@@ -1,7 +1,7 @@
 <br/>
 <p align="center">
   <a href="https://github.com/Bartolumiu/dexchan_rework">
-    <img src="https://static.tr25.es/media/logos/pk/animated.gif" alt="Logo" width="80" height="80">
+    <img src="https://cdn.discordapp.com/avatars/794309204592033821/b1c4eda0575cd423a3f115c75c66f722.webp?size=4096" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Dex-chan (MangaDex ES)</h3>

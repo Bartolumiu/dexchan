@@ -1,0 +1,139 @@
+{
+    "commands": {
+        "ping": {
+            "name": "ping",
+            "description": "Check the bot's latency.",
+            "options": [],
+            "response": {
+                "ping": "Pinging...",
+                "title": "Pong!",
+                "fields": [
+                    {
+                        "name": "Bot Latency",
+                        "value": "%ping%ms"
+                    },
+                    {
+                        "name": "API Latency",
+                        "value": "%apiPing%ms"
+                    }
+                ],
+                "footer": "Requested by %user%"
+            }
+        },
+        "help": {
+            "name": "help",
+            "description": "Get help with the bot.",
+            "options": [],
+            "response": {
+                "title": "Help",
+                "fields": [
+                    {
+                        "name": "Commands",
+                        "value": "To view a list of commands, use `/commands`."
+                    },
+                    {
+                        "name": "Support",
+                        "value": "To get support, use `/support`."
+                    },
+                    {
+                        "name": "Invite",
+                        "value": "To invite the bot to your server, use `/invite`."
+                    },
+                    {
+                        "name": "Stats",
+                        "value": "To view the bot's stats, use `/stats`."
+                    },
+                    {
+                        "name": "Uptime",
+                        "value": "To view the bot's uptime, use `/uptime`."
+                    }
+                ],
+                "footer": "Requested by %user%"
+            }
+        },
+        "commands": {
+            "name": "commands",
+            "description": "Get the list of the commands you can use.",
+            "options": [],
+            "response": {
+                "title": "Commands",
+                "fields": [
+                    {
+                        "name": "%commandName%",
+                        "value": "%commandDescription%"
+                    }
+                ],
+                "footer": "Requested by %user%"
+            }
+        },
+        "invite": {
+            "name": "invite",
+            "description": "Invite the bot to your server.",
+            "options": [],
+            "response": {
+                "title": "Invite",
+                "description": "You can invite the bot to your server by clicking [here](%inviteLink%).",
+                "footer": "Requested by %user%"
+            }
+        },
+        "stats": {
+            "name": "stats",
+            "description": "Get the bot's stats.",
+            "options": [],
+            "response": {
+                "title": "Stats",
+                "fields": [
+                    {
+                        "name": "Servers",
+                        "value": "%guilds%"
+                    },
+                    {
+                        "name": "Users",
+                        "value": "%users%"
+                    },
+                    {
+                        "name": "Commands",
+                        "value": "%commands%"
+                    },
+                    {
+                        "name": "Uptime",
+                        "value": "%uptime%"
+                    }
+                ],
+                "footer": "Requested by %user%"
+            }
+        },
+        "support": {
+            "name": "support",
+            "description": "Get the bot's support server invite.",
+            "options": [],
+            "response": {
+                "title": "Support",
+                "description": "You can join the bot's support server by clicking [here](%supportLink%).",
+                "footer": "Requested by %user%"
+            }
+        },
+        "uptime": {
+            "name": "uptime",
+            "description": "Get the bot's uptime.",
+            "options": [],
+            "response": {
+                "title": "Uptime",
+                "description": "The bot has been online for %uptime%.",
+                "footer": "Requested by %user%"
+            }
+        }
+    },
+    "error_embed": {
+        "title": "Error",
+        "description": "An error occurred while executing this command, below is the error message. Please report this to the bot developer. Thank you!",
+        "message": "Error message",
+        "stack": "Error stack trace",
+        "err_int_ch_input": "Error in command %commandName%",
+        "err_int_btn": "Error in button %buttonId%",
+        "err_int_slct": "Error in select menu %selectId%",
+        "err_int_ctx": "Error in context command %contextId%",
+        "err_int_mod": "Error in modal %modalId%",
+        "err_int_aut": "Error in autocomplete %autocompleteId%"
+    }
+}

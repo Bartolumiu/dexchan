@@ -1,10 +1,11 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("@discordjs/builders");
-const { Colors } = require("discord.js");
+const { Colors, PermissionFlagsBits } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('ping')
-        .setDescription('Check the bot\'s latency'),
+        .setDescription('Check the bot\'s latency')
+        .setDefaultMemberPermissions(PermissionFlagsBits.AttachFiles),
     global: true,
     async execute(interaction, client) {
         // Get user's locale

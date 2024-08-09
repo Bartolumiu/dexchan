@@ -3,58 +3,36 @@ const { readdirSync } = require('fs');
 module.exports = (client) => {
     client.handleComponents = async () => {
         const componentFolders = readdirSync('./src/components');
+        const { buttons, selectMenus, modals } = client;
+
+        const componentMap = {
+            buttons,
+            selectMenus,
+            modals
+        };
+
         for (const folder of componentFolders) {
-            const componentFiles = readdirSync(`./src/components/${folder}`).filter(file => file.endsWith('.js'));
-
-            const { buttons, selectMenus, modals } = client;
-
-            switch (folder) {
-                case 'buttons':
-                    loadButtons(buttons, componentFiles);
-                    break;
-                case 'selectMenus':
-                    loadSelectMenus(selectMenus, componentFiles);
-                    break;
-                case 'modals':
-                    loadModals(modals, componentFiles);
-                    break;
-                default:
-                    console.error(`Error: ${folder} is not a valid component folder.`);
-                    break;
+            const components = componentMap[folder];
+            if (!components) {
+                console.error(`Error: ${folder} is not a valid component folder.`);
+                continue;
             }
+
+            const componentFiles = readdirSync(`./src/components/${folder}`).filter(file => file.endsWith('.js'));
+            loadComponents(components, folder, componentFiles);
         }
     }
 }
 
-function loadButtons(buttons, componentFiles) {
+function loadComponents(collection, folder, componentFiles) {
     for (const file of componentFiles) {
-        try {
-            const button = require(`../../components/buttons/${file}`);
-            buttons.set(button.data.customId, button);
-        } catch (e) {
-            console.error(`Error requiring ${file} in buttons: ${e}`);
-        }
-    }
-}
+        const filePath = path.join(__dirname, `../../components/${folder}/${file}`);
 
-function loadSelectMenus(selectMenus, componentFiles) {
-    for (const file of componentFiles) {
         try {
-            const selectMenu = require(`../../components/selectMenus/${file}`);
-            selectMenus.set(selectMenu.data.customId, selectMenu);
+            const component = require(filePath);
+            collection.set(component.data.customId, component);
         } catch (e) {
-            console.error(`Error requiring ${file} in selectMenus: ${e}`);
-        }
-    }
-}
-
-function loadModals(modals, componentFiles) {
-    for (const file of componentFiles) {
-        try {
-            const modal = require(`../../components/modals/${file}`);
-            modals.set(modal.data.customId, modal);
-        } catch (e) {
-            console.error(`Error requiring ${file} in modals: ${e}`);
+            console.error(`Error requiring ${file} in ${folder}: ${e.message}`);
         }
     }
 }

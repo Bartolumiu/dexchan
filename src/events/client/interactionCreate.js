@@ -5,27 +5,28 @@ module.exports = {
     async execute(interaction, client) {
         const locale = interaction.locale;
 
-        const errorEmbed = await createErrorEmbed(client, locale);
+        const {errorEmbed, errorStack} = await createErrorEmbed(client, locale);
+        const embeds = [errorEmbed, errorStack];
 
         try {
             switch (true) {
                 case interaction.isChatInputCommand():
-                    await handleInteraction(interaction, client.commands, interaction.commandName, 'err_int_ch_input', errorEmbed, client);
+                    await handleInteraction(interaction, client.commands, interaction.commandName, 'err_int_ch_input', embeds, client);
                     break;
                 case interaction.isButton():
-                    await handleInteraction(interaction, client.buttons, interaction.customId, 'err_int_btn', errorEmbed, client);
+                    await handleInteraction(interaction, client.buttons, interaction.customId, 'err_int_btn', embeds, client);
                     break;
                 case interaction.isSelectMenu():
-                    await handleInteraction(interaction, client.selectMenus, interaction.customId, 'err_int_slct', errorEmbed, client);
+                    await handleInteraction(interaction, client.selectMenus, interaction.customId, 'err_int_slct', embeds, client);
                     break;
                 case interaction.isContextMenuCommand():
-                    await handleInteraction(interaction, client.commands, interaction.commandName, 'err_int_ctx', errorEmbed, client);
+                    await handleInteraction(interaction, client.commands, interaction.commandName, 'err_int_ctx', embeds, client);
                     break;
                 case interaction.type == InteractionType.ModalSubmit:
-                    await handleInteraction(interaction, client.modals, interaction.customId, 'err_int_mod', errorEmbed, client);
+                    await handleInteraction(interaction, client.modals, interaction.customId, 'err_int_mod', embeds, client);
                     break;
                 case interaction.type == InteractionType.ApplicationCommandAutocomplete:
-                    await handleInteraction(interaction, client.commands, interaction.commandName, 'err_int_aut', errorEmbed, client);
+                    await handleInteraction(interaction, client.commands, interaction.commandName, 'err_int_aut', embeds, client, true);
                     break;
                 default:
                     console.warn(`Unknown interaction type: ${interaction.type}`);
@@ -33,7 +34,7 @@ module.exports = {
             }
         } catch (e) {
             console.error(e);
-            await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+            await interaction.reply({ embeds: embeds, ephemeral: true });
         }
     }
 };
@@ -41,14 +42,20 @@ module.exports = {
 async function createErrorEmbed(client, locale) {
     const errorTitle = await client.translate(locale, 'error_embed', 'title') || await client.translate('en', 'error_embed', 'title');
     const errorDescription = await client.translate(locale, 'error_embed', 'description') || await client.translate('en', 'error_embed', 'description');
+    const errorStack = await client.translate(locale, 'error_embed', 'stack') || await client.translate('en', 'error_embed', 'stack');
 
-    return new EmbedBuilder()
+    return {
+        errorEmbed: new EmbedBuilder()
         .setTitle(errorTitle)
         .setDescription(errorDescription)
-        .setColor(Colors.Red);
+        .setColor(Colors.Red),
+        errorStack: new EmbedBuilder()
+        .setTitle(errorStack)
+        .setColor(Colors.Red)
+    }
 }
 
-async function handleInteraction(interaction, collection, id, errorType, errorEmbed, client, isAutocomplete = false) {
+async function handleInteraction(interaction, collection, id, errorType, embeds, client, isAutocomplete = false) {
     const item = collection.get(id);
     if (!item) throw new Error(`${errorType.split('_').pop()} not found`);
 
@@ -60,20 +67,22 @@ async function handleInteraction(interaction, collection, id, errorType, errorEm
         }
     } catch (e) {
         console.error(e);
-        await updateErrorEmbed(client, interaction, e, errorType, id, errorEmbed);
+        await updateErrorEmbed(client, interaction, e, errorType, id, embeds[0], embeds[1]);
         throw e;
     }
 }
 
-async function updateErrorEmbed(client, interaction, error, errorType, id, errorEmbed) {
+async function updateErrorEmbed(client, interaction, error, errorType, id, errorEmbed, errorStack) {
     const locale = interaction.locale;
+    const replacements = { commandName: `/${id}`, buttonId: id, selectId: id, contextId: id, modalId: id };
     const error_message = await client.translate(locale, 'error_embed', 'message') || await client.translate('en', 'error_embed', 'message');
-    const error_stack = await client.translate(locale, 'error_embed', 'stack') || await client.translate('en', 'error_embed', 'stack');
-    const footer = await client.translate(locale, `error_embed.${errorType}`, { [`${errorType.split('_').pop()}Id`]: id }) || await client.translate('en', `error_embed.${errorType}`, { [`${errorType.split('_').pop()}Id`]: id });
+    const footer = await client.translate(locale, 'error_embed', `${errorType}`, replacements) || await client.translate('en', 'error_embed', `${errorType}`, replacements);
 
     errorEmbed.addFields(
-        { name: error_message, value: error.message },
-        { name: error_stack, value: error.stack }
+        { name: error_message, value: error.message }
     );
     errorEmbed.setFooter({ text: `${errorType.toUpperCase()} - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
+
+    errorStack.setDescription(error.stack);
+    errorStack.setFooter({ text: `${errorType.toUpperCase()} - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
 }

@@ -25,7 +25,7 @@ module.exports = (client) => {
             const localeData = JSON.parse(readFileSync(filePath, 'utf8'));
 
             // Initialize locale data
-            locales[localeName] = {};
+            locales[localeName] = localeData;
 
             // Load command translations
             if (localeData.commands) {
@@ -52,7 +52,7 @@ module.exports = (client) => {
         if (!translation) return null;
 
         return Object.entries(replacements).reduce(
-            (translatedText, [placeholder, value]) => translatedText.repalce(new RegExp(`%${placeholder}%`, 'g'), value),
+            (translatedText, [placeholder, value]) => translatedText.replace(new RegExp(`%${placeholder}%`, 'g'), value),
             translation
         );
     };

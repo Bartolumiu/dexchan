@@ -3,6 +3,7 @@
         "ping": {
             "name": "ping",
             "description": "Check the bot's latency.",
+            "subcommands": [],
             "options": [],
             "response": {
                 "ping": "Pinging...",
@@ -17,12 +18,13 @@
                         "value": "%apiPing%ms"
                     }
                 ],
-                "footer": "Requested by %user%"
+                "footer": "%commandName% - Requested by %user%"
             }
         },
         "help": {
             "name": "help",
             "description": "Get help with the bot.",
+            "subcommands": [],
             "options": [],
             "response": {
                 "title": "Help",
@@ -48,12 +50,13 @@
                         "value": "To view the bot's uptime, use `/uptime`."
                     }
                 ],
-                "footer": "Requested by %user%"
+                "footer": "%commandName% - Requested by %user%"
             }
         },
         "commands": {
             "name": "commands",
             "description": "Get the list of the commands you can use.",
+            "subcommands": [],
             "options": [],
             "response": {
                 "title": "Commands",
@@ -63,22 +66,24 @@
                         "value": "%commandDescription%"
                     }
                 ],
-                "footer": "Requested by %user%"
+                "footer": "%commandName% - Requested by %user%"
             }
         },
         "invite": {
             "name": "invite",
             "description": "Invite the bot to your server.",
+            "subcommands": [],
             "options": [],
             "response": {
                 "title": "Invite",
                 "description": "You can invite the bot to your server by clicking [here](%inviteLink%).",
-                "footer": "Requested by %user%"
+                "footer": "%commandName% - Requested by %user%"
             }
         },
         "stats": {
             "name": "stats",
             "description": "Get the bot's stats.",
+            "subcommands": [],
             "options": [],
             "response": {
                 "title": "Stats",
@@ -100,27 +105,128 @@
                         "value": "%uptime%"
                     }
                 ],
-                "footer": "Requested by %user%"
+                "footer": "%commandName% - Requested by %user%"
             }
         },
         "support": {
             "name": "support",
             "description": "Get the bot's support server invite.",
+            "subcommands": [],
             "options": [],
             "response": {
                 "title": "Support",
                 "description": "You can join the bot's support server by clicking [here](%supportLink%).",
-                "footer": "Requested by %user%"
+                "footer": "%commandName% - Requested by %user%"
             }
         },
         "uptime": {
             "name": "uptime",
             "description": "Get the bot's uptime.",
+            "subcommands": [],
             "options": [],
             "response": {
                 "title": "Uptime",
                 "description": "The bot has been online for %uptime%.",
-                "footer": "Requested by %user%"
+                "footer": "%commandName% - Requested by %user%"
+            }
+        },
+        "manga": {
+            "name": "manga",
+            "description": "Search for a manga on MangaDex.",
+            "subcommands": [
+                {
+                    "name": "random",
+                    "description": "Get a random manga",
+                    "subcommands": [],
+                    "options": []
+                }
+            ],
+            "options": [
+                {
+                    "name": "query",
+                    "description": "The manga you want to search for"
+                },
+                {
+                    "name": "id",
+                    "description": "The ID of the manga you want to search for"
+                },
+                {
+                    "name": "url",
+                    "description": "The URL of the manga you want to search for"
+                }
+            ],
+            "response": {
+                "found": {
+                    "author": {
+                        "too_many": "Multiple Authors"
+                    },
+                    "title": "%title%",
+                    "description": "%description%",
+                    "fields": [
+                        {
+                            "name": "Rating",
+                            "value": "%rating%"
+                        },
+                        {
+                            "name": "Follows",
+                            "value": "%follows%"
+                        },
+                        {
+                            "name": "Year",
+                            "value": "%year%"
+                        },
+                        {
+                            "name": "Publication Status",
+                            "value": "%status%"
+                        },
+                        {
+                            "name": "Demographic",
+                            "value": "%demographic%"
+                        },
+                        {
+                            "name": "Content Rating",
+                            "value": "%contentRating%"
+                        },
+                        {
+                            "name": "Content Warning",
+                            "value": "%contentWarning%"
+                        },
+                        {
+                            "name": "Format",
+                            "value": "%format%"
+                        },
+                        {
+                            "name": "Genres",
+                            "value": "%genres%"
+                        },
+                        {
+                            "name": "Themes",
+                            "value": "%themes%"
+                        }
+                    ],
+                    "no_description": "No description available."
+                },
+                "query": {
+                    "title": "Search Results",
+                    "description": "Here are the search results for `%query%`.",
+                    "fields": [
+                        {
+                            "name": "%title%",
+                            "value": "%description%"
+                        }
+                    ]
+                },
+                "error": {
+                    "title": "Error",
+                    "description": {
+                        "url": "The provided URL is invalid.",
+                        "id": "The provided ID is invalid.",
+                        "no_results": "The query returned no results. That's all we know.",
+                        "api": "An error occurred while fetching the manga data.\nPlease try again later.\nStatus code: %statusCode%",
+                        "empty": "Please provide either a query, ID, or URL."
+                    }
+                },
+                "footer": "%commandName% - Requested by %user%"
             }
         }
     },

@@ -1,0 +1,251 @@
+{
+    "commands": {
+        "ping": {
+            "name": "ping",
+            "description": "Verifica la latencia del bot.",
+            "subcommands": [],
+            "options": [],
+            "response": {
+                "ping": "Haciendo ping...",
+                "title": "¡Pong!",
+                "fields": [
+                    {
+                        "name": "Latencia del Bot",
+                        "value": "%ping%ms"
+                    },
+                    {
+                        "name": "Latencia de la API",
+                        "value": "%apiPing%ms"
+                    }
+                ],
+                "footer": "%commandName% - Solicitado por %user%"
+            }
+        },
+        "help": {
+            "name": "help",
+            "description": "Obtén ayuda con el bot.",
+            "subcommands": [],
+            "options": [],
+            "response": {
+                "title": "Ayuda",
+                "fields": [
+                    {
+                        "name": "Comandos",
+                        "value": "Para ver una lista de comandos, usa `/commands`."
+                    },
+                    {
+                        "name": "Soporte",
+                        "value": "Para obtener soporte, usa `/support`."
+                    },
+                    {
+                        "name": "Invitar",
+                        "value": "Para invitar al bot a tu servidor, usa `/invite`."
+                    },
+                    {
+                        "name": "Estadísticas",
+                        "value": "Para ver las estadísticas del bot, usa `/stats`."
+                    },
+                    {
+                        "name": "Tiempo de actividad",
+                        "value": "Para ver el tiempo de actividad del bot, usa `/uptime`."
+                    }
+                ],
+                "footer": "%commandName% - Solicitado por %user%"
+            }
+        },
+        "commands": {
+            "name": "commands",
+            "description": "Obtén la lista de comandos que puedes usar.",
+            "subcommands": [],
+            "options": [],
+            "response": {
+                "title": "Comandos",
+                "fields": [
+                    {
+                        "name": "%commandName%",
+                        "value": "%commandDescription%"
+                    }
+                ],
+                "footer": "%commandName% - Solicitado por %user%"
+            }
+        },
+        "invite": {
+            "name": "invite",
+            "description": "Invita al bot a tu servidor.",
+            "subcommands": [],
+            "options": [],
+            "response": {
+                "title": "Invitar",
+                "description": "Puedes invitar al bot a tu servidor haciendo clic [aquí](%inviteLink%).",
+                "footer": "%commandName% - Solicitado por %user%"
+            }
+        },
+        "stats": {
+            "name": "stats",
+            "description": "Obtén las estadísticas del bot.",
+            "subcommands": [],
+            "options": [],
+            "response": {
+                "title": "Estadísticas",
+                "fields": [
+                    {
+                        "name": "Servidores",
+                        "value": "%guilds%"
+                    },
+                    {
+                        "name": "Usuarios",
+                        "value": "%users%"
+                    },
+                    {
+                        "name": "Comandos",
+                        "value": "%commands%"
+                    },
+                    {
+                        "name": "Tiempo de actividad",
+                        "value": "%uptime%"
+                    }
+                ],
+                "footer": "%commandName% - Solicitado por %user%"
+            }
+        },
+        "support": {
+            "name": "support",
+            "description": "Obtén la invitación al servidor de soporte del bot.",
+            "subcommands": [],
+            "options": [],
+            "response": {
+                "title": "Soporte",
+                "description": "Puedes unirte al servidor de soporte del bot haciendo clic [aquí](%supportLink%).",
+                "footer": "%commandName% - Solicitado por %user%"
+            }
+        },
+        "uptime": {
+            "name": "uptime",
+            "description": "Obtén el tiempo de actividad del bot.",
+            "subcommands": [],
+            "options": [],
+            "response": {
+                "title": "Tiempo de Actividad",
+                "description": "El bot ha estado en línea por %uptime%.",
+                "footer": "%commandName% - Solicitado por %user%"
+            }
+        },
+        "manga": {
+            "name": "manga",
+            "description": "Busca un manga en MangaDex.",
+            "subcommands": [
+                {
+                    "name": "random",
+                    "description": "Obtén un manga aleatorio",
+                    "subcommands": [],
+                    "options": []
+                }
+            ],
+            "options": [
+                {
+                    "name": "query",
+                    "description": "El manga que quieres buscar"
+                },
+                {
+                    "name": "id",
+                    "description": "La ID del manga que quieres buscar"
+                },
+                {
+                    "name": "url",
+                    "description": "La URL del manga que quieres buscar"
+                }
+            ],
+            "response": {
+                "found": {
+                    "author": {
+                        "too_many": "Múltiples Autores"
+                    },
+                    "title": "%title%",
+                    "description": "%description%",
+                    "fields": [
+                        {
+                            "name": "Calificación",
+                            "value": "%rating%"
+                        },
+                        {
+                            "name": "Seguidores",
+                            "value": "%follows%"
+                        },
+                        {
+                            "name": "Año",
+                            "value": "%year%"
+                        },
+                        {
+                            "name": "Estado de Publicación",
+                            "value": "%status%"
+                        },
+                        {
+                            "name": "Demografía",
+                            "value": "%demographic%"
+                        },
+                        {
+                            "name": "Calificación de Contenido",
+                            "value": "%contentRating%"
+                        },
+                        {
+                            "name": "Advertencia de Contenido",
+                            "value": "%contentWarning%"
+                        },
+                        {
+                            "name": "Formato",
+                            "value": "%format%"
+                        },
+                        {
+                            "name": "Géneros",
+                            "value": "%genres%"
+                        },
+                        {
+                            "name": "Temas",
+                            "value": "%themes%"
+                        }
+                    ],
+                    "pub_status": {
+                        "ongoing": "En curso",
+                        "completed": "Completado",
+                        "hiatus": "En pausa",
+                        "cancelled": "Cancelado"
+                    },
+                    "no_description": "No hay descripción disponible."
+                },
+                "query": {
+                    "title": "Resultados de la Búsqueda",
+                    "description": "Aquí están los resultados de la búsqueda para `%query%`.",
+                    "fields": [
+                        {
+                            "name": "%title%",
+                            "value": "%description%"
+                        }
+                    ]
+                },
+                "error": {
+                    "title": "Error",
+                    "description": {
+                        "url": "La URL proporcionada no es válida.",
+                        "id": "La ID proporcionada no es válida.",
+                        "no_results": "La consulta no devolvió resultados. Es todo lo que sabemos.",
+                        "api": "Ha ocurrido un error al obtener los datos del manga.\nPor favor, inténtalo de nuevo más tarde.\nCódigo de estado: %statusCode%",
+                        "empty": "Por favor, proporciona una consulta, ID o URL."
+                    }
+                },
+                "footer": "%commandName% - Solicitado por %user%"
+            }
+        }
+    },
+    "error_embed": {
+        "title": "Error",
+        "description": "Ha ocurrido un error al ejecutar este comando, a continuación se muestra el mensaje de error. Por favor, informa de esto al desarrollador del bot. ¡Gracias!",
+        "message": "Mensaje de error",
+        "stack": "Pila del error",
+        "err_int_ch_input": "Error en el comando %commandName%",
+        "err_int_btn": "Error en el botón %buttonId%",
+        "err_int_slct": "Error en el menú de selección %selectId%",
+        "err_int_ctx": "Error en el comando de contexto %contextId%",
+        "err_int_mod": "Error en el modal %modalId%",
+        "err_int_aut": "Error en la autocompletación %autocompleteId%"
+    }
+}

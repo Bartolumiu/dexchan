@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder } = require("discord.js");
-const { get } = require("http");
 const path = require('path');
 
 const urlRegex = /^https?:\/\/(?:www\.)?(?:(?:canary|sandbox)\.)?mangadex\.(?:org|dev)\/title\/([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})(?:\/[a-zA-Z0-9-]+)?\/?$/;
@@ -42,7 +41,7 @@ module.exports = {
         // Get user's locale
         const locale = interaction.locale;
         const embed = new EmbedBuilder();
-        embed.setFooter({ text: `/${await client.translate(locale, 'commands', 'manga.response.footer', { commandName: interaction.commandName, user: interaction.user.username }) || await client.translate('en', 'commands', 'manga.response.footer', { user: interaction.user.username })}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
+        embed.setFooter({ text: `/${await client.translate(locale, 'commands', 'manga.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username }) || await client.translate('en', 'commands', 'manga.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username })}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
 
         // Check if the user provided a query, ID or URL
         if (!interaction.options.getString('query') && !interaction.options.getString('id') && !interaction.options.getString('url')) {
@@ -91,45 +90,58 @@ module.exports = {
         // Fetch the manga data
         const manga = await getManga(mangaID);
         const stats = await getStats(mangaID);
-        const cover_art = await getCoverArt(manga);
 
         const rating = client.translate(locale, 'commands', 'manga.response.found.fields[0].name') || client.translate('en', 'commands', 'manga.response.found.fields[0].name');
         const followers = client.translate(locale, 'commands', 'manga.response.found.fields[1].name') || client.translate('en', 'commands', 'manga.response.found.fields[1].name');
         const year = client.translate(locale, 'commands', 'manga.response.found.fields[2].name') || client.translate('en', 'commands', 'manga.response.found.fields[2].name');
         const status = client.translate(locale, 'commands', 'manga.response.found.fields[3].name') || client.translate('en', 'commands', 'manga.response.found.fields[3].name');
+        const status_value = client.translate(locale, 'commands', `manga.response.found.pub_status.${manga.attributes.status}`) || client.translate('en', 'commands', `manga.response.found.pub_status.${manga.attributes.status}`) || manga.attributes.status;
         const demographic = client.translate(locale, 'commands', 'manga.response.found.fields[4].name') || client.translate('en', 'commands', 'manga.response.found.fields[4].name');
         const contentrating = client.translate(locale, 'commands', 'manga.response.found.fields[5].name') || client.translate('en', 'commands', 'manga.response.found.fields[5].name');
-        const contentwarning = client.translate(locale, 'commands', 'manga.response.found.fields[6].name') || client.translate('en', 'commands', 'manga.response.found.fields[6].name');
-        const format = client.translate(locale, 'commands', 'manga.response.found.fields[7].name') || client.translate('en', 'commands', 'manga.response.found.fields[7].name');
-        const genres = client.translate(locale, 'commands', 'manga.response.found.fields[8].name') || client.translate('en', 'commands', 'manga.response.found.fields[8].name');
-        const themes = client.translate(locale, 'commands', 'manga.response.found.fields[9].name') || client.translate('en', 'commands', 'manga.response.found.fields[9].name');
 
         const creatorsAndArtists = Array.from(new Set([...manga.relationships.filter(rel => rel.type === 'author').map(rel => rel.attributes.name), ...manga.relationships.filter(rel => rel.type === 'artist').map(rel => rel.attributes.name)])).join(', ');
 
         const author = (creatorsAndArtists.length > 256) ? await client.translate(locale, 'commands', 'manga.response.found.author.too_many') || await client.translate('en', 'commands', 'manga.response.found.too_many_creators') : creatorsAndArtists;
 
-        // Icon shenanigans, because Discord only allows URLs for the icon for some reason
-        const mangadexIcon = new AttachmentBuilder('../../media/mangadex.png', 'mangadex.png');
-
-        embed.setAuthor({ name: author, iconURL: 'attachment://mangadex.png' })
-            .setTitle(manga.attributes.title.en)
+        embed.setTitle(manga.attributes.title.en)
             .setURL(urlFormats.primary.replace('{id}', manga.id).replace('{title}', ''))
             .setDescription(await getLocalizedDescription(manga, locale) || client.translate(locale, 'commands', 'manga.response.found.no_description') || client.translate('en', 'commands', 'manga.response.found.no_description'))
             .addFields(
                 { name: rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
                 { name: followers, value: `${stats.follows}`, inline: true },
                 { name: year, value: `${manga.attributes.year}`, inline: true },
-                { name: status, value: `${manga.attributes.status}`, inline: true },
-                { name: demographic, value: `${manga.attributes.publicationDemographic === null ? 'N/A' : manga.attributes.publicationDemographic}` || 'N/A', inline: true },
-                { name: contentrating, value: `${manga.attributes.contentRating}`, inline: true }
+                { name: status, value: `${await capitalizeFirstLetter(status_value)}`, inline: true },
+                { name: demographic, value: `${manga.attributes.publicationDemographic === null ? 'N/A' : await capitalizeFirstLetter(manga.attributes.publicationDemographic)}` || 'N/A', inline: true },
+                { name: contentrating, value: `${await capitalizeFirstLetter(manga.attributes.contentRating)}`, inline: true }
             )
-            .setColor(Colors.Blurple)
-            .setThumbnail(`attachment://cover.jpg`);
+            .setColor(Colors.Blurple);
 
         await addMangaTags(manga, embed, locale, client);
+        const attachments = await setImages(manga, embed, author);
 
-        interaction.reply({ embeds: [embed] });
+        interaction.reply({ embeds: [embed], files: attachments });
     }
+}
+
+async function setImages(manga, embed, author) {
+    const mangadexIcon = new AttachmentBuilder(path.join(__dirname, '../../media/mangadex.png'), 'mangadex.png');
+    embed.setAuthor({ name: author, iconURL: 'attachment://mangadex.png' })
+    const coverURL = await getCoverURL(manga);
+    if (!coverURL) return;
+
+    const cover = await fetch(coverURL);
+    if (!cover.ok) return;
+
+    const coverBuffer = await cover.arrayBuffer();
+    const coverBufferData = Buffer.from(coverBuffer);
+    const coverImage = new AttachmentBuilder(coverBufferData, { name: 'cover.png' });
+    embed.setThumbnail('attachment://cover.png');
+
+    return [mangadexIcon, coverImage];
+}
+
+async function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 async function addMangaTags(manga, embed, locale, client) {
@@ -145,7 +157,7 @@ async function addMangaTags(manga, embed, locale, client) {
     // For each tag, add it to the corresponding group
     tags.forEach(tag => {
         if (!tag) return;
-        tagGroups[tag.attributes.group].push(tag.attributes.name);
+        tagGroups[tag.attributes.group].push(tag.attributes.name.en);
     });
 
     // Translate the tag groups
@@ -172,18 +184,14 @@ async function addMangaTags(manga, embed, locale, client) {
 
     // Add the translated tag groups to the embed
     embed.addFields(content, format, genre, theme);
-
-    console.log('Content Warning:', content.value);
-    console.log('Format:', format.value);
-    console.log('Genre:', genre.value);
-    console.log('Theme:', theme.value);
 }
 
 async function checkIdFormat(id) {
     return idRegex.test(id);
 }
 
-async function getCoverArt(manga) {
+async function getCoverURL(manga) {
+    const mangaID = manga.id;
     const coverArtID = manga.relationships.find(rel => rel.type === 'cover_art').id;
 
     const url = new URL(`https://api.mangadex.org/cover/${coverArtID}`);
@@ -192,14 +200,7 @@ async function getCoverArt(manga) {
     const data = await response.json();
     const fileName = data.data.attributes.fileName;
 
-    // Proxy the image through the bot (MangaDex doesn't allow hotlinking)
-    const image = await fetch(`https://mangadex.org/covers/${coverArtID}/${fileName}`);
-    if (!image.ok) return null;
-    const buffer = await image.buffer(); // Convert the image to a buffer
-
-    // Create a new attachment with the buffer
-    const attachment = new AttachmentBuilder(buffer, { name: 'cover.jpg' });
-    return attachment;
+    return `https://mangadex.org/covers/${mangaID}/${fileName}`;
 }
 
 async function getManga(mangaID) {

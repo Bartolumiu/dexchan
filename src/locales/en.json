@@ -204,6 +204,12 @@
                             "value": "%themes%"
                         }
                     ],
+                    "pub_status": {
+                        "ongoing": "Ongoing",
+                        "completed": "Completed",
+                        "hiatus": "Hiatus",
+                        "cancelled": "Cancelled"
+                    },
                     "no_description": "No description available."
                 },
                 "query": {

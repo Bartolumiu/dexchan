@@ -36,36 +36,36 @@ module.exports = (client) => {
                     if (global) {
                         // Command is global
                         globalCommandList.push(command.data.toJSON());
-                        console.log(chalk.greenBright(`Global command /${name} loaded.`) + ` (${fileIndex + 1}/${commandFiles.length}) | (${folderIndex + 1}/${commandFolders.length})`);
+                        console.log(chalk.greenBright(`[Command Handler] Global command /${name} loaded.`) + ` (${fileIndex + 1}/${commandFiles.length}) | (${folderIndex + 1}/${commandFolders.length})`);
                     } else if (guildID) {
                         // Command is guild-specific
                         if (!guildCommandMap.has(guildID)) {
                             guildCommandMap.set(guildID, []);
                         }
                         guildCommandMap.get(guildID).push(command.data.toJSON());
-                        console.log(chalk.greenBright(`Guild command /${name} loaded for guild ${guildID}.`) + ` (${fileIndex + 1}/${commandFiles.length}) | (${folderIndex + 1}/${commandFolders.length})`);
+                        console.log(chalk.greenBright(`[Command Handler] Guild command /${name} loaded for guild ${guildID}.`) + ` (${fileIndex + 1}/${commandFiles.length}) | (${folderIndex + 1}/${commandFolders.length})`);
                     } else {
                         // Command is neither global nor guild-specific
-                        console.warn(chalk.yellowBright(`Command /${name} does not have a guildID set and is not marked as global. Skipping.`));
+                        console.warn(chalk.yellowBright(`[Command Handler] Command /${name} does not have a guildID set and is not marked as global. Skipping.`));
                     }
                 } catch (e) {
-                    console.error(chalk.redBright(`Error requiring ${file} in ${folder}: ${e.message}`));
+                    console.error(chalk.redBright(`[Command Handler] Error requiring ${file} in ${folder}: ${e.message}`));
                 }
             });
         });
 
         try {
-            console.log(chalk.gray('Started refreshing global application (/) commands.'));
+            console.log(chalk.gray('[Command Handler] Started refreshing global application (/) commands.'));
             await rest.put(Routes.applicationCommands(clientID), { body: globalCommandList });
 
             for (const [guildID, commands] of guildCommandMap) {
-                console.log(chalk.gray(`Started refreshing guild (/) commands for guild ${guildID}.`));
+                console.log(chalk.gray(`[Command Handler] Started refreshing guild (/) commands for guild ${guildID}.`));
                 await rest.put(Routes.applicationGuildCommands(clientID, guildID), { body: commands });
             }
 
-            console.log(chalk.greenBright('Successfully reloaded application (/) commands.'));
+            console.log(chalk.greenBright('[Command Handler] Successfully reloaded application (/) commands.'));
         } catch (e) {
-            console.error(chalk.redBright('Failed to reload application (/) commands.'), e);
+            console.error(chalk.redBright('[Command Handler] Failed to reload application (/) commands.'), e);
         }
     };
 };

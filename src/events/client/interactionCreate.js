@@ -16,16 +16,16 @@ module.exports = {
                 case interaction.isButton():
                     await handleInteraction(interaction, client.buttons, interaction.customId, 'err_int_btn', embeds, client);
                     break;
-                case interaction.isSelectMenu():
+                case interaction.isAnySelectMenu():
                     await handleInteraction(interaction, client.selectMenus, interaction.customId, 'err_int_slct', embeds, client);
                     break;
                 case interaction.isContextMenuCommand():
                     await handleInteraction(interaction, client.commands, interaction.commandName, 'err_int_ctx', embeds, client);
                     break;
-                case interaction.type == InteractionType.ModalSubmit:
+                case interaction.isModalSubmit():
                     await handleInteraction(interaction, client.modals, interaction.customId, 'err_int_mod', embeds, client);
                     break;
-                case interaction.type == InteractionType.ApplicationCommandAutocomplete:
+                case interaction.isAutocomplete():
                     await handleInteraction(interaction, client.commands, interaction.commandName, 'err_int_aut', embeds, client, true);
                     break;
                 default:

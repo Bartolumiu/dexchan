@@ -30,7 +30,7 @@ module.exports = (client) => {
                     handleMongoEvents(client, eventFiles);
                     break;
                 default:
-                    console.error(`Error: ${folder} is not a valid event folder.`);
+                    console.error(`[Event Handler] Error: ${folder} is not a valid event folder.`);
                     break;
             }
         }

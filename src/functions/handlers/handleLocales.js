@@ -16,6 +16,7 @@ const commandDescriptions = {};
 
 module.exports = (client) => {
     client.handleLocales = async () => {
+        const chalk = (await import('chalk')).default;
         const localePath = path.join(__dirname, '../../locales');
         const localeFiles = readdirSync(localePath).filter(file => file.endsWith('.json'));
 
@@ -33,6 +34,8 @@ module.exports = (client) => {
                     Object.entries(localeData.commands).map(([command, commandData]) => [command, commandData.description])
 );
             }
+
+            console.log(chalk.greenBright(`[Locale Handler] Locale ${localeName} loaded.`));
         });
     };
 

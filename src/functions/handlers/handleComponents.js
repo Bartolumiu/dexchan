@@ -1,4 +1,5 @@
 const { readdirSync } = require('fs');
+const path = require('path');
 
 module.exports = (client) => {
     client.handleComponents = async () => {
@@ -14,25 +15,30 @@ module.exports = (client) => {
         for (const folder of componentFolders) {
             const components = componentMap[folder];
             if (!components) {
-                console.error(`Error: ${folder} is not a valid component folder.`);
+                console.error(`[Component Handler] Error: ${folder} is not a valid component folder.`);
                 continue;
             }
 
             const componentFiles = readdirSync(`./src/components/${folder}`).filter(file => file.endsWith('.js'));
-            loadComponents(components, folder, componentFiles);
+            await loadComponents(components, folder, componentFiles);
         }
     }
 }
 
-function loadComponents(collection, folder, componentFiles) {
+async function loadComponents(collection, folder, componentFiles) {
+    const chalkInstance = await import('chalk');
+    const chalk = chalkInstance.default;
+
     for (const file of componentFiles) {
         const filePath = path.join(__dirname, `../../components/${folder}/${file}`);
 
         try {
             const component = require(filePath);
             collection.set(component.data.customId, component);
+
+            console.log(chalk.greenBright(`[Component Handler] Component ${component.data.customId} loaded.`));
         } catch (e) {
-            console.error(`Error requiring ${file} in ${folder}: ${e.message}`);
+            console.error(chalk.redBright(`[Component Handler] Error loading ${file} in ${folder}: ${e.message}`));
         }
     }
 }

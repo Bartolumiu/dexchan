@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require("discord.js");
 const path = require('path');
 
 const urlRegex = /^https?:\/\/(?:www\.)?(?:(?:canary|sandbox)\.)?mangadex\.(?:org|dev)\/title\/([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})(?:\/[a-zA-Z0-9-]+)?\/?$/;
@@ -54,19 +54,33 @@ module.exports = {
         if (query) {
             const searchResults = await searchManga(query);
 
-            if (!searchResults.size) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.no_results');
+            if (!searchResults) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.no_results');
 
             const fields = Array.from(searchResults, ([title, id]) => ({
                 name: title,
                 value: `[View Manga](${urlFormats.primary.replace('{id}', id).replace('{title}', '')})`
             }));
 
+            const menu = new StringSelectMenuBuilder()
+                .setCustomId('manga_select')
+                .setPlaceholder(await client.translate(locale, 'commands', 'manga.response.query.placeholder'))
+                .setMinValues(1)
+                .setMaxValues(1);
+
+            let menuOptions = [];
+            searchResults.forEach((id, title) => {
+                menuOptions.push({ label: title, value: id });
+            });
+            menu.setOptions(menuOptions);
+
+            const row = new ActionRowBuilder().addComponents(menu);
+
             embed.setTitle(await client.translate(locale, 'commands', 'manga.response.query.title'))
                 .setDescription(await client.translate(locale, 'commands', 'manga.response.query.description', { query: query }))
                 .addFields(fields)
                 .setColor(Colors.Blurple);
 
-            return interaction.reply({ embeds: [embed] });
+            return interaction.reply({ embeds: [embed], components: [row] });
         }
 
         const mangaID = id || await getIDfromURL(url);
@@ -78,7 +92,14 @@ module.exports = {
         await buildMangaEmbed(embed, client, locale, manga, stats);
         const attachments = await setImages(manga, embed, locale, client);
 
-        return interaction.reply({ embeds: [embed], files: attachments });
+        const open_button = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setLabel(await client.translate(locale, 'commands', 'manga.response.found.open_button'))
+                .setURL(urlFormats.primary.replace('{id}', manga.id).replace('{title}', ''))
+                .setStyle(ButtonStyle.Link)
+        )
+
+        return interaction.reply({ embeds: [embed], files: attachments, components: [open_button] });
     }
 }
 

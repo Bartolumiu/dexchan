@@ -210,7 +210,8 @@
                         "hiatus": "Hiatus",
                         "cancelled": "Cancelled"
                     },
-                    "no_description": "No description available."
+                    "no_description": "No description available.",
+                    "open_button": "Open on MangaDex"
                 },
                 "query": {
                     "title": "Search Results",
@@ -220,7 +221,8 @@
                             "name": "%title%",
                             "value": "%description%"
                         }
-                    ]
+                    ],
+                    "placeholder": "Select a manga to view more information."
                 },
                 "error": {
                     "title": "Error",

@@ -25,8 +25,8 @@ jobs:
       run: |
         # Start the SSH agent
         eval $(ssh-agent -s)
-        # Decode and add the SSH private key
-        echo "${{ secrets.SSH_PRIVATE_KEY_BASE64 }}" | base64 --decode | ssh-add -
+        # Add the SSH private key to the agent
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
         # Ensure the .ssh directory exists
         mkdir -p ~/.ssh
         # Add the server to known hosts

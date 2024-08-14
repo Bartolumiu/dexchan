@@ -8,9 +8,9 @@ module.exports = {
     async execute(interaction, client) {
         const locale = interaction.locale;
 
-        const title = client.translate(locale, 'commands', 'commands.response.title') || client.translate('en', 'commands', 'commands.response.title');
-        const description = client.translate(locale, 'commands', 'commands.response.description') || client.translate('en', 'commands', 'commands.response.description');
-        const footer = client.translate(locale, 'commands', 'commands.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username }) || client.translate('en', 'commands', 'commands.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username });
+        const title = client.translate(locale, 'commands', 'commands.response.title');
+        const description = client.translate(locale, 'commands', 'commands.response.description');
+        const footer = client.translate(locale, 'commands', 'commands.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username });
 
         // Retrieve both the global and guild commands, as well as the guild command permissions
         const globalCommands = await client.application.commands.fetch();

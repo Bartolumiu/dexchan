@@ -18,12 +18,12 @@ module.exports = {
         const ping = message.createdTimestamp - interaction.createdTimestamp;
 
         // Fetch other translations (if not found, use English as default)
-        const title = client.translate(locale, 'commands', 'ping.response.title') || client.translate('en', 'commands', 'ping.response.title');
-        const field1name = client.translate(locale, 'commands', 'ping.response.fields[0].name') || client.translate('en', 'commands', 'ping.response.fields[0].name');
-        const field2name = client.translate(locale, 'commands', 'ping.response.fields[1].name') || client.translate('en', 'commands', 'ping.response.fields[1].name');
-        const field1value = client.translate(locale, 'commands', 'ping.response.fields[0].value', { ping: ping }) || client.translate('en', 'commands', 'ping.response.fields[0].value', { ping: ping });
-        const field2value = client.translate(locale, 'commands', 'ping.response.fields[1].value', { apiPing: client.ws.ping }) || client.translate('en', 'commands', 'ping.response.fields[1].value', { apiPing: client.ws.ping });
-        const footer = client.translate(locale, 'commands', 'ping.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username }) || client.translate('en', 'commands', 'ping.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username });
+        const title = client.translate(locale, 'commands', 'ping.response.title');
+        const field1name = client.translate(locale, 'commands', 'ping.response.fields[0].name');
+        const field2name = client.translate(locale, 'commands', 'ping.response.fields[1].name');
+        const field1value = client.translate(locale, 'commands', 'ping.response.fields[0].value', { ping: ping });
+        const field2value = client.translate(locale, 'commands', 'ping.response.fields[1].value', { apiPing: client.ws.ping });
+        const footer = client.translate(locale, 'commands', 'ping.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username });
 
         // Build and send the embed
         const embed = new EmbedBuilder()

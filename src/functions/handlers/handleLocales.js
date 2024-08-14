@@ -37,24 +37,7 @@ module.exports = (client) => {
     };
 
     client.translate = (locale, category, key, replacements = {}) => {
-        // Use mapped parent language if available
-        locale = languageMap[locale] || locale;
-
-        // Retrieve translations
-        const localeTranslations = locales[locale];
-        if (!localeTranslations) return null;
-
-        const categoryTranslations = localeTranslations[category];
-        if (!categoryTranslations) return null;
-
-        // Retrieve the nested translation
-        const translation = getNestedTranslation(categoryTranslations, key.split(/\.|\[/));
-        if (!translation) return null;
-
-        return Object.entries(replacements).reduce(
-            (translatedText, [placeholder, value]) => translatedText.replace(new RegExp(`%${placeholder}%`, 'g'), value),
-            translation
-        );
+        return translate(locale, category, key, replacements) || translate('en', category, key, replacements);
     };
 
 
@@ -62,7 +45,7 @@ module.exports = (client) => {
         const chalk = (await import('chalk')).default;
 
         const translations = Object.fromEntries(
-            discordLocales.map(locale => [locale, client.translate(locale, 'commands', `${command}.${attribute}`)]).filter(([, translation]) => translation)
+            discordLocales.map(locale => [locale, translate(locale, 'commands', `${command}.${attribute}`)]).filter(([, translation]) => translation)
         );
 
         try {
@@ -76,6 +59,27 @@ module.exports = (client) => {
             console.error(e);
         }
     };
+};
+
+const translate = (locale, category, key, replacements = {} ) => {
+    // Use mapped parent language if available
+    locale = languageMap[locale] || locale;
+
+    // Retrieve translations
+    const localeTranslations = locales[locale];
+    if (!localeTranslations) return null;
+
+    const categoryTranslations = localeTranslations[category];
+    if (!categoryTranslations) return null;
+
+    // Retrieve the nested translation
+    const translation = getNestedTranslation(categoryTranslations, key.split(/\.|\[/));
+    if (!translation) return null;
+
+    return Object.entries(replacements).reduce(
+        (translatedText, [placeholder, value]) => translatedText.replace(new RegExp(`%${placeholder}%`, 'g'), value),
+        translation
+    );
 };
 
 const getNestedTranslation = (translations, nestedKeys) => {

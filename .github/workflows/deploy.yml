@@ -21,16 +21,20 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Set up SSH agent
+    - name: Set up SSH key
       run: |
-        # Start the SSH agent
-        eval $(ssh-agent -s)
-        # Add the SSH private key to the agent
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
-        # Ensure the .ssh directory exists
+        # Create the .ssh directory if it doesn't exist
         mkdir -p ~/.ssh
+        # Write the SSH private key to a file
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
+        # Set the correct permissions for the key
+        chmod 600 ~/.ssh/id_rsa
         # Add the server to known hosts
         ssh-keyscan ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+        # List the keys in the SSH agent for debugging
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/id_rsa
+        ssh-add -l
 
     - name: Deploy to Server
       run: |

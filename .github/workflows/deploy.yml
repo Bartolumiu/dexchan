@@ -25,8 +25,10 @@ jobs:
       run: |
         # Start the SSH agent
         eval $(ssh-agent -s)
-        # Add the SSH private key to the agent
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
+        # Decode and add the SSH private key
+        echo "${{ secrets.SSH_PRIVATE_KEY_BASE64 }}" | base64 --decode | ssh-add -
+        # Ensure the .ssh directory exists
+        mkdir -p ~/.ssh
         # Add the server to known hosts
         ssh-keyscan ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
@@ -38,7 +40,3 @@ jobs:
           npm install
           pm2 restart Dex-chan || pm2 start bot/index.js --name Dex-chan
         EOF
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        SERVER_HOST: ${{ secrets.SERVER_HOST }}
-        SERVER_USER: ${{ secrets.SERVER_USER }}

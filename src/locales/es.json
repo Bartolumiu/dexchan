@@ -16,9 +16,14 @@
                     {
                         "name": "Latencia de la API",
                         "value": "%apiPing%ms"
+                    },
+                    {
+                        "name": "Latencia de la API de MangaDex",
+                        "value": "%mdPing%ms"
                     }
                 ],
-                "footer": "%commandName% - Solicitado por %user%"
+                "footer": "%commandName% - Solicitado por %user%",
+                "md_not_ok": "Error al obtener los datos"
             }
         },
         "help": {

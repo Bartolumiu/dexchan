@@ -16,9 +16,14 @@
                     {
                         "name": "API Latency",
                         "value": "%apiPing%ms"
+                    },
+                    {
+                        "name": "MangaDex API Latency",
+                        "value": "%mdPing%ms"
                     }
                 ],
-                "footer": "%commandName% - Requested by %user%"
+                "footer": "%commandName% - Requested by %user%",
+                "md_not_ok": "Fetch failed"
             }
         },
         "help": {

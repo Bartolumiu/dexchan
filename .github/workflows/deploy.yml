@@ -16,22 +16,17 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 'node'
+        node-version: '22'
 
     - name: Install dependencies
       run: npm install
 
     - name: Set up SSH key
       run: |
-        # Create the .ssh directory if it doesn't exist
         mkdir -p ~/.ssh
-        # Write the SSH private key to a file
         echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
-        # Set the correct permissions for the key
         chmod 600 ~/.ssh/id_rsa
-        # Add the server to known hosts
         ssh-keyscan ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-        # List the keys in the SSH agent for debugging
         eval $(ssh-agent -s)
         ssh-add ~/.ssh/id_rsa
         ssh-add -l
@@ -39,6 +34,17 @@ jobs:
     - name: Deploy to Server
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+          # Source nvm script and set up environment
+          export NVM_DIR="/home/ubuntu/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+          # Verify npm and pm2 commands are available
+          which npm
+          npm -v
+          which pm2
+          pm2 -v
+
+          # Navigate to the project directory and deploy
           cd /home/ubuntu/dexchan_rework || exit
           git pull origin main
           npm install

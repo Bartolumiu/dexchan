@@ -16,6 +16,7 @@ const commandDescriptions = {};
 
 module.exports = (client) => {
     client.handleLocales = async () => {
+        const chalk = (await import('chalk')).default;
         const localePath = path.join(__dirname, '../../locales');
         const localeFiles = readdirSync(localePath).filter(file => file.endsWith('.json'));
 
@@ -25,97 +26,69 @@ module.exports = (client) => {
             const localeData = JSON.parse(readFileSync(filePath, 'utf8'));
 
             // Initialize locale data
-            commandDescriptions[localeName] = {};
+            locales[localeName] = localeData;
 
             // Load command translations
             if (localeData.commands) {
-                Object.entries(localeData.commands).forEach(([command, commandData]) => {
-                    // Store command translations in map
-                    commandDescriptions[localeName][command] = commandData.description;
-                });
+                commandDescriptions[localeName] = Object.fromEntries(
+                    Object.entries(localeData.commands).map(([command, commandData]) => [command, commandData.description])
+);
             }
 
-            // Load locale translations
-            locales[localeName] = localeData;
+            console.log(chalk.greenBright(`[Locale Handler] Locale ${localeName} loaded.`));
         });
     };
 
     client.translate = (locale, category, key, replacements = {}) => {
-        // Get the parent language if the locale is a specific region
-        locale = getParentLanguage(locale);
+        return translate(locale, category, key, replacements) || translate('en', category, key, replacements);
+    };
 
-        // Get the locale translations
-        const localeTranslations = locales[locale];
-        if (!localeTranslations) return null;
-
-        // Get the category translations
-        const categoryTranslations = localeTranslations[category];
-        if (!categoryTranslations) return null;
-
-        // Split key into nested levels
-        const nestedKeys = key.split(/\.|\[/); // Split by dot or bracket
-        
-        const translation = getNestedTranslation(categoryTranslations, nestedKeys);
-        if (!translation) return null;
-
-        // Replace placeholders in the translation
-        let translatedText = translation;
-        Object.entries(replacements).forEach(([placeholder, value]) => {
-            translatedText = translatedText.replace(new RegExp(`%${placeholder}%`, 'g'), value);
-        });
-
-        return translatedText;
-    }
-
-    const getNestedTranslation = (translations, nestedKeys) => {
-        let translation = translations;
-        for (const key of nestedKeys) {
-            const trimmedKey = key.replace(']', '');
-            if (Array.isArray(translation)) {
-                const index = parseInt(trimmedKey);
-                translation = translation[index];
-            } else {
-                translation = translation[trimmedKey];
-            }
-
-            if (!translation) return null;
-        }
-
-        return translation;
-    }
 
     client.translateCommand = async (data, command, attribute) => {
-        const chalkInstance = await import('chalk');
-        const chalk = chalkInstance.default;
+        const chalk = (await import('chalk')).default;
 
-        const translations = {};
+        const translations = Object.fromEntries(
+            discordLocales.map(locale => [locale, translate(locale, 'commands', `${command}.${attribute}`)]).filter(([, translation]) => translation)
+        );
 
-        // Iterate through each locale
-        for (const locale of discordLocales) {
-            const translation = client.translate(locale, 'commands', `${command}.${attribute}`);
-            if (translation) {
-                translations[locale] = translation;
-            }
-        }
-
-        if (attribute === 'name') {
-            try {
+        try {
+            if (attribute === 'name') {
                 data.setNameLocalizations(translations);
-            } catch (e) {
-                console.log(chalk.redBright(`[Command Handler] Error setting name localizations for command ${command}`));
-                console.error(e);
-            }
-        } else if (attribute === 'description') {
-            try {
+            } else if (attribute === 'description') {
                 data.setDescriptionLocalizations(translations);
-            } catch (e) {
-                console.log(chalk.redBright(`[Command Handler] Error setting description localizations for command ${command}`));
-                console.error(e);
             }
+        } catch (e) {
+            console.log(chalk.redBright(`[Command Handler] Error setting ${attribute} localizations for command ${command}`));
+            console.error(e);
         }
-    }
-}
+    };
+};
 
-const getParentLanguage = (locale) => {
-    return languageMap[locale] || locale;
-}
+const translate = (locale, category, key, replacements = {} ) => {
+    // Use mapped parent language if available
+    locale = languageMap[locale] || locale;
+
+    // Retrieve translations
+    const localeTranslations = locales[locale];
+    if (!localeTranslations) return null;
+
+    const categoryTranslations = localeTranslations[category];
+    if (!categoryTranslations) return null;
+
+    // Retrieve the nested translation
+    const translation = getNestedTranslation(categoryTranslations, key.split(/\.|\[/));
+    if (!translation) return null;
+
+    return Object.entries(replacements).reduce(
+        (translatedText, [placeholder, value]) => translatedText.replace(new RegExp(`%${placeholder}%`, 'g'), value),
+        translation
+    );
+};
+
+const getNestedTranslation = (translations, nestedKeys) => {
+    return nestedKeys.reduce((translation, key) => {
+        if (!translation) return null;
+        const trimmedKey = key.replace(']', '');
+        return Array.isArray(translation) ? translation[parseInt(trimmedKey)] : translation[trimmedKey];
+    }, translations);
+};

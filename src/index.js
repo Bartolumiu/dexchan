@@ -38,6 +38,7 @@ for (const folder of functionFolders) {
 
 client.handleEvents();
 client.handleCommands();
+client.handleComponents();
 client.handleLocales();
 
 // Connect to MongoDB and login to Discord

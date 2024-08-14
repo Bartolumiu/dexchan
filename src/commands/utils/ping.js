@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("@discordjs/builders");
-const { Colors } = require("discord.js");
+const { Colors, PermissionFlagsBits } = require("discord.js");
+const https = require('https');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -16,32 +17,43 @@ module.exports = {
         // Calculate the latency
         const ping = message.createdTimestamp - interaction.createdTimestamp;
 
-        // Fetch other translations (if not found, use English as default)
-        const title = client.translate(locale, 'commands', 'ping.response.title') || client.translate('en', 'commands', 'ping.response.title');
-        const field1name = client.translate(locale, 'commands', 'ping.response.fields[0].name') || client.translate('en', 'commands', 'ping.response.fields[0].name');
-        const field2name = client.translate(locale, 'commands', 'ping.response.fields[1].name') || client.translate('en', 'commands', 'ping.response.fields[1].name');
-        const field1value = client.translate(locale, 'commands', 'ping.response.fields[0].value', { ping: ping }) || client.translate('en', 'commands', 'ping.response.fields[0].value', { ping: ping });
-        const field2value = client.translate(locale, 'commands', 'ping.response.fields[1].value', { apiPing: client.ws.ping }) || client.translate('en', 'commands', 'ping.response.fields[1].value', { apiPing: client.ws.ping });
-        const footer = client.translate(locale, 'commands', 'ping.response.footer', { user: interaction.user.username }) || client.translate('en', 'commands', 'ping.response.footer', { user: interaction.user.username });
+        const title = client.translate(locale, 'commands', 'ping.response.title');
+        const ws_ping_name = client.translate(locale, 'commands', 'ping.response.fields[0].name');
+        const ws_ping_value = client.translate(locale, 'commands', 'ping.response.fields[0].value', { ping: ping });
+        const discord_ping_name = client.translate(locale, 'commands', 'ping.response.fields[1].name');
+        const discord_ping_value = client.translate(locale, 'commands', 'ping.response.fields[1].value', { apiPing: client.ws.ping });
+        const md_ping_name = client.translate(locale, 'commands', 'ping.response.fields[2].name');
+        const footer = client.translate(locale, 'commands', 'ping.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username });
 
-        // Build and send the embed
         const embed = new EmbedBuilder()
             .setTitle(title)
             .addFields(
-                {
-                    name: field1name,
-                    value: field1value,
-                    inline: true
-                },
-                {
-                    name: field2name,
-                    value: field2value,
-                    inline: true
-                }
+                { name: ws_ping_name, value: ws_ping_value, inline: true },
+                { name: discord_ping_name, value: discord_ping_value, inline: true }
             )
-            .setFooter({ text: `/ping | ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
+            .setFooter({ text: footer, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
             .setColor(Colors.Blurple)
             .setTimestamp();
+
+        try {
+            const mdPing = await new Promise((resolve, reject) => {
+                const start = Date.now();
+                https.get('https://api.mangadex.org/ping', (res) => {
+                    res.on('data', () => { });
+                    res.on('end', () => {
+                        resolve(Date.now() - start);
+                    });
+                }).on('error', (e) => {
+                    reject(e);
+                });
+            });
+
+            const md_ping_value = client.translate(locale, 'commands', 'ping.response.fields[2].value', { mdPing: mdPing });
+            embed.addFields({ name: md_ping_name, value: md_ping_value, inline: true });
+        } catch (e) {
+            const md_ping_value = client.translate(locale, 'commands', 'ping.response.md_not_ok');
+            embed.addFields({ name: md_ping_name, value: md_ping_value, inline: true });
+        }
 
         await interaction.editReply({ embeds: [embed] });
     }

@@ -5,207 +5,84 @@ module.exports = {
     async execute(interaction, client) {
         const locale = interaction.locale;
 
-        const errorTitle = await client.translate(locale, 'error_embed', 'title') || client.translate('en', 'error_embed', 'title');
-        const errorDescription = client.translate(locale, 'error_embed', 'description') || client.translate('en', 'error_embed', 'description');
+        const {errorEmbed, errorStack} = await createErrorEmbed(client, locale);
+        const embeds = [errorEmbed, errorStack];
 
-        const errorEmbed = new EmbedBuilder()
-            .setTitle(errorTitle)
-            .setDescription(errorDescription)
-            .setColor(Colors.Red);
-
-
-        if (interaction.isChatInputCommand()) {
-            chatInputCommand(interaction, client, errorEmbed);
-        } else if (interaction.isButton()) {
-            button(interaction, client, errorEmbed);
-        } else if (interaction.isSelectMenu()) {
-            selectMenu(interaction, client, errorEmbed);
-        } else if (interaction.isContextMenuCommand()) {
-            contextMenu(interaction, client, errorEmbed);
-        } else if (interaction.type == InteractionType.ModalSubmit) {
-            modalSubmit(interaction, client, errorEmbed);
-        } else if (interaction.type == InteractionType.ApplicationCommandAutocomplete) {
-            autocomplete(interaction, client, errorEmbed);
+        try {
+            switch (true) {
+                case interaction.isChatInputCommand():
+                    await handleInteraction(interaction, client.commands, interaction.commandName, 'err_int_ch_input', embeds, client);
+                    break;
+                case interaction.isButton():
+                    await handleInteraction(interaction, client.buttons, interaction.customId, 'err_int_btn', embeds, client);
+                    break;
+                case interaction.isAnySelectMenu():
+                    await handleInteraction(interaction, client.selectMenus, interaction.customId, 'err_int_slct', embeds, client);
+                    break;
+                case interaction.isContextMenuCommand():
+                    await handleInteraction(interaction, client.commands, interaction.commandName, 'err_int_ctx', embeds, client);
+                    break;
+                case interaction.isModalSubmit():
+                    await handleInteraction(interaction, client.modals, interaction.customId, 'err_int_mod', embeds, client);
+                    break;
+                case interaction.isAutocomplete():
+                    await handleInteraction(interaction, client.commands, interaction.commandName, 'err_int_aut', embeds, client, true);
+                    break;
+                default:
+                    console.warn(`Unknown interaction type: ${interaction.type}`);
+                    break;
+            }
+        } catch (e) {
+            console.error(e);
+            await interaction.reply({ embeds: embeds, ephemeral: true });
         }
     }
 };
 
-async function chatInputCommand(interaction, client, errorEmbed) {
-    const { commands } = client;
-    const { commandName } = interaction;
-    const command = commands.get(commandName);
-    if (!command) return new Error('Command not found');
+async function createErrorEmbed(client, locale) {
+    const errorTitle = await client.translate(locale, 'error_embed', 'title') || await client.translate('en', 'error_embed', 'title');
+    const errorDescription = await client.translate(locale, 'error_embed', 'description') || await client.translate('en', 'error_embed', 'description');
+    const errorStack = await client.translate(locale, 'error_embed', 'stack') || await client.translate('en', 'error_embed', 'stack');
 
-    try {
-        await command.execute(interaction, client);
-        return true;
-    } catch (e) {
-        console.error(e);
-        const error_message = await client.translate(interaction.locale, 'error_embed', 'message') || await client.translate('en', 'error_embed', 'message');
-        const error_stack = await client.translate(interaction.locale, 'error_embed', 'stack') || await client.translate('en', 'error_embed', 'stack');
-        const footer = await client.translate(interaction.locale, 'error_embed', 'err_int_ch_input', { commandName: commandName }) || await client.translate('en', 'error_embed', 'err_int_ch_input', { commandName: commandName });
-        errorEmbed.addFields(
-            {
-                name: error_message,
-                value: e.message
-            },
-            {
-                name: error_stack,
-                value: e.stack
-            }
-        );
-        errorEmbed.setFooter({ text: `ERR_INT_CH_INP - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
-        await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
-        return false;
+    return {
+        errorEmbed: new EmbedBuilder()
+        .setTitle(errorTitle)
+        .setDescription(errorDescription)
+        .setColor(Colors.Red),
+        errorStack: new EmbedBuilder()
+        .setTitle(errorStack)
+        .setColor(Colors.Red)
     }
 }
 
-async function button(interaction, client, errorEmbed) {
-    const { buttons } = client;
-    const { customId } = interaction;
-    const button = buttons.get(customId);
-    if (!button) return new Error('Button not found');
+async function handleInteraction(interaction, collection, id, errorType, embeds, client, isAutocomplete = false) {
+    const item = collection.get(id);
+    if (!item) throw new Error(`${errorType.split('_').pop()} not found`);
 
     try {
-        await button.execute(interaction, client);
-        return true;
+        if (isAutocomplete) {
+            await item.autocomplete(interaction, client);
+        } else {
+            await item.execute(interaction, client);
+        }
     } catch (e) {
         console.error(e);
-        const error_message = await client.translate(interaction.locale, 'error_embed', 'message') || await client.translate('en', 'error_embed', 'message');
-        const error_stack = await client.translate(interaction.locale, 'error_embed', 'stack') || await client.translate('en', 'error_embed', 'stack');
-        const footer = await client.translate(interaction.locale, 'error_embed', 'err_int_btn', { buttonId: customId }) || await client.translate('en', 'error_embed', 'err_int_btn', { buttonId: customId });
-        errorEmbed.addFields(
-            {
-                name: error_message,
-                value: e.message
-            },
-            {
-                name: error_stack,
-                value: e.stack
-            }
-        );
-        errorEmbed.setFooter({ text: `ERR_INT_BTN - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
-        await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
-        return false;
+        await updateErrorEmbed(client, interaction, e, errorType, id, embeds[0], embeds[1]);
+        throw e;
     }
 }
 
-async function selectMenu(interaction, client, errorEmbed) {
-    const { selectMenus } = client;
-    const { customId } = interaction;
-    const menu = selectMenus.get(customId);
-    if (!menu) return new Error('Select menu not found');
+async function updateErrorEmbed(client, interaction, error, errorType, id, errorEmbed, errorStack) {
+    const locale = interaction.locale;
+    const replacements = { commandName: `/${id}`, buttonId: id, selectId: id, contextId: id, modalId: id };
+    const error_message = await client.translate(locale, 'error_embed', 'message') || await client.translate('en', 'error_embed', 'message');
+    const footer = await client.translate(locale, 'error_embed', `${errorType}`, replacements) || await client.translate('en', 'error_embed', `${errorType}`, replacements);
 
-    try {
-        await menu.execute(interaction, client);
-        return true;
-    } catch (e) {
-        console.error(e);
-        const error_message = await client.translate(interaction.locale, 'error_embed', 'message') || await client.translate('en', 'error_embed', 'message');
-        const error_stack = await client.translate(interaction.locale, 'error_embed', 'stack') || await client.translate('en', 'error_embed', 'stack');
-        const footer = await client.translate(interaction.locale, 'error_embed', 'err_int_slct', { selectId: customId }) || await client.translate('en', 'error_embed', 'err_int_slct', { selectId: customId });
-        errorEmbed.addFields(
-            {
-                name: error_message,
-                value: e.message
-            },
-            {
-                name: error_stack,
-                value: e.stack
-            }
-        );
-        errorEmbed.setFooter({ text: `ERR_INT_SEL - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
-        await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
-        return false;
-    }
-}
+    errorEmbed.addFields(
+        { name: error_message, value: error.message }
+    );
+    errorEmbed.setFooter({ text: `${errorType.toUpperCase()} - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
 
-async function contextMenu(interaction, client, errorEmbed) {
-    const { commands } = client;
-    const { commandName } = interaction.commandName;
-    const contextCommand = commands.get(commandName);
-    if (!contextCommand) return new Error('Command not found');
-
-    try {
-        await contextCommand.execute(interaction, client);
-        return true;
-    } catch (e) {
-        console.error(e);
-        const error_message = await client.translate(interaction.locale, 'error_embed', 'message') || await client.translate('en', 'error_embed', 'message');
-        const error_stack = await client.translate(interaction.locale, 'error_embed', 'stack') || await client.translate('en', 'error_embed', 'stack');
-        const footer = await client.translate(interaction.locale, 'error_embed', 'err_int_ctx', { contextId: commandName }) || await client.translate('en', 'error_embed', 'err_int_ctx', { contextId: commandName });
-        errorEmbed.addFields(
-            {
-                name: error_message,
-                value: e.message
-            },
-            {
-                name: error_stack,
-                value: e.stack
-            }
-        );
-        errorEmbed.setFooter({ text: `ERR_INT_CTX - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
-        await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
-        return false;
-    }
-}
-
-async function modalSubmit(interaction, client, errorEmbed) {
-    const { modals } = client;
-    const { customId } = interaction;
-    const modal = modals.get(customId);
-    if (!modal) return new Error('Modal not found');
-
-    try {
-        await modal.execute(interaction, client);
-        return true;
-    } catch (e) {
-        console.error(e);
-        const error_message = await client.translate(interaction.locale, 'error_embed', 'message') || await client.translate('en', 'error_embed', 'message');
-        const error_stack = await client.translate(interaction.locale, 'error_embed', 'stack') || await client.translate('en', 'error_embed', 'stack');
-        const footer = await client.translate(interaction.locale, 'error_embed', 'err_int_mod', { modalId: customId }) || await client.translate('en', 'error_embed', 'err_int_mod', { modalId: customId });
-        errorEmbed.addFields(
-            {
-                name: error_message,
-                value: e.message
-            },
-            {
-                name: error_stack,
-                value: e.stack
-            }
-        );
-        errorEmbed.setFooter({ text: `ERR_INT_MOD - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
-        await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
-        return false;
-    }
-}
-
-async function autocomplete(interaction, client, errorEmbed) {
-    const { commands } = client;
-    const { commandName } = interaction;
-    const command = commands.get(commandName);
-    if (!command) return new Error('Command not found');
-
-    try {
-        await command.autocomplete(interaction, client);
-        return true;
-    } catch (e) {
-        console.error(e);
-        const error_message = await client.translate(interaction.locale, 'error_embed', 'message') || await client.translate('en', 'error_embed', 'message');
-        const error_stack = await client.translate(interaction.locale, 'error_embed', 'stack') || await client.translate('en', 'error_embed', 'stack');
-        const footer = await client.translate(interaction.locale, 'error_embed', 'err_int_aut', { autocompleteId: commandName }) || await client.translate('en', 'error_embed', 'err_int_aut', { autocompleteId: commandName });
-        errorEmbed.addFields(
-            {
-                name: error_message,
-                value: e.message
-            },
-            {
-                name: error_stack,
-                value: e.stack
-            }
-        );
-        errorEmbed.setFooter({ text: `ERR_INT_AUT - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
-        await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
-        return false;
-    }
+    errorStack.setDescription(error.stack);
+    errorStack.setFooter({ text: `${errorType.toUpperCase()} - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
 }

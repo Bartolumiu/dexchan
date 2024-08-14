@@ -3,7 +3,7 @@ name: Deploy dexchan
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   deploy:
@@ -45,8 +45,8 @@ jobs:
           pm2 -v
 
           # Navigate to the project directory and deploy
-          cd /home/ubuntu/dexchan_rework || exit
+          cd /home/ubuntu/dexchan_rework_dev || exit
           git pull origin main
           npm install
-          pm2 restart dexchan_rework || pm2 start src/index.js --name dexchan_rework
+          pm2 restart dexchan_rework_dev || pm2 start src/index.js --name dexchan_rework_dev
         EOF

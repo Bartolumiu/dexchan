@@ -1,0 +1,37 @@
+name: Deploy dexchan
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.JS
+      uses: actions/setup-node@v3
+      with:
+        node-version: 'node'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Deploy to Server
+      env:
+        SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        echo "${SSH_PRIVATE_KEY}" | tr -d '\r' | ssh-add - > /dev/null
+        ssh-keyscan $SERVER_HOST >> ~/.ssh/known_hosts
+        ssh $SERVER_USER@$SERVER_HOST << 'EOF'
+          cd /home/ubuntu/dexchan_rework || exit
+          git pull origin main
+          npm install
+          pm2 restart Dex-chan || pm2 start bot/index.js --name Dex-chan
+        EOF

@@ -1,6 +1,6 @@
 {
     "name": "dex-chan",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Discord bot for the MangaDex ES server.",
     "main": "src/index.js",
     "scripts": {

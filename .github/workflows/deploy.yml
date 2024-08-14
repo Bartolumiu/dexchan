@@ -34,7 +34,7 @@ jobs:
 
     - name: Deploy to Server
       run: |
-        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
           cd /home/ubuntu/dexchan_rework || exit
           git pull origin main
           npm install

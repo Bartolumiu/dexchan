@@ -62,6 +62,15 @@ module.exports = (client) => {
             console.error(e);
         }
     };
+
+    const translateAttribute = async (command, attribute) => {
+        const translations = {};
+
+        discordLocales.forEach(locale => {
+            const translation = translate(locale, 'commands', `${command}.${attribute}`);
+            if (translation) translations[locale] = translation;
+        })
+    }
 };
 
 const translate = (locale, category, key, replacements = {} ) => {

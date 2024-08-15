@@ -1,11 +1,12 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("@discordjs/builders");
-const { Colors, PermissionFlagsBits } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, Colors } = require('discord.js');
+const translateAttribute = require('../../functions/handlers/handleLocales');
 const https = require('https');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('ping')
-        .setDescription('Check the bot\'s latency'),
+        .setDescription('Check the bot\'s latency')
+        .setDescriptionLocalizations(translateAttribute('ping', 'description')),
     global: true,
     async execute(interaction, client) {
         // Get user's locale

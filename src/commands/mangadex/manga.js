@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require("discord.js");
+const translateAttribute = require('../../functions/handlers/handleLocales');
 const path = require('path');
 
 const urlRegex = /^https?:\/\/(?:www\.)?(?:(?:canary|sandbox)\.)?mangadex\.(?:org|dev)\/title\/([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})(?:\/[a-zA-Z0-9-]+)?\/?$/;
@@ -21,19 +22,23 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('manga')
         .setDescription('Search for a manga on MangaDex')
+        .setDescriptionLocalizations(translateAttribute('manga', 'description'))
         .addStringOption(option =>
             option.setName('query')
                 .setDescription('The manga you want to search for')
+                .setDescriptionLocalizations(translateAttribute('manga', 'options[0].description'))
                 .setRequired(false)
         )
         .addStringOption(option =>
             option.setName('id')
                 .setDescription('The ID of the manga')
+                .setDescriptionLocalizations(translateAttribute('manga', 'options[1].description'))
                 .setRequired(false)
         )
         .addStringOption(option =>
             option.setName('url')
                 .setDescription('The URL of the manga')
+                .setDescriptionLocalizations(translateAttribute('manga', 'options[2].description'))
                 .setRequired(false)
         ),
     global: true,

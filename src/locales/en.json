@@ -241,6 +241,57 @@
                 },
                 "footer": "%commandName% - Requested by %user%"
             }
+        },
+        "settings": {
+            "name": "settings",
+            "description": "View or change the bot's settings.",
+            "subcommand_groups": [
+                {
+                    "name": "locale",
+                    "description": "Language Settings",
+                    "subcommands": [
+                        {
+                            "name": "set",
+                            "description": "Set your preferred language",
+                            "options": [
+                                {
+                                    "name": "locale",
+                                    "description": "The language you want to use"
+                                }
+                            ],
+                            "response": {
+                                "title": {
+                                    "success": "Language Set",
+                                    "error": "Error"
+                                },
+                                "description": {
+                                    "success": "Your preferred language has been set to `%locale%`.",
+                                    "error": "An error occurred while setting your preferred language."
+                                },
+                                "fields": [],
+                                "footer": "%commandName% - Requested by %user%"
+                            }
+                        },
+                        {
+                            "name": "reset",
+                            "description": "Reset your preferred language",
+                            "options": [],
+                            "response": {
+                                "title": {
+                                    "success": "Language Reset",
+                                    "error": "Error"
+                                },
+                                "description": {
+                                    "success": "Your preferred language has been reset.",
+                                    "error": "An error occurred while resetting your preferred language."
+                                },
+                                "fields": [],
+                                "footer": "%commandName% - Requested by %user%"
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     },
     "error_embed": {

@@ -70,6 +70,8 @@ module.exports = (client) => {
             const translation = translate(locale, 'commands', `${command}.${attribute}`);
             if (translation) translations[locale] = translation;
         })
+
+        return translations;
     }
 };
 

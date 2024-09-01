@@ -20,6 +20,10 @@
                     {
                         "name": "Latencia de la API de MangaDex",
                         "value": "%mdPing%ms"
+                    },
+                    {
+                        "name": "Latencia de la API de NamiComi",
+                        "value": "%ncPing%ms"
                     }
                 ],
                 "footer": "%commandName% - Solicitado por %user%",
@@ -241,6 +245,14 @@
                 },
                 "footer": "%commandName% - Solicitado por %user%"
             }
+        },
+        "nami": {
+            "name": "nami",
+            "description": "Busca un título en NamiComi.",
+            "subcommands": [],
+            "subcommand_groups": [],
+            "options": [],
+            "response": {}
         },
         "settings": {
             "name": "settings",

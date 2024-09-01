@@ -2,11 +2,11 @@ const { SlashCommandBuilder, EmbedBuilder, Colors } = require('discord.js');
 const translateAttribute = require('../../functions/handlers/translateAttribute');
 
 module.exports = {
+    global: true,
     data: new SlashCommandBuilder()
         .setName('commands')
         .setDescription('Get the list of the commands you can use')
         .setDescriptionLocalizations(translateAttribute('commands', 'description')),
-    global: true,
     async execute(interaction, client) {
         const locale = interaction.locale;
 

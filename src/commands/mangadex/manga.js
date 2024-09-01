@@ -30,6 +30,7 @@ const languageMap = {
 };
 
 module.exports = {
+    global: true,
     data: new SlashCommandBuilder()
         .setName('manga')
         .setDescription('Search for a manga on MangaDex')
@@ -52,7 +53,6 @@ module.exports = {
                 .setDescriptionLocalizations(translateAttribute('manga', 'options[2].description'))
                 .setRequired(false)
         ),
-    global: true,
     async execute(interaction, client) {
         const locale = interaction.locale;
         const embed = new EmbedBuilder()
@@ -70,16 +70,11 @@ module.exports = {
         if (query) {
             const searchResults = await searchManga(query);
 
-            console.log('Search results:', searchResults);
-
             if (!searchResults) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.no_results');
 
             const fields = Array.from(searchResults, ([title, id]) => {
                 // Ensure title and id are strings
-                if (typeof title !== 'string' || typeof id !== 'string') {
-                    console.log('Invalid title or id:', title, id);
-                    return null;
-                }
+                if (typeof title !== 'string' || typeof id !== 'string') return null;
 
                 // Truncate the title if it's too long (100 character limit)
                 // Truncate after the last space before the 100th character
@@ -88,8 +83,6 @@ module.exports = {
                     const truncatedTitle = title.slice(0, 94).replace(/\s+\S*$/, '');
                     title = `${truncatedTitle} (...)`;
                 }
-
-                console.log('Title:', title, 'ID:', id);
 
                 return { name: title, value: `[View Manga](${urlFormats.primary.replace('{id}', id).replace('{title}', '')})` };
             }).filter(Boolean); // Remove any null values

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors } = require("discord.js");
-const translateAttribute = require('../../functions/handlers/handleLocales');
+const translateAttribute = require('../../functions/handlers/translateAttribute');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -32,6 +32,7 @@ module.exports = {
                 .setDescription('View your settings')
                 .setDescriptionLocalizations(translateAttribute('settings', 'subcommand_groups[1].description'))
         ),
+    global: true,
     async execute(interaction, client) {
         const userProfile = await client.getMongoUserData(interaction.user);
         const embed = new EmbedBuilder();

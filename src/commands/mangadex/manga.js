@@ -1,8 +1,18 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require("discord.js");
-const translateAttribute = require('../../functions/handlers/handleLocales');
+const translateAttribute = require('../../functions/handlers/translateAttribute');
 const path = require('path');
 
-const urlRegex = /^https?:\/\/(?:www\.)?(?:(?:canary|sandbox)\.)?mangadex\.(?:org|dev)\/title\/([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})(?:\/[a-zA-Z0-9-]+)?\/?$/;
+const regexComponents = {
+    protocol: 'https?:\\/\\/',
+    subdomain: '(?:www\\.)?(?:canary|sandbox\\.)?',
+    domain: 'mangadex\\.(?:org|dev)',
+    title: '\/title\/[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}',
+    slug: '(?:\/[a-zA-Z0-9-]+)?',
+    tab: '(?:\\?tab=(?:chapters|comments|art|related))?'
+}
+
+const regexString = `^${regexComponents.protocol}${regexComponents.subdomain}${regexComponents.domain}${regexComponents.title}${regexComponents.slug}${regexComponents.tab}$`;
+const urlRegex = new RegExp(regexString);
 const idRegex = /^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$/;
 
 const urlFormats = {
@@ -59,12 +69,29 @@ module.exports = {
         if (query) {
             const searchResults = await searchManga(query);
 
+            console.log('Search results:', searchResults);
+
             if (!searchResults) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.no_results');
 
-            const fields = Array.from(searchResults, ([title, id]) => ({
-                name: title,
-                value: `[View Manga](${urlFormats.primary.replace('{id}', id).replace('{title}', '')})`
-            }));
+            const fields = Array.from(searchResults, ([title, id]) => {
+                // Ensure title and id are strings
+                if (typeof title !== 'string' || typeof id !== 'string') {
+                    console.log('Invalid title or id:', title, id);
+                    return null;
+                }
+
+                // Truncate the title if it's too long (100 character limit)
+                // Truncate after the last space before the 100th character
+                if (title.length > 100) {
+                    // Just in case the title is a single word, we'll truncate it at the 94th character to be able to add (...) at the end
+                    const truncatedTitle = title.slice(0, 94).replace(/\s+\S*$/, '');
+                    title = `${truncatedTitle} (...)`;
+                }
+
+                console.log('Title:', title, 'ID:', id);
+
+                return { name: title, value: `[View Manga](${urlFormats.primary.replace('{id}', id).replace('{title}', '')})` };
+            }).filter(Boolean); // Remove any null values
 
             const menu = new StringSelectMenuBuilder()
                 .setCustomId('manga_select')
@@ -74,6 +101,13 @@ module.exports = {
 
             let menuOptions = [];
             searchResults.forEach((id, title) => {
+                // Truncate the title if it's too long (100 character limit)
+                // Truncate after the last space before the 100th character
+                if (title.length > 100) {
+                    // Just in case the title is a single word, we'll truncate it at the 94th character to be able to add (...) at the end
+                    const truncatedTitle = title.slice(0, 94).replace(/\s+\S*$/, '');
+                    title = `${truncatedTitle} (...)`;
+                }
                 menuOptions.push({ label: title, value: id });
             });
             menu.setOptions(menuOptions);
@@ -285,7 +319,9 @@ async function searchManga(query) {
     const data = await response.json();
 
     if (data.data.length === 0) return null;
-    const results = new Map(data.data.map(manga => [manga.attributes.title['en'], manga.id]));
+    // Map the results to a Map object with the title as the key and the ID as the value
+    // The title location is in manga.attributes.title (sometimes it's .en, sometimes it's .ja-ro, etc. so we'll fetch the first one)
+    const results = new Map(data.data.map(manga => [manga.attributes.title[Object.keys(manga.attributes.title)[0]], manga.id]));
 
     return results;
 }

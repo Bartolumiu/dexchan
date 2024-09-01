@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors } = require('discord.js');
-const translateAttribute = require('../../functions/handlers/handleLocales');
+const translateAttribute = require('../../functions/handlers/translateAttribute');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -38,12 +38,14 @@ module.exports = {
             
             return hasRolePerm || hasUserPerm;
         });
-        
-        // Initialize the fields array for the embed
-        const fields = availableCommands.map(command => ({
-            name: command.name,
-            value: command.description
-        }));
+
+        let fields = [];
+
+        for (const command of availableCommands) {
+            const name = command.name;
+            const value = await client.translate(locale, 'commands', `${name}.description`);
+            fields.push({ name, value });
+        }
 
         // Create the embed
         const embed = new EmbedBuilder()

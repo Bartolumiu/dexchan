@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors } = require('discord.js');
-const translateAttribute = require('../../functions/handlers/handleLocales');
+const translateAttribute = require('../../functions/handlers/translateAttribute');
 
 module.exports = {
     data: new SlashCommandBuilder()

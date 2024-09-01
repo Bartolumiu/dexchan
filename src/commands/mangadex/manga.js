@@ -76,11 +76,11 @@ module.exports = {
                 // Ensure title and id are strings
                 if (typeof title !== 'string' || typeof id !== 'string') return null;
 
-                // Truncate the title if it's too long (100 character limit)
+                // Truncate the title if it's too long (256 character limit)
                 // Truncate after the last space before the 100th character
-                if (title.length > 100) {
-                    // Just in case the title is a single word, we'll truncate it at the 94th character to be able to add (...) at the end
-                    const truncatedTitle = title.slice(0, 94).replace(/\s+\S*$/, '');
+                if (title.length > 256) {
+                    // Just in case the title is a single word, we'll truncate it at the 250 character to be able to add (...) at the end
+                    const truncatedTitle = title.slice(0, 250).replace(/\s+\S*$/, '');
                     title = `${truncatedTitle} (...)`;
                 }
 

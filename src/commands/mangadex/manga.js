@@ -6,12 +6,13 @@ const regexComponents = {
     protocol: 'https?:\\/\\/',
     subdomain: '(?:www\\.)?(?:canary|sandbox\\.)?',
     domain: 'mangadex\\.(?:org|dev)',
-    title: '\/title\/[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}',
-    slug: '(?:\/[a-zA-Z0-9-]+)?',
-    tab: '(?:\\?tab=(?:chapters|comments|art|related))?'
-}
+    titleSegment: '\\/title\\/',
+    id: '([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})',
+    slugAndParams: '(?:\\/[^?]+)?(?:\\?.*)?'
+};
 
-const regexString = `^${regexComponents.protocol}${regexComponents.subdomain}${regexComponents.domain}${regexComponents.title}${regexComponents.slug}${regexComponents.tab}$`;
+
+const regexString = `^${regexComponents.protocol}${regexComponents.subdomain}${regexComponents.domain}${regexComponents.titleSegment}${regexComponents.id}${regexComponents.slugAndParams}$`;
 const urlRegex = new RegExp(regexString);
 const idRegex = /^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$/;
 
@@ -248,6 +249,7 @@ async function addMangaTags(manga, embed, locale, client) {
 }
 
 async function getIDfromURL(url) {
+    url = url.split('?')[0].split('/').slice(0, 5).join('/');
     const match = url.match(urlRegex);
     return (match) ? match[1] : null;
 }

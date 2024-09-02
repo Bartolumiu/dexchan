@@ -13,7 +13,8 @@ module.exports = {
         .setDescriptionLocalizations(localizations.description);
     },
     async execute(interaction, client) {
-        const locale = interaction.locale;
+        const userSettings = await client.getMongoUserData(interaction.user);
+        const locale = userSettings.preferredLocale || interaction.locale;
         const embed = new EmbedBuilder()
             .setTitle(await client.translate(locale, 'errors', 'working_on_cmd.title'))
             .setDescription(await client.translate(locale, 'errors', 'working_on_cmd.description'))

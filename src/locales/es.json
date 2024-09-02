@@ -14,15 +14,15 @@
                         "value": "%ping%ms"
                     },
                     {
-                        "name": "Latencia de la API",
+                        "name": "API Discord",
                         "value": "%apiPing%ms"
                     },
                     {
-                        "name": "Latencia de la API de MangaDex",
+                        "name": "API MangaDex",
                         "value": "%mdPing%ms"
                     },
                     {
-                        "name": "Latencia de la API de NamiComi",
+                        "name": "API NamiComi",
                         "value": "%ncPing%ms"
                     }
                 ],

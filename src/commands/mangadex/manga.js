@@ -64,7 +64,8 @@ module.exports = {
             );
     },
     async execute(interaction, client) {
-        const locale = interaction.locale;
+        const userSettings = await client.getMongoUserData(interaction.user);
+        const locale = userSettings.preferredLocale || interaction.locale;
         const embed = new EmbedBuilder()
             .setFooter({
                 text: await client.translate(locale, 'commands', 'manga.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username }),

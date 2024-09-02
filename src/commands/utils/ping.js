@@ -14,8 +14,8 @@ module.exports = {
             .setDescriptionLocalizations(localizations.description);
     },
     async execute(interaction, client) {
-        // Get user's locale
-        const locale = interaction.locale;
+        const userSettings = await client.getMongoUserData(interaction.user);
+        const locale = userSettings.preferredLocale || interaction.locale;
 
         const content = client.translate(locale, 'commands', 'ping.response.ping');
         const message = await interaction.deferReply({ content: content, fetchReply: true });

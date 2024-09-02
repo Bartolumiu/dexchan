@@ -3,10 +3,15 @@ const translateAttribute = require('../../functions/handlers/translateAttribute'
 
 module.exports = {
     global: true,
-    data: new SlashCommandBuilder()
+    data: async () => {
+        const localizations = {
+            description: await translateAttribute('nami', 'description')
+        };
+        return new SlashCommandBuilder()
         .setName('nami')
         .setDescription('Search for a title on NamiComi')
-        .setDescriptionLocalizations(translateAttribute('nami', 'description')),
+        .setDescriptionLocalizations(localizations.description);
+    },
     async execute(interaction, client) {
         const locale = interaction.locale;
         const embed = new EmbedBuilder()

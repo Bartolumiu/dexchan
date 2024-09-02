@@ -3,10 +3,15 @@ const translateAttribute = require('../../functions/handlers/translateAttribute'
 
 module.exports = {
     global: true,
-    data: new SlashCommandBuilder()
-        .setName('help')
-        .setDescription('Get help with using the bot')
-        .setDescriptionLocalizations(translateAttribute('help', 'description')),
+    data: async () => {
+        const localizations = {
+            description: await translateAttribute('help', 'description')
+        };
+        return new SlashCommandBuilder()
+            .setName('help')
+            .setDescription('Get help with using the bot')
+            .setDescriptionLocalizations(localizations.description);
+    },
     async execute(interaction, client) {
         const locale = interaction.locale;
 

@@ -3,36 +3,62 @@ const translateAttribute = require('../../functions/handlers/translateAttribute'
 
 module.exports = {
     global: true,
-    data: new SlashCommandBuilder()
-        .setName('settings')
-        .setDescription('Change your settings')
-        .setDescriptionLocalizations(translateAttribute('settings', 'description'))
-        .addSubcommandGroup(group =>
-            group.setName('locale')
-                .setDescription('Your preferred locale')
-                .setDescriptionLocalizations(translateAttribute('settings', 'subcommand_groups[0].description'))
-                .addSubcommand(command =>
-                    command.setName('set')
-                        .setDescription('Set your preferred locale')
-                        .setDescriptionLocalizations(translateAttribute('settings', 'subcommand_groups[0].subcommands[0].description'))
-                        .addStringOption(option =>
-                            option.setName('locale')
-                                .setDescription('The language you want to set as your preferred language')
-                                .setDescriptionLocalizations(translateAttribute('settings', 'subcommand_groups[0].subcommands[0].options[0].description'))
-                                .setRequired(true)
-                        )
-                )
-                .addSubcommand(command =>
-                    command.setName('reset')
-                        .setDescription('Reset your preferred locale')
-                        .setDescriptionLocalizations(translateAttribute('settings', 'subcommand_groups[0].subcommands[1].description'))
-                ),
-        )
-        .addSubcommand(command =>
-            command.setName('view')
-                .setDescription('View your settings')
-                .setDescriptionLocalizations(translateAttribute('settings', 'subcommand_groups[1].description'))
-        ),
+    data: async () => {
+        const localizations = {
+            description: await translateAttribute('settings', 'description'),
+            subcommand_groups: [
+                { // Locale
+                    description: await translateAttribute('settings', 'subcommand_groups[0].description'),
+                    subcommands: [
+                        { // Set locale
+                            description: await translateAttribute('settings', 'subcommand_groups[0].subcommands[0].description'),
+                            options: [
+                                {
+                                    description: await translateAttribute('settings', 'subcommand_groups[0].subcommands[0].options[0].description')
+                                }
+                            ]
+                        },
+                        { // Reset locale
+                            description: await translateAttribute('settings', 'subcommand_groups[0].subcommands[1].description')
+                        }
+                    ]
+                },
+                { // View settings
+                    description: await translateAttribute('settings', 'subcommand_groups[1].description')
+                }
+            ]
+        }
+        return new SlashCommandBuilder()
+            .setName('settings')
+            .setDescription('Change your settings')
+            .setDescriptionLocalizations(localizations.description)
+            .addSubcommandGroup(group =>
+                group.setName('locale')
+                    .setDescription('Your preferred locale')
+                    .setDescriptionLocalizations(localizations.subcommand_groups[0].description)
+                    .addSubcommand(command =>
+                        command.setName('set')
+                            .setDescription('Set your preferred locale')
+                            .setDescriptionLocalizations(localizations.subcommand_groups[0].subcommands[0].description)
+                            .addStringOption(option =>
+                                option.setName('locale')
+                                    .setDescription('The language you want to set as your preferred language')
+                                    .setDescriptionLocalizations(localizations.subcommand_groups[0].subcommands[0].options[0].description)
+                                    .setRequired(true)
+                            )
+                    )
+                    .addSubcommand(command =>
+                        command.setName('reset')
+                            .setDescription('Reset your preferred locale')
+                            .setDescriptionLocalizations(localizations.subcommand_groups[0].subcommands[1].description)
+                    ),
+            )
+            .addSubcommand(command =>
+                command.setName('view')
+                    .setDescription('View your settings')
+                    .setDescriptionLocalizations(localizations.subcommand_groups[1].description)
+            );
+    },
     async execute(interaction, client) {
         const userProfile = await client.getMongoUserData(interaction.user);
         const embed = new EmbedBuilder();

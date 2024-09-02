@@ -64,17 +64,6 @@ module.exports = (client) => {
     };
 };
 
-const translateAttribute = async (command, attribute) => {
-    const translations = {};
-
-    discordLocales.forEach(locale => {
-        const translation = translate(locale, 'commands', `${command}.${attribute}`);
-        if (translation) translations[locale] = translation;
-    });
-
-    return translations;
-}
-
 const translate = (locale, category, key, replacements = {} ) => {
     // Use mapped parent language if available
     locale = languageMap[locale] || locale;

@@ -18,42 +18,38 @@ module.exports = (client) => {
         const guildCommandMap = new Map();
 
         // Folder processing
-        commandFolders.forEach((folder, folderIndex) => {
+        for (const folder of commandFolders) {
             const commandFiles = readdirSync(`./src/commands/${folder}`).filter(file => file.endsWith('.js'));
-
-            // Process each command file in the folder
-            commandFiles.forEach((file, fileIndex) => {
+            for (const file of commandFiles) {
                 try {
                     const command = require(`../../commands/${folder}/${file}`);
-                    const { name } = command.data;
-                    const { guildID, global } = command;
 
-                    // Register command and translate
-                    commands.set(name, command);
-                    client.translateCommand(command.data, name, 'name');
-                    client.translateCommand(command.data, name, 'description');
-
-                    if (global) {
-                        // Command is global
-                        globalCommandList.push(command.data.toJSON());
-                        console.log(chalk.greenBright(`[Command Handler] Global command /${name} loaded.`) + ` (${fileIndex + 1}/${commandFiles.length}) | (${folderIndex + 1}/${commandFolders.length})`);
-                    } else if (guildID) {
-                        // Command is guild-specific
-                        if (!guildCommandMap.has(guildID)) {
-                            guildCommandMap.set(guildID, []);
+                    if (command.data) {
+                        if (typeof command.data === 'function') {
+                            command.data = await command.data();
                         }
-                        guildCommandMap.get(guildID).push(command.data.toJSON());
-                        console.log(chalk.greenBright(`[Command Handler] Guild command /${name} loaded for guild ${guildID}.`) + ` (${fileIndex + 1}/${commandFiles.length}) | (${folderIndex + 1}/${commandFolders.length})`);
+                        commands.set(command.data.name, command);
+
+                        if (command.global) {
+                            globalCommandList.push(command.data.toJSON());
+                            console.log(chalk.greenBright(`[Command Handler] Global command /${command.data.name} loaded.`) + ` (${commandFiles.indexOf(file) + 1}/${commandFiles.length}) | (${commandFolders.indexOf(folder) + 1}/${commandFolders.length})`);
+                        } else if (command.guildID) {
+                            if (!guildCommandMap.has(command.guildID)) {
+                                guildCommandMap.set(command.guildID, []);
+                            }
+                            guildCommandMap.get(command.guildID).push(command.data.toJSON());
+                            console.log(chalk.greenBright(`[Command Handler] Guild command /${command.data.name} loaded for guild ${command.guildID}.`) + ` (${commandFiles.indexOf(file) + 1}/${commandFiles.length}) | (${commandFolders.indexOf(folder) + 1}/${commandFolders.length})`);
+                        } else {
+                            console.warn(chalk.yellowBright(`[Command Handler] Command /${command.data.name} does not have a guildID set and is not marked as global. Skipping.`));
+                        }
                     } else {
-                        // Command is neither global nor guild-specific
-                        console.warn(chalk.yellowBright(`[Command Handler] Command /${name} does not have a guildID set and is not marked as global. Skipping.`));
+                        console.warn(chalk.yellowBright(`[Command Handler] Command file ${file} in ${folder} does not have a data property. Skipping.`));
                     }
                 } catch (e) {
                     console.error(chalk.redBright(`[Command Handler] Error requiring ${file} in ${folder}: ${e.message}`));
                 }
-            });
-        });
-
+            }
+        };
         try {
             console.log(chalk.gray('[Command Handler] Started refreshing global application (/) commands.'));
             await rest.put(Routes.applicationCommands(clientID), { body: globalCommandList });

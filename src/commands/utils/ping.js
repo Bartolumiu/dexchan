@@ -4,10 +4,15 @@ const https = require('https');
 
 module.exports = {
     global: true,
-    data: new SlashCommandBuilder()
-        .setName('ping')
-        .setDescription('Check the bot\'s latency')
-        .setDescriptionLocalizations(translateAttribute('ping', 'description')),
+    data: async () => {
+        const localizations = {
+            description: await translateAttribute('ping', 'description')
+        };
+        return new SlashCommandBuilder()
+            .setName('ping')
+            .setDescription('Check the bot\'s latency')
+            .setDescriptionLocalizations(localizations.description);
+    },
     async execute(interaction, client) {
         // Get user's locale
         const locale = interaction.locale;
@@ -41,7 +46,7 @@ module.exports = {
             const mdPing = await new Promise((resolve, reject) => {
                 const start = Date.now();
                 https.get('https://api.mangadex.org/ping', (res) => {
-                    res.on('data', () => {});
+                    res.on('data', () => { });
                     res.on('end', () => {
                         resolve(Date.now() - start);
                     });
@@ -53,7 +58,7 @@ module.exports = {
             const namiPing = await new Promise((resolve, reject) => {
                 const start = Date.now();
                 https.get('https://api.namicomi.com/ping', (res) => {
-                    res.on('data', () => {});
+                    res.on('data', () => { });
                     res.on('end', () => {
                         resolve(Date.now() - start);
                     });
@@ -74,4 +79,4 @@ module.exports = {
 
         await interaction.editReply({ embeds: [embed] });
     }
-}
+};

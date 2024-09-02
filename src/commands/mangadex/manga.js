@@ -146,7 +146,7 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
 
 async function buildMangaEmbed(embed, client, locale, manga, stats) {
     const title = manga.attributes.title.en;
-    const description = await getLocalizedDescription(manga, locale) || await client.translate(locale, 'commands', 'manga.response.found.no_description');
+    const description = await getLocalizedDescription(client, manga, locale) || await client.translate(locale, 'commands', 'manga.response.found.no_description');
     const author = await getCreators(manga, locale, client);
 
     const fields = [
@@ -288,13 +288,12 @@ async function getStats(mangaID) {
     return data.statistics[mangaID];
 }
 
-async function getLocalizedDescription(manga, locale) {
+async function getLocalizedDescription(client, manga, locale) {
     locale = languageMap[locale] || locale;
 
     let description = manga.attributes.description[locale];
 
     if (!description && locale === 'es') description = manga.attributes.description['es-la'];
-    
     if (!description) description = manga.attributes.description['en'];
 
     return description || await client.translate(locale, 'commands', 'manga.response.found.no_description');

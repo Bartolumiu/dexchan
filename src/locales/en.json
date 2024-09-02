@@ -257,6 +257,24 @@
         "settings": {
             "name": "settings",
             "description": "View or change the bot's settings.",
+            "subcommands": [
+                {
+                    "name": "view",
+                    "description": "View your settings",
+                    "subcommands": [],
+                    "options": [],
+                    "response": {
+                        "title": "User Settings",
+                        "description": "Here are your current settings.",
+                        "fields": [
+                            {
+                                "name": "Language",
+                                "value": "%locale%"
+                            }
+                        ]
+                    }
+                }
+            ],
             "subcommand_groups": [
                 {
                     "name": "locale",
@@ -303,7 +321,11 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "options": [],
+            "response": {
+                "footer": "%commandName% - Requested by %user%"
+            }
         }
     },
     "error_embed": {

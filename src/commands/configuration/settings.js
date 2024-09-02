@@ -42,6 +42,7 @@ module.exports = {
         if (subcommandGroup === 'locale') await localeSettings(interaction, client, userProfile, embed);
         else if (subcommand === 'view') await viewSettings(interaction, client, userProfile, embed);
 
+        embed.setFooter({ text: await client.translate((userProfile.preferredLocale || interaction.locale), 'commands', 'settings.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username }), iconURL: interaction.user.displayAvatarURL({ dynamic: true }) });
         interaction.reply({ embeds: [embed], ephemeral: true });
     }
 }
@@ -53,29 +54,32 @@ async function localeSettings(interaction, client, userProfile, embed) {
                 const locale = interaction.options.getString('locale');
                 userProfile.preferredLocale = locale; // Set the user's preferred locale
                 await userProfile.save();
-                embed.setTitle(await client.translate(userProfile.preferredLocale, 'settings', 'subcommand_groups[0].subcommands[0].response.title.success'));
-                embed.setDescription(await client.translate(userProfile.preferredLocale, 'settings', 'subcommand_groups[0].subcommands[0].response.description.success', { locale: locale }));
+                embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[0].response.title.success'));
+                embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[0].response.description.success', { locale: locale }));
                 embed.setColor(Colors.Green);
             } catch (e) {
-                embed.setTitle(await client.translate(userProfile.preferredLocale, 'settings', 'subcommand_groups[0].subcommands[0].response.title.error'));
-                embed.setDescription(await client.translate(userProfile.preferredLocale, 'settings', 'subcommand_groups[0].subcommands[0].response.description.error'));
+                embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[0].response.title.error'));
+                embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[0].response.description.error'));
                 embed.setColor(Colors.Red);
             }
-            embed.setFooter(await client.translate(userProfile.preferredLocale, 'settings', 'response.footer', { commandName: interaction.commandName, user: interaction.user.username }));
             break;
         case 'reset':
             try {
                 userProfile.preferredLocale = null;
                 await userProfile.save();
-                embed.setTitle(await client.translate(userProfile.preferredLocale, 'settings', 'subcommand_groups[0].subcommands[1].response.title.success'));
-                embed.setDescription(await client.translate(userProfile.preferredLocale, 'settings', 'subcommand_groups[0].subcommands[1].response.description.success'));
+                embed.setTitle(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.title.success'));
+                embed.setDescription(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.description.success'));
                 embed.setColor(Colors.Green);
             } catch (e) {
-                embed.setTitle(await client.translate(userProfile.preferredLocale, 'settings', 'subcommand_groups[0].subcommands[1].response.title.error'));
-                embed.setDescription(await client.translate(userProfile.preferredLocale, 'settings', 'subcommand_groups[0].subcommands[1].response.description.error'));
+                if (userProfile.preferredLocale) {
+                    embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.title.error'));
+                    embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.description.error'));
+                } else {
+                    embed.setTitle(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.title.error'));
+                    embed.setDescription(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.description.error'));
+                }
                 embed.setColor(Colors.Red);
             }
-            embed.setFooter(await client.translate(userProfile.preferredLocale, 'settings', 'response.footer', { commandName: interaction.commandName, user: interaction.user.username }));
             break;
         default:
             break;
@@ -84,8 +88,14 @@ async function localeSettings(interaction, client, userProfile, embed) {
 
 async function viewSettings(interaction, client, userProfile, embed) {
     const locale = userProfile.preferredLocale || interaction.locale;
-    embed.setTitle(await client.translate(locale, 'settings', 'subcommand_groups[1].response.title'));
-    embed.setDescription(await client.translate(locale, 'settings', 'subcommand_groups[1].response.description', { locale: userProfile.preferredLocale || interaction.locale }));
-    embed.setFooter(await client.translate(locale, 'settings', 'response.footer', { commandName: interaction.commandName, user: interaction.user.username }));
+    embed.setTitle(await client.translate(locale, 'commands', 'settings.subcommands[0].response.title'));
+    embed.setDescription(await client.translate(locale, 'commands', 'settings.subcommands[0].response.description', { locale: locale }));
+    embed.addFields(
+        {
+            name: await client.translate(locale, 'commands', 'settings.subcommands[0].response.fields[0].name'),
+            value: await client.translate(locale, 'commands', 'settings.subcommands[0].response.fields[0].value', { locale: locale }),
+            inline: true
+        }
+    )
     embed.setColor(Colors.Blue);
 }

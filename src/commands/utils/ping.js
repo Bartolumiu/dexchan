@@ -1,12 +1,13 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("@discordjs/builders");
-const { Colors, PermissionFlagsBits } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, Colors } = require('discord.js');
+const translateAttribute = require('../../functions/handlers/translateAttribute');
 const https = require('https');
 
 module.exports = {
+    global: true,
     data: new SlashCommandBuilder()
         .setName('ping')
-        .setDescription('Check the bot\'s latency'),
-    global: true,
+        .setDescription('Check the bot\'s latency')
+        .setDescriptionLocalizations(translateAttribute('ping', 'description')),
     async execute(interaction, client) {
         // Get user's locale
         const locale = interaction.locale;
@@ -23,6 +24,7 @@ module.exports = {
         const discord_ping_name = client.translate(locale, 'commands', 'ping.response.fields[1].name');
         const discord_ping_value = client.translate(locale, 'commands', 'ping.response.fields[1].value', { apiPing: client.ws.ping });
         const md_ping_name = client.translate(locale, 'commands', 'ping.response.fields[2].name');
+        const nami_ping_name = client.translate(locale, 'commands', 'ping.response.fields[3].name');
         const footer = client.translate(locale, 'commands', 'ping.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username });
 
         const embed = new EmbedBuilder()
@@ -39,7 +41,19 @@ module.exports = {
             const mdPing = await new Promise((resolve, reject) => {
                 const start = Date.now();
                 https.get('https://api.mangadex.org/ping', (res) => {
-                    res.on('data', () => { });
+                    res.on('data', () => {});
+                    res.on('end', () => {
+                        resolve(Date.now() - start);
+                    });
+                }).on('error', (e) => {
+                    reject(e);
+                });
+            });
+
+            const namiPing = await new Promise((resolve, reject) => {
+                const start = Date.now();
+                https.get('https://api.namicomi.com/ping', (res) => {
+                    res.on('data', () => {});
                     res.on('end', () => {
                         resolve(Date.now() - start);
                     });
@@ -50,6 +64,9 @@ module.exports = {
 
             const md_ping_value = client.translate(locale, 'commands', 'ping.response.fields[2].value', { mdPing: mdPing });
             embed.addFields({ name: md_ping_name, value: md_ping_value, inline: true });
+
+            const nami_ping_value = client.translate(locale, 'commands', 'ping.response.fields[3].value', { ncPing: namiPing });
+            embed.addFields({ name: nami_ping_name, value: nami_ping_value, inline: true });
         } catch (e) {
             const md_ping_value = client.translate(locale, 'commands', 'ping.response.md_not_ok');
             embed.addFields({ name: md_ping_name, value: md_ping_value, inline: true });

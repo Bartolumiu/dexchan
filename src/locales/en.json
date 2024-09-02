@@ -20,6 +20,10 @@
                     {
                         "name": "MangaDex API Latency",
                         "value": "%mdPing%ms"
+                    },
+                    {
+                        "name": "NamiComi API Latency",
+                        "value": "%ncPing%ms"
                     }
                 ],
                 "footer": "%commandName% - Requested by %user%",
@@ -241,6 +245,65 @@
                 },
                 "footer": "%commandName% - Requested by %user%"
             }
+        },
+        "nami": {
+            "name": "nami",
+            "description": "Search for a title on NamiComi.",
+            "subcommands": [],
+            "subcommand_groups": [],
+            "options": [],
+            "response": {}
+        },
+        "settings": {
+            "name": "settings",
+            "description": "View or change the bot's settings.",
+            "subcommand_groups": [
+                {
+                    "name": "locale",
+                    "description": "Language Settings",
+                    "subcommands": [
+                        {
+                            "name": "set",
+                            "description": "Set your preferred language",
+                            "options": [
+                                {
+                                    "name": "locale",
+                                    "description": "The language you want to use"
+                                }
+                            ],
+                            "response": {
+                                "title": {
+                                    "success": "Language Set",
+                                    "error": "Error"
+                                },
+                                "description": {
+                                    "success": "Your preferred language has been set to `%locale%`.",
+                                    "error": "An error occurred while setting your preferred language."
+                                },
+                                "fields": [],
+                                "footer": "%commandName% - Requested by %user%"
+                            }
+                        },
+                        {
+                            "name": "reset",
+                            "description": "Reset your preferred language",
+                            "options": [],
+                            "response": {
+                                "title": {
+                                    "success": "Language Reset",
+                                    "error": "Error"
+                                },
+                                "description": {
+                                    "success": "Your preferred language has been reset.",
+                                    "error": "An error occurred while resetting your preferred language."
+                                },
+                                "fields": [],
+                                "footer": "%commandName% - Requested by %user%"
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     },
     "error_embed": {
@@ -254,5 +317,18 @@
         "err_int_ctx": "Error in context command %contextId%",
         "err_int_mod": "Error in modal %modalId%",
         "err_int_aut": "Error in autocomplete %autocompleteId%"
+    },
+    "errors": {
+        "working_on_cmd": {
+            "title": "Working on it...",
+            "description": "This command is currently being worked on. Please try again later.",
+            "fields": [
+                {
+                    "name": "When will it be ready?",
+                    "value": "We don't have an ETA for this command yet. Please be patient."
+                }
+            ],
+            "footer": "%commandName% - Requested by %user%"
+        }
     }
 }

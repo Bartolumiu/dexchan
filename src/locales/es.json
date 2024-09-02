@@ -20,6 +20,10 @@
                     {
                         "name": "Latencia de la API de MangaDex",
                         "value": "%mdPing%ms"
+                    },
+                    {
+                        "name": "Latencia de la API de NamiComi",
+                        "value": "%ncPing%ms"
                     }
                 ],
                 "footer": "%commandName% - Solicitado por %user%",
@@ -241,6 +245,65 @@
                 },
                 "footer": "%commandName% - Solicitado por %user%"
             }
+        },
+        "nami": {
+            "name": "nami",
+            "description": "Busca un título en NamiComi.",
+            "subcommands": [],
+            "subcommand_groups": [],
+            "options": [],
+            "response": {}
+        },
+        "settings": {
+            "name": "settings",
+            "description": "Revisa o cambia los ajustes del bot.",
+            "subcommand_groups": [
+                {
+                    "name": "locale",
+                    "description": "Ajustes de Idioma",
+                    "subcommands": [
+                        {
+                            "name": "set",
+                            "description": "Cambia tu idioma preferido",
+                            "options": [
+                                {
+                                    "name": "locale",
+                                    "description": "El idioma que quieres usar"
+                                }
+                            ],
+                            "response": {
+                                "title": {
+                                    "success": "¡Idioma cambiado!",
+                                    "error": "Error al cambiar el idioma"
+                                },
+                                "description": {
+                                    "success": "El idioma ha sido cambiado a `%locale%`.",
+                                    "error": "Ha ocurrido un error al cambiar el idioma."
+                                },
+                                "fields": [],
+                                "footer": "%commandName% - Solicitado por %user%"
+                            }
+                        },
+                        {
+                            "name": "reset",
+                            "description": "Restablece tu idioma preferido",
+                            "options": [],
+                            "response": {
+                                "title": {
+                                    "success": "Idioma Restablecido",
+                                    "error": "Error al restablecer el idioma"
+                                },
+                                "description": {
+                                    "success": "Tu idioma ha sido restablecido al idioma predeterminado.",
+                                    "error": "Ha ocurrido un error al restablecer el idioma."
+                                },
+                                "fields": [],
+                                "footer": "%commandName% - Solicitado por %user%"
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     },
     "error_embed": {

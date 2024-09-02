@@ -1,7 +1,19 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require("discord.js");
+const translateAttribute = require('../../functions/handlers/translateAttribute');
 const path = require('path');
 
-const urlRegex = /^https?:\/\/(?:www\.)?(?:(?:canary|sandbox)\.)?mangadex\.(?:org|dev)\/title\/([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})(?:\/[a-zA-Z0-9-]+)?\/?$/;
+const regexComponents = {
+    protocol: 'https?:\\/\\/',
+    subdomain: '(?:www\\.)?(?:canary|sandbox\\.)?',
+    domain: 'mangadex\\.(?:org|dev)',
+    titleSegment: '\\/title\\/',
+    id: '([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})',
+    slugAndParams: '(?:\\/[^?]+)?(?:\\?.*)?'
+};
+
+
+const regexString = `^${regexComponents.protocol}${regexComponents.subdomain}${regexComponents.domain}${regexComponents.titleSegment}${regexComponents.id}${regexComponents.slugAndParams}$`;
+const urlRegex = new RegExp(regexString);
 const idRegex = /^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$/;
 
 const urlFormats = {
@@ -18,25 +30,29 @@ const languageMap = {
 };
 
 module.exports = {
+    global: true,
     data: new SlashCommandBuilder()
         .setName('manga')
         .setDescription('Search for a manga on MangaDex')
+        .setDescriptionLocalizations(translateAttribute('manga', 'description'))
         .addStringOption(option =>
             option.setName('query')
                 .setDescription('The manga you want to search for')
+                .setDescriptionLocalizations(translateAttribute('manga', 'options[0].description'))
                 .setRequired(false)
         )
         .addStringOption(option =>
             option.setName('id')
                 .setDescription('The ID of the manga')
+                .setDescriptionLocalizations(translateAttribute('manga', 'options[1].description'))
                 .setRequired(false)
         )
         .addStringOption(option =>
             option.setName('url')
                 .setDescription('The URL of the manga')
+                .setDescriptionLocalizations(translateAttribute('manga', 'options[2].description'))
                 .setRequired(false)
         ),
-    global: true,
     async execute(interaction, client) {
         const locale = interaction.locale;
         const embed = new EmbedBuilder()
@@ -56,10 +72,20 @@ module.exports = {
 
             if (!searchResults) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.no_results');
 
-            const fields = Array.from(searchResults, ([title, id]) => ({
-                name: title,
-                value: `[View Manga](${urlFormats.primary.replace('{id}', id).replace('{title}', '')})`
-            }));
+            const fields = Array.from(searchResults, ([title, id]) => {
+                // Ensure title and id are strings
+                if (typeof title !== 'string' || typeof id !== 'string') return null;
+
+                // Truncate the title if it's too long (256 character limit)
+                // Truncate after the last space before the 100th character
+                if (title.length > 256) {
+                    // Just in case the title is a single word, we'll truncate it at the 250 character to be able to add (...) at the end
+                    const truncatedTitle = title.slice(0, 250).replace(/\s+\S*$/, '');
+                    title = `${truncatedTitle} (...)`;
+                }
+
+                return { name: title, value: `[View Manga](${urlFormats.primary.replace('{id}', id).replace('{title}', '')})` };
+            }).filter(Boolean); // Remove any null values
 
             const menu = new StringSelectMenuBuilder()
                 .setCustomId('manga_select')
@@ -69,6 +95,13 @@ module.exports = {
 
             let menuOptions = [];
             searchResults.forEach((id, title) => {
+                // Truncate the title if it's too long (100 character limit)
+                // Truncate after the last space before the 100th character
+                if (title.length > 100) {
+                    // Just in case the title is a single word, we'll truncate it at the 94th character to be able to add (...) at the end
+                    const truncatedTitle = title.slice(0, 94).replace(/\s+\S*$/, '');
+                    title = `${truncatedTitle} (...)`;
+                }
                 menuOptions.push({ label: title, value: id });
             });
             menu.setOptions(menuOptions);
@@ -113,7 +146,7 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
 
 async function buildMangaEmbed(embed, client, locale, manga, stats) {
     const title = manga.attributes.title.en;
-    const description = await getLocalizedDescription(manga, locale) || await client.translate(locale, 'commands', 'manga.response.found.no_description');
+    const description = await getLocalizedDescription(client, manga, locale) || await client.translate(locale, 'commands', 'manga.response.found.no_description');
     const author = await getCreators(manga, locale, client);
 
     const fields = [
@@ -209,6 +242,7 @@ async function addMangaTags(manga, embed, locale, client) {
 }
 
 async function getIDfromURL(url) {
+    url = url.split('?')[0].split('/').slice(0, 5).join('/');
     const match = url.match(urlRegex);
     return (match) ? match[1] : null;
 }
@@ -254,13 +288,12 @@ async function getStats(mangaID) {
     return data.statistics[mangaID];
 }
 
-async function getLocalizedDescription(manga, locale) {
+async function getLocalizedDescription(client, manga, locale) {
     locale = languageMap[locale] || locale;
 
     let description = manga.attributes.description[locale];
 
     if (!description && locale === 'es') description = manga.attributes.description['es-la'];
-    
     if (!description) description = manga.attributes.description['en'];
 
     return description || await client.translate(locale, 'commands', 'manga.response.found.no_description');
@@ -280,7 +313,9 @@ async function searchManga(query) {
     const data = await response.json();
 
     if (data.data.length === 0) return null;
-    const results = new Map(data.data.map(manga => [manga.attributes.title['en'], manga.id]));
+    // Map the results to a Map object with the title as the key and the ID as the value
+    // The title location is in manga.attributes.title (sometimes it's .en, sometimes it's .ja-ro, etc. so we'll fetch the first one)
+    const results = new Map(data.data.map(manga => [manga.attributes.title[Object.keys(manga.attributes.title)[0]], manga.id]));
 
     return results;
 }

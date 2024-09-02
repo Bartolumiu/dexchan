@@ -31,28 +31,38 @@ const languageMap = {
 
 module.exports = {
     global: true,
-    data: new SlashCommandBuilder()
-        .setName('manga')
-        .setDescription('Search for a manga on MangaDex')
-        .setDescriptionLocalizations(translateAttribute('manga', 'description'))
-        .addStringOption(option =>
-            option.setName('query')
-                .setDescription('The manga you want to search for')
-                .setDescriptionLocalizations(translateAttribute('manga', 'options[0].description'))
-                .setRequired(false)
-        )
-        .addStringOption(option =>
-            option.setName('id')
-                .setDescription('The ID of the manga')
-                .setDescriptionLocalizations(translateAttribute('manga', 'options[1].description'))
-                .setRequired(false)
-        )
-        .addStringOption(option =>
-            option.setName('url')
-                .setDescription('The URL of the manga')
-                .setDescriptionLocalizations(translateAttribute('manga', 'options[2].description'))
-                .setRequired(false)
-        ),
+    data: async () => {
+        const localizations = {
+            description: await translateAttribute('manga', 'description'),
+            options: [
+                { description: await translateAttribute('manga', 'options[0].description') },
+                { description: await translateAttribute('manga', 'options[1].description') },
+                { description: await translateAttribute('manga', 'options[2].description') }
+            ]
+        }
+        return new SlashCommandBuilder()
+            .setName('manga')
+            .setDescription('Search for a manga on MangaDex')
+            .setDescriptionLocalizations(localizations.description)
+            .addStringOption(option =>
+                option.setName('query')
+                    .setDescription('The manga you want to search for')
+                    .setDescriptionLocalizations(localizations.options[0].description)
+                    .setRequired(false)
+            )
+            .addStringOption(option =>
+                option.setName('id')
+                    .setDescription('The ID of the manga')
+                    .setDescriptionLocalizations(localizations.options[1].description)
+                    .setRequired(false)
+            )
+            .addStringOption(option =>
+                option.setName('url')
+                    .setDescription('The URL of the manga')
+                    .setDescriptionLocalizations(localizations.options[2].description)
+                    .setRequired(false)
+            );
+    },
     async execute(interaction, client) {
         const locale = interaction.locale;
         const embed = new EmbedBuilder()

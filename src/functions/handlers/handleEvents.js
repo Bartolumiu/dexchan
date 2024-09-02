@@ -1,7 +1,7 @@
 const { readdirSync } = require('fs');
 const { connection } = require('mongoose');
 
-const handleClientEvents = (client, eventFiles) => {
+const handleClientEvents = async (client, eventFiles) => {
     for (const file of eventFiles) {
         const event = require(`../../events/client/${file}`);
         if (event.once) client.once(event.name, (...args) => event.execute(...args, client));
@@ -9,7 +9,7 @@ const handleClientEvents = (client, eventFiles) => {
     }
 };
 
-const handleMongoEvents = (client, eventFiles) => {
+const handleMongoEvents = async (client, eventFiles) => {
     for (const file of eventFiles) {
         const event = require(`../../events/mongo/${file}`);
         if (event.once) connection.once(event.name, (...args) => event.execute(...args, client));
@@ -24,10 +24,10 @@ module.exports = (client) => {
             const eventFiles = readdirSync(`./src/events/${folder}`).filter(file => file.endsWith('.js'));
             switch (folder) {
                 case 'client':
-                    handleClientEvents(client, eventFiles);
+                    await handleClientEvents(client, eventFiles);
                     break;
                 case 'mongo':
-                    handleMongoEvents(client, eventFiles);
+                    await handleMongoEvents(client, eventFiles);
                     break;
                 default:
                     console.error(`[Event Handler] Error: ${folder} is not a valid event folder.`);

@@ -11,8 +11,6 @@ const languageMap = {
 const discordLocales = ['id', 'da', 'de', 'en-GB', 'en-US', 'es-ES', 'es-419', 'fr', 'hr', 'it', 'lt', 'hu', 'nl', 'no', 'pl', 'pt-BR', 'ro', 'fi', 'sv-SE', 'vi', 'tr', 'cs', 'el', 'bg', 'ru', 'uk', 'hi', 'th', 'zh-CN', 'ja', 'zh-TW', 'ko'];
 
 const locales = {};
-const commandDescriptions = {};
-
 const localePath = path.join(__dirname, '../../locales');
 const localeFiles = readdirSync(localePath).filter(file => file.endsWith('.json'));
 
@@ -26,9 +24,13 @@ localeFiles.forEach(file => {
 const translateAttribute = async (command, attribute) => {
     const translations = {};
 
-    for (const locale in locales) {
-        const translation = await translate(locale, 'commands', `${command}.${attribute}`);
-        if (translation) translations[locale] = translation;
+    for (const locale in discordLocales) {
+        const translation = await translate(discordLocales[locale], 'commands', `${command}.${attribute}`);
+        
+        // If translation is available, add it to the map
+        if (translation) {
+            translations[discordLocales[locale]] = translation;
+        }
     }
 
     return translations;

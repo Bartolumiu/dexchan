@@ -261,6 +261,7 @@
                 {
                     "name": "view",
                     "description": "Revisa tus ajustes",
+                    "subcommands": [],
                     "options": [],
                     "response": {
                         "title": "Ajustes de Usuario",
@@ -338,5 +339,18 @@
         "err_int_ctx": "Error en el comando de contexto %contextId%",
         "err_int_mod": "Error en el modal %modalId%",
         "err_int_aut": "Error en la autocompletación %autocompleteId%"
+    },
+    "errors": {
+        "working_on_cmd": {
+            "title": "Trabajando en ello...",
+            "description": "Este comando está siendo desarrollado actualmente. Por favor, inténtalo de nuevo más tarde.",
+            "fields": [
+                {
+                    "name": "¿Cuándo estará listo?",
+                    "value": "No hay una fecha de lanzamiento prevista en este momento. Por favor, sé paciente."
+                }
+            ],
+            "footer":"%commandName% - Solicitado por %user%"
+        }
     }
 }

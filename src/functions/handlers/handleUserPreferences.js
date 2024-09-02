@@ -1,5 +1,4 @@
 const User = require('../../schemas/user');
-const mongoose = require('mongoose');
 
 module.exports = (client) => {
     client.getMongoUserData = async (user) => {
@@ -8,11 +7,10 @@ module.exports = (client) => {
 }
 
 async function getUserData(user) {
-    const userProfile = await User.findOne({ userID: user.id });
+    const userProfile = await User.findOne({ _id: user.id });
     if (!userProfile) {
         const newUser = new User({
-            _id: mongoose.Types.ObjectId(),
-            userID: user.id,
+            _id: user.id,
             username: user.username,
             preferredLocale: null
         });

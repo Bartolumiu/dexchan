@@ -257,6 +257,23 @@
         "settings": {
             "name": "settings",
             "description": "Revisa o cambia los ajustes del bot.",
+            "subcommands": [
+                {
+                    "name": "view",
+                    "description": "Revisa tus ajustes",
+                    "options": [],
+                    "response": {
+                        "title": "Ajustes de Usuario",
+                        "description": "Aquí tienes tus ajustes actuales.",
+                        "fields": [
+                            {
+                                "name": "Idioma",
+                                "value": "%locale%"
+                            }
+                        ]
+                    }
+                }
+            ],
             "subcommand_groups": [
                 {
                     "name": "locale",
@@ -303,7 +320,11 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "options": [],
+            "response": {
+                "footer":"%commandName% - Solicitado por %user%"
+            }
         }
     },
     "error_embed": {

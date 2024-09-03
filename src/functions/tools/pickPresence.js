@@ -4,18 +4,18 @@ module.exports = (client) => {
     client.pickPresence = async (options) => {
         const ActivityOptions = [
             {
-                type: ActivityType.Watching,
-                text: `over the server | v${client.version}`,
+                type: ActivityType.Custom,
+                text: `Watching over the server | v${client.version}`,
                 status: 'ONLINE'
             },
             {
-                type: ActivityType.Playing,
-                text: `with the API | v${client.version}`,
+                type: ActivityType.Custom,
+                text: `Playing with the API | v${client.version}`,
                 status: 'ONLINE'
             },
             {
-                type: ActivityType.Listening,
-                text: `music with Nami | v${client.version}`,
+                type: ActivityType.Custom,
+                text: `Listening to music with Nami | v${client.version}`,
                 status: 'ONLINE'
             },
             {

@@ -237,7 +237,7 @@
                     "title": "Error",
                     "description": {
                         "url": "La URL proporcionada no es válida.",
-                        "id": "La ID proporcionada no es válida.",
+                        "invalid_id": "La ID proporcionada no es válida.",
                         "no_results": "La consulta no devolvió resultados. Es todo lo que sabemos.",
                         "api": "Ha ocurrido un error al obtener los datos del manga.\nPor favor, inténtalo de nuevo más tarde.\nCódigo de estado: %statusCode%",
                         "empty": "Por favor, proporciona una consulta, ID o URL."
@@ -251,8 +251,112 @@
             "description": "Busca un título en NamiComi.",
             "subcommands": [],
             "subcommand_groups": [],
-            "options": [],
-            "response": {}
+            "options": [
+                {
+                    "name": "query",
+                    "description": "El título que quieres buscar"
+                },
+                {
+                    "name": "id",
+                    "description": "La ID del título que quieres buscar"
+                },
+                {
+                    "name": "url",
+                    "description": "La URL del título que quieres buscar"
+                }
+            ],
+            "response": {
+                "found": {
+                    "author": {
+                        "too_many": "Múltiples Autores",
+                        "error": "Autor Desconocido"
+                    },
+                    "title": "%title%",
+                    "description": "%description%",
+                    "fields": [
+                        {
+                            "name": "Calificación",
+                            "value": "%rating%"
+                        },
+                        {
+                            "name": "Seguidores",
+                            "value": "%follows%"
+                        },
+                        {
+                            "name": "Año",
+                            "value": "%year%"
+                        },
+                        {
+                            "name": "Estado de Publicación",
+                            "value": "%status%"
+                        },
+                        {
+                            "name": "Demografía",
+                            "value": "%demographic%"
+                        },
+                        {
+                            "name": "Calificación de Contenido",
+                            "value": "%contentRating%"
+                        },
+                        {
+                            "name": "Advertencia de Contenido",
+                            "value": "%contentWarning%"
+                        },
+                        {
+                            "name": "Formato",
+                            "value": "%format%"
+                        },
+                        {
+                            "name": "Géneros",
+                            "value": "%genres%"
+                        },
+                        {
+                            "name": "Temas",
+                            "value": "%themes%"
+                        },
+                        {
+                            "name": "Modo de Lectura",
+                            "value": {
+                                "vertical": "Vertical",
+                                "horizontal": {
+                                    "left_to_right": "Horizontal (Izquierda a Derecha)",
+                                    "right_to_left": "Horizontal (Derecha a Izquierda)"
+                                }
+                            }
+                        }
+                    ],
+                    "pub_status": {
+                        "ongoing": "En curso",
+                        "completed": "Completado",
+                        "hiatus": "En pausa",
+                        "cancelled": "Cancelado"
+                    },
+                    "no_description": "No hay descripción disponible.",
+                    "open_button": "Abrir en NamiComi"
+                },
+                "query": {
+                    "title": "Resultados de la Búsqueda",
+                    "description": "Aquí están los resultados de la búsqueda para `%query%`.",
+                    "fields": [
+                        {
+                            "name": "%title%",
+                            "value": "%description%"
+                        }
+                    ],
+                    "placeholder": "Selecciona un título para ver más información..."
+                },
+                "error": {
+                    "title": "Error",
+                    "description": {
+                        "url": "La URL proporcionada no es válida.",
+                        "invalid_id": "La ID proporcionada no es válida.",
+                        "no_results":"La consulta no devolvió resultados. Es todo lo que sabemos.",
+                        "api":"Ha ocurrido un error al obtener los datos del título.\nPor favor, inténtalo de nuevo más tarde.\nCódigo de estado: %statusCode%",
+                        "empty":"Por favor, proporciona una consulta, ID o URL."
+                    }
+                },
+                "footer": "%commandName% - Solicitado por %user%"
+            }
         },
         "settings": {
             "name": "settings",

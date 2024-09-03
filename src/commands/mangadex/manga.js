@@ -11,7 +11,6 @@ const regexComponents = {
     slugAndParams: '(?:\\/[^?]+)?(?:\\?.*)?'
 };
 
-
 const regexString = `^${regexComponents.protocol}${regexComponents.subdomain}${regexComponents.domain}${regexComponents.titleSegment}${regexComponents.id}${regexComponents.slugAndParams}$`;
 const urlRegex = new RegExp(regexString);
 const idRegex = /^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$/;
@@ -39,7 +38,7 @@ module.exports = {
                 { description: await translateAttribute('manga', 'options[1].description') },
                 { description: await translateAttribute('manga', 'options[2].description') }
             ]
-        }
+        };
         return new SlashCommandBuilder()
             .setName('manga')
             .setDescription('Search for a manga on MangaDex')
@@ -49,21 +48,22 @@ module.exports = {
                     .setDescription('The manga you want to search for')
                     .setDescriptionLocalizations(localizations.options[0].description)
                     .setRequired(false)
-            )
-            .addStringOption(option =>
+            ).addStringOption(option =>
                 option.setName('id')
-                    .setDescription('The ID of the manga')
+                    .setDescription('The ID of the manga you want to search for')
                     .setDescriptionLocalizations(localizations.options[1].description)
                     .setRequired(false)
-            )
-            .addStringOption(option =>
+            ).addStringOption(option =>
                 option.setName('url')
-                    .setDescription('The URL of the manga')
+                    .setDescription('The URL of the manga you want to search for')
                     .setDescriptionLocalizations(localizations.options[2].description)
                     .setRequired(false)
             );
     },
     async execute(interaction, client) {
+        // If the interaction is not already deferred, defer it
+        if (!interaction.deferred && !interaction.replied) await interaction.deferReply();
+
         const userSettings = await client.getMongoUserData(interaction.user);
         const locale = userSettings.preferredLocale || interaction.locale;
         const embed = new EmbedBuilder()
@@ -80,23 +80,16 @@ module.exports = {
 
         if (query) {
             const searchResults = await searchManga(query);
-
             if (!searchResults) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.no_results');
-
             const fields = Array.from(searchResults, ([title, id]) => {
-                // Ensure title and id are strings
                 if (typeof title !== 'string' || typeof id !== 'string') return null;
-
-                // Truncate the title if it's too long (256 character limit)
-                // Truncate after the last space before the 100th character
                 if (title.length > 256) {
-                    // Just in case the title is a single word, we'll truncate it at the 250 character to be able to add (...) at the end
                     const truncatedTitle = title.slice(0, 250).replace(/\s+\S*$/, '');
                     title = `${truncatedTitle} (...)`;
                 }
 
                 return { name: title, value: `[View Manga](${urlFormats.primary.replace('{id}', id).replace('{title}', '')})` };
-            }).filter(Boolean); // Remove any null values
+            }).filter(Boolean);
 
             const menu = new StringSelectMenuBuilder()
                 .setCustomId('manga_select')
@@ -106,13 +99,10 @@ module.exports = {
 
             let menuOptions = [];
             searchResults.forEach((id, title) => {
-                // Truncate the title if it's too long (100 character limit)
-                // Truncate after the last space before the 100th character
                 if (title.length > 100) {
-                    // Just in case the title is a single word, we'll truncate it at the 94th character to be able to add (...) at the end
                     const truncatedTitle = title.slice(0, 94).replace(/\s+\S*$/, '');
                     title = `${truncatedTitle} (...)`;
-                }
+                };
                 menuOptions.push({ label: title, value: id });
             });
             menu.setOptions(menuOptions);
@@ -120,18 +110,18 @@ module.exports = {
             const row = new ActionRowBuilder().addComponents(menu);
 
             embed.setTitle(await client.translate(locale, 'commands', 'manga.response.query.title'))
-                .setDescription(await client.translate(locale, 'commands', 'manga.response.query.description', { query: query }))
+                .setDescription(await client.translate(locale, 'commands', 'manga.response.query.description', { query }))
                 .addFields(fields)
                 .setColor(Colors.Blurple);
 
-            return interaction.reply({ embeds: [embed], components: [row] });
+            return interaction.editReply({ embeds: [embed], components: [row] });
         }
 
         const mangaID = id || await getIDfromURL(url);
-        if (!(await checkIdFormat(mangaID))) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.id');
+        if (!(await checkIdFormat(mangaID))) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.invalid_id');
 
         const [manga, stats] = await Promise.all([getManga(mangaID), getStats(mangaID)]);
-        if (!manga || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.id');
+        if (!manga || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.invalid_id');
 
         await buildMangaEmbed(embed, client, locale, manga, stats);
         const attachments = await setImages(manga, embed, locale, client);
@@ -143,7 +133,8 @@ module.exports = {
                 .setStyle(ButtonStyle.Link)
         )
 
-        return interaction.reply({ embeds: [embed], files: attachments, components: [open_button] });
+        if (interaction.type === 3) return interaction.reply({ embeds: [embed], files: attachments, components: [open_button] });
+        return interaction.editReply({ embeds: [embed], files: attachments, components: [open_button] });
     }
 }
 
@@ -152,7 +143,7 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
         .setDescription(await client.translate(locale, 'commands', errorKey))
         .setColor(Colors.Red);
 
-    return interaction.reply({ embeds: [embed] });
+    return interaction.editReply({ embeds: [embed] });
 }
 
 async function buildMangaEmbed(embed, client, locale, manga, stats) {
@@ -192,7 +183,7 @@ async function getCreators(manga, locale, client) {
 
 async function setImages(manga, embed, locale, client) {
     const author = await getCreators(manga, locale, client);
-    const mangadexIcon = new AttachmentBuilder(path.join(__dirname, '../../media/mangadex.png'), 'mangadex.png');
+    const mangadexIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/mangadex.png'), 'mangadex.png');
     embed.setAuthor({ name: author, iconURL: 'attachment://mangadex.png' })
 
     const coverURL = await getCoverURL(manga);
@@ -214,10 +205,10 @@ async function capitalizeFirstLetter(string) {
 
 async function addMangaTags(manga, embed, locale, client) {
     const tagGroups = {
-        content: [],
-        format: [],
+        theme: [],
         genre: [],
-        theme: []
+        content_warning: [],
+        format: []
     };
 
     // For each tag, add it to the corresponding group
@@ -226,12 +217,8 @@ async function addMangaTags(manga, embed, locale, client) {
         tagGroups[tag.attributes.group].push(tag.attributes.name.en);
     });
 
+    // Create the fields for the embed
     const fields = [
-        {
-            name: await client.translate(locale, 'commands', 'manga.response.found.fields[6].name'),
-            value: tagGroups.content.join(', ') || 'N/A',
-            inline: true
-        },
         {
             name: await client.translate(locale, 'commands', 'manga.response.found.fields[7].name'),
             value: tagGroups.format.join(', ') || 'N/A',
@@ -246,7 +233,12 @@ async function addMangaTags(manga, embed, locale, client) {
             name: await client.translate(locale, 'commands', 'manga.response.found.fields[9].name'),
             value: tagGroups.theme.join(', ') || 'N/A',
             inline: true
-        }
+        },
+        {
+            name: await client.translate(locale, 'commands', 'manga.response.found.fields[6].name'),
+            value: tagGroups.content_warning.join(', ') || 'N/A',
+            inline: true
+        },
     ];
 
     embed.addFields(fields);

@@ -237,7 +237,7 @@
                     "title": "Error",
                     "description": {
                         "url": "The provided URL is invalid.",
-                        "id": "The provided ID is invalid.",
+                        "invalid_id": "The provided ID is invalid.",
                         "no_results": "The query returned no results. That's all we know.",
                         "api": "An error occurred while fetching the manga data.\nPlease try again later.\nStatus code: %statusCode%",
                         "empty": "Please provide either a query, ID, or URL."
@@ -251,8 +251,112 @@
             "description": "Search for a title on NamiComi.",
             "subcommands": [],
             "subcommand_groups": [],
-            "options": [],
-            "response": {}
+            "options": [
+                {
+                    "name": "query",
+                    "description": "The title you want to search for"
+                },
+                {
+                    "name": "id",
+                    "description": "The ID of the title you want to search for"
+                },
+                {
+                    "name": "url",
+                    "description": "The URL of the title you want to search for"
+                }
+            ],
+            "response": {
+                "found": {
+                    "author": {
+                        "too_many": "Multiple Authors",
+                        "error": "Unknown Author"
+                    },
+                    "title": "%title%",
+                    "description": "%description%",
+                    "fields": [
+                        {
+                            "name": "Rating",
+                            "value": "%rating%"
+                        },
+                        {
+                            "name": "Follows",
+                            "value": "%follows%"
+                        },
+                        {
+                            "name": "Year",
+                            "value": "%year%"
+                        },
+                        {
+                            "name": "Publication Status",
+                            "value": "%status%"
+                        },
+                        {
+                            "name": "Demographic",
+                            "value": "%demographic%"
+                        },
+                        {
+                            "name": "Content Rating",
+                            "value": "%contentRating%"
+                        },
+                        {
+                            "name": "Content Warning",
+                            "value": "%contentWarning%"
+                        },
+                        {
+                            "name": "Format",
+                            "value": "%format%"
+                        },
+                        {
+                            "name": "Genres",
+                            "value": "%genres%"
+                        },
+                        {
+                            "name": "Themes",
+                            "value": "%themes%"
+                        },
+                        {
+                            "name": "Reading Mode",
+                            "value": {
+                                "vertical": "Vertical",
+                                "horizontal": {
+                                    "left_to_right": "Horizontal (Left to Right)",
+                                    "right_to_left": "Horizontal (Right to Left)"
+                                }
+                            }
+                        }
+                    ],
+                    "pub_status": {
+                        "ongoing": "Ongoing",
+                        "completed": "Completed",
+                        "hiatus": "Hiatus",
+                        "cancelled": "Cancelled"
+                    },
+                    "no_description": "No description available.",
+                    "open_button": "Open on NamiComi"
+                },
+                "query": {
+                    "title": "Search Results",
+                    "description":"Here are the search results for `%query%`.",
+                    "fields": [
+                        {
+                            "name": "%title%",
+                            "value": "%description%"
+                        }
+                    ],
+                    "placeholder": "Select a title to view more information."
+                },
+                "error": {
+                    "title": "Error",
+                    "description": {
+                        "url": "The provided URL is invalid.",
+                        "invalid_id": "The provided ID is invalid.",
+                        "no_results": "The query returned no results. That's all we know.",
+                        "api": "An error occurred while fetching the title data.\nPlease try again later.\nStatus code: %statusCode%",
+                        "empty": "Please provide either a query, ID, or URL."
+                    }
+                },
+                "footer": "%commandName% - Requested by %user%"
+            }
         },
         "settings": {
             "name": "settings",
@@ -309,7 +413,7 @@
                             "response": {
                                 "title": {
                                     "success": "Language Reset",
-                                    "error": "Error"
+                                    "error": "Error while resetting the language"
                                 },
                                 "description": {
                                     "success": "Your preferred language has been reset.",

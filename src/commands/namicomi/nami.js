@@ -155,7 +155,7 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
 }
 
 async function buildTitleEmbed(embed, client, locale, title, stats) {
-    const embedTitle = title.attributes.title[locale] || title.attributes.title.en;
+    const embedTitle = await getLocalizedTitle(title, locale);
     const description = await getLocalizedDescription(client, title, locale) || await client.translate(locale, 'commands', 'nami.response.found.no_description');
     const author = await getCreators(title, locale, client);
 
@@ -189,6 +189,13 @@ async function buildTitleEmbed(embed, client, locale, title, stats) {
             break;
     }
     embed.setAuthor({ name: author, iconURL: 'attachment://namicomi.png' });
+}
+
+async function getLocalizedTitle(title, locale) {
+    const localizedTitle = title.attributes.title[locale];
+    if (!localizedTitle && locale === 'es') return title.attributes.title['es-419'];
+    if (!localizedTitle) return title.attributes.title['en'];
+    return localizedTitle || title.attributes.title[Object.keys(title.attributes.title)[0]];
 }
 
 async function getCreators(title, locale, client) {
@@ -387,14 +394,6 @@ async function getLocalizedDescription(client, title, locale) {
     return description || await client.translate(locale, 'commands', 'nami.response.found.no_description');
 }
 
-async function getLocalizedTitle(title, locale) {
-    let localizedTitle = title[locale];
-    if (!localizedTitle && locale === 'es') localizedTitle = title['es-419'];
-    if (!localizedTitle) localizedTitle = title['en'];
-    if (!localizedTitle) localizedTitle = title[Object.keys(title)[0]];
-    return localizedTitle;
-}
-
 async function searchTitle(query, locale) {
     const url = new URL('https://api.namicomi.com/title/search');
     url.searchParams.append('title', query);
@@ -408,9 +407,14 @@ async function searchTitle(query, locale) {
     const data = await response.json();
 
     if (data.data.length === 0) return null;
-    const results = new Map(data.data.map(async title => {
-        const localizedTitle = await getLocalizedTitle(title.attributes.title, locale);
-        return [localizedTitle, title.id];
+    const results = new Map(data.data.map(title => {
+        if (title?.attributes?.title) {
+            let localizedTitle = title.attributes.title[locale];
+            if (!localizedTitle && locale === 'es') localizedTitle = title.attributes.title['es-419'];
+            if (!localizedTitle) localizedTitle = title.attributes.title['en'];
+            if (!localizedTitle) localizedTitle = title.attributes.title[Object.keys(title)[0]];
+            return [localizedTitle, title.id];
+        }
     }));
 
     return results;

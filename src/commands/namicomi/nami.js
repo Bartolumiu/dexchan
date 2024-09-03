@@ -6,14 +6,14 @@ const regexComponents = {
     protocol: 'https?:\\/\\/',
     primary_domain: 'namicomi\\.com',
     secondary_domain: 'nami\\.moe',
-    locale: '[a-z]{2}(?:-[A-Z]{2})?',
+    locale: '[a-z]{2}(?:-[a-zA-Z]{2})?',
     id: '([a-zA-Z0-9]{8})',
-    slug: '(?:\\/[^?]+)?',
+    slug: '\\/[^\\/]+$',
 }
 
 const regexStrings = {
     primary: `${regexComponents.protocol}${regexComponents.primary_domain}\\/${regexComponents.locale}\\/title\\/${regexComponents.id}${regexComponents.slug}`,
-    semi_shortened: `${regexComponents.protocol}${regexComponents.primary_domain}\\/t\\/${regexComponents.id}${regexComponents.slug}`,
+    semi_shortened: `${regexComponents.protocol}${regexComponents.primary_domain}\\/t\\/${regexComponents.id}`,
     shortened: `${regexComponents.protocol}${regexComponents.secondary_domain}\\/t\\/${regexComponents.id}`
 }
 
@@ -24,7 +24,7 @@ const regexes = {
 }
 
 const urlFormats = {
-    primary: 'https://namicomi.com/{locale}/title/{id}/{title}',
+    primary: 'https://namicomi.com/{locale}/title/{id}/{slug}',
     semi_shortened: 'https://namicomi.com/t/{id}',
     shortened: 'https://nami.moe/t/{id}'
 }
@@ -192,9 +192,9 @@ async function buildTitleEmbed(embed, client, locale, title, stats) {
 }
 
 async function getLocalizedTitle(title, locale) {
-    const localizedTitle = title.attributes.title[locale];
-    if (!localizedTitle && locale === 'es') return title.attributes.title['es-419'];
-    if (!localizedTitle) return title.attributes.title['en'];
+    let localizedTitle = title.attributes.title[locale];
+    if (!localizedTitle && locale === 'es') localizedTitle = title.attributes.title['es-419'];
+    if (!localizedTitle) localizedTitle = title.attributes.title['en'];
     return localizedTitle || title.attributes.title[Object.keys(title.attributes.title)[0]];
 }
 
@@ -304,7 +304,6 @@ async function addTitleTags(title, embed, locale, client) {
 }
 
 async function getIDfromURL(url) {
-    url = url.split('?')[0].split('/').slice(0, 5).join('/');
     const primaryMatch = url.match(regexes.primary);
     if (primaryMatch) return primaryMatch[1];
     const semiShortenedMatch = url.match(regexes.semi_shortened);

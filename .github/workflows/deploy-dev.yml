@@ -1,4 +1,4 @@
-name: Deploy dexchan
+name: Deploy dexchan (dev)
 
 on:
   push:

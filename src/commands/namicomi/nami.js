@@ -185,7 +185,7 @@ async function buildTitleEmbed(embed, client, locale, title, stats) {
             embed.addFields({ name: await client.translate(locale, 'commands', 'nami.response.found.fields[10].name'), value: await client.translate(locale, 'commands', 'nami.response.found.fields[10].value.horizontal.right_to_left'), inline: true });
             break;
         case 'ltr':
-            embed.addField({ name: await client.translate(locale, 'commands', 'nami.response.found.fields[10].name'), value: await client.translate(locale, 'commands', 'nami.response.found.fields[10].value.horizontal.left_to_right'), inline: true });
+            embed.addFields({ name: await client.translate(locale, 'commands', 'nami.response.found.fields[10].name'), value: await client.translate(locale, 'commands', 'nami.response.found.fields[10].value.horizontal.left_to_right'), inline: true });
             break;
     }
     embed.setAuthor({ name: author, iconURL: 'attachment://namicomi.png' });

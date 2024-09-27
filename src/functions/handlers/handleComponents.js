@@ -1,6 +1,17 @@
 const { readdirSync } = require('fs');
 const path = require('path');
 
+/**
+ * Handles the loading of components (buttons, selectMenus, modals) for the client.
+ * 
+ * @param {Object} client - The client object that contains the collections for components.
+ * @param {Map} client.buttons - Collection of button components.
+ * @param {Map} client.selectMenus - Collection of select menu components.
+ * @param {Map} client.modals - Collection of modal components.
+ * 
+ * @function handleComponents
+ * @async
+ */
 module.exports = (client) => {
     client.handleComponents = async () => {
         const componentFolders = readdirSync('./src/components');
@@ -25,6 +36,18 @@ module.exports = (client) => {
     }
 }
 
+/**
+ * Loads components from the specified folder and adds them to the provided collection.
+ * 
+ * @param {Map} collection - The collection to which the components will be added.
+ * @param {string} folder - The folder from which to load the components.
+ * @param {string[]} componentFiles - Array of component file names to be loaded.
+ * 
+ * @returns {Promise<void>}
+ * 
+ * @function loadComponents
+ * @async
+ */
 async function loadComponents(collection, folder, componentFiles) {
     const chalkInstance = await import('chalk');
     const chalk = chalkInstance.default;

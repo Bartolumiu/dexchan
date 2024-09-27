@@ -14,8 +14,18 @@ module.exports = {
             const mockInteraction = {
                 ...interaction,
                 options: {
+                    /**
+                     * Mocks the getString method for the interaction options.
+                     * @param {*} name - Option name
+                     * @returns {string | null} - The value of the option or null if the option is not found.
+                     */
                     getString: (name) => (name === 'id' ? title : null),
                 },
+                /**
+                 * Mocks the reply method for the interaction
+                 * @param {*} response - The response to send to the interaction
+                 * @returns {Promise<void>} - A promise that resolves when the interaction is replied to.
+                 */
                 reply: (response) => interaction.editReply(response),
             };
 

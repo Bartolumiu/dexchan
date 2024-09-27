@@ -2,6 +2,17 @@ const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowB
 const translateAttribute = require('../../functions/handlers/translateAttribute');
 const path = require('path');
 
+
+/**
+ * An object containing regular expression components for matching MangaDex URLs.
+ * 
+ * @property {string} protocol - The protocol part of the URL (http or https).
+ * @property {string} subdomain - The optional subdomain part of the URL (www, canary, or sandbox).
+ * @property {string} domain - The domain part of the URL (mangadex.org or mangadex.dev).
+ * @property {string} titleSegment - The segment of the URL that indicates a title.
+ * @property {string} id - The UUID of the manga title.
+ * @property {string} slugAndParams - The optional slug and query parameters of the URL.
+ */
 const regexComponents = {
     protocol: 'https?:\\/\\/',
     subdomain: '(?:www\\.)?(?:canary|sandbox\\.)?',
@@ -15,12 +26,28 @@ const regexString = `^${regexComponents.protocol}${regexComponents.subdomain}${r
 const urlRegex = new RegExp(regexString);
 const idRegex = /^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$/;
 
+/**
+ * An object containing URL formats for different MangaDex environments.
+ * 
+ * @property {string} primary - The URL format for the primary MangaDex environment.
+ * @property {string} canary - The URL format for the canary MangaDex environment.
+ * @property {string} sandbox - The URL format for the sandbox MangaDex environment.
+ */
 const urlFormats = {
     primary: 'https://mangadex.org/title/{id}/{title}',
     canary: 'https://canary.mangadex.dev/title/{id}/{title}',
     sandbox: 'https://sandbox.mangadex.dev/title/{id}/{title}'
 };
 
+/**
+ * A mapping of locale codes to their corresponding language codes.
+ * 
+ * @type {Object.<string, string>}
+ * @property {string} en-GB - British English mapped to 'en'.
+ * @property {string} en-US - American English mapped to 'en'.
+ * @property {string} es-ES - Spanish (Spain) mapped to 'es'.
+ * @property {string} es-419 - Spanish (Latin America and Caribbean) mapped to 'es'.
+ */
 const languageMap = {
     'en-GB': 'en',
     'en-US': 'en',
@@ -138,6 +165,16 @@ module.exports = {
     }
 }
 
+/**
+ * Sends an error embed message in response to an interaction.
+ *
+ * @param {Object} interaction - The interaction object from Discord.
+ * @param {Object} client - The client instance for interacting with Discord API.
+ * @param {string} locale - The locale string for translation.
+ * @param {Object} embed - The embed object to be modified and sent.
+ * @param {string} errorKey - The key for the error message to be translated.
+ * @returns {Promise<Object>} - A promise that resolves to the edited interaction reply.
+ */
 async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
     embed.setTitle(await client.translate(locale, 'commands', 'manga.response.error.title'))
         .setDescription(await client.translate(locale, 'commands', errorKey))
@@ -146,6 +183,16 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
     return interaction.editReply({ embeds: [embed] });
 }
 
+/**
+ * Builds an embed for a manga using the provided information.
+ *
+ * @param {Object} embed - The embed object to be built.
+ * @param {Object} client - The client object used for translations and other utilities.
+ * @param {string} locale - The locale string for translations.
+ * @param {Object} manga - The manga object containing manga details.
+ * @param {Object} stats - The stats object containing manga statistics.
+ * @returns {Promise<void>} A promise that resolves when the embed is built.
+ */
 async function buildMangaEmbed(embed, client, locale, manga, stats) {
     const title = manga.attributes.title.en;
     const description = await getLocalizedDescription(client, manga, locale) || await client.translate(locale, 'commands', 'manga.response.found.no_description');
@@ -170,6 +217,15 @@ async function buildMangaEmbed(embed, client, locale, manga, stats) {
     embed.setAuthor({ name: author, iconURL: 'attachment://mangadex.png' });
 }
 
+/**
+ * Retrieves the names of the creators (authors and artists) of a manga.
+ * If the combined length of the names exceeds 256 characters, a translated message is returned.
+ *
+ * @param {Object} manga - The manga object containing relationships.
+ * @param {string} locale - The locale for translation.
+ * @param {Object} client - The client object used for translation.
+ * @returns {Promise<string>} - A promise that resolves to a string of creator names or a translated message.
+ */
 async function getCreators(manga, locale, client) {
     const creatorsAndArtists = Array.from(new Set([
         ...manga.relationships.filter(rel => rel.type === 'author').map(rel => rel.attributes.name),
@@ -181,6 +237,15 @@ async function getCreators(manga, locale, client) {
         : creatorsAndArtists;
 }
 
+/**
+ * Sets the images for the given manga embed.
+ *
+ * @param {Object} manga - The manga object containing manga details.
+ * @param {Object} embed - The embed object to set images on.
+ * @param {string} locale - The locale string for localization.
+ * @param {Object} client - The client object for making API requests.
+ * @returns {Promise<Array>} - A promise that resolves to an array of AttachmentBuilder objects.
+ */
 async function setImages(manga, embed, locale, client) {
     const author = await getCreators(manga, locale, client);
     const mangadexIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/mangadex.png'), 'mangadex.png');
@@ -199,10 +264,25 @@ async function setImages(manga, embed, locale, client) {
     return [mangadexIcon, coverImage];
 }
 
+/**
+ * Capitalizes the first letter of a given string.
+ *
+ * @param {string} string - The string to capitalize.
+ * @returns {Promise<string>} A promise that resolves to the string with the first letter capitalized.
+ */
 async function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+/**
+ * Adds manga tags to the provided embed object.
+ *
+ * @param {Object} manga - The manga object containing attributes and tags.
+ * @param {Object} embed - The embed object to which the fields will be added.
+ * @param {string} locale - The locale string used for translation.
+ * @param {Object} client - The client object used for translation.
+ * @returns {Promise<void>} - A promise that resolves when the fields have been added to the embed.
+ */
 async function addMangaTags(manga, embed, locale, client) {
     const tagGroups = {
         theme: [],
@@ -244,16 +324,38 @@ async function addMangaTags(manga, embed, locale, client) {
     embed.addFields(fields);
 }
 
+/**
+ * Extracts the ID from a given MangaDex URL.
+ *
+ * @param {string} url - The URL to extract the ID from.
+ * @returns {Promise<string|null>} - A promise that resolves to the extracted ID or null if no ID is found.
+ */
 async function getIDfromURL(url) {
     url = url.split('?')[0].split('/').slice(0, 5).join('/');
     const match = url.match(urlRegex);
     return (match) ? match[1] : null;
 }
 
+/**
+ * Checks if the given ID matches the expected format.
+ *
+ * @param {string} id - The ID to be checked.
+ * @returns {Promise<boolean>} - A promise that resolves to true if the ID matches the format, otherwise false.
+ */
 async function checkIdFormat(id) {
     return idRegex.test(id);
 }
 
+/**
+ * Fetches the cover URL for a given manga.
+ *
+ * @param {Object} manga - The manga object containing details about the manga.
+ * @param {string} manga.id - The unique identifier for the manga.
+ * @param {Array} manga.relationships - The relationships array containing related entities.
+ * @param {Object} manga.relationships[].type - The type of relationship (e.g., 'cover_art').
+ * @param {string} manga.relationships[].id - The unique identifier for the related entity.
+ * @returns {Promise<string|null>} - A promise that resolves to the cover URL string or null if the fetch fails.
+ */
 async function getCoverURL(manga) {
     const mangaID = manga.id;
     const coverArtID = manga.relationships.find(rel => rel.type === 'cover_art').id;
@@ -267,6 +369,12 @@ async function getCoverURL(manga) {
     return `https://mangadex.org/covers/${mangaID}/${fileName}`;
 }
 
+/**
+ * Fetches manga details from the MangaDex API.
+ *
+ * @param {string} mangaID - The ID of the manga to fetch.
+ * @returns {Promise<Object|null>} A promise that resolves to the manga data object if the request is successful, or null if the request fails.
+ */
 async function getManga(mangaID) {
     const url = new URL(`https://api.mangadex.org/manga/${mangaID}`);
     url.searchParams.append('includes[]', 'author');
@@ -281,6 +389,14 @@ async function getManga(mangaID) {
     return data.data;
 }
 
+/**
+ * Fetches and returns the statistics for a given manga from the MangaDex API.
+ *
+ * @async
+ * @function getStats
+ * @param {string} mangaID - The ID of the manga to fetch statistics for.
+ * @returns {Promise<Object|null>} A promise that resolves to the statistics object for the manga, or null if the request fails.
+ */
 async function getStats(mangaID) {
     const url = new URL(`https://api.mangadex.org/statistics/manga/${mangaID}`);
 
@@ -291,6 +407,14 @@ async function getStats(mangaID) {
     return data.statistics[mangaID];
 }
 
+/**
+ * Retrieves the localized description of a manga.
+ *
+ * @param {Object} client - The client object used for translation.
+ * @param {Object} manga - The manga object containing attributes and descriptions.
+ * @param {string} locale - The locale code for the desired language.
+ * @returns {Promise<string>} - A promise that resolves to the localized description of the manga.
+ */
 async function getLocalizedDescription(client, manga, locale) {
     locale = languageMap[locale] || locale;
 
@@ -302,6 +426,12 @@ async function getLocalizedDescription(client, manga, locale) {
     return description || await client.translate(locale, 'commands', 'manga.response.found.no_description');
 }
 
+/**
+ * Searches for manga titles on MangaDex based on the provided query.
+ *
+ * @param {string} query - The title or keyword to search for.
+ * @returns {Promise<Map<string, string> | null>} A promise that resolves to a Map object containing manga titles as keys and their IDs as values, or null if no results are found or the request fails.
+ */
 async function searchManga(query) {
     const url = new URL('https://api.mangadex.org/manga');
     url.searchParams.append('title', query);

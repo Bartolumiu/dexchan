@@ -2,6 +2,27 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v10');
 const { readdirSync } = require('fs');
 
+/**
+ * Handles the loading and registration of Discord commands for the client.
+ * 
+ * This function reads command files from the specified directories, processes them,
+ * and registers them as either global or guild-specific commands using the Discord API.
+ * 
+ * @param {Object} client - The Discord client instance.
+ * @param {Map} client.commands - A collection to store the commands.
+ * 
+ * @requires @discordjs/rest
+ * @requires discord-api-types/v10
+ * @requires fs
+ * 
+ * @example
+ * const client = {
+ *   commands: new Map(),
+ *   handleCommands: null
+ * };
+ * require('./handleCommands')(client);
+ * client.handleCommands();
+ */
 module.exports = (client) => {
     client.handleCommands = async () => {
         const chalkInstance = await import('chalk');

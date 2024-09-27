@@ -2,6 +2,16 @@ const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowB
 const translateAttribute = require('../../functions/handlers/translateAttribute');
 const path = require('path');
 
+/**
+ * An object containing regular expression components for matching various parts of a URL.
+ * 
+ * @property {string} protocol - Regular expression to match the protocol (http or https).
+ * @property {string} primary_domain - Regular expression to match the primary domain (namicomi.com).
+ * @property {string} secondary_domain - Regular expression to match the secondary domain (nami.moe).
+ * @property {string} locale - Regular expression to match the locale (e.g., en-US).
+ * @property {string} id - Regular expression to match an 8-character alphanumeric ID.
+ * @property {string} slug - Regular expression to match the slug (path after the domain).
+ */
 const regexComponents = {
     protocol: 'https?:\\/\\/',
     primary_domain: 'namicomi\\.com',
@@ -11,24 +21,54 @@ const regexComponents = {
     slug: '\\/[^\\/]+$',
 }
 
+/**
+ * An object containing regular expression strings for different URL formats.
+ * 
+ * @property {string} primary - The primary URL format including protocol, primary domain, locale, title, ID, and slug.
+ * @property {string} semi_shortened - A semi-shortened URL format including protocol, primary domain, and ID.
+ * @property {string} shortened - A shortened URL format including protocol, secondary domain, and ID.
+ */
 const regexStrings = {
     primary: `${regexComponents.protocol}${regexComponents.primary_domain}\\/${regexComponents.locale}\\/title\\/${regexComponents.id}${regexComponents.slug}`,
     semi_shortened: `${regexComponents.protocol}${regexComponents.primary_domain}\\/t\\/${regexComponents.id}`,
     shortened: `${regexComponents.protocol}${regexComponents.secondary_domain}\\/t\\/${regexComponents.id}`
 }
 
+/**
+ * An object containing regular expressions used for various matching patterns.
+ * 
+ * @property {RegExp} primary - The primary regular expression pattern.
+ * @property {RegExp} semi_shortened - The semi-shortened regular expression pattern.
+ * @property {RegExp} shortened - The shortened regular expression pattern.
+ */
 const regexes = {
     primary: new RegExp(regexStrings.primary),
     semi_shortened: new RegExp(regexStrings.semi_shortened),
     shortened: new RegExp(regexStrings.shortened)
 }
 
+/**
+ * An object containing different URL formats for accessing titles on the Namicomi website.
+ * 
+ * @property {string} primary - The primary URL format, which includes locale, title ID, and slug.
+ * @property {string} semi_shortened - A semi-shortened URL format that includes only the title ID.
+ * @property {string} shortened - A shortened URL format that uses a different domain and includes only the title ID.
+ */
 const urlFormats = {
     primary: 'https://namicomi.com/{locale}/title/{id}/{slug}',
     semi_shortened: 'https://namicomi.com/t/{id}',
     shortened: 'https://nami.moe/t/{id}'
 }
 
+/**
+ * A mapping of locale codes to their corresponding language codes.
+ * 
+ * @constant {Object.<string, string>}
+ * @property {string} en-GB - Maps to 'en' for English (Great Britain).
+ * @property {string} en-US - Maps to 'en' for English (United States).
+ * @property {string} es-ES - Maps to 'es' for Spanish (Spain).
+ * @property {string} es-419 - Maps to 'es' for Spanish (Latin America and Caribbean).
+ */
 const languageMap = {
     'en-GB': 'en',
     'en-US': 'en',
@@ -146,6 +186,16 @@ module.exports = {
     }
 }
 
+/**
+ * Sends an error embed message in response to an interaction.
+ *
+ * @param {Object} interaction - The interaction object from Discord.
+ * @param {Object} client - The Discord client instance.
+ * @param {string} locale - The locale string for translation.
+ * @param {Object} embed - The embed object to be modified and sent.
+ * @param {string} errorKey - The key for the error message to be translated.
+ * @returns {Promise<Object>} - A promise that resolves to the edited interaction reply.
+ */
 async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
     embed.setTitle(await client.translate(locale, 'commands', 'nami.response.error.title'))
         .setDescription(await client.translate(locale, 'commands', errorKey))
@@ -154,6 +204,16 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
     return interaction.editReply({ embeds: [embed] });
 }
 
+/**
+ * Builds an embed message for a title with localized information.
+ *
+ * @param {Object} embed - The embed object to be modified.
+ * @param {Object} client - The client object used for translations and other utilities.
+ * @param {string} locale - The locale string for translations.
+ * @param {Object} title - The title object containing information about the title.
+ * @param {Object} stats - The stats object containing statistical information about the title.
+ * @returns {Promise<void>} A promise that resolves when the embed has been built.
+ */
 async function buildTitleEmbed(embed, client, locale, title, stats) {
     const embedTitle = await getLocalizedTitle(title, locale);
     const description = await getLocalizedDescription(client, title, locale) || await client.translate(locale, 'commands', 'nami.response.found.no_description');
@@ -191,6 +251,17 @@ async function buildTitleEmbed(embed, client, locale, title, stats) {
     embed.setAuthor({ name: author, iconURL: 'attachment://namicomi.png' });
 }
 
+/**
+ * Retrieves the localized title based on the provided locale.
+ * If the title is not available in the specified locale, it falls back to 'es-419' for Spanish,
+ * then to English ('en'), and finally to the first available title.
+ *
+ * @param {Object} title - The title object containing localized titles.
+ * @param {Object} title.attributes - The attributes of the title.
+ * @param {Object} title.attributes.title - An object where keys are locale codes and values are titles.
+ * @param {string} locale - The locale code to retrieve the title for.
+ * @returns {Promise<string>} - The localized title.
+ */
 async function getLocalizedTitle(title, locale) {
     let localizedTitle = title.attributes.title[locale];
     if (!localizedTitle && locale === 'es') localizedTitle = title.attributes.title['es-419'];
@@ -198,6 +269,15 @@ async function getLocalizedTitle(title, locale) {
     return localizedTitle || title.attributes.title[Object.keys(title.attributes.title)[0]];
 }
 
+/**
+ * Retrieves a list of unique creators (organizations) associated with a given title.
+ * If the list of creators exceeds 256 characters, a translated message indicating too many authors is returned.
+ *
+ * @param {Object} title - The title object containing relationships.
+ * @param {string} locale - The locale for translation.
+ * @param {Object} client - The client object used for translation.
+ * @returns {Promise<string>} A comma-separated string of unique creators or a translated message if too many.
+ */
 async function getCreators(title, locale, client) {
     const creators = Array.from(new Set([
         ...title.relationships.filter(rel => rel.type === 'organization').map(rel => rel.attributes.name)
@@ -208,6 +288,19 @@ async function getCreators(title, locale, client) {
         : creators;
 }
 
+/**
+ * Sets images for the embed based on the provided title.
+ *
+ * This function fetches and sets the author icon, cover image, and title banner
+ * for the given embed. It returns an array of AttachmentBuilder objects containing
+ * the images.
+ *
+ * @param {Object} title - The title object containing information about the manga.
+ * @param {Object} embed - The embed object to set the images on.
+ * @param {string} locale - The locale string for fetching localized data.
+ * @param {Object} client - The client object used for fetching data.
+ * @returns {Promise<Array>} A promise that resolves to an array of AttachmentBuilder objects.
+ */
 async function setImages(title, embed, locale, client) {
     // NamiComi logo as the author icon
     const author = await getCreators(title, locale, client);
@@ -237,10 +330,25 @@ async function setImages(title, embed, locale, client) {
     return [namiIcon, coverImage, bannerImage];
 }
 
+/**
+ * Capitalizes the first letter of a given string.
+ *
+ * @param {string} string - The string to capitalize.
+ * @returns {string} The string with the first letter capitalized.
+ */
 async function capitalizeFirstLetter(string) {
     return (typeof string === 'string' ? string.charAt(0).toUpperCase() + string.slice(1) : string);
 }
 
+/**
+ * Adds title tags to the provided embed object.
+ *
+ * @param {Object} title - The title object containing relationships and other metadata.
+ * @param {Object} embed - The embed object to which the tags will be added.
+ * @param {string} locale - The locale to be used for tag names.
+ * @param {Object} client - The client object used for translation.
+ * @returns {Promise<void>} - A promise that resolves when the tags have been added to the embed.
+ */
 async function addTitleTags(title, embed, locale, client) {
     // Get the primary and secondary tag IDs
     const primaryTagID = title.relationships.find(rel => rel.type === 'primary_tag')?.id;
@@ -303,6 +411,12 @@ async function addTitleTags(title, embed, locale, client) {
     embed.addFields(fields);
 }
 
+/**
+ * Extracts an ID from a given URL based on predefined regex patterns.
+ *
+ * @param {string} url - The URL from which to extract the ID.
+ * @returns {Promise<string|null>} - A promise that resolves to the extracted ID if a match is found, or null if no match is found.
+ */
 async function getIDfromURL(url) {
     const primaryMatch = url.match(regexes.primary);
     if (primaryMatch) return primaryMatch[1];
@@ -313,11 +427,26 @@ async function getIDfromURL(url) {
     return null;
 }
 
+/**
+ * Checks if the given ID is a string of length 8.
+ *
+ * @param {string} id - The ID to check.
+ * @returns {boolean} True if the ID is a string of length 8, otherwise false.
+ */
 async function checkIdFormat(id) {
     return (typeof id === 'string' && id.length === 8);
 
 }
 
+/**
+ * Fetches the cover URL for a given title and locale.
+ *
+ * @param {Object} title - The title object containing the ID and relationships.
+ * @param {string} title.id - The ID of the title.
+ * @param {Array} title.relationships - The relationships of the title.
+ * @param {string} locale - The locale to match the cover art.
+ * @returns {Promise<string|null>} - A promise that resolves to the cover URL or null if not found.
+ */
 async function getCoverURL(title, locale) {
     locale = languageMap[locale] || locale;
 
@@ -346,6 +475,12 @@ async function getCoverURL(title, locale) {
     return `https://uploads.namicomi.com/covers/${titleID}/${fileName}`;
 }
 
+/**
+ * Fetches the title information from the NamiComi API.
+ *
+ * @param {string} titleID - The ID of the title to fetch.
+ * @returns {Promise<Object|null>} A promise that resolves to the title data object if the request is successful, or null if the request fails.
+ */
 async function getTitle(titleID) {
     const url = new URL(`https://api.namicomi.com/title/${titleID}`);
     url.searchParams.append('includes[]', 'organization');
@@ -359,6 +494,14 @@ async function getTitle(titleID) {
     return data.data;
 }
 
+/**
+ * Fetches and returns statistics for a given title from the NamiComi API.
+ *
+ * @async
+ * @function getStats
+ * @param {string} titleID - The ID of the title to fetch statistics for.
+ * @returns {Promise<Object|null>} An object containing the title's statistics or null if the fetch fails.
+ */
 async function getStats(titleID) {
     const ratingsURL = new URL(`https://api.namicomi.com/title/${titleID}/rating`);
     const statsURL = new URL(`https://api.namicomi.com/statistics/title/${titleID}`);
@@ -369,6 +512,9 @@ async function getStats(titleID) {
 
     return {
         comments: {
+            /**
+             * Placeholder for thread ID (data consistency).
+             */
             threadId: null, // Data consistency
             repliesCount: statsData.data.attributes.commentCount,
         },
@@ -382,6 +528,14 @@ async function getStats(titleID) {
     }
 }
 
+/**
+ * Retrieves a localized description for a given title.
+ *
+ * @param {Object} client - The client object that provides translation services.
+ * @param {Object} title - The title object containing attribute descriptions.
+ * @param {string} locale - The locale code to retrieve the description for.
+ * @returns {Promise<string>} - A promise that resolves to the localized description.
+ */
 async function getLocalizedDescription(client, title, locale) {
     locale = languageMap[locale] || locale;
 
@@ -393,6 +547,15 @@ async function getLocalizedDescription(client, title, locale) {
     return description || await client.translate(locale, 'commands', 'nami.response.found.no_description');
 }
 
+/**
+ * Searches for titles based on the given query and locale.
+ *
+ * @async
+ * @function searchTitle
+ * @param {string} query - The title query to search for.
+ * @param {string} locale - The locale to use for the title search.
+ * @returns {Promise<Map<string, string>|null>} A promise that resolves to a Map of localized titles and their IDs, or null if no results are found.
+ */
 async function searchTitle(query, locale) {
     const url = new URL('https://api.namicomi.com/title/search');
     url.searchParams.append('title', query);

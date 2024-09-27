@@ -1,6 +1,14 @@
 const { readdirSync } = require('fs');
 const { connection } = require('mongoose');
 
+
+/**
+ * Asynchronously handles client events by loading event files and registering them with the client.
+ *
+ * @param {Object} client - The client object that will handle the events.
+ * @param {Array<string>} eventFiles - An array of filenames for the event files to be loaded.
+ * @returns {Promise<void>} A promise that resolves when all events have been registered.
+ */
 const handleClientEvents = async (client, eventFiles) => {
     for (const file of eventFiles) {
         const event = require(`../../events/client/${file}`);
@@ -9,6 +17,14 @@ const handleClientEvents = async (client, eventFiles) => {
     }
 };
 
+
+/**
+ * Handles MongoDB events by loading event files and attaching them to the MongoDB client.
+ *
+ * @param {Object} client - The MongoDB client instance.
+ * @param {string[]} eventFiles - An array of event file names to be loaded and handled.
+ * @returns {Promise<void>} A promise that resolves when all events have been handled.
+ */
 const handleMongoEvents = async (client, eventFiles) => {
     for (const file of eventFiles) {
         const event = require(`../../events/mongo/${file}`);
@@ -17,6 +33,10 @@ const handleMongoEvents = async (client, eventFiles) => {
     }
 };
 
+/**
+ * Handles the loading and execution of events.
+ * @param {*} client - The Discord client instance.
+ */
 module.exports = (client) => {
     client.handleEvents = async () => {
         const eventFolders = readdirSync('./src/events');

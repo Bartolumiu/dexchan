@@ -66,12 +66,31 @@ module.exports = {
     }
 }
 
+/**
+ * Checks if the user has the required role permissions for a command.
+ *
+ * @param {Array} commandPermissions - An array of permission objects for the command.
+ * @param {Object} interaction - The interaction object containing user and role information.
+ * @param {Object} interaction.member - The member object containing role information.
+ * @param {Object} interaction.member.roles - The roles object containing the user's roles.
+ * @param {Map} interaction.member.roles.cache - A map of the user's roles.
+ * @returns {boolean} - Returns true if the user has the required role permissions, otherwise false.
+ */
 const hasRolePermission = (commandPermissions, interaction) => {
     const rolePermissions = commandPermissions.filter(p => p.type === 1 && p.permission === true);
     const userRoleIDs = interaction.member.roles.cache.map(role => role.id);
     return rolePermissions.some(p => userRoleIDs.includes(p.id));
 };
 
+/**
+ * Checks if the user has the required permissions for a command.
+ *
+ * @param {Array} commandPermissions - The list of permissions associated with the command.
+ * @param {Object} interaction - The interaction object containing user information.
+ * @param {Object} interaction.user - The user object within the interaction.
+ * @param {string} interaction.user.id - The ID of the user.
+ * @returns {boolean} - Returns true if the user has the required permissions, otherwise false.
+ */
 const hasUserPermission = (commandPermissions, interaction) => {
     const userPermissions = commandPermissions.filter(p => p.type === 2 && p.permission === true);
     return userPermissions.some(p => p.id === interaction.user.id);

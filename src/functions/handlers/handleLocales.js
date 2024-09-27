@@ -14,6 +14,10 @@ const discordLocales = ['id', 'da', 'de', 'en-GB', 'en-US', 'es-ES', 'es-419', '
 const locales = {};
 const commandDescriptions = {};
 
+/**
+ * Handles the loading and translation of locale files.
+ * @param {*} client - The Discord client instance.
+ */
 module.exports = (client) => {
     client.handleLocales = async () => {
         const chalk = (await import('chalk')).default;
@@ -39,11 +43,25 @@ module.exports = (client) => {
         });
     };
 
+    /**
+     * Translates a given key within a specified category for a given locale.
+     * Falls back to English if the translation is not found.
+     * @param {string} locale - The locale to translate to.
+     * @param {string} category - The category of the translation (e.g., 'commands').
+     * @param {string} key - The key of the translation within the category.
+     * @param {Object} [replacements={}] - An object containing placeholder replacements.
+     * @returns {string|null} - The translated string or null if not found.
+     */
     client.translate = (locale, category, key, replacements = {}) => {
         return translate(locale, category, key, replacements) || translate('en', category, key, replacements);
     };
 
-
+    /**
+     * Translates command attributes (name or description) for all supported Discord locales.
+     * @param {Object} data - The command data object.
+     * @param {string} command - The command name.
+     * @param {string} attribute - The attribute to translate ('name' or 'description').
+     */
     client.translateCommand = async (data, command, attribute) => {
         const chalk = (await import('chalk')).default;
 
@@ -64,7 +82,16 @@ module.exports = (client) => {
     };
 };
 
-const translate = (locale, category, key, replacements = {} ) => {
+/**
+ * Translates a given key within a specified category for a given locale, with optional replacements.
+ * Falls back to English if the translation is not found.
+ * @param {string} locale - The locale to translate to.
+ * @param {string} category - The category of the translation.
+ * @param {string} key - The key of the translation, which can be nested.
+ * @param {Object} [replacements={}] - An object containing placeholder replacements for the translation.
+ * @returns {string|null} - The translated string with placeholders replaced, or null if translation is not found.
+ */
+const translate = (locale, category, key, replacements = {}) => {
     // Use mapped parent language if available
     locale = languageMap[locale] || locale;
 
@@ -85,6 +112,12 @@ const translate = (locale, category, key, replacements = {} ) => {
     );
 };
 
+/**
+ * Retrieves a nested translation from a given set of translations.
+ * @param {Object} translations - The translations object.
+ * @param {string[]} nestedKeys - An array of keys representing the nested path.
+ * @returns {string|null} - The nested translation or null if not found.
+ */
 const getNestedTranslation = (translations, nestedKeys) => {
     return nestedKeys.reduce((translation, key) => {
         if (!translation) return null;

@@ -1,5 +1,14 @@
 const { ActivityType } = require('discord.js');
 
+/**
+ * Sets a random presence for the Discord client from a predefined list of activities.
+ *
+ * @param {Object} client - The Discord client instance.
+ * @param {Object} client.user - The user object of the client.
+ * @param {Function} client.user.setPresence - Function to set the presence of the client.
+ * @param {string} client.version - The version of the client.
+ * @param {Object} options - Additional options for setting the presence (currently unused).
+ */
 module.exports = (client) => {
     client.pickPresence = async (options) => {
         const ActivityOptions = [

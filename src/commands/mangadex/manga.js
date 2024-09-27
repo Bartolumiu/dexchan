@@ -293,7 +293,7 @@ async function addMangaTags(manga, embed, locale, client) {
 
     // For each tag, add it to the corresponding group
     manga.attributes.tags.forEach(tag => {
-        if (!tag) return;
+        if (!tag?.attributes?.group || !tag?.attributes?.name) return;
         tagGroups[tag.attributes.group].push(tag.attributes.name.en);
     });
 

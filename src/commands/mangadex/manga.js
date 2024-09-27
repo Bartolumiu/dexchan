@@ -194,7 +194,7 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
  * @returns {Promise<void>} A promise that resolves when the embed is built.
  */
 async function buildMangaEmbed(embed, client, locale, manga, stats) {
-    const title = manga.attributes.title.en;
+    const title = manga.attributes.title[Object.keys(manga.attributes.title)[0]];
     const description = await getLocalizedDescription(client, manga, locale) || await client.translate(locale, 'commands', 'manga.response.found.no_description');
     const author = await getCreators(manga, locale, client);
 

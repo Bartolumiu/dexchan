@@ -73,6 +73,14 @@ module.exports = {
     }
 }
 
+/**
+ * Handles locale settings for a user profile based on the interaction subcommand.
+ *
+ * @param {Object} interaction - The interaction object from the Discord API.
+ * @param {Object} client - The Discord client instance.
+ * @param {Object} userProfile - The user profile object containing user settings.
+ * @param {Object} embed - The embed object used to send responses.
+ */
 async function localeSettings(interaction, client, userProfile, embed) {
     switch (interaction.options.getSubcommand()) {
         case 'set':
@@ -112,6 +120,14 @@ async function localeSettings(interaction, client, userProfile, embed) {
     }
 }
 
+/**
+ * Displays the user settings in an embedded message.
+ *
+ * @param {Object} interaction - The interaction object from the Discord API.
+ * @param {Object} client - The Discord client instance.
+ * @param {Object} userProfile - The user's profile containing their settings.
+ * @param {Object} embed - The embed object to format the message.
+ */
 async function viewSettings(interaction, client, userProfile, embed) {
     const locale = userProfile.preferredLocale || interaction.locale;
     embed.setTitle(await client.translate(locale, 'commands', 'settings.subcommands[0].response.title'));

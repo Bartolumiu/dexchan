@@ -21,6 +21,14 @@ localeFiles.forEach(file => {
     locales[localeName] = localeData;
 })
 
+
+/**
+ * Translates a given attribute of a command into multiple locales.
+ *
+ * @param {string} command - The command to translate.
+ * @param {string} attribute - The attribute of the command to translate.
+ * @returns {Promise<Object>} A promise that resolves to an object containing translations for each locale.
+ */
 const translateAttribute = async (command, attribute) => {
     const translations = {};
 
@@ -36,6 +44,16 @@ const translateAttribute = async (command, attribute) => {
     return translations;
 }
 
+
+/**
+ * Translates a given key within a specified category for a given locale, with optional replacements.
+ *
+ * @param {string} locale - The locale to translate to. If a mapped parent language is available, it will be used.
+ * @param {string} category - The category of the translation.
+ * @param {string} key - The key of the translation, which can be nested.
+ * @param {Object} [replacements={}] - An object containing placeholder replacements for the translation.
+ * @returns {Promise<string|null>} - The translated string with placeholders replaced, or null if translation is not found.
+ */
 const translate = async (locale, category, key, replacements = {} ) => {
     // Use mapped parent language if available
     locale = languageMap[locale] || locale;
@@ -58,6 +76,14 @@ const translate = async (locale, category, key, replacements = {} ) => {
     );
 };
 
+
+/**
+ * Retrieves a nested translation value from a translations object based on an array of nested keys.
+ *
+ * @param {Object|Array} translations - The translations object or array to search within.
+ * @param {string[]} nestedKeys - An array of keys representing the path to the nested translation.
+ * @returns {Promise<*>} - The nested translation value, or null if not found.
+ */
 const getNestedTranslation = async (translations, nestedKeys) => {
     return nestedKeys.reduce((translation, key) => {
         if (!translation) return null;

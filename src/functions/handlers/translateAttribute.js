@@ -66,7 +66,7 @@ const translate = async (locale, category, key, replacements = {} ) => {
     if (!categoryTranslations) return null;
 
     // Retrieve the nested translation
-    const translation = await getNestedTranslation(categoryTranslations, key.split(/\.|\[/));
+    const translation = await getNestedTranslation(categoryTranslations, key.split(/[.[/]/));
     if (!translation) return null;
 
     // Replace placeholders

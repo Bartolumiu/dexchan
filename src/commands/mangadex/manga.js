@@ -111,7 +111,7 @@ module.exports = {
             const fields = Array.from(searchResults, ([title, id]) => {
                 if (typeof title !== 'string' || typeof id !== 'string') return null;
                 if (title.length > 256) {
-                    const truncatedTitle = title.slice(0, 250).replace(/\s+\S*$/, '');
+                    const truncatedTitle = title.slice(0, 250).split(' ').slice(0, -1).join(' ');
                     title = `${truncatedTitle} (...)`;
                 }
 
@@ -127,7 +127,7 @@ module.exports = {
             let menuOptions = [];
             searchResults.forEach((id, title) => {
                 if (title.length > 100) {
-                    const truncatedTitle = title.slice(0, 94).replace(/\s+\S*$/, '');
+                    const truncatedTitle = title.slice(0, 94).split(' ').slice(0, -1).join(' ');
                     title = `${truncatedTitle} (...)`;
                 };
                 menuOptions.push({ label: title, value: id });
@@ -332,7 +332,7 @@ async function addMangaTags(manga, embed, locale, client) {
  */
 async function getIDfromURL(url) {
     url = url.split('?')[0].split('/').slice(0, 5).join('/');
-    const match = url.match(urlRegex);
+    const match = urlRegex.exec(url);
     return (match) ? match[1] : null;
 }
 

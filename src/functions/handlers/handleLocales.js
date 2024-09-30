@@ -103,7 +103,7 @@ const translate = (locale, category, key, replacements = {}) => {
     if (!categoryTranslations) return null;
 
     // Retrieve the nested translation
-    const translation = getNestedTranslation(categoryTranslations, key.split(/\.|\[/));
+    const translation = getNestedTranslation(categoryTranslations, key.split(/[.[/]/));
     if (!translation) return null;
 
     return Object.entries(replacements).reduce(

@@ -132,7 +132,7 @@ module.exports = {
             const fields = Array.from(searchResults, ([title, id]) => {
                 if (typeof title !== 'string' || typeof id !== 'string') return null;
                 if (title.length > 256) {
-                    const truncatedTitle = title.slice(0, 250).replace(/\s+\S*$/, '');
+                    const truncatedTitle = title.slice(0, 250).split(' ').slice(0, -1).join(' ');
                     title = `${truncatedTitle} (...)`;
                 }
 
@@ -148,7 +148,7 @@ module.exports = {
             let menuOptions = [];
             searchResults.forEach((id, title) => {
                 if (typeof title === 'string' && title.length > 100) {
-                    const truncatedTitle = title.slice(0, 94).replace(/\s+\S*$/, '');
+                    const truncatedTitle = title.slice(0, 94).split(' ').slice(0, -1).join(' ');
                     title = `${truncatedTitle} (...)`;
                 };
                 menuOptions.push({ label: title, value: id });
@@ -418,11 +418,11 @@ async function addTitleTags(title, embed, locale, client) {
  * @returns {Promise<string|null>} - A promise that resolves to the extracted ID if a match is found, or null if no match is found.
  */
 async function getIDfromURL(url) {
-    const primaryMatch = url.match(regexes.primary);
+    const primaryMatch = regexes.primary.exec(url);
     if (primaryMatch) return primaryMatch[1];
-    const semiShortenedMatch = url.match(regexes.semi_shortened);
+    const semiShortenedMatch = regexes.semi_shortened.exec(url);
     if (semiShortenedMatch) return semiShortenedMatch[1];
-    const shortenedMatch = url.match(regexes.shortened);
+    const shortenedMatch = regexes.shortened.exec(url);
     if (shortenedMatch) return shortenedMatch[1];
     return null;
 }

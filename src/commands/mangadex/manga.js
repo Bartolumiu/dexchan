@@ -287,7 +287,7 @@ async function addMangaTags(manga, embed, locale, client) {
     const tagGroups = {
         theme: [],
         genre: [],
-        content_warning: [],
+        content: [],
         format: []
     };
 
@@ -316,7 +316,7 @@ async function addMangaTags(manga, embed, locale, client) {
         },
         {
             name: await client.translate(locale, 'commands', 'manga.response.found.fields[6].name'),
-            value: tagGroups.content_warning.join(', ') || 'N/A',
+            value: tagGroups.content.join(', ') || 'N/A',
             inline: true
         },
     ];

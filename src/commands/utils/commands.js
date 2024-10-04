@@ -8,9 +8,9 @@ module.exports = {
             description: await translateAttribute('commands', 'description')
         }
         return new SlashCommandBuilder()
-        .setName('commands')
-        .setDescription('Get the list of the commands you can use')
-        .setDescriptionLocalizations(localizations.description);
+            .setName('commands')
+            .setDescription('Get the list of the commands you can use')
+            .setDescriptionLocalizations(localizations.description);
     },
     async execute(interaction, client) {
         const userSettings = await client.getMongoUserData(interaction.user);
@@ -41,7 +41,7 @@ module.exports = {
 
             const hasRolePerm = hasRolePermission(permissions, interaction);
             const hasUserPerm = hasUserPermission(permissions, interaction);
-            
+
             return hasRolePerm || hasUserPerm;
         });
 

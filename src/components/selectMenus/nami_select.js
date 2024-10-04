@@ -38,7 +38,7 @@ module.exports = {
             } else {
                 await interaction.editReply({ components: [] });
             }
-            
+
             mockInteraction.commandName = 'nami';
 
             await command.execute(mockInteraction, client);

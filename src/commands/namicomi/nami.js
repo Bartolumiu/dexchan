@@ -311,7 +311,7 @@ async function setImages(title, embed, locale, client) {
     if (!coverURL) return [namiIcon];
 
     // Cover image as the thumbnail
-    const cover = await fetch(coverURL);
+    const cover = await fetch(coverURL, { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 });
     if (!cover.ok) return [namiIcon];
 
     const coverBuffer = await cover.arrayBuffer();
@@ -320,7 +320,7 @@ async function setImages(title, embed, locale, client) {
 
     // Title banner as the image
     const bannerURL = `https://uploads.namicomi.com/media/manga/${title.id}/banner/${title.attributes.bannerFileName}`;
-    const banner = await fetch(bannerURL);
+    const banner = await fetch(bannerURL, { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 });
     if (!banner.ok) return [namiIcon, coverImage];
 
     const bannerBuffer = await banner.arrayBuffer();
@@ -360,7 +360,7 @@ async function addTitleTags(title, embed, locale, client) {
 
     // NamiComi tag list: https://api.namicomi.com/title/tags
     // Fetch the tag list and filter out the tags that are not in the tag list
-    const tagList = await fetch('https://api.namicomi.com/title/tags').then(res => res.ok ? res.json() : null);
+    const tagList = await fetch('https://api.namicomi.com/title/tags', { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 }).then(res => res.ok ? res.json() : null);
     if (!tagList) return;
 
     // Filter out the tag IDs that are not in the tag list
@@ -457,7 +457,7 @@ async function getCoverURL(title, locale) {
 
     // Fetch all cover arts in parallel
     const coverArtPromises = coverArtRelationships.map(async rel => {
-        return await fetch(`https://api.namicomi.com/cover/${rel.id}`).then(res => res.ok ? res.json() : null);
+        return await fetch(`https://api.namicomi.com/cover/${rel.id}`, { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 }).then(res => res.ok ? res.json() : null);
     });
 
     // Resolve all promises and filter out the ones that are not ok
@@ -487,7 +487,7 @@ async function getTitle(titleID) {
     url.searchParams.append('includes[]', 'cover_art');
     url.searchParams.append('includes[]', 'tag');
 
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 });
     if (!response.ok) return null;
     const data = await response.json();
 
@@ -506,7 +506,7 @@ async function getStats(titleID) {
     const ratingsURL = new URL(`https://api.namicomi.com/title/${titleID}/rating`);
     const statsURL = new URL(`https://api.namicomi.com/statistics/title/${titleID}`);
 
-    const [ratingsResponse, statsResponse] = await Promise.all([fetch(ratingsURL), fetch(statsURL)]);
+    const [ratingsResponse, statsResponse] = await Promise.all([fetch(ratingsURL, { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 }), fetch(statsURL, { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 })]);
     if (!ratingsResponse.ok || !statsResponse.ok) return null;
     const [ratingsData, statsData] = await Promise.all([ratingsResponse.json(), statsResponse.json()]);
 
@@ -564,7 +564,7 @@ async function searchTitle(query, locale) {
     url.searchParams.append('contentRatings[]', 'mature');
     url.searchParams.append('contentRatings[]', 'restricted');
 
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 });
     if (!response.ok) return null;
     const data = await response.json();
 

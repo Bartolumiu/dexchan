@@ -254,7 +254,7 @@ async function setImages(manga, embed, locale, client) {
     const coverURL = await getCoverURL(manga);
     if (!coverURL) return [mangadexIcon];
 
-    const cover = await fetch(coverURL);
+    const cover = await fetch(coverURL, { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 });
     if (!cover.ok) return [mangadexIcon];
 
     const coverBuffer = await cover.arrayBuffer();
@@ -361,7 +361,7 @@ async function getCoverURL(manga) {
     const coverArtID = manga.relationships.find(rel => rel.type === 'cover_art').id;
 
     const url = new URL(`https://api.mangadex.org/cover/${coverArtID}`);
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 });
     if (!response.ok) return null;
     const data = await response.json();
     const fileName = data.data.attributes.fileName;
@@ -382,7 +382,7 @@ async function getManga(mangaID) {
     url.searchParams.append('includes[]', 'cover_art');
     url.searchParams.append('includes[]', 'tag');
 
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 });
     if (!response.ok) return null;
     const data = await response.json();
 
@@ -400,7 +400,7 @@ async function getManga(mangaID) {
 async function getStats(mangaID) {
     const url = new URL(`https://api.mangadex.org/statistics/manga/${mangaID}`);
 
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 });
     if (!response.ok) return null;
     const data = await response.json();
 
@@ -441,7 +441,7 @@ async function searchManga(query) {
     url.searchParams.append('contentRating[]', 'erotica');
     url.searchParams.append('contentRating[]', 'pornographic');
 
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${process.version} by Bartolumiu` }, timeout: 5000 });
     if (!response.ok) return null;
     const data = await response.json();
 

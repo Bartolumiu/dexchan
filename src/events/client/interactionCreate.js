@@ -3,9 +3,9 @@ const { EmbedBuilder, Colors } = require('discord.js');
 module.exports = {
     name: 'interactionCreate',
     async execute(interaction, client) {
-        const locale = interaction.locale;
+        const locale = client.getMongoUserData(interaction.user) || interaction.locale;
 
-        const {errorEmbed, errorStack} = await createErrorEmbed(client, locale);
+        const { errorEmbed, errorStack } = await createErrorEmbed(client, locale);
         const embeds = [errorEmbed, errorStack];
 
         try {
@@ -33,25 +33,26 @@ module.exports = {
                     break;
             }
         } catch (e) {
-            console.error(e);
-            await interaction.reply({ embeds: embeds, ephemeral: true });
+            // Check if the interaction has already been replied to
+            if (interaction.replied || interaction.deferred) await interaction.followUp({ embeds: embeds, ephemeral: true });
+            else await interaction.reply({ embeds: embeds, ephemeral: true });
         }
     }
 };
 
 async function createErrorEmbed(client, locale) {
-    const errorTitle = await client.translate(locale, 'error_embed', 'title') || await client.translate('en', 'error_embed', 'title');
-    const errorDescription = await client.translate(locale, 'error_embed', 'description') || await client.translate('en', 'error_embed', 'description');
-    const errorStack = await client.translate(locale, 'error_embed', 'stack') || await client.translate('en', 'error_embed', 'stack');
+    const errorTitle = await client.translate(locale, 'error_embed', 'title');
+    const errorDescription = await client.translate(locale, 'error_embed', 'description');
+    const errorStack = await client.translate(locale, 'error_embed', 'stack');
 
     return {
         errorEmbed: new EmbedBuilder()
-        .setTitle(errorTitle)
-        .setDescription(errorDescription)
-        .setColor(Colors.Red),
+            .setTitle(errorTitle)
+            .setDescription(errorDescription)
+            .setColor(Colors.Red),
         errorStack: new EmbedBuilder()
-        .setTitle(errorStack)
-        .setColor(Colors.Red)
+            .setTitle(errorStack)
+            .setColor(Colors.Red)
     }
 }
 
@@ -66,17 +67,20 @@ async function handleInteraction(interaction, collection, id, errorType, embeds,
             await item.execute(interaction, client);
         }
     } catch (e) {
-        console.error(e);
-        await updateErrorEmbed(client, interaction, e, errorType, id, embeds[0], embeds[1]);
-        throw e;
+        if (e.code === 'ECONNABORTED' || e.message.toLowerCase().includes('timeout') || e.stack.toLowerCase().includes('timeout')) await errorTimeout(client, interaction, e, errorType, id, embeds[0], embeds[1]);
+        else {
+            await updateErrorEmbed(client, interaction, e, errorType, id, embeds[0], embeds[1]);
+            throw e;
+        }
+        throw new Error();
     }
 }
 
 async function updateErrorEmbed(client, interaction, error, errorType, id, errorEmbed, errorStack) {
-    const locale = interaction.locale;
+    const locale = client.getMongoUserData(interaction.user) || interaction.locale;
     const replacements = { commandName: `/${id}`, buttonId: id, selectId: id, contextId: id, modalId: id };
-    const error_message = await client.translate(locale, 'error_embed', 'message') || await client.translate('en', 'error_embed', 'message');
-    const footer = await client.translate(locale, 'error_embed', `${errorType}`, replacements) || await client.translate('en', 'error_embed', `${errorType}`, replacements);
+    const error_message = await client.translate(locale, 'error_embed', 'message');
+    const footer = await client.translate(locale, 'error_embed', `${errorType}`, replacements);
 
     errorEmbed.addFields(
         { name: error_message, value: error.message }
@@ -85,4 +89,18 @@ async function updateErrorEmbed(client, interaction, error, errorType, id, error
 
     errorStack.setDescription(error.stack);
     errorStack.setFooter({ text: `${errorType.toUpperCase()} - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
+}
+
+async function errorTimeout(client, interaction, error, errorType, id, errorEmbed, errorStack) {
+    const locale = client.getMongoUserData(interaction.user) || interaction.locale;
+    const replacements = { commandName: `/${id}`, buttonId: id, selectId: id, contextId: id, modalId: id };
+    const footer = await client.translate(locale, 'error_embed', `${errorType}`, replacements);
+
+    errorEmbed.setTitle(await client.translate(locale, 'error_embed', 'timeout.title'));
+    errorEmbed.setDescription(await client.translate(locale, 'error_embed', 'timeout.description'));
+    errorEmbed.setFooter({ text: `ERR_TIMEOUT - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
+
+    errorStack.setTitle(await client.translate(locale, 'error_embed', 'no_stack'));
+    errorStack.setDescription(await client.translate(locale, 'error_embed', 'timeout.note'));
+    errorStack.setFooter({ text: `ERR_TIMEOUT - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
 }

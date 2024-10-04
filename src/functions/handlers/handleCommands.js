@@ -42,7 +42,7 @@ module.exports = (client) => {
             // File processing
             await handleFiles(commandFiles, folder, commands, globalCommandList, guildCommandMap, chalk);
         };
-        
+
         // Register commands
         await refreshCommands(globalCommandList, guildCommandMap, chalk);
     };

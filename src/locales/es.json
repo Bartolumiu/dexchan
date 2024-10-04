@@ -441,6 +441,7 @@
     "error_embed": {
         "title": "Error",
         "description": "Ha ocurrido un error al ejecutar este comando, a continuación se muestra el mensaje de error. Por favor, informa de esto al desarrollador del bot. ¡Gracias!",
+        "external_timeout": "Se ha agotado el tiempo de espera al obtener datos de una API externa. Por favor, vuelve a intentarlo más tarde.",
         "message": "Mensaje de error",
         "stack": "Pila del error",
         "err_int_ch_input": "Error en el comando %commandName%",

@@ -32,57 +32,99 @@ module.exports = (client) => {
 
         const commandFolders = readdirSync('./src/commands');
 
-        const clientID = `${process.env.clientID}`;
-        const rest = new REST({ version: '10' }).setToken(process.env.token);
-
         const globalCommandList = [];
         const guildCommandMap = new Map();
 
         // Folder processing
         for (const folder of commandFolders) {
             const commandFiles = readdirSync(`./src/commands/${folder}`).filter(file => file.endsWith('.js'));
-            for (const file of commandFiles) {
-                try {
-                    const command = require(`../../commands/${folder}/${file}`);
 
-                    if (command.data) {
-                        if (typeof command.data === 'function') {
-                            command.data = await command.data();
-                        }
-                        commands.set(command.data.name, command);
-
-                        if (command.global) {
-                            globalCommandList.push(command.data.toJSON());
-                            console.log(chalk.greenBright(`[Command Handler] Global command /${command.data.name} loaded.`) + ` (${commandFiles.indexOf(file) + 1}/${commandFiles.length}) | (${commandFolders.indexOf(folder) + 1}/${commandFolders.length})`);
-                        } else if (command.guildID) {
-                            if (!guildCommandMap.has(command.guildID)) {
-                                guildCommandMap.set(command.guildID, []);
-                            }
-                            guildCommandMap.get(command.guildID).push(command.data.toJSON());
-                            console.log(chalk.greenBright(`[Command Handler] Guild command /${command.data.name} loaded for guild ${command.guildID}.`) + ` (${commandFiles.indexOf(file) + 1}/${commandFiles.length}) | (${commandFolders.indexOf(folder) + 1}/${commandFolders.length})`);
-                        } else {
-                            console.warn(chalk.yellowBright(`[Command Handler] Command /${command.data.name} does not have a guildID set and is not marked as global. Skipping.`));
-                        }
-                    } else {
-                        console.warn(chalk.yellowBright(`[Command Handler] Command file ${file} in ${folder} does not have a data property. Skipping.`));
-                    }
-                } catch (e) {
-                    console.error(chalk.redBright(`[Command Handler] Error requiring ${file} in ${folder}: ${e.message}`));
-                }
-            }
+            // File processing
+            await handleFiles(commandFiles, folder, commands, globalCommandList, guildCommandMap, chalk);
         };
-        try {
-            console.log(chalk.gray('[Command Handler] Started refreshing global application (/) commands.'));
-            await rest.put(Routes.applicationCommands(clientID), { body: globalCommandList });
-
-            for (const [guildID, commands] of guildCommandMap) {
-                console.log(chalk.gray(`[Command Handler] Started refreshing guild (/) commands for guild ${guildID}.`));
-                await rest.put(Routes.applicationGuildCommands(clientID, guildID), { body: commands });
-            }
-
-            console.log(chalk.greenBright('[Command Handler] Successfully reloaded application (/) commands.'));
-        } catch (e) {
-            console.error(chalk.redBright('[Command Handler] Failed to reload application (/) commands.'), e);
-        }
+        
+        // Register commands
+        await refreshCommands(globalCommandList, guildCommandMap, chalk);
     };
 };
+
+/**
+ * Refreshes the global and guild-specific application (/) commands.
+ *
+ * @param {Array} globalCommandList - The list of global commands to be registered.
+ * @param {Map} guildCommandMap - A map where the key is the guild ID and the value is the list of commands for that guild.
+ * @param {Object} chalk - The chalk instance for colored console output.
+ * @returns {Promise<void>} - A promise that resolves when the commands have been refreshed.
+ */
+async function refreshCommands(globalCommandList, guildCommandMap, chalk) {
+    const clientID = `${process.env.clientID}`;
+    const rest = new REST({ version: '10' }).setToken(process.env.token);
+    try {
+        console.log(chalk.gray('[Command Handler] Started refreshing global application (/) commands.'));
+        await rest.put(Routes.applicationCommands(clientID), { body: globalCommandList });
+
+        for (const [guildID, commands] of guildCommandMap) {
+            console.log(chalk.gray(`[Command Handler] Started refreshing guild (/) commands for guild ${guildID}.`));
+            await rest.put(Routes.applicationGuildCommands(clientID, guildID), { body: commands });
+        }
+
+        console.log(chalk.greenBright('[Command Handler] Successfully reloaded application (/) commands.'));
+    } catch (e) {
+        console.error(chalk.redBright('[Command Handler] Failed to reload application (/) commands.'), e);
+    }
+}
+
+/**
+ * Handles the loading of command files.
+ *
+ * @async
+ * @function handleFiles
+ * @param {string[]} commandFiles - An array of command file names to be loaded.
+ * @param {string} folder - The folder containing the command files.
+ * @param {Map} commands - The map of all commands.
+ * @param {Array} globalCommandList - The list of global commands.
+ * @param {Map} guildCommandMap - The map of guild-specific commands.
+ * @param {import('chalk').ChalkInstance} chalk - The chalk instance for colorized console
+ * @returns {Promise<void>} - A promise that resolves when all command files have been processed.
+ * @throws {Error} - Throws an error if there is an issue requiring a command file.
+ */
+async function handleFiles(commandFiles, folder, commands, globalCommandList, guildCommandMap, chalk) {
+    for (const file of commandFiles) {
+        try {
+            const command = require(`../../commands/${folder}/${file}`);
+            if (command.data) await loadCommand(command, commands, globalCommandList, guildCommandMap, chalk);
+            else console.warn(chalk.yellowBright(`[Command Handler] Command file ${file} in ${folder} does not have a data property. Skipping.`));
+        } catch (e) {
+            console.error(chalk.redBright(`[Command Handler] Error requiring ${file} in ${folder}: ${e.message}`));
+        }
+    }
+}
+
+
+/**
+ * Loads a command into the appropriate command list and logs the action.
+ *
+ * @param {Object} command - The command object to be loaded.
+ * @param {Map} commands - The map of all commands.
+ * @param {Array} globalCommandList - The list of global commands.
+ * @param {Map} guildCommandMap - The map of guild-specific commands.
+ * @param {import('chalk').ChalkInstance} chalk - The chalk instance for colorized console
+ * @returns {Promise<void>} - A promise that resolves when the command is loaded.
+ */
+async function loadCommand(command, commands, globalCommandList, guildCommandMap, chalk) {
+    if (typeof command.data === 'function') command.data = await command.data();
+    commands.set(command.data.name, command);
+
+    if (command.global) {
+        globalCommandList.push(command.data.toJSON());
+        console.log(chalk.greenBright(`[Command Handler] Global command /${command.data.name} loaded.`));
+    } else if (command.guildID) {
+        if (!guildCommandMap.has(command.guildID)) {
+            guildCommandMap.set(command.guildID, []);
+        }
+        guildCommandMap.get(command.guildID).push(command.data.toJSON());
+        console.log(chalk.greenBright(`[Command Handler] Guild command /${command.data.name} loaded for guild ${command.guildID}.`));
+    } else {
+        console.warn(chalk.yellowBright(`[Command Handler] Command /${command.data.name} does not have a guildID set and is not marked as global. Skipping.`));
+    }
+}

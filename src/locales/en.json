@@ -1,4 +1,10 @@
 {
+    "locale": {
+        "name": "English",
+        "english": "English",
+        "flag": "🇬🇧",
+        "code": "en"
+    },
     "commands": {
         "ping": {
             "name": "ping",

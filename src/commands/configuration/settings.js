@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors } = require("discord.js");
 const translateAttribute = require('../../functions/handlers/translateAttribute');
+const fs = require('fs');
 
 module.exports = {
     global: true,
@@ -44,6 +45,7 @@ module.exports = {
                                 option.setName('locale')
                                     .setDescription('The language you want to set as your preferred language')
                                     .setDescriptionLocalizations(localizations.subcommand_groups[0].subcommands[0].options[0].description)
+                                    .setAutocomplete(true)
                                     .setRequired(true)
                             )
                     )
@@ -70,7 +72,35 @@ module.exports = {
 
         embed.setFooter({ text: await client.translate((userProfile.preferredLocale || interaction.locale), 'commands', 'settings.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username }), iconURL: interaction.user.displayAvatarURL({ dynamic: true }) });
         interaction.reply({ embeds: [embed], ephemeral: true });
+    },
+    async autocomplete(interaction) {
+        const subcommandGroup = interaction.options.getSubcommandGroup().toLowerCase();
+        const subcommand = interaction.options.getSubcommand().toLowerCase();
+
+        if (subcommandGroup === 'locale' && subcommand === 'set') {
+            const locales = await getLocaleList(interaction);
+            return interaction.respond(locales);
+        }
     }
+}
+
+async function getLocaleList(interaction) {
+    // Current working directory for fs
+    //process.chdir('./src');
+    console.log(process.cwd());
+    // Get locale files
+    const files = fs.readdirSync(__dirname+'/../../locales').filter(file => file.endsWith('.json'));
+    const locales = files.map(file => file.split('.')[0]);
+    // Read locale files and get the locale name
+    const localeList = locales.map(locale => {
+        const localeData = require(__dirname+`/../../locales/${locale}.json`);
+        return {
+            name: `${localeData.locale.name} (${localeData.locale.code})`,
+            value: localeData.locale.code
+        }
+    });
+
+    return localeList;
 }
 
 /**

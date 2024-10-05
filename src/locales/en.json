@@ -1,4 +1,10 @@
 {
+    "locale": {
+        "name": "English",
+        "english": "English",
+        "flag": "🇬🇧",
+        "code": "en"
+    },
     "commands": {
         "ping": {
             "name": "ping",
@@ -437,12 +443,18 @@
         "description": "An error occurred while executing this command, below is the error message. Please report this to the bot developer. Thank you!",
         "message": "Error message",
         "stack": "Error stack trace",
+        "no_stack": "No stack trace available",
         "err_int_ch_input": "Error in command %commandName%",
         "err_int_btn": "Error in button %buttonId%",
         "err_int_slct": "Error in select menu %selectId%",
         "err_int_ctx": "Error in context command %contextId%",
         "err_int_mod": "Error in modal %modalId%",
-        "err_int_aut": "Error in autocomplete %autocompleteId%"
+        "err_int_aut": "Error in autocomplete %autocompleteId%",
+        "timeout": {
+            "title": "Timeout",
+            "description": "A timeout occured while fetching data from an external API. Please try again later.",
+            "note": "This error is usually caused by the external API being slow or unresponsive."
+        }
     },
     "errors": {
         "working_on_cmd": {

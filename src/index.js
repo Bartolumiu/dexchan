@@ -26,12 +26,13 @@ for (const folder of functionFolders) {
         try {
             const func = require(`./functions/${folder}/${file}`);
             if (typeof func === 'function') {
+                if (func.name === 'checkUpdates') continue; // Skip checkUpdates function
                 func(client);
             } else {
                 console.error(`Error: ${file} in ${folder} is not exporting a function.`);
             }
         } catch (e) {
-            console.error(`error requiring ${file} in ${folder}: ${e}`);
+            console.error(`Error requiring ${file} in ${folder}: ${e}`);
         }
     }
 }
@@ -42,8 +43,9 @@ client.handleComponents();
 client.handleLocales();
 
 // Connect to MongoDB and login to Discord
-client.login(token);
-client.guilds.fetch(); // Cache all guilds
-(async () => {
+client.login(token).then(async () => {
     await connect(dbToken).catch(console.error);
-})();
+    client.guilds.fetch(); // Cache all guilds
+}).catch(e => {
+    console.error('[Discord] Failed to login:', e);
+});

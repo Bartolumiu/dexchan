@@ -1,10 +1,10 @@
 {
     "name": "dex-chan",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "description": "Discord bot for the MangaDex ES server.",
     "main": "src/index.js",
     "scripts": {
-        "test": "node .",
+        "test": "echo Hi there! && exit 0",
         "update": "npm update --save"
     },
     "keywords": [
@@ -15,10 +15,11 @@
     "author": "Bartolumiu",
     "license": "GPL-3.0",
     "dependencies": {
-        "@discordjs/rest": "^2.3.0",
+        "@discordjs/rest": "^2.4.0",
+        "axios": "^1.7.7",
         "chalk": "^5.3.0",
-        "discord.js": "^14.15.3",
+        "discord.js": "^14.16.3",
         "dotenv": "^16.4.5",
-        "mongoose": "^8.5.3"
+        "mongoose": "^8.7.0"
     }
 }

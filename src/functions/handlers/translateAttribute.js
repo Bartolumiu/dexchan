@@ -34,7 +34,7 @@ const translateAttribute = async (command, attribute) => {
 
     for (const locale in discordLocales) {
         const translation = await translate(discordLocales[locale], 'commands', `${command}.${attribute}`);
-        
+
         // If translation is available, add it to the map
         if (translation) {
             translations[discordLocales[locale]] = translation;
@@ -54,7 +54,7 @@ const translateAttribute = async (command, attribute) => {
  * @param {Object} [replacements={}] - An object containing placeholder replacements for the translation.
  * @returns {Promise<string|null>} - The translated string with placeholders replaced, or null if translation is not found.
  */
-const translate = async (locale, category, key, replacements = {} ) => {
+const translate = async (locale, category, key, replacements = {}) => {
     // Use mapped parent language if available
     locale = languageMap[locale] || locale;
 
@@ -66,7 +66,7 @@ const translate = async (locale, category, key, replacements = {} ) => {
     if (!categoryTranslations) return null;
 
     // Retrieve the nested translation
-    const translation = await getNestedTranslation(categoryTranslations, key.split(/\.|\[/));
+    const translation = await getNestedTranslation(categoryTranslations, key.split(/[.[/]/));
     if (!translation) return null;
 
     // Replace placeholders
@@ -87,7 +87,7 @@ const translate = async (locale, category, key, replacements = {} ) => {
 const getNestedTranslation = async (translations, nestedKeys) => {
     return nestedKeys.reduce((translation, key) => {
         if (!translation) return null;
-        const trimmedKey = key.replace(']', '');
+        const trimmedKey = key.replace(/\]/g, '');
         return Array.isArray(translation) ? translation[parseInt(trimmedKey)] : translation[trimmedKey];
     }, translations);
 }

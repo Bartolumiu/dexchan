@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require("discord.js");
 const translateAttribute = require('../../functions/handlers/translateAttribute');
 const path = require('path');
-
+let version = require('../../../package.json').version;
 
 /**
  * An object containing regular expression components for matching MangaDex URLs.
@@ -111,7 +111,7 @@ module.exports = {
             const fields = Array.from(searchResults, ([title, id]) => {
                 if (typeof title !== 'string' || typeof id !== 'string') return null;
                 if (title.length > 256) {
-                    const truncatedTitle = title.slice(0, 250).replace(/\s+\S*$/, '');
+                    const truncatedTitle = title.slice(0, 250).split(' ').slice(0, -1).join(' ');
                     title = `${truncatedTitle} (...)`;
                 }
 
@@ -127,7 +127,7 @@ module.exports = {
             let menuOptions = [];
             searchResults.forEach((id, title) => {
                 if (title.length > 100) {
-                    const truncatedTitle = title.slice(0, 94).replace(/\s+\S*$/, '');
+                    const truncatedTitle = title.slice(0, 94).split(' ').slice(0, -1).join(' ');
                     title = `${truncatedTitle} (...)`;
                 };
                 menuOptions.push({ label: title, value: id });
@@ -254,7 +254,7 @@ async function setImages(manga, embed, locale, client) {
     const coverURL = await getCoverURL(manga);
     if (!coverURL) return [mangadexIcon];
 
-    const cover = await fetch(coverURL);
+    const cover = await fetch(coverURL, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
     if (!cover.ok) return [mangadexIcon];
 
     const coverBuffer = await cover.arrayBuffer();
@@ -287,7 +287,7 @@ async function addMangaTags(manga, embed, locale, client) {
     const tagGroups = {
         theme: [],
         genre: [],
-        content_warning: [],
+        content: [],
         format: []
     };
 
@@ -316,7 +316,7 @@ async function addMangaTags(manga, embed, locale, client) {
         },
         {
             name: await client.translate(locale, 'commands', 'manga.response.found.fields[6].name'),
-            value: tagGroups.content_warning.join(', ') || 'N/A',
+            value: tagGroups.content.join(', ') || 'N/A',
             inline: true
         },
     ];
@@ -332,7 +332,7 @@ async function addMangaTags(manga, embed, locale, client) {
  */
 async function getIDfromURL(url) {
     url = url.split('?')[0].split('/').slice(0, 5).join('/');
-    const match = url.match(urlRegex);
+    const match = urlRegex.exec(url);
     return (match) ? match[1] : null;
 }
 
@@ -361,7 +361,7 @@ async function getCoverURL(manga) {
     const coverArtID = manga.relationships.find(rel => rel.type === 'cover_art').id;
 
     const url = new URL(`https://api.mangadex.org/cover/${coverArtID}`);
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
     if (!response.ok) return null;
     const data = await response.json();
     const fileName = data.data.attributes.fileName;
@@ -382,7 +382,7 @@ async function getManga(mangaID) {
     url.searchParams.append('includes[]', 'cover_art');
     url.searchParams.append('includes[]', 'tag');
 
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
     if (!response.ok) return null;
     const data = await response.json();
 
@@ -400,7 +400,7 @@ async function getManga(mangaID) {
 async function getStats(mangaID) {
     const url = new URL(`https://api.mangadex.org/statistics/manga/${mangaID}`);
 
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
     if (!response.ok) return null;
     const data = await response.json();
 
@@ -441,7 +441,7 @@ async function searchManga(query) {
     url.searchParams.append('contentRating[]', 'erotica');
     url.searchParams.append('contentRating[]', 'pornographic');
 
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
     if (!response.ok) return null;
     const data = await response.json();
 

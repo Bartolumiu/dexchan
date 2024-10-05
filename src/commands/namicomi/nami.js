@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require('discord.js');
 const translateAttribute = require('../../functions/handlers/translateAttribute');
 const path = require('path');
+let version = require('../../../package.json').version;
 
 /**
  * An object containing regular expression components for matching various parts of a URL.
@@ -132,7 +133,7 @@ module.exports = {
             const fields = Array.from(searchResults, ([title, id]) => {
                 if (typeof title !== 'string' || typeof id !== 'string') return null;
                 if (title.length > 256) {
-                    const truncatedTitle = title.slice(0, 250).replace(/\s+\S*$/, '');
+                    const truncatedTitle = title.slice(0, 250).split(' ').slice(0, -1).join(' ');
                     title = `${truncatedTitle} (...)`;
                 }
 
@@ -148,7 +149,7 @@ module.exports = {
             let menuOptions = [];
             searchResults.forEach((id, title) => {
                 if (typeof title === 'string' && title.length > 100) {
-                    const truncatedTitle = title.slice(0, 94).replace(/\s+\S*$/, '');
+                    const truncatedTitle = title.slice(0, 94).split(' ').slice(0, -1).join(' ');
                     title = `${truncatedTitle} (...)`;
                 };
                 menuOptions.push({ label: title, value: id });
@@ -311,7 +312,7 @@ async function setImages(title, embed, locale, client) {
     if (!coverURL) return [namiIcon];
 
     // Cover image as the thumbnail
-    const cover = await fetch(coverURL);
+    const cover = await fetch(coverURL, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
     if (!cover.ok) return [namiIcon];
 
     const coverBuffer = await cover.arrayBuffer();
@@ -320,7 +321,7 @@ async function setImages(title, embed, locale, client) {
 
     // Title banner as the image
     const bannerURL = `https://uploads.namicomi.com/media/manga/${title.id}/banner/${title.attributes.bannerFileName}`;
-    const banner = await fetch(bannerURL);
+    const banner = await fetch(bannerURL, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
     if (!banner.ok) return [namiIcon, coverImage];
 
     const bannerBuffer = await banner.arrayBuffer();
@@ -360,7 +361,7 @@ async function addTitleTags(title, embed, locale, client) {
 
     // NamiComi tag list: https://api.namicomi.com/title/tags
     // Fetch the tag list and filter out the tags that are not in the tag list
-    const tagList = await fetch('https://api.namicomi.com/title/tags').then(res => res.ok ? res.json() : null);
+    const tagList = await fetch('https://api.namicomi.com/title/tags', { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 }).then(res => res.ok ? res.json() : null);
     if (!tagList) return;
 
     // Filter out the tag IDs that are not in the tag list
@@ -418,11 +419,11 @@ async function addTitleTags(title, embed, locale, client) {
  * @returns {Promise<string|null>} - A promise that resolves to the extracted ID if a match is found, or null if no match is found.
  */
 async function getIDfromURL(url) {
-    const primaryMatch = url.match(regexes.primary);
+    const primaryMatch = regexes.primary.exec(url);
     if (primaryMatch) return primaryMatch[1];
-    const semiShortenedMatch = url.match(regexes.semi_shortened);
+    const semiShortenedMatch = regexes.semi_shortened.exec(url);
     if (semiShortenedMatch) return semiShortenedMatch[1];
-    const shortenedMatch = url.match(regexes.shortened);
+    const shortenedMatch = regexes.shortened.exec(url);
     if (shortenedMatch) return shortenedMatch[1];
     return null;
 }
@@ -457,7 +458,7 @@ async function getCoverURL(title, locale) {
 
     // Fetch all cover arts in parallel
     const coverArtPromises = coverArtRelationships.map(async rel => {
-        return await fetch(`https://api.namicomi.com/cover/${rel.id}`).then(res => res.ok ? res.json() : null);
+        return await fetch(`https://api.namicomi.com/cover/${rel.id}`, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 }).then(res => res.ok ? res.json() : null);
     });
 
     // Resolve all promises and filter out the ones that are not ok
@@ -487,7 +488,7 @@ async function getTitle(titleID) {
     url.searchParams.append('includes[]', 'cover_art');
     url.searchParams.append('includes[]', 'tag');
 
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
     if (!response.ok) return null;
     const data = await response.json();
 
@@ -506,7 +507,7 @@ async function getStats(titleID) {
     const ratingsURL = new URL(`https://api.namicomi.com/title/${titleID}/rating`);
     const statsURL = new URL(`https://api.namicomi.com/statistics/title/${titleID}`);
 
-    const [ratingsResponse, statsResponse] = await Promise.all([fetch(ratingsURL), fetch(statsURL)]);
+    const [ratingsResponse, statsResponse] = await Promise.all([fetch(ratingsURL, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 }), fetch(statsURL, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 })]);
     if (!ratingsResponse.ok || !statsResponse.ok) return null;
     const [ratingsData, statsData] = await Promise.all([ratingsResponse.json(), statsResponse.json()]);
 
@@ -564,7 +565,7 @@ async function searchTitle(query, locale) {
     url.searchParams.append('contentRatings[]', 'mature');
     url.searchParams.append('contentRatings[]', 'restricted');
 
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
     if (!response.ok) return null;
     const data = await response.json();
 

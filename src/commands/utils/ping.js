@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors } = require('discord.js');
 const translateAttribute = require('../../functions/handlers/translateAttribute');
+let version = require('../../../package.json').version;
 const https = require('https');
 
 module.exports = {
@@ -45,7 +46,7 @@ module.exports = {
         try {
             const mdPing = await new Promise((resolve, reject) => {
                 const start = Date.now();
-                https.get('https://api.mangadex.org/ping', (res) => {
+                https.get('https://api.mangadex.org/ping', { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` } }, (res) => {
                     res.on('data', () => { });
                     res.on('end', () => {
                         resolve(Date.now() - start);
@@ -57,7 +58,7 @@ module.exports = {
 
             const namiPing = await new Promise((resolve, reject) => {
                 const start = Date.now();
-                https.get('https://api.namicomi.com/ping', (res) => {
+                https.get('https://api.namicomi.com/ping', { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` } }, (res) => {
                     res.on('data', () => { });
                     res.on('end', () => {
                         resolve(Date.now() - start);

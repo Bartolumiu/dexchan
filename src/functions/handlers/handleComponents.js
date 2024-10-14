@@ -59,7 +59,7 @@ async function loadComponents(collection, folder, componentFiles) {
             const component = require(filePath);
             collection.set(component.data.customId, component);
 
-            console.log(chalk.greenBright(`[Component Handler] Component ${component.data.customId} loaded.`));
+            console.log(chalk.greenBright(`[Component Handler] Component ${component.data.customId} loaded from ${file} in ${folder}.`));
         } catch (e) {
             console.error(chalk.redBright(`[Component Handler] Error loading ${file} in ${folder}: ${e.message}`));
         }

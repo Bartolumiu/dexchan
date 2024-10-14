@@ -85,9 +85,6 @@ module.exports = {
 }
 
 async function getLocaleList(interaction) {
-    // Current working directory for fs
-    //process.chdir('./src');
-    console.log(process.cwd());
     // Get locale files
     const files = fs.readdirSync(__dirname+'/../../locales').filter(file => file.endsWith('.json'));
     const locales = files.map(file => file.split('.')[0]);
@@ -100,7 +97,11 @@ async function getLocaleList(interaction) {
         }
     });
 
-    return localeList;
+    // Filter locales based on the user's input
+    if (interaction.options.getString('locale')) {
+        const input = interaction.options.getString('locale').toLowerCase();
+        return localeList.filter(locale => locale.name.toLowerCase().includes(input) || locale.value.toLowerCase().includes(input));
+    } else return localeList;
 }
 
 /**

@@ -226,7 +226,8 @@
                         "cancelled": "Cancelado"
                     },
                     "no_description": "No hay descripción disponible.",
-                    "open_button": "Abrir en MangaDex"
+                    "open_button": "Abrir en MangaDex",
+                    "stats_button": "Ver Estadísticas"
                 },
                 "query": {
                     "title": "Resultados de la Búsqueda",
@@ -238,6 +239,39 @@
                         }
                     ],
                     "placeholder": "Selecciona un manga para ver más información..."
+                },
+                "stats": {
+                    "title": "Estadísticas del Manga",
+                    "description": "Aquí están las estadísticas para el manga con la ID `%mangaId%`.",
+                    "fields": [
+                        {
+                            "name": "Valoración Media",
+                            "value": "%rating%"
+                        },
+                        {
+                            "name": "Valoración Bayesiana",
+                            "value": "%bayesian%"
+                        },
+                        {
+                            "name": "Seguidores",
+                            "value": "%follows%"
+                        },
+                        {
+                            "name": "Distribución de Valoraciones",
+                            "value": "%ratingDistribution%"
+                        },
+                        {
+                            "name": "Comentarios",
+                            "value": "%comments%"
+                        }
+                    ],
+                    "units": {
+                        "votes": "valoraciones",
+                        "comments": "comentarios"
+                    },
+                    "buttons": {
+                        "forum": "Abrir el hilo del foro",
+                    }
                 },
                 "error": {
                     "title": "Error",
@@ -338,7 +372,8 @@
                         "cancelled": "Cancelado"
                     },
                     "no_description": "No hay descripción disponible.",
-                    "open_button": "Abrir en NamiComi"
+                    "open_button": "Abrir en NamiComi",
+                    "stats_button": "Ver Estadísticas"
                 },
                 "query": {
                     "title": "Resultados de la Búsqueda",
@@ -350,6 +385,46 @@
                         }
                     ],
                     "placeholder": "Selecciona un título para ver más información..."
+                },
+                "stats": {
+                    "title": "Estadísticas del Título",
+                    "description": "Aquí están las estadísticas para el título con la ID `%titleId%`.",
+                    "fields": [
+                        {
+                            "name": "Valoraciones",
+                            "value": "%ratings%"
+                        },
+                        {
+                            "name": "Visualizaciones",
+                            "value": "%views%"
+                        },
+                        {
+                            "name": "Seguidores",
+                            "value": "%follows%"
+                        },
+                        {
+                            "name": "Comentarios",
+                            "value": "%comments%"
+                        },
+                        {
+                            "name": "Visualizaciones de Capítulos",
+                            "value": "%chapterViews%"
+                        },
+                        {
+                            "name": "Comentarios de Capítulos",
+                            "value": "%chapterComments%"
+                        },
+                        {
+                            "name": "Reacciones de Capítulos",
+                            "value": "%chapterReactions%"
+                        }
+                    ],
+                    "units": {
+                        "votes": "valoraciones",
+                        "views": "visualizaciones",
+                        "comments": "comentarios",
+                        "reactions": "reacciones"
+                    }
                 },
                 "error": {
                     "title": "Error",
@@ -449,7 +524,12 @@
         "err_int_slct": "Error en el menú de selección %selectId%",
         "err_int_ctx": "Error en el comando de contexto %contextId%",
         "err_int_mod": "Error en el modal %modalId%",
-        "err_int_aut": "Error en la autocompletación %autocompleteId%"
+        "err_int_aut": "Error en la autocompletación %autocompleteId%",
+        "timeout": {
+            "title": "Timeout",
+            "description": "Se ha agotado el tiempo de espera al obtener los datos desde la API externa. Por favor, inténtalo de nuevo más tarde.",
+            "note": "Este error puede deberse a la API externa siendo lenta o no respondiendo."
+        }
     },
     "errors": {
         "working_on_cmd": {

@@ -153,15 +153,20 @@ module.exports = {
         await buildMangaEmbed(embed, client, locale, manga, stats);
         const attachments = await setImages(manga, embed, locale, client);
 
-        const open_button = new ActionRowBuilder().addComponents(
+        const buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setLabel(await client.translate(locale, 'commands', 'manga.response.found.open_button'))
                 .setURL(urlFormats.primary.replace('{id}', manga.id).replace('{title}', ''))
-                .setStyle(ButtonStyle.Link)
-        )
+                .setStyle(ButtonStyle.Link),
+            new ButtonBuilder()
+                .setLabel(await client.translate(locale, 'commands', 'manga.response.found.stats_button'))
+                .setCustomId(`mangadex_stats_${manga.id}`)
+                .setStyle(ButtonStyle.Secondary)
+                .setEmoji('📊')
+        );
 
-        if (interaction.type === 3) return interaction.reply({ embeds: [embed], files: attachments, components: [open_button] });
-        return interaction.editReply({ embeds: [embed], files: attachments, components: [open_button] });
+        if (interaction.type === 3) return interaction.reply({ embeds: [embed], files: attachments, components: [buttons] });
+        return interaction.editReply({ embeds: [embed], files: attachments, components: [buttons] });
     }
 }
 

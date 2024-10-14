@@ -226,7 +226,8 @@
                         "cancelled": "Cancelled"
                     },
                     "no_description": "No description available.",
-                    "open_button": "Open on MangaDex"
+                    "open_button": "Open on MangaDex",
+                    "stats_button": "View Stats"
                 },
                 "query": {
                     "title": "Search Results",
@@ -238,6 +239,39 @@
                         }
                     ],
                     "placeholder": "Select a manga to view more information."
+                },
+                "stats": {
+                    "title": "Manga Stats",
+                    "description": "Here are the stats for the manga with ID `%mangaId%`.",
+                    "fields": [
+                        {
+                            "name": "Average Rating",
+                            "value": "%rating%"
+                        },
+                        {
+                            "name": "Bayesian Rating",
+                            "value": "%bayesian%"
+                        },
+                        {
+                            "name": "Follows",
+                            "value": "%follows%"
+                        },
+                        {
+                            "name": "Rating Distribution",
+                            "value": "%ratingDistribution%"
+                        },
+                        {
+                            "name": "Comments",
+                            "value": "%comments%"
+                        }
+                    ],
+                    "units": {
+                        "votes": "votes",
+                        "comments": "comments"
+                    },
+                    "buttons": {
+                        "forum": "Open Forum Thread"
+                    }
                 },
                 "error": {
                     "title": "Error",
@@ -338,7 +372,8 @@
                         "cancelled": "Cancelled"
                     },
                     "no_description": "No description available.",
-                    "open_button": "Open on NamiComi"
+                    "open_button": "Open on NamiComi",
+                    "stats_button": "View Stats"
                 },
                 "query": {
                     "title": "Search Results",
@@ -350,6 +385,46 @@
                         }
                     ],
                     "placeholder": "Select a title to view more information."
+                },
+                "stats": {
+                    "title": "Title Stats",
+                    "description": "Here are the stats for the title with ID `%titleId%`.",
+                    "fields": [
+                        {
+                            "name": "Rating",
+                            "value": "%rating%"
+                        },
+                        {
+                            "name": "Views",
+                            "value": "%views%"
+                        },
+                        {
+                            "name": "Follows",
+                            "value": "%follows%"
+                        },
+                        {
+                            "name": "Comments",
+                            "value": "%comments%"
+                        },
+                        {
+                            "name": "Chapter Views",
+                            "value": "%chapterViews%"
+                        },
+                        {
+                            "name": "Chapter Comments",
+                            "value": "%chapterComments%"
+                        },
+                        {
+                            "name": "Chapter Reactions",
+                            "value": "%chapterReactions%"
+                        }
+                    ],
+                    "units": {
+                        "votes": "votes",
+                        "views": "views",
+                        "comments": "comments",
+                        "reactions": "reactions"
+                    }
                 },
                 "error": {
                     "title": "Error",

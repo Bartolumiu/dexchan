@@ -1,4 +1,5 @@
 const { EmbedBuilder, Colors } = require('discord.js');
+const fs = require('fs');
 
 module.exports = {
     name: 'interactionCreate',
@@ -33,6 +34,10 @@ module.exports = {
                     break;
             }
         } catch (e) {
+            let errorTimestamp = new Date().toISOString().replace(/:/g, '-').split('.')[0];
+            if (!fs.existsSync('./logs')) fs.mkdirSync('./logs').then(console.log('Created logs folder'));
+            fs.writeFileSync(`./logs/${errorTimestamp}.txt`, `Date: ${errorTimestamp}\nUser: ${interaction.user.tag} (${interaction.user.id})\nError origin: ${interaction.customId || interaction.commandName}\nError message: ${e.message}\nError stack: ${e.stack}`);
+
             // Check if the interaction has already been replied to
             if (interaction.replied || interaction.deferred) await interaction.followUp({ embeds: embeds, ephemeral: true });
             else await interaction.reply({ embeds: embeds, ephemeral: true });
@@ -57,7 +62,15 @@ async function createErrorEmbed(client, locale) {
 }
 
 async function handleInteraction(interaction, collection, id, errorType, embeds, client, isAutocomplete = false) {
-    const item = collection.get(id);
+    let item = collection.get(id);
+    if (!item) {
+        for (const [key, value] of collection.entries()) {
+            if (key instanceof RegExp && key.test(id)) {
+                item = value;
+                break;
+            }
+        }
+    }
     if (!item) throw new Error(`${errorType.split('_').pop()} not found`);
 
     try {

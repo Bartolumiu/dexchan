@@ -175,15 +175,21 @@ module.exports = {
         await buildTitleEmbed(embed, client, locale, title, stats);
         const attachments = await setImages(title, embed, locale, client);
 
-        const open_button = new ActionRowBuilder().addComponents(
+        const buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setLabel(await client.translate(locale, 'commands', 'nami.response.found.open_button'))
                 .setURL(urlFormats.shortened.replace('{id}', title.id))
-                .setStyle(ButtonStyle.Link)
+                .setStyle(ButtonStyle.Link),
+            new ButtonBuilder()
+            .setLabel(await client.translate(locale, 'commands', 'nami.response.found.stats_button'))
+            .setCustomId(`nami_stats_${title.id}`)
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled(false)
+            .setEmoji('📊')
         )
 
-        if (interaction.type === 3) return interaction.reply({ embeds: [embed], files: attachments, components: [open_button] });
-        return interaction.editReply({ embeds: [embed], files: attachments, components: [open_button] });
+        if (interaction.type === 3) return interaction.reply({ embeds: [embed], files: attachments, components: [buttons] });
+        return interaction.editReply({ embeds: [embed], files: attachments, components: [buttons] });
     }
 }
 
@@ -575,7 +581,7 @@ async function searchTitle(query, locale) {
             let localizedTitle = title.attributes.title[locale];
             if (!localizedTitle && locale === 'es') localizedTitle = title.attributes.title['es-419'];
             if (!localizedTitle) localizedTitle = title.attributes.title['en'];
-            if (!localizedTitle) localizedTitle = title.attributes.title[Object.keys(title)[0]];
+            if (!localizedTitle) localizedTitle = title.attributes.title[Object.keys(title.attributes.title)[0]];
             return [localizedTitle, title.id];
         }
     }));

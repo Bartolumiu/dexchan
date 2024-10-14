@@ -1,6 +1,6 @@
 {
     "name": "dex-chan",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "Discord bot for the MangaDex ES server.",
     "main": "src/index.js",
     "scripts": {
@@ -20,6 +20,6 @@
         "chalk": "^5.3.0",
         "discord.js": "^14.16.3",
         "dotenv": "^16.4.5",
-        "mongoose": "^8.7.0"
+        "mongoose": "^8.7.1"
     }
 }

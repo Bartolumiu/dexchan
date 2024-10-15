@@ -9,31 +9,33 @@
         "ping": {
             "name": "ping",
             "description": "Check the bot's latency.",
-            "subcommands": [],
-            "options": [],
+            "subcommands": {},
+            "options": {},
             "response": {
                 "ping": "Pinging...",
                 "title": "Pong!",
-                "fields": [
-                    {
+                "fields": {
+                    "bot_latency": {
                         "name": "Bot Latency",
                         "value": "%ping%ms"
                     },
-                    {
-                        "name": "Discord API",
-                        "value": "%apiPing%ms"
-                    },
-                    {
-                        "name": "MangaDex API",
-                        "value": "%mdPing%ms"
-                    },
-                    {
-                        "name": "NamiComi API",
-                        "value": "%ncPing%ms"
+                    "api": {
+                        "discord": {
+                            "name": "Discord API",
+                            "value": "%apiPing%ms"
+                        },
+                        "mangadex": {
+                            "name": "MangaDex API",
+                            "value": "%mdPing%ms"
+                        },
+                        "namicomi": {
+                            "name": "NamiComi API",
+                            "value": "%ncPing%ms"
+                        }
                     }
-                ],
+                },
                 "footer": "%commandName% - Requested by %user%",
-                "md_not_ok": "Fetch failed"
+                "not_ok": "Fetch failed"
             }
         },
         "help": {

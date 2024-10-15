@@ -41,32 +41,32 @@
         "help": {
             "name": "help",
             "description": "Obtén ayuda con el bot.",
-            "subcommands": [],
-            "options": [],
+            "subcommands": {},
+            "options": {},
             "response": {
                 "title": "Ayuda",
-                "fields": [
-                    {
+                "fields": {
+                    "commands": {
                         "name": "Comandos",
                         "value": "Para ver una lista de comandos, usa `/commands`."
                     },
-                    {
+                    "support": {
                         "name": "Soporte",
                         "value": "Para obtener soporte, usa `/support`."
                     },
-                    {
+                    "invite": {
                         "name": "Invitar",
                         "value": "Para invitar al bot a tu servidor, usa `/invite`."
                     },
-                    {
+                    "stats": {
                         "name": "Estadísticas",
                         "value": "Para ver las estadísticas del bot, usa `/stats`."
                     },
-                    {
+                    "uptime": {
                         "name": "Tiempo de actividad",
                         "value": "Para ver el tiempo de actividad del bot, usa `/uptime`."
                     }
-                ],
+                },
                 "footer": "%commandName% - Solicitado por %user%"
             }
         },

@@ -95,3 +95,5 @@ async function getPing(url) {
         });
     });
 };
+
+module.exports.getPing = getPing;

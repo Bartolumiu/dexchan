@@ -4,8 +4,13 @@
     "description": "Discord bot for the MangaDex ES server.",
     "main": "src/index.js",
     "scripts": {
-        "test": "echo Hi there! && exit 0",
+        "test": "jest",
         "update": "npm update --save"
+    },
+    "jest": {
+        "testMatch": [
+            "<rootDir>/tests/**/*.test.js"
+        ]
     },
     "keywords": [
         "discord",
@@ -21,5 +26,9 @@
         "discord.js": "^14.16.3",
         "dotenv": "^16.4.5",
         "mongoose": "^8.7.1"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "nock": "^13.5.5"
     }
 }

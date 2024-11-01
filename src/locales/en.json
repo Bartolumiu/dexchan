@@ -365,6 +365,10 @@
                                     "right_to_left": "Horizontal (Right to Left)"
                                 }
                             }
+                        },
+                        {
+                            "name": "Others",
+                            "value": "%otherTags%"
                         }
                     ],
                     "pub_status": {

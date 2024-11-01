@@ -67,7 +67,7 @@ module.exports = {
             embed.addFields(fields.md);
         } catch (e) {
             console.error('Error while fetching Mangadex API ping:', e);
-            embed.addFields(fields.md);
+            embed.addFields({ name: fields.md.name, value: fields.not_ok, inline: true });
         } finally {
             try {
                 fields.nami.value = client.translate(locale, 'commands', 'ping.response.fields.api.namicomi.value', { ncPing: await getPing(API_URLS.NAMICOMI) });

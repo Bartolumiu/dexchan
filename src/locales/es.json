@@ -293,20 +293,20 @@
             "description": "Busca un título en NamiComi.",
             "subcommands": [],
             "subcommand_groups": [],
-            "options": [
-                {
+            "options": {
+                "query": {
                     "name": "query",
                     "description": "El título que quieres buscar"
                 },
-                {
+                "id": {
                     "name": "id",
                     "description": "La ID del título que quieres buscar"
                 },
-                {
+                "url": {
                     "name": "url",
                     "description": "La URL del título que quieres buscar"
                 }
-            ],
+            },
             "response": {
                 "found": {
                     "author": {
@@ -315,48 +315,32 @@
                     },
                     "title": "%title%",
                     "description": "%description%",
-                    "fields": [
-                        {
+                    "fields": {
+                        "rating": {
                             "name": "Calificación",
                             "value": "%rating%"
                         },
-                        {
+                        "follows": {
                             "name": "Seguidores",
                             "value": "%follows%"
                         },
-                        {
+                        "year": {
                             "name": "Año",
                             "value": "%year%"
                         },
-                        {
+                        "pub_status": {
                             "name": "Estado de Publicación",
                             "value": "%status%"
                         },
-                        {
+                        "demographic": {
                             "name": "Demografía",
                             "value": "%demographic%"
                         },
-                        {
+                        "content_rating": {
                             "name": "Calificación de Contenido",
                             "value": "%contentRating%"
                         },
-                        {
-                            "name": "Advertencia de Contenido",
-                            "value": "%contentWarning%"
-                        },
-                        {
-                            "name": "Formato",
-                            "value": "%format%"
-                        },
-                        {
-                            "name": "Géneros",
-                            "value": "%genres%"
-                        },
-                        {
-                            "name": "Temas",
-                            "value": "%themes%"
-                        },
-                        {
+                        "reading_mode": {
                             "name": "Modo de Lectura",
                             "value": {
                                 "vertical": "Vertical",
@@ -365,8 +349,28 @@
                                     "right_to_left": "Horizontal (Derecha a Izquierda)"
                                 }
                             }
+                        },
+                        "format": {
+                            "name": "Formato",
+                            "value": "%format%"
+                        },
+                        "genres": {
+                            "name": "Géneros",
+                            "value": "%genres%"
+                        },
+                        "themes": {
+                            "name": "Temas",
+                            "value": "%themes%"
+                        },
+                        "content_warning": {
+                            "name": "Advertencia de Contenido",
+                            "value": "%contentWarning%"
+                        },
+                        "other_tags": {
+                            "name": "Otras Etiquetas",
+                            "value": "%otherTags%"
                         }
-                    ],
+                    },
                     "pub_status": {
                         "ongoing": "En curso",
                         "completed": "Completado",

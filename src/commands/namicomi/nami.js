@@ -21,7 +21,7 @@ const regexComponents = {
     locale: '[a-z]{2}(?:-[a-zA-Z]{2})?',
     id: '([a-zA-Z0-9]{8})',
     slug: '\\/[^\\/]+$',
-}
+};
 
 /**
  * An object containing regular expression strings for different URL formats.
@@ -34,7 +34,7 @@ const regexStrings = {
     primary: `${regexComponents.protocol}${regexComponents.primary_domain}\\/${regexComponents.locale}\\/title\\/${regexComponents.id}${regexComponents.slug}`,
     semi_shortened: `${regexComponents.protocol}${regexComponents.primary_domain}\\/t\\/${regexComponents.id}`,
     shortened: `${regexComponents.protocol}${regexComponents.secondary_domain}\\/t\\/${regexComponents.id}`
-}
+};
 
 /**
  * An object containing regular expressions used for various matching patterns.
@@ -47,7 +47,7 @@ const regexes = {
     primary: new RegExp(regexStrings.primary),
     semi_shortened: new RegExp(regexStrings.semi_shortened),
     shortened: new RegExp(regexStrings.shortened)
-}
+};
 
 /**
  * An object containing different URL formats for accessing titles on the Namicomi website.
@@ -60,7 +60,7 @@ const urlFormats = {
     primary: 'https://namicomi.com/{locale}/title/{id}/{slug}',
     semi_shortened: 'https://namicomi.com/t/{id}',
     shortened: 'https://nami.moe/t/{id}'
-}
+};
 
 /**
  * A mapping of locale codes to their corresponding language codes.
@@ -83,11 +83,11 @@ module.exports = {
     data: async () => {
         const localizations = {
             description: await translateAttribute('nami', 'description'),
-            options: [
-                { description: await translateAttribute('nami', 'options[0].description') },
-                { description: await translateAttribute('nami', 'options[1].description') },
-                { description: await translateAttribute('nami', 'options[2].description') }
-            ]
+            options: {
+                query: { description: await translateAttribute('nami', 'options.query.description') },
+                id: { description: await translateAttribute('nami', 'options.id.description') },
+                url: { description: await translateAttribute('nami', 'options.url.description') }
+            }
         };
         return new SlashCommandBuilder()
             .setName('nami')
@@ -96,17 +96,17 @@ module.exports = {
             .addStringOption(option =>
                 option.setName('query')
                     .setDescription('The title you want to search for')
-                    .setDescriptionLocalizations(localizations.options[0].description)
+                    .setDescriptionLocalizations(localizations.options.query.description)
                     .setRequired(false)
             ).addStringOption(option =>
                 option.setName('id')
                     .setDescription('The ID of the title you want to search for')
-                    .setDescriptionLocalizations(localizations.options[1].description)
+                    .setDescriptionLocalizations(localizations.options.id.description)
                     .setRequired(false)
             ).addStringOption(option =>
                 option.setName('url')
                     .setDescription('The URL of the title you want to search for')
-                    .setDescriptionLocalizations(localizations.options[2].description)
+                    .setDescriptionLocalizations(localizations.options.url.description)
                     .setRequired(false)
             );
     },
@@ -116,9 +116,52 @@ module.exports = {
 
         const userSettings = await client.getMongoUserData(interaction.user);
         const locale = userSettings.preferredLocale || interaction.locale;
+        const translations = {
+            embed: {
+                fields: {
+                    rating: await client.translate(locale, 'commands', 'nami.response.found.fields.rating.name'),
+                    follows: await client.translate(locale, 'commands', 'nami.response.found.fields.follows.name'),
+                    year: await client.translate(locale, 'commands', 'nami.response.found.fields.year.name'),
+                    pub_status: await client.translate(locale, 'commands', 'nami.response.found.fields.pub_status.name'),
+                    demographic: await client.translate(locale, 'commands', 'nami.response.found.fields.demographic.name'),
+                    content_rating: await client.translate(locale, 'commands', 'nami.response.found.fields.content_rating.name'),
+                    reading_mode: {
+                        name: await client.translate(locale, 'commands', 'nami.response.found.fields.reading_mode.name'),
+                        vertical: await client.translate(locale, 'commands', 'nami.response.found.fields.reading_mode.value.vertical'),
+                        horizontal: {
+                            left_to_right: await client.translate(locale, 'commands', 'nami.response.found.fields.reading_mode.value.horizontal.left_to_right'),
+                            right_to_left: await client.translate(locale, 'commands', 'nami.response.found.fields.reading_mode.value.horizontal.right_to_left')
+                        }
+                    },
+
+                    format: await client.translate(locale, 'commands', 'nami.response.found.fields.format.name'),
+                    genres: await client.translate(locale, 'commands', 'nami.response.found.fields.genres.name'),
+                    themes: await client.translate(locale, 'commands', 'nami.response.found.fields.themes.name'),
+                    content_warning: await client.translate(locale, 'commands', 'nami.response.found.fields.content_warning.name'),
+                    other_tags: await client.translate(locale, 'commands', 'nami.response.found.fields.other_tags.name')
+                },
+                query: {
+                    title: await client.translate(locale, 'commands', 'nami.response.query.title'),
+                    description: await client.translate(locale, 'commands', 'nami.response.query.description'),
+                },
+                error: {
+                    title: await client.translate(locale, 'commands', 'nami.response.error.title'),
+                    no_description: await client.translate(locale, 'commands', 'nami.response.found.no_description'),
+                    too_many_authors: await client.translate(locale, 'commands', 'nami.response.found.author.too_many')
+                },
+                footer: await client.translate(locale, 'commands', 'nami.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username }),
+            },
+            menu: {
+                placeholder: await client.translate(locale, 'commands', 'nami.response.query.placeholder')
+            },
+            button: {
+                open: await client.translate(locale, 'commands', 'nami.response.found.open_button'),
+                stats: await client.translate(locale, 'commands', 'nami.response.found.stats_button')
+            }
+        }
         const embed = new EmbedBuilder()
             .setFooter({
-                text: await client.translate(locale, 'commands', 'nami.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username }),
+                text: translations.embed.footer,
                 iconURL: client.user.displayAvatarURL({ dynamic: true })
             });
 
@@ -143,7 +186,7 @@ module.exports = {
 
             const menu = new StringSelectMenuBuilder()
                 .setCustomId('nami_select')
-                .setPlaceholder(await client.translate(locale, 'commands', 'nami.response.query.placeholder'))
+                .setPlaceholder(translations.menu.placeholder)
                 .setMinValues(1)
                 .setMaxValues(1);
 
@@ -159,8 +202,8 @@ module.exports = {
 
             const row = new ActionRowBuilder().addComponents(menu);
 
-            embed.setTitle(await client.translate(locale, 'commands', 'nami.response.query.title'))
-                .setDescription(await client.translate(locale, 'commands', 'nami.response.query.description', { query }))
+            embed.setTitle(translations.embed.query.title)
+                .setDescription(translations.embed.query.description.replace('%query%', query))
                 .addFields(fields)
                 .setColor(Colors.Blurple);
 
@@ -173,16 +216,16 @@ module.exports = {
         const [title, stats] = await Promise.all([getTitle(titleID), getStats(titleID)]);
         if (!title || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.invalid_id');
 
-        await buildTitleEmbed(embed, client, locale, title, stats);
-        const attachments = await setImages(title, embed, locale, client);
+        await buildTitleEmbed(embed, client, locale, title, stats, translations);
+        const attachments = await setImages(title, embed, locale, client, translations);
 
         const buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
-                .setLabel(await client.translate(locale, 'commands', 'nami.response.found.open_button'))
+                .setLabel(translations.button.open)
                 .setURL(urlFormats.shortened.replace('{id}', title.id))
                 .setStyle(ButtonStyle.Link),
             new ButtonBuilder()
-            .setLabel(await client.translate(locale, 'commands', 'nami.response.found.stats_button'))
+            .setLabel(translations.button.stats)
             .setCustomId(`nami_stats_${title.id}`)
             .setStyle(ButtonStyle.Secondary)
             .setDisabled(false)
@@ -192,7 +235,7 @@ module.exports = {
         if (interaction.type === 3) return interaction.reply({ embeds: [embed], files: attachments, components: [buttons] });
         return interaction.editReply({ embeds: [embed], files: attachments, components: [buttons] });
     }
-}
+};
 
 /**
  * Sends an error embed message in response to an interaction.
@@ -210,7 +253,7 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
         .setColor(Colors.Red);
 
     return interaction.editReply({ embeds: [embed] });
-}
+};
 
 /**
  * Builds an embed message for a title with localized information.
@@ -220,20 +263,21 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
  * @param {string} locale - The locale string for translations.
  * @param {Object} title - The title object containing information about the title.
  * @param {Object} stats - The stats object containing statistical information about the title.
+ * @param {Object} translations - The translations object containing localized strings.
  * @returns {Promise<void>} A promise that resolves when the embed has been built.
  */
-async function buildTitleEmbed(embed, client, locale, title, stats) {
+async function buildTitleEmbed(embed, client, locale, title, stats, translations) {
     const embedTitle = await getLocalizedTitle(title, locale);
-    const description = await getLocalizedDescription(client, title, locale) || await client.translate(locale, 'commands', 'nami.response.found.no_description');
-    const author = await getCreators(title, locale, client);
+    const description = await getLocalizedDescription(title, locale, translations) || translations.embed.error.no_description;
+    const author = await getCreators(title, translations);
 
     const fields = [
-        { name: await client.translate(locale, 'commands', 'nami.response.found.fields[0].name'), value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
-        { name: await client.translate(locale, 'commands', 'nami.response.found.fields[1].name'), value: `${stats.follows}`, inline: true },
-        { name: await client.translate(locale, 'commands', 'nami.response.found.fields[2].name'), value: `${title.attributes.year}`, inline: true },
-        { name: await client.translate(locale, 'commands', 'nami.response.found.fields[3].name'), value: await capitalizeFirstLetter(await client.translate(locale, 'commands', `nami.response.found.pub_status.${title.attributes.publicationStatus}`) || title.attributes.publicationStatus), inline: true },
-        { name: await client.translate(locale, 'commands', 'nami.response.found.fields[4].name'), value: await capitalizeFirstLetter(title.attributes.publicationDemographic || 'N/A'), inline: true },
-        { name: await client.translate(locale, 'commands', 'nami.response.found.fields[5].name'), value: await capitalizeFirstLetter(title.attributes.contentRating), inline: true }
+        { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
+        { name: translations.embed.fields.follows, value: `${stats.follows}`, inline: true },
+        { name: translations.embed.fields.year, value: `${title.attributes.year}`, inline: true },
+        { name: translations.embed.fields.pub_status, value: await capitalizeFirstLetter(await client.translate(locale, 'commands', `nami.response.found.pub_status.${title.attributes.publicationStatus}`) || title.attributes.publicationStatus), inline: true },
+        { name: translations.embed.fields.demographic, value: await capitalizeFirstLetter(title.attributes.publicationDemographic || 'N/A'), inline: true },
+        { name: translations.embed.fields.content_rating, value: await capitalizeFirstLetter(title.attributes.contentRating), inline: true }
     ];
 
     embed.setTitle(embedTitle)
@@ -242,18 +286,18 @@ async function buildTitleEmbed(embed, client, locale, title, stats) {
         .addFields(fields)
         .setColor(Colors.Blurple);
 
-    await addTitleTags(title, embed, locale, client);
+    await addTitleTags(title, embed, locale, client, translations);
 
     // Reading mode (Vertical, Horizontal: Left to Right, Horizontal: Right to Left)
     switch (title.attributes.readingMode) {
         case 'vls':
-            embed.addFields({ name: await client.translate(locale, 'commands', 'nami.response.found.fields[10].name'), value: await client.translate(locale, 'commands', 'nami.response.found.fields[10].value.vertical'), inline: true });
+            embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.vertical, inline: true });
             break;
         case 'rtl':
-            embed.addFields({ name: await client.translate(locale, 'commands', 'nami.response.found.fields[10].name'), value: await client.translate(locale, 'commands', 'nami.response.found.fields[10].value.horizontal.right_to_left'), inline: true });
+            embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.right_to_left, inline: true });
             break;
         case 'ltr':
-            embed.addFields({ name: await client.translate(locale, 'commands', 'nami.response.found.fields[10].name'), value: await client.translate(locale, 'commands', 'nami.response.found.fields[10].value.horizontal.left_to_right'), inline: true });
+            embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.left_to_right, inline: true });
             break;
     }
     embed.setAuthor({ name: author, iconURL: 'attachment://namicomi.png' });
@@ -282,17 +326,16 @@ async function getLocalizedTitle(title, locale) {
  * If the list of creators exceeds 256 characters, a translated message indicating too many authors is returned.
  *
  * @param {Object} title - The title object containing relationships.
- * @param {string} locale - The locale for translation.
- * @param {Object} client - The client object used for translation.
+ * @param {Object} translations - The translations object containing localized strings.
  * @returns {Promise<string>} A comma-separated string of unique creators or a translated message if too many.
  */
-async function getCreators(title, locale, client) {
+async function getCreators(title, translations) {
     const creators = Array.from(new Set([
         ...title.relationships.filter(rel => rel.type === 'organization').map(rel => rel.attributes.name)
     ])).join(', ');
 
     return (creators.length > 256)
-        ? await client.translate(locale, 'commands', 'nami.response.found.author.too_many')
+        ? translations.embed.error.too_many_authors
         : creators;
 }
 
@@ -307,11 +350,12 @@ async function getCreators(title, locale, client) {
  * @param {Object} embed - The embed object to set the images on.
  * @param {string} locale - The locale string for fetching localized data.
  * @param {Object} client - The client object used for fetching data.
+ * @param {Object} translations - The translations object containing localized strings.
  * @returns {Promise<Array>} A promise that resolves to an array of AttachmentBuilder objects.
  */
-async function setImages(title, embed, locale, client) {
+async function setImages(title, embed, locale, client, translations) {
     // NamiComi logo as the author icon
-    const author = await getCreators(title, locale, client);
+    const author = await getCreators(title, translations);
     const namiIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/namicomi.png'), 'namicomi.png');
     embed.setAuthor({ name: author, iconURL: 'attachment://namicomi.png' });
 
@@ -357,7 +401,7 @@ async function capitalizeFirstLetter(string) {
  * @param {Object} client - The client object used for translation.
  * @returns {Promise<void>} - A promise that resolves when the tags have been added to the embed.
  */
-async function addTitleTags(title, embed, locale, client) {
+async function addTitleTags(title, embed, locale, client, translations) {
     // Get the primary and secondary tag IDs
     const primaryTagID = title.relationships.find(rel => rel.type === 'primary_tag')?.id;
     const secondaryTagID = title.relationships.find(rel => rel.type === 'secondary_tag')?.id;
@@ -397,22 +441,22 @@ async function addTitleTags(title, embed, locale, client) {
     // Create the fields for the embed
     const fields = [
         {
-            name: await client.translate(locale, 'commands', 'nami.response.found.fields[7].name'), // Format
+            name: translations.embed.fields.format, // Format
             value: tagGroups.format.join(', ') || 'N/A',
             inline: true
         },
         {
-            name: await client.translate(locale, 'commands', 'nami.response.found.fields[8].name'), // Genre
+            name: translations.embed.fields.genres, // Genre
             value: tagGroups.genre.join(', ') || 'N/A',
             inline: true
         },
         {
-            name: await client.translate(locale, 'commands', 'nami.response.found.fields[9].name'), // Theme
+            name: translations.embed.fields.themes, // Theme
             value: tagGroups.theme.join(', ') || 'N/A',
             inline: true
         },
         {
-            name: await client.translate(locale, 'commands', 'nami.response.found.fields[6].name'), // Content Warning
+            name: translations.embed.fields.content_warning, // Content Warning
             value: tagGroups.content_warning.join(', ') || 'N/A',
             inline: true
         },
@@ -427,7 +471,7 @@ async function addTitleTags(title, embed, locale, client) {
     
     if (otherTags.length > 0) {
         fields.push({
-            name: await client.translate(locale, 'commands', 'nami.response.found.fields[11].name'), // Other Tags
+            name: translations.embed.fields.other_tags, // Other Tags
             value: otherTags.join(', '),
             inline: true
         });
@@ -556,12 +600,12 @@ async function getStats(titleID) {
 /**
  * Retrieves a localized description for a given title.
  *
- * @param {Object} client - The client object that provides translation services.
  * @param {Object} title - The title object containing attribute descriptions.
  * @param {string} locale - The locale code to retrieve the description for.
+ * @param {Object} translations - The translations object containing localized strings.
  * @returns {Promise<string>} - A promise that resolves to the localized description.
  */
-async function getLocalizedDescription(client, title, locale) {
+async function getLocalizedDescription(title, locale, translations) {
     locale = languageMap[locale] || locale;
 
     let description = title.attributes.description[locale];
@@ -569,7 +613,7 @@ async function getLocalizedDescription(client, title, locale) {
     if (!description && locale === 'es') description = title.attributes.description['es-419'];
     if (!description) description = title.attributes.description['en'];
 
-    return description || await client.translate(locale, 'commands', 'nami.response.found.no_description');
+    return description || translations.embed.error.no_description;
 }
 
 /**

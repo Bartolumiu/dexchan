@@ -5,7 +5,8 @@ module.exports = {
         customId: /^nami_stats_/,
     },
     async execute(interaction, client) {
-        const locale = client.getMongoUserData(interaction.user) || interaction.locale;
+        const userSettings = await client.getMongoUserData(interaction.user);
+        const locale = userSettings.preferredLocale || interaction.locale;
         await interaction.deferUpdate();
         const customId = interaction.customId;
 

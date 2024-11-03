@@ -150,77 +150,78 @@
         "manga": {
             "name": "manga",
             "description": "Search for a manga on MangaDex.",
-            "subcommands": [
-                {
+            "subcommands": {
+                "random": {
                     "name": "random",
                     "description": "Get a random manga",
-                    "subcommands": [],
-                    "options": []
+                    "subcommands": {},
+                    "options": {}
                 }
-            ],
-            "options": [
-                {
+            },
+            "options": {
+                "query": {
                     "name": "query",
                     "description": "The manga you want to search for"
                 },
-                {
+                "id": {
                     "name": "id",
                     "description": "The ID of the manga you want to search for"
                 },
-                {
+                "url": {
                     "name": "url",
                     "description": "The URL of the manga you want to search for"
                 }
-            ],
+            },
             "response": {
                 "found": {
                     "author": {
-                        "too_many": "Multiple Authors"
+                        "too_many": "Multiple Authors",
+                        "error": "Unknown Author"
                     },
                     "title": "%title%",
                     "description": "%description%",
-                    "fields": [
-                        {
+                    "fields": {
+                        "rating": {
                             "name": "Rating",
                             "value": "%rating%"
                         },
-                        {
+                        "follows": {
                             "name": "Follows",
                             "value": "%follows%"
                         },
-                        {
+                        "year": {
                             "name": "Year",
                             "value": "%year%"
                         },
-                        {
+                        "pub_status": {
                             "name": "Publication Status",
                             "value": "%status%"
                         },
-                        {
+                        "demographic": {
                             "name": "Demographic",
                             "value": "%demographic%"
                         },
-                        {
+                        "content_rating": {
                             "name": "Content Rating",
                             "value": "%contentRating%"
                         },
-                        {
-                            "name": "Content Warning",
-                            "value": "%contentWarning%"
-                        },
-                        {
+                        "format": {
                             "name": "Format",
                             "value": "%format%"
                         },
-                        {
+                        "genres": {
                             "name": "Genres",
                             "value": "%genres%"
                         },
-                        {
+                        "themes": {
                             "name": "Themes",
                             "value": "%themes%"
+                        },
+                        "content_warning": {
+                            "name": "Content Warning",
+                            "value": "%contentWarning%"
                         }
-                    ],
+                    },
                     "pub_status": {
                         "ongoing": "Ongoing",
                         "completed": "Completed",
@@ -240,7 +241,7 @@
                             "value": "%description%"
                         }
                     ],
-                    "placeholder": "Select a manga to view more information."
+                    "placeholder": "Select a manga to view more information..."
                 },
                 "stats": {
                     "title": "Manga Stats",

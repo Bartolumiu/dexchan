@@ -150,77 +150,78 @@
         "manga": {
             "name": "manga",
             "description": "Busca un manga en MangaDex.",
-            "subcommands": [
-                {
+            "subcommands": {
+                "random": {
                     "name": "random",
                     "description": "Obtén un manga aleatorio",
-                    "subcommands": [],
-                    "options": []
+                    "subcommands": {},
+                    "options": {}
                 }
-            ],
-            "options": [
-                {
+            },
+            "options": {
+                "query": {
                     "name": "query",
                     "description": "El manga que quieres buscar"
                 },
-                {
+                "id": {
                     "name": "id",
-                    "description": "La ID del manga que quieres buscar"
+                    "description": "ID del manga que quieres buscar"
                 },
-                {
+                "url": {
                     "name": "url",
                     "description": "La URL del manga que quieres buscar"
                 }
-            ],
+            },
             "response": {
                 "found": {
                     "author": {
-                        "too_many": "Múltiples Autores"
+                        "too_many": "Múltiples Autores",
+                        "error": "Autor Desconocido"
                     },
                     "title": "%title%",
                     "description": "%description%",
-                    "fields": [
-                        {
+                    "fields": {
+                        "rating": {
                             "name": "Calificación",
                             "value": "%rating%"
                         },
-                        {
+                        "follows": {
                             "name": "Seguidores",
                             "value": "%follows%"
                         },
-                        {
+                        "year": {
                             "name": "Año",
                             "value": "%year%"
                         },
-                        {
+                        "pub_status": {
                             "name": "Estado de Publicación",
                             "value": "%status%"
                         },
-                        {
+                        "demographic": {
                             "name": "Demografía",
                             "value": "%demographic%"
                         },
-                        {
+                        "content_rating": {
                             "name": "Calificación de Contenido",
                             "value": "%contentRating%"
                         },
-                        {
-                            "name": "Advertencia de Contenido",
-                            "value": "%contentWarning%"
-                        },
-                        {
+                        "format": {
                             "name": "Formato",
                             "value": "%format%"
                         },
-                        {
+                        "genres": {
                             "name": "Géneros",
                             "value": "%genres%"
                         },
-                        {
+                        "themes": {
                             "name": "Temas",
                             "value": "%themes%"
+                        },
+                        "content_warning": {
+                            "name": "Advertencia de Contenido",
+                            "value": "%contentWarning%"
                         }
-                    ],
+                    },
                     "pub_status": {
                         "ongoing": "En curso",
                         "completed": "Completado",
@@ -244,7 +245,7 @@
                 },
                 "stats": {
                     "title": "Estadísticas del Manga",
-                    "description": "Aquí están las estadísticas para el manga con la ID `%mangaId%`.",
+                    "description": "Aquí están las estadísticas para el manga con ID `%mangaId%`.",
                     "fields": [
                         {
                             "name": "Valoración Media",
@@ -300,7 +301,7 @@
                 },
                 "id": {
                     "name": "id",
-                    "description": "La ID del título que quieres buscar"
+                    "description": "ID del título que quieres buscar"
                 },
                 "url": {
                     "name": "url",
@@ -394,7 +395,7 @@
                 },
                 "stats": {
                     "title": "Estadísticas del Título",
-                    "description": "Aquí están las estadísticas para el título con la ID `%titleId%`.",
+                    "description": "Aquí están las estadísticas para el título con ID `%titleId%`.",
                     "fields": [
                         {
                             "name": "Valoraciones",
@@ -437,9 +438,9 @@
                     "description": {
                         "url": "La URL proporcionada no es válida.",
                         "invalid_id": "La ID proporcionada no es válida.",
-                        "no_results":"La consulta no devolvió resultados. Es todo lo que sabemos.",
-                        "api":"Ha ocurrido un error al obtener los datos del título.\nPor favor, inténtalo de nuevo más tarde.\nCódigo de estado: %statusCode%",
-                        "empty":"Por favor, proporciona una consulta, ID o URL."
+                        "no_results": "La consulta no devolvió resultados. Es todo lo que sabemos.",
+                        "api": "Ha ocurrido un error al obtener los datos del título.\nPor favor, inténtalo de nuevo más tarde.\nCódigo de estado: %statusCode%",
+                        "empty": "Por favor, proporciona una consulta, ID o URL."
                     }
                 },
                 "footer": "%commandName% - Solicitado por %user%"
@@ -515,7 +516,7 @@
             ],
             "options": [],
             "response": {
-                "footer":"%commandName% - Solicitado por %user%"
+                "footer": "%commandName% - Solicitado por %user%"
             }
         }
     },
@@ -547,7 +548,7 @@
                     "value": "No hay una fecha de lanzamiento prevista en este momento. Por favor, sé paciente."
                 }
             ],
-            "footer":"%commandName% - Solicitado por %user%"
+            "footer": "%commandName% - Solicitado por %user%"
         }
     }
 }

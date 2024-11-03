@@ -15,10 +15,11 @@ module.exports = {
     async execute(interaction, client) {
         const userSettings = await client.getMongoUserData(interaction.user);
         const locale = userSettings.preferredLocale || interaction.locale;
-
-        const title = client.translate(locale, 'commands', 'commands.response.title');
-        const description = client.translate(locale, 'commands', 'commands.response.description');
-        const footer = client.translate(locale, 'commands', 'commands.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username });
+        const translations = {
+            title: await client.translate(locale, 'commands', 'commands.response.title'),
+            description: await client.translate(locale, 'commands', 'commands.response.description'),
+            footer: await client.translate(locale, 'commands', 'commands.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username })
+        };
 
         // Retrieve both the global and guild commands, as well as the guild command permissions
         const globalCommands = await client.application.commands.fetch();
@@ -55,11 +56,11 @@ module.exports = {
 
         // Create the embed
         const embed = new EmbedBuilder()
-            .setTitle(title)
-            .setDescription(description)
+            .setTitle(translations.title)
+            .setDescription(translations.description)
             .addFields(fields)
             .setColor(Colors.Blurple)
-            .setFooter({ text: footer, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
+            .setFooter({ text: translations.footer, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
             .setTimestamp();
 
         await interaction.reply({ embeds: [embed] });

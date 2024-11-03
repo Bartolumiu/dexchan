@@ -84,6 +84,12 @@ module.exports = {
     }
 }
 
+/**
+ * Get a list of locales based on the user's input.
+ * 
+ * @param {*} interaction - The interaction object from the Discord API.
+ * @returns 
+ */
 async function getLocaleList(interaction) {
     // Get locale files
     const files = fs.readdirSync(__dirname+'/../../locales').filter(file => file.endsWith('.json'));

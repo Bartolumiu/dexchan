@@ -93,9 +93,44 @@ module.exports = {
 
         const userSettings = await client.getMongoUserData(interaction.user);
         const locale = userSettings.preferredLocale || interaction.locale;
+        const translations = {
+            embed: {
+                fields: {
+                    rating: await client.translate(locale, 'commands', 'manga.response.found.fields.rating.name'),
+                    follows: await client.translate(locale, 'commands', 'manga.response.found.fields.follows.name'),
+                    year: await client.translate(locale, 'commands', 'manga.response.found.fields.year.name'),
+                    pub_status: await client.translate(locale, 'commands', 'manga.response.found.fields.pub_status.name'),
+                    demographic: await client.translate(locale, 'commands', 'manga.response.found.fields.demographic.name'),
+                    content_rating: await client.translate(locale, 'commands', 'manga.response.found.fields.content_rating.name'),
+
+                    format: await client.translate(locale, 'commands', 'manga.response.found.fields.format.name'),
+                    genres: await client.translate(locale, 'commands', 'manga.response.found.fields.genres.name'),
+                    themes: await client.translate(locale, 'commands', 'manga.response.found.fields.themes.name'),
+                    content_warning: await client.translate(locale, 'commands', 'manga.response.found.fields.content_warning.name'),
+                },
+                query: {
+                    title: await client.translate(locale, 'commands', 'manga.response.query.title'),
+                    description: await client.translate(locale, 'commands', 'manga.response.query.description', { query: interaction.options.getString('query') })
+                },
+                error: {
+                    title: await client.translate(locale, 'commands', 'manga.response.error.title'),
+                    no_description: await client.translate(locale, 'commands', 'manga.response.error.description.no_description'),
+                    too_many_authors: await client.translate(locale, 'commands', 'manga.response.error.description.too_many_authors'),
+                },
+                footer: await client.translate(locale, 'commands', 'manga.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username })
+            },
+            menu: {
+                placeholder: await client.translate(locale, 'commands', 'manga.response.query.placeholder')
+            },
+            button: {
+                open: await client.translate(locale, 'commands', 'manga.response.found.open_button'),
+                stats: await client.translate(locale, 'commands', 'manga.response.found.stats_button')
+            }
+        };
+
         const embed = new EmbedBuilder()
             .setFooter({
-                text: await client.translate(locale, 'commands', 'manga.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username }),
+                text: translations.embed.footer,
                 iconURL: client.user.displayAvatarURL({ dynamic: true })
             });
 
@@ -120,7 +155,7 @@ module.exports = {
 
             const menu = new StringSelectMenuBuilder()
                 .setCustomId('manga_select')
-                .setPlaceholder(await client.translate(locale, 'commands', 'manga.response.query.placeholder'))
+                .setPlaceholder(translations.menu.placeholder)
                 .setMinValues(1)
                 .setMaxValues(1);
 
@@ -136,8 +171,8 @@ module.exports = {
 
             const row = new ActionRowBuilder().addComponents(menu);
 
-            embed.setTitle(await client.translate(locale, 'commands', 'manga.response.query.title'))
-                .setDescription(await client.translate(locale, 'commands', 'manga.response.query.description', { query }))
+            embed.setTitle(translations.embed.query.title)
+                .setDescription(translations.embed.query.description)
                 .addFields(fields)
                 .setColor(Colors.Blurple);
 
@@ -150,16 +185,16 @@ module.exports = {
         const [manga, stats] = await Promise.all([getManga(mangaID), getStats(mangaID)]);
         if (!manga || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.invalid_id');
 
-        await buildMangaEmbed(embed, client, locale, manga, stats);
-        const attachments = await setImages(manga, embed, locale, client);
+        await buildMangaEmbed(embed, client, locale, manga, stats, translations);
+        const attachments = await setImages(manga, embed, translations);
 
         const buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
-                .setLabel(await client.translate(locale, 'commands', 'manga.response.found.open_button'))
+                .setLabel(translations.button.open)
                 .setURL(urlFormats.primary.replace('{id}', manga.id).replace('{title}', ''))
                 .setStyle(ButtonStyle.Link),
             new ButtonBuilder()
-                .setLabel(await client.translate(locale, 'commands', 'manga.response.found.stats_button'))
+                .setLabel(translations.button.stats)
                 .setCustomId(`mangadex_stats_${manga.id}`)
                 .setStyle(ButtonStyle.Secondary)
                 .setEmoji('📊')
@@ -196,20 +231,21 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
  * @param {string} locale - The locale string for translations.
  * @param {Object} manga - The manga object containing manga details.
  * @param {Object} stats - The stats object containing manga statistics.
+ * @param {Object} translations - The translations object containing translated strings.
  * @returns {Promise<void>} A promise that resolves when the embed is built.
  */
-async function buildMangaEmbed(embed, client, locale, manga, stats) {
+async function buildMangaEmbed(embed, client, locale, manga, stats, translations) {
     const title = manga.attributes.title[Object.keys(manga.attributes.title)[0]];
-    const description = await getLocalizedDescription(client, manga, locale) || await client.translate(locale, 'commands', 'manga.response.found.no_description');
-    const author = await getCreators(manga, locale, client);
+    const description = await getLocalizedDescription(manga, locale, translations) || translations.embed.error.no_description;
+    const author = await getCreators(manga, translations);
 
     const fields = [
-        { name: await client.translate(locale, 'commands', 'manga.response.found.fields[0].name'), value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
-        { name: await client.translate(locale, 'commands', 'manga.response.found.fields[1].name'), value: `${stats.follows}`, inline: true },
-        { name: await client.translate(locale, 'commands', 'manga.response.found.fields[2].name'), value: `${manga.attributes.year}`, inline: true },
-        { name: await client.translate(locale, 'commands', 'manga.response.found.fields[3].name'), value: await capitalizeFirstLetter(await client.translate(locale, 'commands', `manga.response.found.pub_status.${manga.attributes.status}`) || manga.attributes.status), inline: true },
-        { name: await client.translate(locale, 'commands', 'manga.response.found.fields[4].name'), value: await capitalizeFirstLetter(manga.attributes.publicationDemographic || 'N/A'), inline: true },
-        { name: await client.translate(locale, 'commands', 'manga.response.found.fields[5].name'), value: await capitalizeFirstLetter(manga.attributes.contentRating), inline: true }
+        { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
+        { name: translations.embed.fields.follows, value: `${stats.follows}`, inline: true },
+        { name: translations.embed.fields.year, value: `${manga.attributes.year}`, inline: true },
+        { name: translations.embed.fields.pub_status, value: await capitalizeFirstLetter(await client.translate(locale, 'commands', `manga.response.found.pub_status.${manga.attributes.status}`) || manga.attributes.status), inline: true },
+        { name: translations.embed.fields.demographic, value: await capitalizeFirstLetter(manga.attributes.publicationDemographic || 'N/A'), inline: true },
+        { name: translations.embed.fields.content_rating, value: await capitalizeFirstLetter(manga.attributes.contentRating), inline: true }
     ];
 
     embed.setTitle(title)
@@ -218,7 +254,7 @@ async function buildMangaEmbed(embed, client, locale, manga, stats) {
         .addFields(fields)
         .setColor(Colors.Blurple);
 
-    await addMangaTags(manga, embed, locale, client);
+    await addMangaTags(manga, embed, translations);
     embed.setAuthor({ name: author, iconURL: 'attachment://mangadex.png' });
 }
 
@@ -227,18 +263,17 @@ async function buildMangaEmbed(embed, client, locale, manga, stats) {
  * If the combined length of the names exceeds 256 characters, a translated message is returned.
  *
  * @param {Object} manga - The manga object containing relationships.
- * @param {string} locale - The locale for translation.
- * @param {Object} client - The client object used for translation.
+ * @param {Object} translations - The translations object containing translated strings.
  * @returns {Promise<string>} - A promise that resolves to a string of creator names or a translated message.
  */
-async function getCreators(manga, locale, client) {
+async function getCreators(manga, translations) {
     const creatorsAndArtists = Array.from(new Set([
         ...manga.relationships.filter(rel => rel.type === 'author').map(rel => rel.attributes.name),
         ...manga.relationships.filter(rel => rel.type === 'artist').map(rel => rel.attributes.name)
     ])).join(', ');
 
     return (creatorsAndArtists.length > 256)
-        ? await client.translate(locale, 'commands', 'manga.response.found.author.too_many')
+        ? translations.embed.error.too_many_authors
         : creatorsAndArtists;
 }
 
@@ -247,12 +282,11 @@ async function getCreators(manga, locale, client) {
  *
  * @param {Object} manga - The manga object containing manga details.
  * @param {Object} embed - The embed object to set images on.
- * @param {string} locale - The locale string for localization.
- * @param {Object} client - The client object for making API requests.
+ * @param {Object} translations - The translations object containing translated strings.
  * @returns {Promise<Array>} - A promise that resolves to an array of AttachmentBuilder objects.
  */
-async function setImages(manga, embed, locale, client) {
-    const author = await getCreators(manga, locale, client);
+async function setImages(manga, embed, translations) {
+    const author = await getCreators(manga, translations);
     const mangadexIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/mangadex.png'), 'mangadex.png');
     embed.setAuthor({ name: author, iconURL: 'attachment://mangadex.png' })
 
@@ -284,11 +318,10 @@ async function capitalizeFirstLetter(string) {
  *
  * @param {Object} manga - The manga object containing attributes and tags.
  * @param {Object} embed - The embed object to which the fields will be added.
- * @param {string} locale - The locale string used for translation.
- * @param {Object} client - The client object used for translation.
+ * @param {Object} translations - The translations object containing translated strings.
  * @returns {Promise<void>} - A promise that resolves when the fields have been added to the embed.
  */
-async function addMangaTags(manga, embed, locale, client) {
+async function addMangaTags(manga, embed, translations) {
     const tagGroups = {
         theme: [],
         genre: [],
@@ -305,22 +338,22 @@ async function addMangaTags(manga, embed, locale, client) {
     // Create the fields for the embed
     const fields = [
         {
-            name: await client.translate(locale, 'commands', 'manga.response.found.fields[7].name'),
+            name: translations.embed.fields.format,
             value: tagGroups.format.join(', ') || 'N/A',
             inline: true
         },
         {
-            name: await client.translate(locale, 'commands', 'manga.response.found.fields[8].name'),
+            name: translations.embed.fields.genres,
             value: tagGroups.genre.join(', ') || 'N/A',
             inline: true
         },
         {
-            name: await client.translate(locale, 'commands', 'manga.response.found.fields[9].name'),
+            name: translations.embed.fields.themes,
             value: tagGroups.theme.join(', ') || 'N/A',
             inline: true
         },
         {
-            name: await client.translate(locale, 'commands', 'manga.response.found.fields[6].name'),
+            name: translations.embed.fields.content_warning,
             value: tagGroups.content.join(', ') || 'N/A',
             inline: true
         },
@@ -415,12 +448,12 @@ async function getStats(mangaID) {
 /**
  * Retrieves the localized description of a manga.
  *
- * @param {Object} client - The client object used for translation.
  * @param {Object} manga - The manga object containing attributes and descriptions.
  * @param {string} locale - The locale code for the desired language.
+ * @param {Object} translations - The translations object containing translated strings.
  * @returns {Promise<string>} - A promise that resolves to the localized description of the manga.
  */
-async function getLocalizedDescription(client, manga, locale) {
+async function getLocalizedDescription(manga, locale, translations) {
     locale = languageMap[locale] || locale;
 
     let description = manga.attributes.description[locale];
@@ -428,7 +461,7 @@ async function getLocalizedDescription(client, manga, locale) {
     if (!description && locale === 'es') description = manga.attributes.description['es-la'];
     if (!description) description = manga.attributes.description['en'];
 
-    return description || await client.translate(locale, 'commands', 'manga.response.found.no_description');
+    return description || translations.embed.error.no_description;
 }
 
 /**

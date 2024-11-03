@@ -49,8 +49,8 @@ module.exports = {
         let fields = [];
 
         for (const command of availableCommands) {
-            const name = command.name;
-            const value = await client.translate(locale, 'commands', `${name}.description`);
+            const name = `/${command.name}`;
+            const value = await client.translate(locale, 'commands', `${command.name}.description`);
             fields.push({ name, value });
         }
 

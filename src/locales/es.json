@@ -73,16 +73,11 @@
         "commands": {
             "name": "commands",
             "description": "Obtén la lista de comandos que puedes usar.",
-            "subcommands": [],
-            "options": [],
+            "subcommands": {},
+            "options": {},
             "response": {
                 "title": "Comandos",
-                "fields": [
-                    {
-                        "name": "%commandName%",
-                        "value": "%commandDescription%"
-                    }
-                ],
+                "fields": {},
                 "footer": "%commandName% - Solicitado por %user%"
             }
         },
@@ -235,12 +230,7 @@
                 "query": {
                     "title": "Resultados de la Búsqueda",
                     "description": "Aquí están los resultados de la búsqueda para `%query%`.",
-                    "fields": [
-                        {
-                            "name": "%title%",
-                            "value": "%description%"
-                        }
-                    ],
+                    "fields": {},
                     "placeholder": "Selecciona un manga para ver más información..."
                 },
                 "stats": {
@@ -292,8 +282,8 @@
         "nami": {
             "name": "nami",
             "description": "Busca un título en NamiComi.",
-            "subcommands": [],
-            "subcommand_groups": [],
+            "subcommands": {},
+            "subcommand_groups": {},
             "options": {
                 "query": {
                     "name": "query",
@@ -385,12 +375,7 @@
                 "query": {
                     "title": "Resultados de la Búsqueda",
                     "description": "Aquí están los resultados de la búsqueda para `%query%`.",
-                    "fields": [
-                        {
-                            "name": "%title%",
-                            "value": "%description%"
-                        }
-                    ],
+                    "fields": {},
                     "placeholder": "Selecciona un título para ver más información..."
                 },
                 "stats": {

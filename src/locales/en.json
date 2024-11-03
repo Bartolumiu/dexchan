@@ -73,16 +73,11 @@
         "commands": {
             "name": "commands",
             "description": "Get the list of the commands you can use.",
-            "subcommands": [],
-            "options": [],
+            "subcommands": {},
+            "options": {},
             "response": {
                 "title": "Commands",
-                "fields": [
-                    {
-                        "name": "%commandName%",
-                        "value": "%commandDescription%"
-                    }
-                ],
+                "fields": {},
                 "footer": "%commandName% - Requested by %user%"
             }
         },
@@ -235,12 +230,7 @@
                 "query": {
                     "title": "Search Results",
                     "description": "Here are the search results for `%query%`.",
-                    "fields": [
-                        {
-                            "name": "%title%",
-                            "value": "%description%"
-                        }
-                    ],
+                    "fields": {},
                     "placeholder": "Select a manga to view more information..."
                 },
                 "stats": {
@@ -385,12 +375,7 @@
                 "query": {
                     "title": "Search Results",
                     "description":"Here are the search results for `%query%`.",
-                    "fields": [
-                        {
-                            "name": "%title%",
-                            "value": "%description%"
-                        }
-                    ],
+                    "fields": {},
                     "placeholder": "Select a title to view more information."
                 },
                 "stats": {

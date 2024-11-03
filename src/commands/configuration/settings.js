@@ -119,12 +119,12 @@ async function localeSettings(interaction, client, userProfile, embed) {
                 const locale = interaction.options.getString('locale');
                 userProfile.preferredLocale = locale; // Set the user's preferred locale
                 await userProfile.save();
-                embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[0].response.title.success'));
-                embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[0].response.description.success', { locale: locale }));
+                embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.success'));
+                embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.success', { locale: locale }));
                 embed.setColor(Colors.Green);
             } catch (e) {
-                embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[0].response.title.error'));
-                embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[0].response.description.error'));
+                embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error'));
+                embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error'));
                 embed.setColor(Colors.Red);
             }
             break;
@@ -132,16 +132,16 @@ async function localeSettings(interaction, client, userProfile, embed) {
             try {
                 userProfile.preferredLocale = null;
                 await userProfile.save();
-                embed.setTitle(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.title.success'));
-                embed.setDescription(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.description.success'));
+                embed.setTitle(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.success'));
+                embed.setDescription(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.success'));
                 embed.setColor(Colors.Green);
             } catch (e) {
                 if (userProfile.preferredLocale) {
-                    embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.title.error'));
-                    embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.description.error'));
+                    embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.error'));
+                    embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.error'));
                 } else {
-                    embed.setTitle(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.title.error'));
-                    embed.setDescription(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.description.error'));
+                    embed.setTitle(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.error'));
+                    embed.setDescription(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.error'));
                 }
                 embed.setColor(Colors.Red);
             }
@@ -161,12 +161,12 @@ async function localeSettings(interaction, client, userProfile, embed) {
  */
 async function viewSettings(interaction, client, userProfile, embed) {
     const locale = userProfile.preferredLocale || interaction.locale;
-    embed.setTitle(await client.translate(locale, 'commands', 'settings.subcommands[0].response.title'));
-    embed.setDescription(await client.translate(locale, 'commands', 'settings.subcommands[0].response.description', { locale: locale }));
+    embed.setTitle(await client.translate(locale, 'commands', 'settings.subcommands.view.response.title'));
+    embed.setDescription(await client.translate(locale, 'commands', 'settings.subcommands.view.response.description', { locale: locale }));
     embed.addFields(
         {
-            name: await client.translate(locale, 'commands', 'settings.subcommands[0].response.fields[0].name'),
-            value: await client.translate(locale, 'commands', 'settings.subcommands[0].response.fields[0].value', { locale: locale }),
+            name: await client.translate(locale, 'commands', 'settings.subcommands.view.response.fields.locale.name'),
+            value: await client.translate(locale, 'commands', 'settings.subcommands.view.response.fields.locale.value', { locale: locale }),
             inline: true
         }
     )

@@ -434,38 +434,38 @@
         "settings": {
             "name": "settings",
             "description": "View or change the bot's settings.",
-            "subcommands": [
-                {
+            "subcommands": {
+                "view": {
                     "name": "view",
                     "description": "View your settings",
-                    "subcommands": [],
-                    "options": [],
+                    "subcommands": {},
+                    "options": {},
                     "response": {
                         "title": "User Settings",
                         "description": "Here are your current settings.",
-                        "fields": [
-                            {
+                        "fields": {
+                            "locale": {
                                 "name": "Language",
                                 "value": "%locale%"
                             }
-                        ]
+                        }
                     }
                 }
-            ],
-            "subcommand_groups": [
-                {
+            },
+            "subcommand_groups": {
+                "locale": {
                     "name": "locale",
                     "description": "Language Settings",
-                    "subcommands": [
-                        {
+                    "subcommands": {
+                        "set": {
                             "name": "set",
                             "description": "Set your preferred language",
-                            "options": [
-                                {
+                            "options": {
+                                "locale": {
                                     "name": "locale",
                                     "description": "The language you want to use"
                                 }
-                            ],
+                            },
                             "response": {
                                 "title": {
                                     "success": "Language Set",
@@ -475,31 +475,31 @@
                                     "success": "Your preferred language has been set to `%locale%`.",
                                     "error": "An error occurred while setting your preferred language."
                                 },
-                                "fields": [],
+                                "fields": {},
                                 "footer": "%commandName% - Requested by %user%"
                             }
                         },
-                        {
+                        "reset": {
                             "name": "reset",
                             "description": "Reset your preferred language",
-                            "options": [],
+                            "options": {},
                             "response": {
                                 "title": {
                                     "success": "Language Reset",
                                     "error": "Error while resetting the language"
                                 },
                                 "description": {
-                                    "success": "Your preferred language has been reset.",
+                                    "success":"Your preferred language has been reset.",
                                     "error": "An error occurred while resetting your preferred language."
                                 },
-                                "fields": [],
+                                "fields": {},
                                 "footer": "%commandName% - Requested by %user%"
                             }
                         }
-                    ]
+                    }
                 }
-            ],
-            "options": [],
+            },
+            "options": {},
             "response": {
                 "footer": "%commandName% - Requested by %user%"
             }

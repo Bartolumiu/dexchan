@@ -434,38 +434,38 @@
         "settings": {
             "name": "settings",
             "description": "Revisa o cambia los ajustes del bot.",
-            "subcommands": [
-                {
+            "subcommands": {
+                "view": {
                     "name": "view",
                     "description": "Revisa tus ajustes",
-                    "subcommands": [],
-                    "options": [],
+                    "subcommands": {},
+                    "options": {},
                     "response": {
                         "title": "Ajustes de Usuario",
                         "description": "Aquí tienes tus ajustes actuales.",
-                        "fields": [
-                            {
+                        "fields": {
+                            "locale": {
                                 "name": "Idioma",
                                 "value": "%locale%"
                             }
-                        ]
+                        }
                     }
                 }
-            ],
-            "subcommand_groups": [
-                {
+            },
+            "subcommand_groups": {
+                "locale": {
                     "name": "locale",
                     "description": "Ajustes de Idioma",
-                    "subcommands": [
-                        {
+                    "subcommands": {
+                        "set": {
                             "name": "set",
                             "description": "Cambia tu idioma preferido",
-                            "options": [
-                                {
+                            "options": {
+                                "locale": {
                                     "name": "locale",
                                     "description": "El idioma que quieres usar"
                                 }
-                            ],
+                            },
                             "response": {
                                 "title": {
                                     "success": "¡Idioma cambiado!",
@@ -475,14 +475,14 @@
                                     "success": "El idioma ha sido cambiado a `%locale%`.",
                                     "error": "Ha ocurrido un error al cambiar el idioma."
                                 },
-                                "fields": [],
+                                "fields": {},
                                 "footer": "%commandName% - Solicitado por %user%"
                             }
                         },
-                        {
+                        "reset": {
                             "name": "reset",
                             "description": "Restablece tu idioma preferido",
-                            "options": [],
+                            "options": {},
                             "response": {
                                 "title": {
                                     "success": "Idioma Restablecido",
@@ -492,14 +492,14 @@
                                     "success": "Tu idioma ha sido restablecido al idioma predeterminado.",
                                     "error": "Ha ocurrido un error al restablecer el idioma."
                                 },
-                                "fields": [],
+                                "fields": {},
                                 "footer": "%commandName% - Solicitado por %user%"
                             }
                         }
-                    ]
+                    }
                 }
-            ],
-            "options": [],
+            },
+            "options": {},
             "response": {
                 "footer": "%commandName% - Solicitado por %user%"
             }

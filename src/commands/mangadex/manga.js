@@ -114,8 +114,8 @@ module.exports = {
                 },
                 error: {
                     title: await client.translate(locale, 'commands', 'manga.response.error.title'),
-                    no_description: await client.translate(locale, 'commands', 'manga.response.error.found.no_description'),
-                    too_many_authors: await client.translate(locale, 'commands', 'manga.response.error.found.author.too_many'),
+                    no_description: await client.translate(locale, 'commands', 'manga.response.found.no_description'),
+                    too_many_authors: await client.translate(locale, 'commands', 'manga.response.found.author.too_many'),
                 },
                 footer: await client.translate(locale, 'commands', 'manga.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username })
             },

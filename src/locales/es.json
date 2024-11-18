@@ -272,7 +272,7 @@
                         "url": "La URL proporcionada no es válida.",
                         "invalid_id": "La ID proporcionada no es válida.",
                         "no_results": "La consulta no devolvió resultados. Es todo lo que sabemos.",
-                        "api": "Ha ocurrido un error al obtener los datos del manga.\nPor favor, inténtalo de nuevo más tarde.\nCódigo de estado: %statusCode%",
+                        "api": "No se ha podido obtener los datos del manga de la API externa.\nPor favor, inténtalo de nuevo más tarde.",
                         "empty": "Por favor, proporciona una consulta, ID o URL."
                     }
                 },

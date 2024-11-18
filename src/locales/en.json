@@ -272,7 +272,7 @@
                         "url": "The provided URL is invalid.",
                         "invalid_id": "The provided ID is invalid.",
                         "no_results": "The query returned no results. That's all we know.",
-                        "api": "An error occurred while fetching the manga data.\nPlease try again later.\nStatus code: %statusCode%",
+                        "api": "Couldn't fetch manga data from the external API.\nPlease try again later.",
                         "empty": "Please provide either a query, ID, or URL."
                     }
                 },

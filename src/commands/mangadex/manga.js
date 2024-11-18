@@ -220,6 +220,11 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
         .setDescription(await client.translate(locale, 'commands', errorKey))
         .setColor(Colors.Red);
 
+    // If it's an autocomplete interaction (selection menu), the error came from the API (probably a timeout), so API error message is sent instead
+    if (interaction.type === 3) {
+        embed.setDescription(await client.translate(locale, 'commands', 'manga.response.error.description.api'));
+        return interaction.reply({ embeds: [embed] });
+    }
     return interaction.editReply({ embeds: [embed] });
 }
 
@@ -293,8 +298,12 @@ async function setImages(manga, embed, translations) {
     const coverURL = await getCoverURL(manga);
     if (!coverURL) return [mangadexIcon];
 
-    const cover = await fetch(coverURL, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
-    if (!cover.ok) return [mangadexIcon];
+    try {
+        const cover = await fetch(coverURL, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
+        if (!cover.ok) return [mangadexIcon];
+    } catch (error) {
+        return [mangadexIcon];
+    }
 
     const coverBuffer = await cover.arrayBuffer();
     const coverImage = new AttachmentBuilder(Buffer.from(coverBuffer), { name: 'cover.png' });
@@ -399,12 +408,16 @@ async function getCoverURL(manga) {
     const coverArtID = manga.relationships.find(rel => rel.type === 'cover_art').id;
 
     const url = new URL(`https://api.mangadex.org/cover/${coverArtID}`);
-    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
-    if (!response.ok) return null;
-    const data = await response.json();
-    const fileName = data.data.attributes.fileName;
 
-    return `https://mangadex.org/covers/${mangaID}/${fileName}`;
+    try {
+        const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
+        if (!response.ok) return null;
+        const data = await response.json();
+        const fileName = data.data.attributes.fileName;
+        return `https://mangadex.org/covers/${mangaID}/${fileName}`;
+    } catch (error) {
+        return null;
+    }
 }
 
 /**
@@ -420,11 +433,14 @@ async function getManga(mangaID) {
     url.searchParams.append('includes[]', 'cover_art');
     url.searchParams.append('includes[]', 'tag');
 
-    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
-    if (!response.ok) return null;
-    const data = await response.json();
-
-    return data.data;
+    try {
+        const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.data;
+    } catch (error) {
+        return null;
+    }
 }
 
 /**
@@ -438,11 +454,14 @@ async function getManga(mangaID) {
 async function getStats(mangaID) {
     const url = new URL(`https://api.mangadex.org/statistics/manga/${mangaID}`);
 
-    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
-    if (!response.ok) return null;
-    const data = await response.json();
-
-    return data.statistics[mangaID];
+    try {
+        const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.statistics[mangaID];
+    } catch (error) {
+        return null;
+    }
 }
 
 /**
@@ -479,14 +498,18 @@ async function searchManga(query) {
     url.searchParams.append('contentRating[]', 'erotica');
     url.searchParams.append('contentRating[]', 'pornographic');
 
-    const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
-    if (!response.ok) return null;
-    const data = await response.json();
+    try {
+        const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
+        if (!response.ok) return null;
+        const data = await response.json();
 
-    if (data.data.length === 0) return null;
-    // Map the results to a Map object with the title as the key and the ID as the value
-    // The title location is in manga.attributes.title (sometimes it's .en, sometimes it's .ja-ro, etc. so we'll fetch the first one)
-    const results = new Map(data.data.map(manga => [manga.attributes.title[Object.keys(manga.attributes.title)[0]], manga.id]));
-
-    return results;
+        if (data.data.length === 0) return null;
+        // Map the results to a Map object with the title as the key and the ID as the value
+        // The title location is in manga.attributes.title (sometimes it's .en, sometimes it's .ja-ro, etc. so we'll fetch the first one)
+        const results = new Map(data.data.map(manga => [manga.attributes.title[Object.keys(manga.attributes.title)[0]], manga.id]));
+    
+        return results;
+    } catch (error) {
+        return null;
+    }
 }

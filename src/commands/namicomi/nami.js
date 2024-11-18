@@ -363,8 +363,12 @@ async function setImages(title, embed, locale, client, translations) {
     if (!coverURL) return [namiIcon];
 
     // Cover image as the thumbnail
-    const cover = await fetch(coverURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-    if (!cover.ok) return [namiIcon];
+    try {
+        const cover = await fetch(coverURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
+        if (!cover.ok) return [namiIcon];
+    } catch (error) {
+        return [namiIcon];
+    }
 
     const coverBuffer = await cover.arrayBuffer();
     const coverImage = new AttachmentBuilder(Buffer.from(coverBuffer), { name: 'cover.png' });
@@ -372,14 +376,18 @@ async function setImages(title, embed, locale, client, translations) {
 
     // Title banner as the image
     const bannerURL = `https://uploads.namicomi.com/media/manga/${title.id}/banner/${title.attributes.bannerFileName}`;
-    const banner = await fetch(bannerURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-    if (!banner.ok) return [namiIcon, coverImage];
+    try {
+        const banner = await fetch(bannerURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
+        if (!banner.ok) return [namiIcon, coverImage];
 
-    const bannerBuffer = await banner.arrayBuffer();
-    const bannerImage = new AttachmentBuilder(Buffer.from(bannerBuffer), { name: 'banner.png' });
-    embed.setImage('attachment://banner.png');
+        const bannerBuffer = await banner.arrayBuffer();
+        const bannerImage = new AttachmentBuilder(Buffer.from(bannerBuffer), { name: 'banner.png' });
+        embed.setImage('attachment://banner.png');
 
-    return [namiIcon, coverImage, bannerImage];
+        return [namiIcon, coverImage, bannerImage];
+    } catch (error) {
+        return [namiIcon, coverImage];
+    }
 }
 
 /**
@@ -412,72 +420,76 @@ async function addTitleTags(title, embed, locale, client, translations) {
 
     // NamiComi tag list: https://api.namicomi.com/title/tags
     // Fetch the tag list and filter out the tags that are not in the tag list
-    const tagList = await fetch('https://api.namicomi.com/title/tags', { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 }).then(res => res.ok ? res.json() : null);
-    if (!tagList) return;
+    try {
+        const tagList = await fetch('https://api.namicomi.com/title/tags', { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 }).then(res => res.ok ? res.json() : null);
+        if (!tagList) return;
 
-    // Filter out the tag IDs that are not in the tag list
-    const validTags = tags.filter(tag => tagList.data.find(t => t.id === tag));
+        // Filter out the tag IDs that are not in the tag list
+        const validTags = tags.filter(tag => tagList.data.find(t => t.id === tag));
 
-    // Organize the tags into groups (attributes.group attribute in the tag element)
-    const tagGroups = {
-        theme: [],
-        genre: [],
-        content_warning: [],
-        format: []
-    };
+        // Organize the tags into groups (attributes.group attribute in the tag element)
+        const tagGroups = {
+            theme: [],
+            genre: [],
+            content_warning: [],
+            format: []
+        };
 
-    // Sort the tags into their respective groups
-    validTags.forEach(tag => {
-        const tagData = tagList.data.find(t => t.id === tag);
-        if (!tagData) return;
-
-        const group = tagData.attributes.group;
-        if (!group) return;
-
-        if (!tagGroups[group]) tagGroups[group] = [];
-        tagGroups[group].push(tagData.attributes.name[locale] || tagData.attributes.name.en);
-    });
-
-    // Create the fields for the embed
-    const fields = [
-        {
-            name: translations.embed.fields.format, // Format
-            value: tagGroups.format.join(', ') || 'N/A',
-            inline: true
-        },
-        {
-            name: translations.embed.fields.genres, // Genre
-            value: tagGroups.genre.join(', ') || 'N/A',
-            inline: true
-        },
-        {
-            name: translations.embed.fields.themes, // Theme
-            value: tagGroups.theme.join(', ') || 'N/A',
-            inline: true
-        },
-        {
-            name: translations.embed.fields.content_warning, // Content Warning
-            value: tagGroups.content_warning.join(', ') || 'N/A',
-            inline: true
-        },
-    ];
+        // Sort the tags into their respective groups
+        validTags.forEach(tag => {
+            const tagData = tagList.data.find(t => t.id === tag);
+            if (!tagData) return;
     
-    // Add tags from extra groups (if any)
-    const otherTags = [];
-    for (const [group, tags] of Object.entries(tagGroups)) {
-        if (['theme', 'genre', 'content_warning', 'format'].includes(group)) continue;
-        otherTags.push(...tags);
-    }
+            const group = tagData.attributes.group;
+            if (!group) return;
     
-    if (otherTags.length > 0) {
-        fields.push({
-            name: translations.embed.fields.other_tags, // Other Tags
-            value: otherTags.join(', '),
-            inline: true
+            if (!tagGroups[group]) tagGroups[group] = [];
+            tagGroups[group].push(tagData.attributes.name[locale] || tagData.attributes.name.en);
         });
+
+        // Create the fields for the embed
+        const fields = [
+            {
+                name: translations.embed.fields.format, // Format
+                value: tagGroups.format.join(', ') || 'N/A',
+                inline: true
+            },
+            {
+                name: translations.embed.fields.genres, // Genre
+                value: tagGroups.genre.join(', ') || 'N/A',
+                inline: true
+            },
+            {
+                name: translations.embed.fields.themes, // Theme
+                value: tagGroups.theme.join(', ') || 'N/A',
+                inline: true
+            },
+            {
+                name: translations.embed.fields.content_warning, // Content Warning
+                value: tagGroups.content_warning.join(', ') || 'N/A',
+                inline: true
+            },
+        ];
+
+        // Add tags from extra groups (if any)
+        const otherTags = [];
+        for (const [group, tags] of Object.entries(tagGroups)) {
+            if (['theme', 'genre', 'content_warning', 'format'].includes(group)) continue;
+            otherTags.push(...tags);
+        }
+        
+        if (otherTags.length > 0) {
+            fields.push({
+                name: translations.embed.fields.other_tags, // Other Tags
+                value: otherTags.join(', '),
+                inline: true
+            });
+        }
+        
+        embed.addFields(fields);
+    } catch (error) {
+        return;
     }
-    
-    embed.addFields(fields);
 }
 
 /**
@@ -526,7 +538,13 @@ async function getCoverURL(title, locale) {
 
     // Fetch all cover arts in parallel
     const coverArtPromises = coverArtRelationships.map(async rel => {
-        return await fetch(`https://api.namicomi.com/cover/${rel.id}`, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 }).then(res => res.ok ? res.json() : null);
+        try {
+            const res = await fetch(`https://api.namicomi.com/cover/${rel.id}`, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
+            if (!res.ok) return null;
+            return res.json();
+        } catch (error) {
+            return null;
+        }
     });
 
     // Resolve all promises and filter out the ones that are not ok
@@ -556,11 +574,15 @@ async function getTitle(titleID) {
     url.searchParams.append('includes[]', 'cover_art');
     url.searchParams.append('includes[]', 'tag');
 
-    const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-    if (!response.ok) return null;
-    const data = await response.json();
+    try {
+        const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
+        if (!response.ok) return null;
+        const data = await response.json();
 
-    return data.data;
+        return data.data;
+    } catch (error) {
+        return null;
+    }
 }
 
 /**
@@ -633,20 +655,24 @@ async function searchTitle(query, locale) {
     url.searchParams.append('contentRatings[]', 'mature');
     url.searchParams.append('contentRatings[]', 'restricted');
 
-    const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-    if (!response.ok) return null;
-    const data = await response.json();
-
-    if (data.data.length === 0) return null;
-    const results = new Map(data.data.map(title => {
-        if (title?.attributes?.title) {
-            let localizedTitle = title.attributes.title[locale];
-            if (!localizedTitle && locale === 'es') localizedTitle = title.attributes.title['es-419'];
-            if (!localizedTitle) localizedTitle = title.attributes.title['en'];
-            if (!localizedTitle) localizedTitle = title.attributes.title[Object.keys(title.attributes.title)[0]];
-            return [localizedTitle, title.id];
-        }
-    }));
-
-    return results;
+    try {
+        const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
+        if (!response.ok) return null;
+        const data = await response.json();
+        
+        if (data.data.length === 0) return null;
+        const results = new Map(data.data.map(title => {
+            if (title?.attributes?.title) {
+                let localizedTitle = title.attributes.title[locale];
+                if (!localizedTitle && locale === 'es') localizedTitle = title.attributes.title['es-419'];
+                if (!localizedTitle) localizedTitle = title.attributes.title['en'];
+                if (!localizedTitle) localizedTitle = title.attributes.title[Object.keys(title.attributes.title)[0]];
+                return [localizedTitle, title.id];
+            }
+        }));
+    
+        return results;
+    } catch (error) {
+        return null;
+    }
 }

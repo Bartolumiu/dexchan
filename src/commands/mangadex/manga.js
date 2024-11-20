@@ -301,15 +301,16 @@ async function setImages(manga, embed, translations) {
     try {
         const cover = await fetch(coverURL, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
         if (!cover.ok) return [mangadexIcon];
+        
+        const coverBuffer = await cover.arrayBuffer();
+        const coverImage = new AttachmentBuilder(Buffer.from(coverBuffer), { name: 'cover.png' });
+        embed.setThumbnail('attachment://cover.png');
+    
+        return [mangadexIcon, coverImage];
     } catch (error) {
         return [mangadexIcon];
     }
 
-    const coverBuffer = await cover.arrayBuffer();
-    const coverImage = new AttachmentBuilder(Buffer.from(coverBuffer), { name: 'cover.png' });
-    embed.setThumbnail('attachment://cover.png');
-
-    return [mangadexIcon, coverImage];
 }
 
 /**

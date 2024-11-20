@@ -88,7 +88,7 @@ const urlRegexes = {
  * @param {string} type - The type of URL (`"namicomi"` or `"mangadex"`).
  * @returns {Promise<string|null>} The extracted ID if matched, otherwise null.
  */
-async function parseURL(url, type) {
+const parseURL = async (url, type) => {
     if (!url || typeof url !== 'string') return null;
 
     switch (type) {
@@ -109,7 +109,7 @@ async function parseURL(url, type) {
  * @param {string} url - The NamiComi URL to parse.
  * @returns {Promise<string|null>} The extracted ID if matched, otherwise null.
  */
-async function parseNamiComiURL(url) {
+const parseNamiComiURL = async (url) => {
     const primary = urlRegexes.namicomi.primary.exec(url);
     if (primary) return primary[1];
     const semiShortened = urlRegexes.namicomi.semi_shortened.exec(url);
@@ -126,10 +126,10 @@ async function parseNamiComiURL(url) {
  * @param {string} url - The MangaDex URL to parse.
  * @returns {Promise<string|null>} The extracted ID if matched, otherwise null.
  */
-async function parseMangaDexURL(url) {
+const parseMangaDexURL = async (url) => {
     url = url.split('?')[0].split('/').slice(0, 5).join('/');
     const match = urlRegexes.mangadex.exec(url);
     return (match) ? match[1] : null;
 };
 
-module.exports = { parseURL, parseNamiComiURL, parseMangaDexURL };
+module.exports = parseURL;

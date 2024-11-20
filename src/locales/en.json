@@ -263,7 +263,10 @@
                         "comments": "comments"
                     },
                     "buttons": {
-                        "forum": "Open Forum Thread"
+                        "forum": {
+                            "open": "Open Forum Thread",
+                            "no_thread": "No Forum Thread"
+                        }
                     }
                 },
                 "error": {

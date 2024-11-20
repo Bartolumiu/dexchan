@@ -263,7 +263,10 @@
                         "comments": "comentarios"
                     },
                     "buttons": {
-                        "forum": "Abrir el hilo del foro"
+                        "forum": {
+                            "open": "Abrir el hilo del foro",
+                            "no_thread": "No hay hilo del foro"
+                        }
                     }
                 },
                 "error": {

@@ -28,14 +28,14 @@ module.exports = {
         }
 
         // Format the statistics data
-        const statsData = stats.statistics[title];
-        const ratingData = statsData.rating;
-        const distribution = ratingData.distribution;
-        const distributionString = Object.entries(distribution).reverse().filter(([rating, count]) => count > 0).map(([rating, count]) => `${rating}/10: ${count}`).join('\n');
-        const totalVotes = Object.values(distribution).reduce((total, count) => total + count, 0);
-        const averageRating = ratingData.average.toFixed(2);
-        const bayesianRating = ratingData.bayesian.toFixed(2);
-        const follows = statsData.follows;
+        const statsData = stats.statistics[title] || {};
+        const ratingData = statsData.rating || {};
+        const distribution = ratingData.distribution || {};
+        const distributionString = Object.entries(distribution).reverse().filter(([rating, count]) => count > 0).map(([rating, count]) => `${rating}/10: ${count}`).join('\n') || 'N/A';
+        const totalVotes = Object.values(distribution).reduce((total, count) => total + count, 0) || 0;
+        const averageRating = ratingData.average?.toFixed(2) || 0.00;
+        const bayesianRating = ratingData.bayesian?.toFixed(2) || 0.00;
+        const follows = statsData.follows || 0;
 
 
         // Create an embed with the statistics data
@@ -65,7 +65,7 @@ module.exports = {
                 },
                 {   // Comments
                     name: await client.translate(locale, 'commands', 'manga.response.stats.fields[4].name'),
-                    value: `${statsData.comments.repliesCount}`,
+                    value: `${statsData.comments?.repliesCount || 0}`,
                     inline: true
                 }
             )
@@ -75,14 +75,25 @@ module.exports = {
                 iconURL: client.user.avatarURL({ dynamic: true })
             });
 
-            const buttons = new ActionRowBuilder().addComponents(
-                new ButtonBuilder()
-                    .setLabel(await client.translate(locale, 'commands', 'manga.response.stats.buttons.forum'))
-                    .setURL(`https://forums.mangadex.org/threads/${statsData.comments.threadId}`)
+            const buttons = new ActionRowBuilder();
+            if (statsData.comments?.threadId) {
+                buttons.addComponents(
+                    new ButtonBuilder()
+                        .setLabel(await client.translate(locale, 'commands', 'manga.response.stats.buttons.forum.open'))
+                        .setURL(`https://forums.mangadex.org/threads/${statsData.comments.threadId}`)
+                        .setStyle(ButtonStyle.Link)
+                );
+            } else {
+                buttons.addComponents(
+                    new ButtonBuilder()
+                    .setLabel(await client.translate(locale, 'commands', 'manga.response.stats.buttons.forum.no_thread'))
+                    .setURL('https://forums.mangadex.org/')
                     .setStyle(ButtonStyle.Link)
-            )
-
-        // Send a follow-up message with the embed
-        await interaction.followUp({ embeds: [embed], components: [buttons] });
+                    .setDisabled(true)
+                );
+            }
+            
+            // Send a follow-up message with the embed
+            await interaction.followUp({ embeds: [embed], components: [buttons] });
     }
 }

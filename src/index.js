@@ -17,25 +17,9 @@ client.globalCommands = [];
 // Import version from package.json
 client.version = require('../package.json').version;
 
-
-// Read function files
-const functionFolders = readdirSync('./src/functions');
-for (const folder of functionFolders) {
-    const functions = readdirSync(`./src/functions/${folder}`).filter(file => file.endsWith('.js'));
-    for (const file of functions) {
-        try {
-            const func = require(`./functions/${folder}/${file}`);
-            if (typeof func === 'function') {
-                if (func.name === 'checkUpdates') continue; // Skip checkUpdates function
-                func(client);
-            } else {
-                console.error(`Error: ${file} in ${folder} is not exporting a function.`);
-            }
-        } catch (e) {
-            console.error(`Error requiring ${file} in ${folder}: ${e}`);
-        }
-    }
-}
+console.log(`[NodeJS] Starting Dex-chan v${client.version}...`);
+const loadFunctions = require('./functions/handlers/handleFunctions');
+loadFunctions(client);
 
 client.handleEvents();
 client.handleCommands();

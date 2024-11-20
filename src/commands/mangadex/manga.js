@@ -2,6 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowB
 const translateAttribute = require('../../functions/handlers/translateAttribute');
 const path = require('path');
 let version = require('../../../package.json').version;
+const USER_AGENT = `Dex-chan/${version} by Bartolumiu`;
 
 /**
  * An object containing regular expression components for matching MangaDex URLs.
@@ -299,9 +300,9 @@ async function setImages(manga, embed, translations) {
     if (!coverURL) return [mangadexIcon];
 
     try {
-        const cover = await fetch(coverURL, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
+        const cover = await fetch(coverURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
         if (!cover.ok) return [mangadexIcon];
-        
+
         const coverBuffer = await cover.arrayBuffer();
         const coverImage = new AttachmentBuilder(Buffer.from(coverBuffer), { name: 'cover.png' });
         embed.setThumbnail('attachment://cover.png');
@@ -411,7 +412,7 @@ async function getCoverURL(manga) {
     const url = new URL(`https://api.mangadex.org/cover/${coverArtID}`);
 
     try {
-        const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
+        const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
         if (!response.ok) return null;
         const data = await response.json();
         const fileName = data.data.attributes.fileName;
@@ -435,7 +436,7 @@ async function getManga(mangaID) {
     url.searchParams.append('includes[]', 'tag');
 
     try {
-        const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
+        const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
         if (!response.ok) return null;
         const data = await response.json();
         return data.data;
@@ -456,7 +457,7 @@ async function getStats(mangaID) {
     const url = new URL(`https://api.mangadex.org/statistics/manga/${mangaID}`);
 
     try {
-        const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
+        const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
         if (!response.ok) return null;
         const data = await response.json();
         return data.statistics[mangaID];
@@ -500,7 +501,7 @@ async function searchManga(query) {
     url.searchParams.append('contentRating[]', 'pornographic');
 
     try {
-        const response = await fetch(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }, timeout: 5000 });
+        const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
         if (!response.ok) return null;
         const data = await response.json();
 

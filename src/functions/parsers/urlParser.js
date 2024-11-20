@@ -47,15 +47,22 @@ const regexComponents = {
 
 /**
  * @typedef {Object} RegexStrings
- * @property {string} mangadex - Complete regex for MangaDex URLs.
+ * @property {Object} mangadex - Complete regex patterns for MangaDex URLs.
+ * @property {string} mangadex.id - Full regex pattern for IDs in MangaDex URLs.
+ * @property {string} mangadex.primary - Full regex pattern for primary MangaDex URL.
  * @property {Object} namicomi - Complete regex patterns for NamiComi URLs.
+ * @property {string} namicomi.id - Full regex pattern for IDs in NamiComi URLs.
  * @property {string} namicomi.primary - Full regex pattern for primary NamiComi URL.
  * @property {string} namicomi.semi_shortened - Full regex pattern for semi-shortened NamiComi URL.
  * @property {string} namicomi.shortened - Full regex pattern for shortened NamiComi URL.
  */
 const regexStrings = {
-    mangadex: `^${regexComponents.protocol.https}${regexComponents.mangadex.subdomain}${regexComponents.mangadex.domain}\\/title\\/${regexComponents.mangadex.id}${regexComponents.mangadex.slugAndParams}$`,
+    mangadex: {
+        id: regexComponents.mangadex.id,
+        primary: `^${regexComponents.protocol.https}${regexComponents.mangadex.subdomain}${regexComponents.mangadex.domain}\\/title\\/${regexComponents.mangadex.id}${regexComponents.mangadex.slugAndParams}$`
+    },
     namicomi: {
+        id: regexComponents.namicomi.id,
         primary: `^${regexComponents.protocol.https}${regexComponents.namicomi.primary}\\/${regexComponents.namicomi.locale}\\/title\\/${regexComponents.namicomi.id}${regexComponents.namicomi.slug}$`,
         semi_shortened: `^${regexComponents.protocol.https}${regexComponents.namicomi.primary}\\/t\\/${regexComponents.namicomi.id}$`,
         shortened: `^${regexComponents.protocol.https}${regexComponents.namicomi.secondary}\\/t\\/${regexComponents.namicomi.id}$`
@@ -64,15 +71,22 @@ const regexStrings = {
 
 /**
  * @typedef {Object} UrlRegexes
- * @property {RegExp} mangadex - Regular expression object for MangaDex URLs.
+ * @property {Object} mangadex - Regular expression objects for MangaDex URLs.
+ * @property {RegExp} mangadex.id - Regular expression for IDs in MangaDex URLs.
+ * @property {RegExp} mangadex.primary - Regular expression for primary MangaDex URL.
  * @property {Object} namicomi - Regular expression objects for NamiComi URL formats.
+ * @property {RegExp} namicomi.id - Regular expression for IDs in NamiComi URLs.
  * @property {RegExp} namicomi.primary - RegExp for primary NamiComi URL.
  * @property {RegExp} namicomi.semi_shortened - RegExp for semi-shortened NamiComi URL.
  * @property {RegExp} namicomi.shortened - RegExp for shortened NamiComi URL.
  */
 const urlRegexes = {
-    mangadex: new RegExp(regexStrings.mangadex),
+    mangadex: {
+        id: new RegExp(regexStrings.mangadex.id),
+        primary: new RegExp(regexStrings.mangadex.primary)
+    },
     namicomi: {
+        id: new RegExp(regexStrings.namicomi.id),
         primary: new RegExp(regexStrings.namicomi.primary),
         semi_shortened: new RegExp(regexStrings.namicomi.semi_shortened),
         shortened: new RegExp(regexStrings.namicomi.shortened)
@@ -98,7 +112,7 @@ const parseURL = async (url, type) => {
             return parseMangaDexURL(url);
         default:
             return null;
-    }
+    };
 };
 
 /**
@@ -127,9 +141,56 @@ const parseNamiComiURL = async (url) => {
  * @returns {Promise<string|null>} The extracted ID if matched, otherwise null.
  */
 const parseMangaDexURL = async (url) => {
+    console.log('URL:', url);
     url = url.split('?')[0].split('/').slice(0, 5).join('/');
-    const match = urlRegexes.mangadex.exec(url);
+    console.log('URL:', url);
+    const match = urlRegexes.mangadex.primary.exec(url);
+    console.log('Match:', match);
     return (match) ? match[1] : null;
 };
 
-module.exports = parseURL;
+
+/**
+ * Checks the validity of an ID based on the specified type.
+ *
+ * @param {string} id - The ID to be checked.
+ * @param {string} type - The type of ID to check. Can be 'namicomi' or 'mangadex'.
+ * @returns {Promise<null|boolean>} - Returns null if the ID is invalid or the type is not recognized, otherwise returns the result of the specific ID check.
+ */
+const checkID = async (id, type) => {
+    if (!id || typeof id !== 'string') return null;
+
+    switch (type) {
+        case 'namicomi':
+            return checkNamiComiID(id);
+        case 'mangadex':
+            return checkMangaDexID(id);
+        default:
+            return null;
+    };
+}
+
+/**
+ * Checks the validity of a NamiComi ID.
+ *
+ * @param {string} id - The ID to be checked.
+ * @returns {Promise<boolean>} - Returns true if the ID is valid, otherwise false.
+ */
+const checkNamiComiID = async (id) => {
+    return urlRegexes.namicomi.id.test(id);
+};
+
+/**
+ * Checks the validity of a MangaDex ID.
+ *
+ * @param {string} id - The ID to be checked.
+ * @returns {Promise<boolean>} - Returns true if the ID is valid, otherwise false.
+ */
+const checkMangaDexID = async (id) => {
+    return urlRegexes.mangadex.id.test(id);
+};
+
+module.exports = {
+    parseURL,
+    checkID
+};

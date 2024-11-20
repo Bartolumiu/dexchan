@@ -1,53 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require('discord.js');
 const translateAttribute = require('../../functions/handlers/translateAttribute');
 const path = require('path');
+const { parseURL, checkID } = require('../../functions/parsers/urlParser');
 let version = require('../../../package.json').version;
 const USER_AGENT = `Dex-chan/${version} by Bartolumiu`;
-
-/**
- * An object containing regular expression components for matching various parts of a URL.
- * 
- * @property {string} protocol - Regular expression to match the protocol (http or https).
- * @property {string} primary_domain - Regular expression to match the primary domain (namicomi.com).
- * @property {string} secondary_domain - Regular expression to match the secondary domain (nami.moe).
- * @property {string} locale - Regular expression to match the locale (e.g., en-US).
- * @property {string} id - Regular expression to match an 8-character alphanumeric ID.
- * @property {string} slug - Regular expression to match the slug (path after the domain).
- */
-const regexComponents = {
-    protocol: 'https?:\\/\\/',
-    primary_domain: 'namicomi\\.com',
-    secondary_domain: 'nami\\.moe',
-    locale: '[a-z]{2}(?:-[a-zA-Z]{2})?',
-    id: '([a-zA-Z0-9]{8})',
-    slug: '\\/[^\\/]+$',
-};
-
-/**
- * An object containing regular expression strings for different URL formats.
- * 
- * @property {string} primary - The primary URL format including protocol, primary domain, locale, title, ID, and slug.
- * @property {string} semi_shortened - A semi-shortened URL format including protocol, primary domain, and ID.
- * @property {string} shortened - A shortened URL format including protocol, secondary domain, and ID.
- */
-const regexStrings = {
-    primary: `${regexComponents.protocol}${regexComponents.primary_domain}\\/${regexComponents.locale}\\/title\\/${regexComponents.id}${regexComponents.slug}`,
-    semi_shortened: `${regexComponents.protocol}${regexComponents.primary_domain}\\/t\\/${regexComponents.id}`,
-    shortened: `${regexComponents.protocol}${regexComponents.secondary_domain}\\/t\\/${regexComponents.id}`
-};
-
-/**
- * An object containing regular expressions used for various matching patterns.
- * 
- * @property {RegExp} primary - The primary regular expression pattern.
- * @property {RegExp} semi_shortened - The semi-shortened regular expression pattern.
- * @property {RegExp} shortened - The shortened regular expression pattern.
- */
-const regexes = {
-    primary: new RegExp(regexStrings.primary),
-    semi_shortened: new RegExp(regexStrings.semi_shortened),
-    shortened: new RegExp(regexStrings.shortened)
-};
 
 /**
  * An object containing different URL formats for accessing titles on the Namicomi website.
@@ -210,8 +166,8 @@ module.exports = {
             return interaction.editReply({ embeds: [embed], components: [row] });
         }
 
-        const titleID = id || await getIDfromURL(url);
-        if (!(await checkIdFormat(titleID))) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.invalid_id');
+        const titleID = id || await parseURL(url, 'namicomi');
+        if (!(await checkID(titleID, 'namicomi'))) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.invalid_id');
 
         const [title, stats] = await Promise.all([getTitle(titleID), getStats(titleID)]);
         if (!title || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.invalid_id');
@@ -299,9 +255,9 @@ async function buildTitleEmbed(embed, client, locale, title, stats, translations
         case 'ltr':
             embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.left_to_right, inline: true });
             break;
-    }
+    };
     embed.setAuthor({ name: author, iconURL: 'attachment://namicomi.png' });
-}
+};
 
 /**
  * Retrieves the localized title based on the provided locale.
@@ -319,7 +275,7 @@ async function getLocalizedTitle(title, locale) {
     if (!localizedTitle && locale === 'es') localizedTitle = title.attributes.title['es-419'];
     if (!localizedTitle) localizedTitle = title.attributes.title['en'];
     return localizedTitle || title.attributes.title[Object.keys(title.attributes.title)[0]];
-}
+};
 
 /**
  * Retrieves a list of unique creators (organizations) associated with a given title.
@@ -337,7 +293,7 @@ async function getCreators(title, translations) {
     return (creators.length > 256)
         ? translations.embed.error.too_many_authors
         : creators;
-}
+};
 
 /**
  * Sets images for the embed based on the provided title.
@@ -366,29 +322,30 @@ async function setImages(title, embed, locale, client, translations) {
     try {
         const cover = await fetch(coverURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
         if (!cover.ok) return [namiIcon];
+        
+        const coverBuffer = await cover.arrayBuffer();
+        const coverImage = new AttachmentBuilder(Buffer.from(coverBuffer), { name: 'cover.png' });
+        embed.setThumbnail('attachment://cover.png');
+        
+        // Title banner as the image
+        const bannerURL = `https://uploads.namicomi.com/media/manga/${title.id}/banner/${title.attributes.bannerFileName}`;
+            
+        try {
+            const banner = await fetch(bannerURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
+            if (!banner.ok) return [namiIcon, coverImage];
+        
+            const bannerBuffer = await banner.arrayBuffer();
+            const bannerImage = new AttachmentBuilder(Buffer.from(bannerBuffer), { name: 'banner.png' });
+            embed.setImage('attachment://banner.png');
+        
+            return [namiIcon, coverImage, bannerImage];
+        } catch (error) {
+            return [namiIcon, coverImage];
+        };
     } catch (error) {
         return [namiIcon];
-    }
-
-    const coverBuffer = await cover.arrayBuffer();
-    const coverImage = new AttachmentBuilder(Buffer.from(coverBuffer), { name: 'cover.png' });
-    embed.setThumbnail('attachment://cover.png');
-
-    // Title banner as the image
-    const bannerURL = `https://uploads.namicomi.com/media/manga/${title.id}/banner/${title.attributes.bannerFileName}`;
-    try {
-        const banner = await fetch(bannerURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-        if (!banner.ok) return [namiIcon, coverImage];
-
-        const bannerBuffer = await banner.arrayBuffer();
-        const bannerImage = new AttachmentBuilder(Buffer.from(bannerBuffer), { name: 'banner.png' });
-        embed.setImage('attachment://banner.png');
-
-        return [namiIcon, coverImage, bannerImage];
-    } catch (error) {
-        return [namiIcon, coverImage];
-    }
-}
+    };
+};
 
 /**
  * Capitalizes the first letter of a given string.
@@ -398,7 +355,7 @@ async function setImages(title, embed, locale, client, translations) {
  */
 async function capitalizeFirstLetter(string) {
     return (typeof string === 'string' ? string.charAt(0).toUpperCase() + string.slice(1) : string);
-}
+};
 
 /**
  * Adds title tags to the provided embed object.
@@ -476,7 +433,7 @@ async function addTitleTags(title, embed, locale, client, translations) {
         for (const [group, tags] of Object.entries(tagGroups)) {
             if (['theme', 'genre', 'content_warning', 'format'].includes(group)) continue;
             otherTags.push(...tags);
-        }
+        };
         
         if (otherTags.length > 0) {
             fields.push({
@@ -484,40 +441,13 @@ async function addTitleTags(title, embed, locale, client, translations) {
                 value: otherTags.join(', '),
                 inline: true
             });
-        }
+        };
         
         embed.addFields(fields);
     } catch (error) {
         return;
-    }
-}
-
-/**
- * Extracts an ID from a given URL based on predefined regex patterns.
- *
- * @param {string} url - The URL from which to extract the ID.
- * @returns {Promise<string|null>} - A promise that resolves to the extracted ID if a match is found, or null if no match is found.
- */
-async function getIDfromURL(url) {
-    const primaryMatch = regexes.primary.exec(url);
-    if (primaryMatch) return primaryMatch[1];
-    const semiShortenedMatch = regexes.semi_shortened.exec(url);
-    if (semiShortenedMatch) return semiShortenedMatch[1];
-    const shortenedMatch = regexes.shortened.exec(url);
-    if (shortenedMatch) return shortenedMatch[1];
-    return null;
-}
-
-/**
- * Checks if the given ID is a string of length 8.
- *
- * @param {string} id - The ID to check.
- * @returns {boolean} True if the ID is a string of length 8, otherwise false.
- */
-async function checkIdFormat(id) {
-    return (typeof id === 'string' && id.length === 8);
-
-}
+    };
+};
 
 /**
  * Fetches the cover URL for a given title and locale.
@@ -544,7 +474,7 @@ async function getCoverURL(title, locale) {
             return res.json();
         } catch (error) {
             return null;
-        }
+        };
     });
 
     // Resolve all promises and filter out the ones that are not ok
@@ -560,7 +490,7 @@ async function getCoverURL(title, locale) {
     const fileName = selectedCoverArt.data.attributes.fileName;
 
     return `https://uploads.namicomi.com/covers/${titleID}/${fileName}`;
-}
+};
 
 /**
  * Fetches the title information from the NamiComi API.
@@ -582,8 +512,8 @@ async function getTitle(titleID) {
         return data.data;
     } catch (error) {
         return null;
-    }
-}
+    };
+};
 
 /**
  * Fetches and returns statistics for a given title from the NamiComi API.
@@ -616,8 +546,8 @@ async function getStats(titleID) {
         },
         follows: statsData.data.attributes.followCount,
         views: statsData.data.attributes.viewCount
-    }
-}
+    };
+};
 
 /**
  * Retrieves a localized description for a given title.
@@ -636,7 +566,7 @@ async function getLocalizedDescription(title, locale, translations) {
     if (!description) description = title.attributes.description['en'];
 
     return description || translations.embed.error.no_description;
-}
+};
 
 /**
  * Searches for titles based on the given query and locale.
@@ -668,11 +598,11 @@ async function searchTitle(query, locale) {
                 if (!localizedTitle) localizedTitle = title.attributes.title['en'];
                 if (!localizedTitle) localizedTitle = title.attributes.title[Object.keys(title.attributes.title)[0]];
                 return [localizedTitle, title.id];
-            }
+            };
         }));
     
         return results;
     } catch (error) {
         return null;
-    }
-}
+    };
+};

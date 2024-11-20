@@ -1,31 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require("discord.js");
 const translateAttribute = require('../../functions/handlers/translateAttribute');
 const path = require('path');
+const { parseURL, checkID } = require('../../functions/parsers/urlParser');
 let version = require('../../../package.json').version;
 const USER_AGENT = `Dex-chan/${version} by Bartolumiu`;
-
-/**
- * An object containing regular expression components for matching MangaDex URLs.
- * 
- * @property {string} protocol - The protocol part of the URL (http or https).
- * @property {string} subdomain - The optional subdomain part of the URL (www, canary, or sandbox).
- * @property {string} domain - The domain part of the URL (mangadex.org or mangadex.dev).
- * @property {string} titleSegment - The segment of the URL that indicates a title.
- * @property {string} id - The UUID of the manga title.
- * @property {string} slugAndParams - The optional slug and query parameters of the URL.
- */
-const regexComponents = {
-    protocol: 'https?:\\/\\/',
-    subdomain: '(?:www\\.)?(?:canary|sandbox\\.)?',
-    domain: 'mangadex\\.(?:org|dev)',
-    titleSegment: '\\/title\\/',
-    id: '([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})',
-    slugAndParams: '(?:\\/[^?]+)?(?:\\?.*)?'
-};
-
-const regexString = `^${regexComponents.protocol}${regexComponents.subdomain}${regexComponents.domain}${regexComponents.titleSegment}${regexComponents.id}${regexComponents.slugAndParams}$`;
-const urlRegex = new RegExp(regexString);
-const idRegex = /^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$/;
 
 /**
  * An object containing URL formats for different MangaDex environments.
@@ -180,8 +158,8 @@ module.exports = {
             return interaction.editReply({ embeds: [embed], components: [row] });
         }
 
-        const mangaID = id || await getIDfromURL(url);
-        if (!(await checkIdFormat(mangaID))) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.invalid_id');
+        const mangaID = id || await parseURL(url, 'mangadex');
+        if (!(await checkID(mangaID, 'mangadex'))) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.invalid_id');
 
         const [manga, stats] = await Promise.all([getManga(mangaID), getStats(mangaID)]);
         if (!manga || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.invalid_id');
@@ -371,28 +349,6 @@ async function addMangaTags(manga, embed, translations) {
     ];
 
     embed.addFields(fields);
-}
-
-/**
- * Extracts the ID from a given MangaDex URL.
- *
- * @param {string} url - The URL to extract the ID from.
- * @returns {Promise<string|null>} - A promise that resolves to the extracted ID or null if no ID is found.
- */
-async function getIDfromURL(url) {
-    url = url.split('?')[0].split('/').slice(0, 5).join('/');
-    const match = urlRegex.exec(url);
-    return (match) ? match[1] : null;
-}
-
-/**
- * Checks if the given ID matches the expected format.
- *
- * @param {string} id - The ID to be checked.
- * @returns {Promise<boolean>} - A promise that resolves to true if the ID matches the format, otherwise false.
- */
-async function checkIdFormat(id) {
-    return idRegex.test(id);
 }
 
 /**

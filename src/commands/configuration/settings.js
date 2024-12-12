@@ -7,44 +7,50 @@ module.exports = {
     data: async () => {
         const localizations = {
             description: await translateAttribute('settings', 'description'),
-            subcommand_groups: [
-                { // Locale
-                    description: await translateAttribute('settings', 'subcommand_groups[0].description'),
-                    subcommands: [
-                        { // Set locale
-                            description: await translateAttribute('settings', 'subcommand_groups[0].subcommands[0].description'),
-                            options: [
-                                {
-                                    description: await translateAttribute('settings', 'subcommand_groups[0].subcommands[0].options[0].description')
-                                }
-                            ]
-                        },
-                        { // Reset locale
-                            description: await translateAttribute('settings', 'subcommand_groups[0].subcommands[1].description')
-                        }
-                    ]
-                },
-                { // View settings
-                    description: await translateAttribute('settings', 'subcommand_groups[1].description')
+            subcommands: {
+                view: {
+                    description: await translateAttribute('settings', 'subcommands.view.description')
                 }
-            ]
+            },
+            subcommand_groups: {
+                locale: {
+                    description: await translateAttribute('settings', 'subcommand_groups.locale.description'),
+                    subcommands: {
+                        set: {
+                            description: await translateAttribute('settings', 'subcommand_groups.locale.subcommands.set.description'),
+                            options: {
+                                locale: {
+                                    description: await translateAttribute('settings', 'subcommand_groups.locale.subcommands.set.options.locale.description')
+                                }
+                            }
+                        },
+                        reset: {
+                            description: await translateAttribute('settings', 'subcommand_groups.locale.subcommands.reset.description')
+                        }
+                    }
+                }
+            }
         }
         return new SlashCommandBuilder()
             .setName('settings')
             .setDescription('Change your settings')
             .setDescriptionLocalizations(localizations.description)
+            .addSubcommand(command =>
+                command.setName('view')
+                    .setDescription('View your settings')
+                    .setDescriptionLocalizations(localizations.subcommands.view.description))
             .addSubcommandGroup(group =>
                 group.setName('locale')
                     .setDescription('Your preferred locale')
-                    .setDescriptionLocalizations(localizations.subcommand_groups[0].description)
+                    .setDescriptionLocalizations(localizations.subcommand_groups.locale.description)
                     .addSubcommand(command =>
                         command.setName('set')
                             .setDescription('Set your preferred locale')
-                            .setDescriptionLocalizations(localizations.subcommand_groups[0].subcommands[0].description)
+                            .setDescriptionLocalizations(localizations.subcommand_groups.locale.subcommands.set.description)
                             .addStringOption(option =>
                                 option.setName('locale')
                                     .setDescription('The language you want to set as your preferred language')
-                                    .setDescriptionLocalizations(localizations.subcommand_groups[0].subcommands[0].options[0].description)
+                                    .setDescriptionLocalizations(localizations.subcommand_groups.locale.subcommands.set.options.locale.description)
                                     .setAutocomplete(true)
                                     .setRequired(true)
                             )
@@ -52,13 +58,8 @@ module.exports = {
                     .addSubcommand(command =>
                         command.setName('reset')
                             .setDescription('Reset your preferred locale')
-                            .setDescriptionLocalizations(localizations.subcommand_groups[0].subcommands[1].description)
+                            .setDescriptionLocalizations(localizations.subcommand_groups.locale.subcommands.reset.description)
                     ),
-            )
-            .addSubcommand(command =>
-                command.setName('view')
-                    .setDescription('View your settings')
-                    .setDescriptionLocalizations(localizations.subcommand_groups[1].description)
             );
     },
     async execute(interaction, client) {

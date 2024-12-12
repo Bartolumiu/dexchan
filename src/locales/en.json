@@ -84,8 +84,8 @@
         "invite": {
             "name": "invite",
             "description": "Invite the bot to your server.",
-            "subcommands": [],
-            "options": [],
+            "subcommands": {},
+            "options": {},
             "response": {
                 "title": "Invite",
                 "description": "You can invite the bot to your server by clicking [here](%inviteLink%).",
@@ -95,8 +95,8 @@
         "stats": {
             "name": "stats",
             "description": "Get the bot's stats.",
-            "subcommands": [],
-            "options": [],
+            "subcommands": {},
+            "options": {},
             "response": {
                 "title": "Stats",
                 "fields": [
@@ -123,8 +123,8 @@
         "support": {
             "name": "support",
             "description": "Get the bot's support server invite.",
-            "subcommands": [],
-            "options": [],
+            "subcommands": {},
+            "options": {},
             "response": {
                 "title": "Support",
                 "description": "You can join the bot's support server by clicking [here](%supportLink%).",
@@ -134,8 +134,8 @@
         "uptime": {
             "name": "uptime",
             "description": "Get the bot's uptime.",
-            "subcommands": [],
-            "options": [],
+            "subcommands": {},
+            "options": {},
             "response": {
                 "title": "Uptime",
                 "description": "The bot has been online for %uptime%.",
@@ -236,28 +236,28 @@
                 "stats": {
                     "title": "Manga Stats",
                     "description": "Here are the stats for the manga with ID `%mangaId%`.",
-                    "fields": [
-                        {
+                    "fields": {
+                        "average": {
                             "name": "Average Rating",
                             "value": "%rating%"
                         },
-                        {
+                        "bayesian": {
                             "name": "Bayesian Rating",
                             "value": "%bayesian%"
                         },
-                        {
+                        "follows": {
                             "name": "Follows",
                             "value": "%follows%"
                         },
-                        {
+                        "distribution": {
                             "name": "Rating Distribution",
                             "value": "%ratingDistribution%"
                         },
-                        {
+                        "comments": {
                             "name": "Comments",
                             "value": "%comments%"
                         }
-                    ],
+                    },
                     "units": {
                         "votes": "votes",
                         "comments": "comments"
@@ -285,8 +285,8 @@
         "nami": {
             "name": "nami",
             "description": "Search for a title on NamiComi.",
-            "subcommands": [],
-            "subcommand_groups": [],
+            "subcommands": {},
+            "subcommand_groups": {},
             "options": {
                 "query": {
                     "name": "query",
@@ -384,36 +384,36 @@
                 "stats": {
                     "title": "Title Stats",
                     "description": "Here are the stats for the title with ID `%titleId%`.",
-                    "fields": [
-                        {
+                    "fields": {
+                        "rating": {
                             "name": "Rating",
                             "value": "%rating%"
                         },
-                        {
+                        "views": {
                             "name": "Views",
                             "value": "%views%"
                         },
-                        {
+                        "follows": {
                             "name": "Follows",
                             "value": "%follows%"
                         },
-                        {
+                        "comments": {
                             "name": "Comments",
                             "value": "%comments%"
                         },
-                        {
+                        "chapterViews": {
                             "name": "Chapter Views",
                             "value": "%chapterViews%"
                         },
-                        {
+                        "chapterComments": {
                             "name": "Chapter Comments",
                             "value": "%chapterComments%"
                         },
-                        {
+                        "chapterReactions": {
                             "name": "Chapter Reactions",
                             "value": "%chapterReactions%"
                         }
-                    ],
+                    },
                     "units": {
                         "votes": "votes",
                         "views": "views",

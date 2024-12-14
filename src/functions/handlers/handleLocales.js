@@ -21,8 +21,10 @@ const commandDescriptions = {};
 module.exports = (client) => {
     client.handleLocales = async () => {
         const chalk = (await import('chalk')).default;
+        console.log(chalk.blueBright('[Locale Handler] Loading locales...'));
         const localePath = path.join(__dirname, '../../locales');
         const localeFiles = readdirSync(localePath).filter(file => file.endsWith('.json'));
+        console.log(chalk.blueBright(`[Locale Handler] Found ${localeFiles.length} locales.`));
 
         localeFiles.forEach(file => {
             const filePath = path.join(localePath, file);

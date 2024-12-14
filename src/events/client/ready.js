@@ -6,8 +6,8 @@ module.exports = {
     async execute(client) {
         setInterval(client.pickPresence, 10 * 1000)
         const chalk = await import('chalk');
-        console.log(chalk.default.greenBright(`[Event Handler] Ready as ${client.user.tag}`));
-        console.log(chalk.default.greenBright(`[Event Handler] Version: ${client.version}`));
+        console.log(chalk.default.greenBright(`[Discord] Ready as ${client.user.tag}`));
+        console.log(chalk.default.greenBright(`[Discord] Version: ${client.version}`));
 
         // Check for updates
         console.log(chalk.default.blueBright('[GitHub] Checking for updates...'));

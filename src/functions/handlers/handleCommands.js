@@ -27,7 +27,7 @@ module.exports = (client) => {
     client.handleCommands = async () => {
         const chalkInstance = await import('chalk');
         const chalk = chalkInstance.default;
-
+        console.log(chalk.blueBright('[Command Handler] Loading commands...'));
         const { commands } = client;
 
         const commandFolders = readdirSync('./src/commands');
@@ -60,7 +60,7 @@ async function refreshCommands(globalCommandList, guildCommandMap, chalk) {
     const clientID = `${process.env.clientID}`;
     const rest = new REST({ version: '10' }).setToken(process.env.token);
     try {
-        console.log(chalk.gray('[Command Handler] Started refreshing global application (/) commands.'));
+        console.log(chalk.blueBright('[Command Handler] Started refreshing global application (/) commands.'));
         await rest.put(Routes.applicationCommands(clientID), { body: globalCommandList });
 
         for (const [guildID, commands] of guildCommandMap) {

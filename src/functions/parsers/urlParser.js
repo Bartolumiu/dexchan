@@ -141,11 +141,8 @@ const parseNamiComiURL = async (url) => {
  * @returns {Promise<string|null>} The extracted ID if matched, otherwise null.
  */
 const parseMangaDexURL = async (url) => {
-    console.log('URL:', url);
     url = url.split('?')[0].split('/').slice(0, 5).join('/');
-    console.log('URL:', url);
     const match = urlRegexes.mangadex.primary.exec(url);
-    console.log('Match:', match);
     return (match) ? match[1] : null;
 };
 
@@ -192,5 +189,7 @@ const checkMangaDexID = async (id) => {
 
 module.exports = {
     parseURL,
+    parseNamiComiURL,
+    parseMangaDexURL,
     checkID
 };

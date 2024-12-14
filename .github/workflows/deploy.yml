@@ -44,9 +44,14 @@ jobs:
           which pm2
           pm2 -v
 
-          # Navigate to the project directory and deploy
+          # Navigate to the project directory
           cd /home/ubuntu/dexchan || exit
-          git pull origin main
+
+          # Fetch latest changes and reset local branch to remote state (discarding local changes)
+          git fetch origin
+          git reset --hard origin/main
+
+          # Install dependencies and restart the app
           npm install
           pm2 restart dexchan || pm2 start src/index.js --name dexchan
         EOF

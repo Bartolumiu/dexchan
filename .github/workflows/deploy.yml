@@ -45,8 +45,8 @@ jobs:
           pm2 -v
 
           # Navigate to the project directory and deploy
-          cd /home/ubuntu/dexchan_rework || exit
+          cd /home/ubuntu/dexchan || exit
           git pull origin main
           npm install
-          pm2 restart dexchan_rework || pm2 start src/index.js --name dexchan_rework
+          pm2 restart dexchan || pm2 start src/index.js --name dexchan
         EOF

@@ -63,14 +63,14 @@ module.exports = {
             .setTimestamp();
 
         try {
-            fields.md.value = client.translate(locale, 'commands', 'ping.response.fields.api.mangadex.value', { mdPing: await getPing(API_URLS.MANGADEX) });
+            fields.md.value = await client.translate(locale, 'commands', 'ping.response.fields.api.mangadex.value', { mdPing: await getPing(API_URLS.MANGADEX) });
             embed.addFields(fields.md);
         } catch (e) {
             console.error('Error while fetching Mangadex API ping:', e);
             embed.addFields({ name: fields.md.name, value: fields.not_ok, inline: true });
         } finally {
             try {
-                fields.nami.value = client.translate(locale, 'commands', 'ping.response.fields.api.namicomi.value', { ncPing: await getPing(API_URLS.NAMICOMI) });
+                fields.nami.value = await client.translate(locale, 'commands', 'ping.response.fields.api.namicomi.value', { ncPing: await getPing(API_URLS.NAMICOMI) });
                 embed.addFields(fields.nami);
             } catch (e) {
                 console.error('Error while fetching Namicomi API ping:', e);

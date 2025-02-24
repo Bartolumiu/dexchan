@@ -35,7 +35,7 @@ module.exports = {
             }
         } catch (e) {
             let errorTimestamp = new Date().toISOString().replace(/:/g, '-').split('.')[0];
-            if (!fs.existsSync('./logs')) fs.mkdirSync('./logs').then(console.log('Created logs folder'));
+            if (!fs.existsSync('./logs')) fs.mkdirSync('./logs', { recursive: true });
             fs.writeFileSync(`./logs/${errorTimestamp}.txt`, `Date: ${errorTimestamp}\nUser: ${interaction.user.tag} (${interaction.user.id})\nError origin: ${interaction.customId || interaction.commandName}\nError message: ${e.message}\nError stack: ${e.stack}`);
 
             // Check if the interaction has already been replied to

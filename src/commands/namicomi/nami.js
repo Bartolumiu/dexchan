@@ -40,9 +40,9 @@ module.exports = {
         const localizations = {
             description: await translateAttribute('nami', 'description'),
             options: {
-                query: { description: await translateAttribute('nami', 'options.query.description') },
-                id: { description: await translateAttribute('nami', 'options.id.description') },
-                url: { description: await translateAttribute('nami', 'options.url.description') }
+                query: await translateAttribute('nami', 'options.query.description'),
+                id: await translateAttribute('nami', 'options.id.description'),
+                url: await translateAttribute('nami', 'options.url.description')
             }
         };
         return new SlashCommandBuilder()
@@ -52,17 +52,17 @@ module.exports = {
             .addStringOption(option =>
                 option.setName('query')
                     .setDescription('The title you want to search for')
-                    .setDescriptionLocalizations(localizations.options.query.description)
+                    .setDescriptionLocalizations(localizations.options.query)
                     .setRequired(false)
             ).addStringOption(option =>
                 option.setName('id')
                     .setDescription('The ID of the title you want to search for')
-                    .setDescriptionLocalizations(localizations.options.id.description)
+                    .setDescriptionLocalizations(localizations.options.id)
                     .setRequired(false)
             ).addStringOption(option =>
                 option.setName('url')
                     .setDescription('The URL of the title you want to search for')
-                    .setDescriptionLocalizations(localizations.options.url.description)
+                    .setDescriptionLocalizations(localizations.options.url)
                     .setRequired(false)
             );
     },

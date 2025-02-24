@@ -39,11 +39,11 @@ module.exports = {
     data: async () => {
         const localizations = {
             description: await translateAttribute('manga', 'description'),
-            options: [
-                { description: await translateAttribute('manga', 'options[0].description') },
-                { description: await translateAttribute('manga', 'options[1].description') },
-                { description: await translateAttribute('manga', 'options[2].description') }
-            ]
+            options: {
+                query: await translateAttribute('manga', 'options.query.description'),
+                id: await translateAttribute('manga', 'options.id.description'),
+                url: await translateAttribute('manga', 'options.url.description')
+            }
         };
         return new SlashCommandBuilder()
             .setName('manga')
@@ -52,17 +52,17 @@ module.exports = {
             .addStringOption(option =>
                 option.setName('query')
                     .setDescription('The manga you want to search for')
-                    .setDescriptionLocalizations(localizations.options[0].description)
+                    .setDescriptionLocalizations(localizations.options.query)
                     .setRequired(false)
             ).addStringOption(option =>
                 option.setName('id')
                     .setDescription('The ID of the manga you want to search for')
-                    .setDescriptionLocalizations(localizations.options[1].description)
+                    .setDescriptionLocalizations(localizations.options.id)
                     .setRequired(false)
             ).addStringOption(option =>
                 option.setName('url')
                     .setDescription('The URL of the manga you want to search for')
-                    .setDescriptionLocalizations(localizations.options[2].description)
+                    .setDescriptionLocalizations(localizations.options.url)
                     .setRequired(false)
             );
     },

@@ -282,6 +282,48 @@ describe('settings command', () => {
             expect(embed.data.description).toBe('Your preferred language has been reset.');
             expect(embed.data.color).toBe(Colors.Green);
         });
+
+        it('should return an error embed if the locale is not found', async () => {
+            const interaction = {
+                options: {
+                    getSubcommandGroup: () => 'locale',
+                    getSubcommand: () => 'set',
+                    getString: () => 'xx'
+                },
+                locale: 'en',
+                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() }
+            };
+            const client = {
+                translate: jest.fn().mockImplementation((locale, key, value) => {
+                    switch (value) {
+                        case 'settings.subcommand_groups.locale.subcommands.set.response.title.error':
+                            return 'Error';
+                        case 'settings.subcommand_groups.locale.subcommands.set.response.description.error':
+                            return 'An error occurred while setting your preferred language.';
+                        default:
+                            return '';
+                    };
+                })
+            };
+            const userProfile = { preferredLocale: 'en', save: jest.fn() };
+            const embed = {
+                setTitle: jest.fn(),
+                setColor: jest.fn(),
+                setFooter: jest.fn(),
+                data: {
+                    title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error'),
+                    description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error'),
+                    color: Colors.Red
+                }
+            }
+
+            await settingsCommand.localeSettings(interaction, client, userProfile, embed);
+
+            expect(userProfile.preferredLocale).toBe('en');
+            expect(embed.data.title).toBe('Error');
+            expect(embed.data.description).toBe('An error occurred while setting your preferred language.');
+            expect(embed.data.color).toBe(Colors.Red);
+        });
     });
 
     describe('viewSettings', () => {

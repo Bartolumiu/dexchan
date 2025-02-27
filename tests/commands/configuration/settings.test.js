@@ -89,7 +89,7 @@ describe('settings command', () => {
     });
 
     describe('execute', () => {
-        it('should call localeSettings when the locale subcommand is used', async () => {
+        it('should call localeSettings when the locale subcommand group and the set subcommand is used', async () => {
             const interaction = {
                 options: { getSubcommandGroup: () => 'locale', getSubcommand: () => 'set', getString: () => 'en' },
                 locale: 'en',
@@ -196,6 +196,102 @@ describe('settings command', () => {
             expect(embed.data.fields[0].value).toBe('en');
             expect(embed.data.color).toBe(Colors.Blue);
             expect(embed.data.footer.text).toBe('/settings - Requested by test-user');
+        });
+
+        it('should return an error embed if an invalid locale is provided', async () => {
+            const interaction = {
+                options: { getSubcommandGroup: () => 'locale', getSubcommand: () => 'set', getString: () => 'xx' },
+                locale: 'en',
+                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() },
+                reply: jest.fn()
+            };
+
+            const userProfile = { preferredLocale: 'en', save: jest.fn() };
+            const client = {
+                getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
+                translate: jest.fn().mockImplementation((locale, key, value) => {
+                    switch (value) {
+                        case 'settings.subcommand_groups.locale.subcommands.set.response.title.error':
+                            return 'Error';
+                        case 'settings.subcommand_groups.locale.subcommands.set.response.description.error':
+                            return 'An error occurred while setting your preferred language.';
+                        case 'settings.response.footer':
+                            return '/settings - Requested by test-user';
+                        default:
+                            return '';
+                    };
+                })
+            };
+
+            const embed = {
+                setTitle: jest.fn(),
+                setDescription: jest.fn(),
+                setColor: jest.fn(),
+                setFooter: jest.fn(),
+                data: {
+                    title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error'),
+                    description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error'),
+                    footer: client.translate('en', 'commands', 'settings.response.footer'),
+                    color: Colors.Red
+                }
+            };
+
+            await settingsCommand.execute(interaction, client);
+            localeSettings(interaction, client, userProfile, embed);
+            expect(embed.data.title).toBe('Error');
+            expect(embed.data.description).toBe('An error occurred while setting your preferred language.');
+            expect(embed.data.color).toBe(Colors.Red);
+            expect(embed.data.footer).toBe('/settings - Requested by test-user');
+        });
+
+        it('should call localeSettings when the locale subcommand group and reset subcommand is used', async () => {
+            const interaction = {
+                options: { getSubcommandGroup: () => 'locale', getSubcommand: () => 'reset' },
+                locale: 'en',
+                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() },
+                reply: jest.fn()
+            };
+
+            const userProfile = { preferredLocale: 'en', save: jest.fn() };
+            const client = {
+                getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
+                translate: jest.fn().mockImplementation((locale, key, value) => {
+                    switch (value) {
+                        case 'settings.subcommand_groups.locale.subcommands.reset.response.title.success':
+                            return 'Language Reset';
+                        case 'settings.subcommand_groups.locale.subcommands.reset.response.description.success':
+                            return 'Your preferred language has been reset.';
+                        case 'settings.subcommand_groups.locale.subcommands.reset.response.title.error':
+                            return 'Error while resetting the language';
+                        case 'settings.subcommand_groups.locale.subcommands.reset.response.description.error':
+                            return 'An error occurred while resetting your preferred language.';
+                        case 'settings.response.footer':
+                            return '/settings - Requested by test-user';
+                        default:
+                            return '';
+                    };
+                })
+            };
+
+            const embed = {
+                setTitle: jest.fn(),
+                setDescription: jest.fn(),
+                setColor: jest.fn(),
+                setFooter: jest.fn(),
+                data: {
+                    title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.success'),
+                    description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.success'),
+                    footer: client.translate('en', 'commands', 'settings.response.footer'),
+                    color: Colors.Green
+                }
+            };
+
+            await settingsCommand.execute(interaction, client);
+            localeSettings(interaction, client, userProfile, embed);
+            expect(embed.data.title).toBe('Language Reset');
+            expect(embed.data.description).toBe('Your preferred language has been reset.');
+            expect(embed.data.color).toBe(Colors.Green);
+            expect(embed.data.footer).toBe('/settings - Requested by test-user');
         });
     });
 

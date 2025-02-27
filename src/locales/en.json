@@ -472,11 +472,19 @@
                             "response": {
                                 "title": {
                                     "success": "Language Set",
-                                    "error": "Error"
+                                    "error": {
+                                        "invalid_locale": "Invalid Language",
+                                        "no_changes": "No Change",
+                                        "unknown": "Unknown Error"
+                                    }
                                 },
                                 "description": {
                                     "success": "Your preferred language has been set to `%locale%`.",
-                                    "error": "An error occurred while setting your preferred language."
+                                    "error": {
+                                        "invalid_locale": "The language `%locale%` is not valid.",
+                                        "no_changes": "No changes made. The language remains set to `%locale%`.",
+                                        "unknown": "An unknown error occurred while changing the language."
+                                    }
                                 },
                                 "fields": {},
                                 "footer": "%commandName% - Requested by %user%"

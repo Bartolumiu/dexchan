@@ -472,11 +472,19 @@
                             "response": {
                                 "title": {
                                     "success": "¡Idioma cambiado!",
-                                    "error": "Error al cambiar el idioma"
+                                    "error": {
+                                        "invalid_locale": "Idioma Inválido",
+                                        "no_changes": "Sin Cambios",
+                                        "unknown": "Error Desconocido"
+                                    }
                                 },
                                 "description": {
                                     "success": "El idioma ha sido cambiado a `%locale%`.",
-                                    "error": "Ha ocurrido un error al cambiar el idioma."
+                                    "error": {
+                                        "invalid_locale": "El idioma `%locale%` no es válido.",
+                                        "no_changes": "No se realizaron cambios. El idioma establecido sigue siendo `%locale%`.",
+                                        "unknown": "Ha ocurrido un error desconocido al cambiar el idioma."
+                                    }
                                 },
                                 "fields": {},
                                 "footer": "%commandName% - Solicitado por %user%"

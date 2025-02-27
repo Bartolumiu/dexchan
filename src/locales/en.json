@@ -474,7 +474,7 @@
                                     "success": "Language Set",
                                     "error": {
                                         "invalid_locale": "Invalid Language",
-                                        "no_changes": "No Change",
+                                        "no_changes": "No Changes",
                                         "unknown": "Unknown Error"
                                     }
                                 },

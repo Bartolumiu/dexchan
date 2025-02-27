@@ -91,7 +91,7 @@ describe('settings command', () => {
     describe('execute', () => {
         it('should call localeSettings when the locale subcommand group and the set subcommand is used', async () => {
             const interaction = {
-                options: { getSubcommandGroup: () => 'locale', getSubcommand: () => 'set', getString: () => 'en' },
+                options: { getSubcommandGroup: () => 'locale', getSubcommand: () => 'set', getString: () => 'es' },
                 locale: 'en',
                 user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() },
                 reply: jest.fn()
@@ -105,7 +105,7 @@ describe('settings command', () => {
                         case 'settings.subcommand_groups.locale.subcommands.set.response.title.success':
                             return 'Language Set';
                         case 'settings.subcommand_groups.locale.subcommands.set.response.description.success':
-                            return 'Your preferred language has been set to `%locale%`.'.replace('%locale%', locale);
+                            return 'Your preferred language has been set to `%locale%`.'.replace('%locale%', 'es');
                         case 'settings.response.footer':
                             return '/settings - Requested by test-user';
                         default:
@@ -128,10 +128,8 @@ describe('settings command', () => {
             };
 
             await settingsCommand.execute(interaction, client);
-            localeSettings(interaction, client, userProfile, embed);
-            expect(localeSettings).toHaveBeenCalled();
             expect(embed.data.title).toBe('Language Set');
-            expect(embed.data.description).toBe('Your preferred language has been set to `en`.');
+            expect(embed.data.description).toBe('Your preferred language has been set to `es`.');
             expect(embed.data.color).toBe(Colors.Green);
             expect(embed.data.footer).toBe('/settings - Requested by test-user');
         });
@@ -211,10 +209,10 @@ describe('settings command', () => {
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
-                        case 'settings.subcommand_groups.locale.subcommands.set.response.title.error':
-                            return 'Error';
-                        case 'settings.subcommand_groups.locale.subcommands.set.response.description.error':
-                            return 'An error occurred while setting your preferred language.';
+                        case 'settings.subcommand_groups.locale.subcommands.set.response.title.error.invalid_locale':
+                            return 'Invalid Language';
+                        case 'settings.subcommand_groups.locale.subcommands.set.response.description.error.invalid_locale':
+                            return 'The language `%locale%` is not valid.'.replace('%locale%', 'xx');
                         case 'settings.response.footer':
                             return '/settings - Requested by test-user';
                         default:
@@ -229,8 +227,8 @@ describe('settings command', () => {
                 setColor: jest.fn(),
                 setFooter: jest.fn(),
                 data: {
-                    title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error'),
-                    description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error'),
+                    title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error.invalid_locale'),
+                    description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error.invalid_locale'),
                     footer: client.translate('en', 'commands', 'settings.response.footer'),
                     color: Colors.Red
                 }
@@ -238,8 +236,8 @@ describe('settings command', () => {
 
             await settingsCommand.execute(interaction, client);
             localeSettings(interaction, client, userProfile, embed);
-            expect(embed.data.title).toBe('Error');
-            expect(embed.data.description).toBe('An error occurred while setting your preferred language.');
+            expect(embed.data.title).toBe('Invalid Language');
+            expect(embed.data.description).toBe('The language `xx` is not valid.');
             expect(embed.data.color).toBe(Colors.Red);
             expect(embed.data.footer).toBe('/settings - Requested by test-user');
         });
@@ -252,7 +250,7 @@ describe('settings command', () => {
                 reply: jest.fn()
             };
 
-            const userProfile = { preferredLocale: 'en', save: jest.fn() };
+            const userProfile = { preferredLocale: null, save: jest.fn() };
             const client = {
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
@@ -287,7 +285,6 @@ describe('settings command', () => {
             };
 
             await settingsCommand.execute(interaction, client);
-            localeSettings(interaction, client, userProfile, embed);
             expect(embed.data.title).toBe('Language Reset');
             expect(embed.data.description).toBe('Your preferred language has been reset.');
             expect(embed.data.color).toBe(Colors.Green);
@@ -301,18 +298,22 @@ describe('settings command', () => {
                 options: {
                     getSubcommandGroup: () => 'locale',
                     getSubcommand: () => 'set',
-                    getString: () => 'en'
+                    getString: () => 'es'
                 },
                 locale: 'en',
-                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() }
+                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() },
+                reply: jest.fn()
             };
             const client = {
+                getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
                         case 'settings.subcommand_groups.locale.subcommands.set.response.title.success':
                             return 'Language Set';
                         case 'settings.subcommand_groups.locale.subcommands.set.response.description.success':
-                            return 'Your preferred language has been set to `%locale%`.'.replace('%locale%', locale);
+                            return 'Your preferred language has been set to `%locale%`.'.replace('%locale%', 'es');
+                        case 'settings.response.footer':
+                            return '/settings - Requested by test-user';
                         default:
                             return '';
                     };
@@ -326,16 +327,65 @@ describe('settings command', () => {
                 data: {
                     title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.success'),
                     description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.success'),
+                    footer: client.translate('en', 'commands', 'settings.response.footer'),
                     color: Colors.Green
                 }
             }
 
-            await settingsCommand.localeSettings(interaction, client, userProfile, embed);
-
+            await settingsCommand.execute(interaction, client);
             expect(userProfile.preferredLocale).toBe('en');
             expect(embed.data.title).toBe('Language Set');
-            expect(embed.data.description).toBe('Your preferred language has been set to `en`.');
+            expect(embed.data.description).toBe('Your preferred language has been set to `es`.');
             expect(embed.data.color).toBe(Colors.Green);
+        });
+
+        it('should return an error embed if an error occurs while setting the locale', async () => {
+            const interaction = {
+                options: {
+                    getSubcommandGroup: () => 'locale',
+                    getSubcommand: () => 'set',
+                    getString: () => 'es'
+                },
+                locale: 'en',
+                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() },
+                reply: jest.fn()
+            };
+            const client = {
+                getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
+                translate: jest.fn().mockImplementation((locale, key, value) => {
+                    switch (value) {
+                        case 'settings.subcommand_groups.locale.subcommands.set.response.title.error.unknown':
+                            return 'Unknown Error';
+                        case 'settings.subcommand_groups.locale.subcommands.set.response.description.error.unknown':
+                            return 'An unknown error occurred while changing the language.';
+                        case 'settings.response.footer':
+                            return '/settings - Requested by test-user';
+                        default:
+                            return '';
+                    };
+                })
+            };
+            const userProfile = { preferredLocale: 'en', save: jest.fn().mockRejectedValue(new Error('Save failed')) };
+            const embed = {
+                setTitle: jest.fn(),
+                setColor: jest.fn(),
+                setFooter: jest.fn(),
+                data: {
+                    title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error.unknown'),
+                    description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error.unknown'),
+                    footer: client.translate('en', 'commands', 'settings.response.footer'),
+                    color: Colors.Red
+                }
+            }
+
+            console.log('should return an error embed if an error occurs while setting the locale');
+            await settingsCommand.execute(interaction, client);
+
+            expect(userProfile.preferredLocale).toBe('en');
+            expect(embed.data.title).toBe('Unknown Error');
+            expect(embed.data.description).toBe('An unknown error occurred while changing the language.');
+            expect(embed.data.color).toBe(Colors.Red);
+            await expect(userProfile.save).rejects.toThrow('Save failed');
         });
 
         it('should reset the locale and return a success embed', async () => {
@@ -346,14 +396,18 @@ describe('settings command', () => {
                 },
                 locale: 'en',
                 user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() },
+                reply: jest.fn()
             };
             const client = {
+                getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: null, save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
                         case 'settings.subcommand_groups.locale.subcommands.reset.response.title.success':
                             return 'Language Reset';
                         case 'settings.subcommand_groups.locale.subcommands.reset.response.description.success':
                             return 'Your preferred language has been reset.';
+                        case 'settings.response.footer':
+                            return '/settings - Requested by test-user';
                         default:
                             return '';
                     };
@@ -367,11 +421,13 @@ describe('settings command', () => {
                 data: {
                     title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.success'),
                     description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.success'),
+                    footer: client.translate('en', 'commands', 'settings.response.footer'),
                     color: Colors.Green
                 }
             }
 
-            await settingsCommand.localeSettings(interaction, client, userProfile, embed);
+            console.log('should reset the locale and return a success embed');
+            await settingsCommand.execute(interaction, client);
 
             expect(userProfile.preferredLocale).toBeNull();
             expect(embed.data.title).toBe('Language Reset');
@@ -387,15 +443,19 @@ describe('settings command', () => {
                     getString: () => 'xx'
                 },
                 locale: 'en',
-                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() }
+                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() },
+                reply: jest.fn()
             };
             const client = {
+                getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
-                        case 'settings.subcommand_groups.locale.subcommands.set.response.title.error':
-                            return 'Error';
-                        case 'settings.subcommand_groups.locale.subcommands.set.response.description.error':
-                            return 'An error occurred while setting your preferred language.';
+                        case 'settings.subcommand_groups.locale.subcommands.set.response.title.error.invalid_locale':
+                            return 'Invalid Language';
+                        case 'settings.subcommand_groups.locale.subcommands.set.response.description.error.invalid_locale':
+                            return 'The language `%locale%` is not valid.'.replace('%locale%', 'xx');
+                        case 'settings.response.footer':
+                            return '/settings - Requested by test-user';
                         default:
                             return '';
                     };
@@ -407,17 +467,19 @@ describe('settings command', () => {
                 setColor: jest.fn(),
                 setFooter: jest.fn(),
                 data: {
-                    title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error'),
-                    description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error'),
+                    title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error.invalid_locale'),
+                    description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error.invalid_locale'),
+                    footer: client.translate('en', 'commands', 'settings.response.footer'),
                     color: Colors.Red
                 }
             }
 
-            await settingsCommand.localeSettings(interaction, client, userProfile, embed);
+            console.log('should return an error embed if the locale is not found');
+            await settingsCommand.execute(interaction, client);
 
             expect(userProfile.preferredLocale).toBe('en');
-            expect(embed.data.title).toBe('Error');
-            expect(embed.data.description).toBe('An error occurred while setting your preferred language.');
+            expect(embed.data.title).toBe('Invalid Language');
+            expect(embed.data.description).toBe('The language `xx` is not valid.');
             expect(embed.data.color).toBe(Colors.Red);
         });
 
@@ -428,21 +490,25 @@ describe('settings command', () => {
                     getSubcommand: () => 'reset'
                 },
                 locale: 'en',
-                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() }
+                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() },
+                reply: jest.fn()
             };
             const client = {
+                getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn().mockRejectedValue(new Error('Save failed')) }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
                         case 'settings.subcommand_groups.locale.subcommands.reset.response.title.error':
                             return 'Error while resetting the language';
                         case 'settings.subcommand_groups.locale.subcommands.reset.response.description.error':
                             return 'An error occurred while resetting your preferred language.';
+                        case 'settings.response.footer':
+                            return '/settings - Requested by test-user';
                         default:
                             return '';
                     };
                 })
             };
-            const userProfile = { preferredLocale: 'en', save: jest.fn() };
+            const userProfile = { preferredLocale: 'en', save: jest.fn().mockRejectedValue(new Error('Save failed')) };
             const embed = {
                 setTitle: jest.fn(),
                 setColor: jest.fn(),
@@ -450,16 +516,19 @@ describe('settings command', () => {
                 data: {
                     title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.error'),
                     description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.error'),
+                    footer: client.translate('en', 'commands', 'settings.response.footer'),
                     color: Colors.Red
                 }
             }
 
-            await settingsCommand.localeSettings(interaction, client, userProfile, embed);
+            console.log('should return an error embed if an error occurs while resetting the locale (locale still set)');
+            await settingsCommand.execute(interaction, client);
 
             expect(userProfile.preferredLocale).toBe('en');
             expect(embed.data.title).toBe('Error while resetting the language');
             expect(embed.data.description).toBe('An error occurred while resetting your preferred language.');
             expect(embed.data.color).toBe(Colors.Red);
+            await expect(userProfile.save).rejects.toThrow('Save failed');
         });
 
         it('should return an error embed if an error occurs while resetting the locale (locale not set)', async () => {
@@ -469,21 +538,25 @@ describe('settings command', () => {
                     getSubcommand: () => 'reset'
                 },
                 locale: 'en',
-                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() }
+                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() },
+                reply: jest.fn()
             };
             const client = {
+                getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: null, save: jest.fn().mockRejectedValue(new Error('Save failed')) }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
                         case 'settings.subcommand_groups.locale.subcommands.reset.response.title.error':
                             return 'Error while resetting the language';
                         case 'settings.subcommand_groups.locale.subcommands.reset.response.description.error':
                             return 'An error occurred while resetting your preferred language.';
+                        case 'settings.response.footer':
+                            return '/settings - Requested by test-user';
                         default:
                             return '';
                     };
                 })
             };
-            const userProfile = { preferredLocale: null, save: jest.fn() };
+            const userProfile = { preferredLocale: null, save: jest.fn().mockRejectedValue(new Error('Save failed')) };
             const embed = {
                 setTitle: jest.fn(),
                 setColor: jest.fn(),
@@ -491,17 +564,21 @@ describe('settings command', () => {
                 data: {
                     title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.error'),
                     description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.error'),
+                    footer: client.translate('en', 'commands', 'settings.response.footer'),
                     color: Colors.Red
                 }
             }
 
-            await settingsCommand.localeSettings(interaction, client, userProfile, embed);
+            console.log('should return an error embed if an error occurs while resetting the locale (locale not set)');
+            await settingsCommand.execute(interaction, client);
 
+            console.log('Expected: preferredLocale to be null');
             expect(userProfile.preferredLocale).toBeNull();
             expect(embed.data.title).toBe('Error while resetting the language');
             expect(embed.data.description).toBe('An error occurred while resetting your preferred language.');
             expect(embed.data.color).toBe(Colors.Red);
-        });    
+            await expect(userProfile.save).rejects.toThrow('Save failed');
+        });
     });
 
     describe('viewSettings', () => {

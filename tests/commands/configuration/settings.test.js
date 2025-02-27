@@ -420,6 +420,88 @@ describe('settings command', () => {
             expect(embed.data.description).toBe('An error occurred while setting your preferred language.');
             expect(embed.data.color).toBe(Colors.Red);
         });
+
+        it('should return an error embed if an error occurs while resetting the locale (locale still set)', async () => {
+            const interaction = {
+                options: {
+                    getSubcommandGroup: () => 'locale',
+                    getSubcommand: () => 'reset'
+                },
+                locale: 'en',
+                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() }
+            };
+            const client = {
+                translate: jest.fn().mockImplementation((locale, key, value) => {
+                    switch (value) {
+                        case 'settings.subcommand_groups.locale.subcommands.reset.response.title.error':
+                            return 'Error while resetting the language';
+                        case 'settings.subcommand_groups.locale.subcommands.reset.response.description.error':
+                            return 'An error occurred while resetting your preferred language.';
+                        default:
+                            return '';
+                    };
+                })
+            };
+            const userProfile = { preferredLocale: 'en', save: jest.fn() };
+            const embed = {
+                setTitle: jest.fn(),
+                setColor: jest.fn(),
+                setFooter: jest.fn(),
+                data: {
+                    title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.error'),
+                    description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.error'),
+                    color: Colors.Red
+                }
+            }
+
+            await settingsCommand.localeSettings(interaction, client, userProfile, embed);
+
+            expect(userProfile.preferredLocale).toBe('en');
+            expect(embed.data.title).toBe('Error while resetting the language');
+            expect(embed.data.description).toBe('An error occurred while resetting your preferred language.');
+            expect(embed.data.color).toBe(Colors.Red);
+        });
+
+        it('should return an error embed if an error occurs while resetting the locale (locale not set)', async () => {
+            const interaction = {
+                options: {
+                    getSubcommandGroup: () => 'locale',
+                    getSubcommand: () => 'reset'
+                },
+                locale: 'en',
+                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() }
+            };
+            const client = {
+                translate: jest.fn().mockImplementation((locale, key, value) => {
+                    switch (value) {
+                        case 'settings.subcommand_groups.locale.subcommands.reset.response.title.error':
+                            return 'Error while resetting the language';
+                        case 'settings.subcommand_groups.locale.subcommands.reset.response.description.error':
+                            return 'An error occurred while resetting your preferred language.';
+                        default:
+                            return '';
+                    };
+                })
+            };
+            const userProfile = { preferredLocale: null, save: jest.fn() };
+            const embed = {
+                setTitle: jest.fn(),
+                setColor: jest.fn(),
+                setFooter: jest.fn(),
+                data: {
+                    title: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.error'),
+                    description: client.translate('en', 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.error'),
+                    color: Colors.Red
+                }
+            }
+
+            await settingsCommand.localeSettings(interaction, client, userProfile, embed);
+
+            expect(userProfile.preferredLocale).toBeNull();
+            expect(embed.data.title).toBe('Error while resetting the language');
+            expect(embed.data.description).toBe('An error occurred while resetting your preferred language.');
+            expect(embed.data.color).toBe(Colors.Red);
+        });    
     });
 
     describe('viewSettings', () => {

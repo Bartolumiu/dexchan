@@ -159,30 +159,17 @@ async function localeSettings(interaction, client, userProfile, embed) {
             break;
         case 'reset':
             try {
-                console.log('Resetting locale');
                 userProfile.preferredLocale = null;
-                console.log('Saving profile');
                 await userProfile.save();
-                console.log('Profile saved');
                 embed.setTitle(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.success'));
                 embed.setDescription(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.success'));
                 embed.setColor(Colors.Green);
-                console.log('Response sent');
             } catch (e) {
-                console.log('Error resetting locale:', e);
-                if (userProfile.preferredLocale) {
-                    console.log('Preferred locale:', userProfile.preferredLocale);
-                    embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.error'));
-                    embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.error'));
-                } else {
-                    console.log('No preferred locale (it worked but still threw an error):', userProfile.preferredLocale);
-                    embed.setTitle(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.error'));
-                    embed.setDescription(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.error'));
-                }
+                const currentLocale = (await client.getMongoUserData(interaction.user)).preferredLocale || interaction.locale;
+                embed.setTitle(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.error'));
+                embed.setDescription(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.error'));
                 embed.setColor(Colors.Red);
             }
-            break;
-        default:
             break;
     }
 }

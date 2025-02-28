@@ -28,7 +28,7 @@ describe('settings command', () => {
     describe('data', () => {
         it('should build the slash command with correct localizations', async () => {
             // Mock the translateAttribute function
-            translateAttribute.mockResolvedValue({ 'en-GB': 'translated string'});
+            translateAttribute.mockResolvedValue({ 'en-GB': 'translated string' });
             const command = {
                 name: 'settings',
                 description: 'Change your settings',
@@ -706,6 +706,42 @@ describe('settings command', () => {
             await settingsCommand.autocomplete(interaction);
             const autocompletion = interaction.respond.mock.calls[0][0];
             expect(autocompletion).toContainEqual({ name: 'English (en)', value: 'en' });
+        });
+
+        it('should not return any suggestions if the subcommand is not set or subcommand group is not locale', async () => {
+            const interaction = { options: { getString: () => '', getSubcommandGroup: () => 'other', getSubcommand: () => 'view' }, respond: jest.fn() };
+
+            await settingsCommand.autocomplete(interaction);
+            expect(interaction.respond).not.toHaveBeenCalled();
+        });
+
+        it('should return if no valid subcommand group or subcommand is provided', async () => {
+            const interaction = {
+                options: { getSubcommandGroup: () => null, getSubcommand: () => null },
+                locale: 'en',
+                user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() },
+                reply: jest.fn()
+            };
+
+            const userProfile = { preferredLocale: 'en', save: jest.fn() };
+            const client = {
+                getMongoUserData: jest.fn().mockResolvedValue(userProfile),
+                translate: jest.fn()
+            };
+
+            const embed = {
+                setTitle: jest.fn(),
+                setDescription: jest.fn(),
+                setColor: jest.fn(),
+                setFooter: jest.fn()
+            };
+
+            await settingsCommand.execute(interaction, client);
+            expect(embed.setTitle).not.toHaveBeenCalled();
+            expect(embed.setDescription).not.toHaveBeenCalled();
+            expect(embed.setColor).not.toHaveBeenCalled();
+            expect(embed.setFooter).not.toHaveBeenCalled();
+            expect(interaction.reply).not.toHaveBeenCalled();
         });
     });
 });

@@ -70,6 +70,7 @@ module.exports = {
 
         if (subcommandGroup === 'locale') await localeSettings(interaction, client, userProfile, embed);
         else if (subcommand === 'view') await viewSettings(interaction, client, userProfile, embed);
+        else return; // Return if the subcommand is not recognized (impossible case, but needed for coverage)
 
         embed.setFooter({ text: await client.translate((userProfile.preferredLocale || interaction.locale), 'commands', 'settings.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username }), iconURL: interaction.user.displayAvatarURL({ dynamic: true }) });
         interaction.reply({ embeds: [embed], ephemeral: true });
@@ -120,10 +121,10 @@ async function getLocaleList(interaction) {
  * @param {Object} embed - The embed object used to send responses.
  */
 async function localeSettings(interaction, client, userProfile, embed) {
+    const currentLocale = getLocale(userProfile, interaction);
     switch (interaction.options.getSubcommand()) {
         case 'set':
             try {
-                const currentLocale = userProfile.preferredLocale || interaction.locale;
                 const locale = interaction.options.getString('locale');
 
                 // Ensure the locale is valid before setting it
@@ -151,7 +152,6 @@ async function localeSettings(interaction, client, userProfile, embed) {
                 embed.setDescription(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.success', { locale: locale }));
                 embed.setColor(Colors.Green);
             } catch (e) {
-                const currentLocale = userProfile.preferredLocale || interaction.locale;
                 embed.setTitle(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error.unknown'));
                 embed.setDescription(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error.unknown'));
                 embed.setColor(Colors.Red);
@@ -183,7 +183,7 @@ async function localeSettings(interaction, client, userProfile, embed) {
  * @param {Object} embed - The embed object to format the message.
  */
 async function viewSettings(interaction, client, userProfile, embed) {
-    const locale = userProfile.preferredLocale || interaction.locale;
+    const locale = getLocale(userProfile, interaction);
     embed.setTitle(await client.translate(locale, 'commands', 'settings.subcommands.view.response.title'));
     embed.setDescription(await client.translate(locale, 'commands', 'settings.subcommands.view.response.description', { locale: locale }));
     embed.addFields(
@@ -194,4 +194,15 @@ async function viewSettings(interaction, client, userProfile, embed) {
         }
     )
     embed.setColor(Colors.Blue);
+}
+
+/**
+ * Get the user's preferred locale based on their profile or interaction.
+ * 
+ * @param {Object} userProfile - The user's profile containing their settings.
+ * @param {Object} interaction - The interaction object from the Discord API.
+ * @returns {string} - The preferred locale of the user or the interaction locale.
+ */
+function getLocale(userProfile, interaction) {
+    return userProfile.preferredLocale || interaction.locale;
 }

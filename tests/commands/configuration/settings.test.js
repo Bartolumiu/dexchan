@@ -100,8 +100,6 @@ describe('settings command', () => {
                 user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() },
                 reply: jest.fn()
             };
-
-            const userProfile = { preferredLocale: 'en', save: jest.fn() };
             const client = {
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
@@ -253,8 +251,6 @@ describe('settings command', () => {
                 user: { id: '000000000000000000', username: 'test-user', displayAvatarURL: jest.fn() },
                 reply: jest.fn()
             };
-
-            const userProfile = { preferredLocale: null, save: jest.fn() };
             const client = {
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {

@@ -27,64 +27,68 @@ describe('settings command', () => {
 
     describe('data', () => {
         it('should build the slash command with correct localizations', async () => {
+            // Mock the translateAttribute function
+            translateAttribute.mockResolvedValue({ 'en-GB': 'translated string'});
             const command = {
                 name: 'settings',
                 description: 'Change your settings',
                 descriptionLocalizations: await translateAttribute('settings', 'description'),
-                subcommands: [
-                    {
+                subcommands: {
+                    view: {
                         name: 'view',
                         description: 'View your settings',
                         descriptionLocalizations: await translateAttribute('settings', 'subcommands.view.description')
                     }
-                ],
-                subcommand_groups: [
-                    {
+                },
+                subcommand_groups: {
+                    locale: {
                         name: 'locale',
                         description: 'Your preferred locale',
                         descriptionLocalizations: await translateAttribute('settings', 'subcommand_groups.locale.description'),
-                        subcommands: [
-                            {
+                        subcommands: {
+                            set: {
                                 name: 'set',
                                 description: 'Set your preferred locale',
                                 descriptionLocalizations: await translateAttribute('settings', 'subcommand_groups.locale.subcommands.set.description'),
-                                options: [
-                                    {
+                                options: {
+                                    locale: {
                                         name: 'locale',
                                         description: 'The language you want to set as your preferred language',
                                         descriptionLocalizations: await translateAttribute('settings', 'subcommand_groups.locale.subcommands.set.options.locale.description')
                                     }
-                                ]
+                                }
                             },
-                            {
+                            reset: {
                                 name: 'reset',
                                 description: 'Reset your preferred locale',
                                 descriptionLocalizations: await translateAttribute('settings', 'subcommand_groups.locale.subcommands.reset.description')
                             }
-                        ]
+                        }
                     }
-                ]
+                }
             };
 
+            await settingsCommand.data();
             expect(command.name).toBe('settings');
             expect(command.description).toBe('Change your settings');
-            expect(command.descriptionLocalizations).toBe('translated string');
-            expect(command.subcommands[0].name).toBe('view');
-            expect(command.subcommands[0].description).toBe('View your settings');
-            expect(command.subcommands[0].descriptionLocalizations).toBe('translated string');
-            expect(command.subcommand_groups[0].name).toBe('locale');
-            expect(command.subcommand_groups[0].description).toBe('Your preferred locale');
-            expect(command.subcommand_groups[0].descriptionLocalizations).toBe('translated string');
-            expect(command.subcommand_groups[0].subcommands[0].name).toBe('set');
-            expect(command.subcommand_groups[0].subcommands[0].description).toBe('Set your preferred locale');
-            expect(command.subcommand_groups[0].subcommands[0].descriptionLocalizations).toBe('translated string');
-            expect(command.subcommand_groups[0].subcommands[0].options[0].name).toBe('locale');
-            expect(command.subcommand_groups[0].subcommands[0].options[0].description).toBe('The language you want to set as your preferred language');
-            expect(command.subcommand_groups[0].subcommands[0].options[0].descriptionLocalizations).toBe('translated string');
-            expect(command.subcommand_groups[0].subcommands[1].name).toBe('reset');
-            expect(command.subcommand_groups[0].subcommands[1].description).toBe('Reset your preferred locale');
-            expect(command.subcommand_groups[0].subcommands[1].descriptionLocalizations).toBe('translated string');
-            expect(require('../../../src/functions/handlers/translateAttribute')).toHaveBeenCalledTimes(6);
+            expect(command.descriptionLocalizations).toStrictEqual({ 'en-GB': 'translated string' });
+            expect(command.subcommands.view.name).toBe('view');
+            expect(command.subcommands.view.description).toBe('View your settings');
+            expect(command.subcommands.view.descriptionLocalizations).toStrictEqual({ 'en-GB': 'translated string' });
+            expect(command.subcommand_groups.locale.name).toBe('locale');
+            expect(command.subcommand_groups.locale.description).toBe('Your preferred locale');
+            expect(command.subcommand_groups.locale.descriptionLocalizations).toStrictEqual({ 'en-GB': 'translated string' });
+            expect(command.subcommand_groups.locale.subcommands.set.name).toBe('set');
+            expect(command.subcommand_groups.locale.subcommands.set.description).toBe('Set your preferred locale');
+            expect(command.subcommand_groups.locale.subcommands.set.descriptionLocalizations).toStrictEqual({ 'en-GB': 'translated string' });
+            expect(command.subcommand_groups.locale.subcommands.set.options.locale.name).toBe('locale');
+            expect(command.subcommand_groups.locale.subcommands.set.options.locale.description).toBe('The language you want to set as your preferred language');
+            expect(command.subcommand_groups.locale.subcommands.set.options.locale.descriptionLocalizations).toStrictEqual({ 'en-GB': 'translated string' });
+            expect(command.subcommand_groups.locale.subcommands.reset.name).toBe('reset');
+            expect(command.subcommand_groups.locale.subcommands.reset.description).toBe('Reset your preferred locale');
+            expect(command.subcommand_groups.locale.subcommands.reset.descriptionLocalizations).toStrictEqual({ 'en-GB': 'translated string' });
+            expect(command.subcommand_groups.locale.subcommands.reset.options).toBeUndefined();
+            expect(require('../../../src/functions/handlers/translateAttribute')).toHaveBeenCalledTimes(12);
         });
     });
 

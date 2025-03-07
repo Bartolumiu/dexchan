@@ -82,6 +82,17 @@ module.exports = (client) => {
             console.error(e);
         }
     };
+
+    /**
+     * Get the user's preferred locale based on their profile or interaction.
+     * 
+     * @param {Object} userProfile - The user's profile containing their settings.
+     * @param {Object} interaction - The interaction object from the Discord API.
+     * @returns {string} - The preferred locale of the user or the interaction locale.
+     */
+    client.getLocale = (userProfile, interaction) => {
+        return userProfile.preferredLocale || interaction.locale;
+    }
 };
 
 /**

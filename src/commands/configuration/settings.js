@@ -121,7 +121,7 @@ async function getLocaleList(interaction) {
  * @param {Object} embed - The embed object used to send responses.
  */
 async function localeSettings(interaction, client, userProfile, embed) {
-    const currentLocale = getLocale(userProfile, interaction);
+    const currentLocale = client.getLocale(userProfile, interaction);
     switch (interaction.options.getSubcommand()) {
         case 'set':
             try {
@@ -183,7 +183,7 @@ async function localeSettings(interaction, client, userProfile, embed) {
  * @param {Object} embed - The embed object to format the message.
  */
 async function viewSettings(interaction, client, userProfile, embed) {
-    const locale = getLocale(userProfile, interaction);
+    const locale = client.getLocale(userProfile, interaction);
     embed.setTitle(await client.translate(locale, 'commands', 'settings.subcommands.view.response.title'));
     embed.setDescription(await client.translate(locale, 'commands', 'settings.subcommands.view.response.description', { locale: locale }));
     embed.addFields(
@@ -194,15 +194,4 @@ async function viewSettings(interaction, client, userProfile, embed) {
         }
     )
     embed.setColor(Colors.Blue);
-}
-
-/**
- * Get the user's preferred locale based on their profile or interaction.
- * 
- * @param {Object} userProfile - The user's profile containing their settings.
- * @param {Object} interaction - The interaction object from the Discord API.
- * @returns {string} - The preferred locale of the user or the interaction locale.
- */
-function getLocale(userProfile, interaction) {
-    return userProfile.preferredLocale || interaction.locale;
 }

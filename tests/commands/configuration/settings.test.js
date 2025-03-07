@@ -101,6 +101,7 @@ describe('settings command', () => {
                 reply: jest.fn()
             };
             const client = {
+                getLocale: jest.fn().mockReturnValue('en'),
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
@@ -147,6 +148,7 @@ describe('settings command', () => {
 
             const userProfile = { preferredLocale: 'en', save: jest.fn() };
             const client = {
+                getLocale: jest.fn().mockReturnValue('en'),
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en' }),
                 translate: jest.fn().mockImplementation((locale, key, value, replacements = {}) => {
                     switch (value) {
@@ -208,6 +210,7 @@ describe('settings command', () => {
 
             const userProfile = { preferredLocale: 'en', save: jest.fn() };
             const client = {
+                getLocale: jest.fn().mockReturnValue('en'),
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
@@ -252,6 +255,7 @@ describe('settings command', () => {
                 reply: jest.fn()
             };
             const client = {
+                getLocale: jest.fn().mockReturnValue('en'),
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
@@ -305,6 +309,7 @@ describe('settings command', () => {
                 reply: jest.fn()
             };
             const client = {
+                getLocale: jest.fn().mockReturnValue('en'),
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
@@ -351,6 +356,7 @@ describe('settings command', () => {
                 reply: jest.fn()
             };
             const client = {
+                getLocale: jest.fn().mockReturnValue('en'),
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
@@ -398,6 +404,7 @@ describe('settings command', () => {
                 reply: jest.fn()
             };
             const client = {
+                getLocale: jest.fn().mockReturnValue('en'),
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: null, save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
@@ -445,6 +452,7 @@ describe('settings command', () => {
                 reply: jest.fn()
             };
             const client = {
+                getLocale: jest.fn().mockReturnValue('en'),
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
@@ -491,6 +499,7 @@ describe('settings command', () => {
                 reply: jest.fn()
             };
             const client = {
+                getLocale: jest.fn().mockReturnValue('en'),
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn().mockRejectedValue(new Error('Save failed')) }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
@@ -538,6 +547,7 @@ describe('settings command', () => {
                 reply: jest.fn()
             };
             const client = {
+                getLocale: jest.fn().mockReturnValue('en'),
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: null, save: jest.fn().mockRejectedValue(new Error('Save failed')) }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
@@ -586,6 +596,7 @@ describe('settings command', () => {
                 reply: jest.fn()
             };
             const client = {
+                getLocale: jest.fn().mockReturnValue('en'),
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en', save: jest.fn() }),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
@@ -626,6 +637,7 @@ describe('settings command', () => {
         it('should populate the embed with the correct user settings', async () => {
             const interaction = { locale: 'en' };
             const client = {
+                getLocale: jest.fn().mockReturnValue('en'),
                 translate: jest.fn().mockImplementation((locale, key, value) => {
                     switch (value) {
                         case 'settings.subcommands.view.title':

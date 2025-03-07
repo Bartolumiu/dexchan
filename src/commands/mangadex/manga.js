@@ -372,7 +372,7 @@ async function getCoverURL(manga) {
         if (!response.ok) return null;
         const data = await response.json();
         const fileName = data.data.attributes.fileName;
-        return `https://mangadex.org/covers/${mangaID}/${fileName}`;
+        return `https://mangadex.org/covers/${mangaID}/${fileName}.512.jpg`;
     } catch (error) {
         return null;
     }

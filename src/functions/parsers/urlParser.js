@@ -62,7 +62,7 @@ const regexStrings = {
         primary: `^${regexComponents.protocol.https}${regexComponents.mangadex.subdomain}${regexComponents.mangadex.domain}\\/title\\/${regexComponents.mangadex.id}${regexComponents.mangadex.slugAndParams}$`
     },
     namicomi: {
-        id: regexComponents.namicomi.id,
+        id: `^${regexComponents.namicomi.id}$`,
         primary: `^${regexComponents.protocol.https}${regexComponents.namicomi.primary}\\/${regexComponents.namicomi.locale}\\/title\\/${regexComponents.namicomi.id}${regexComponents.namicomi.slug}$`,
         semi_shortened: `^${regexComponents.protocol.https}${regexComponents.namicomi.primary}\\/t\\/${regexComponents.namicomi.id}$`,
         shortened: `^${regexComponents.protocol.https}${regexComponents.namicomi.secondary}\\/t\\/${regexComponents.namicomi.id}$`

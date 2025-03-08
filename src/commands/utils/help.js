@@ -13,8 +13,8 @@ module.exports = {
             .setDescriptionLocalizations(localizations.description);
     },
     async execute(interaction, client) {
-        const userSettings = await client.getMongoUserData(interaction.user);
-        const locale = userSettings.preferredLocale || interaction.locale;
+        const userProfile  = await client.getMongoUserData(interaction.user);
+        const locale = client.getLocale(userProfile, interaction);
         const translations = {
             title: await client.translate(locale, 'commands', 'help.response.title'),
             fields: [

@@ -1,8 +1,10 @@
 const { EmbedBuilder, Colors } = require('discord.js');
 const helpCommand = require('../../../src/commands/utils/help');
-const translateAttribute = require('../../../src/functions/handlers/translateAttribute');
+const { translateAttribute } = require('../../../src/functions/handlers/handleLocales');
 
-jest.mock('../../../src/functions/handlers/translateAttribute', () => jest.fn().mockResolvedValue('translated string'));
+jest.mock('../../../src/functions/handlers/handleLocales', () => ({
+    translateAttribute: jest.fn().mockResolvedValue('translated string'),
+}));
 
 describe('help command', () => {
     beforeEach(() => {

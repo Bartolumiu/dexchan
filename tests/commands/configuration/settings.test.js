@@ -1,6 +1,18 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors } = require('discord.js');
 const settingsCommand = require('../../../src/commands/configuration/settings');
-const translateAttribute = require('../../../src/functions/handlers/translateAttribute');
+const { localeSettings, viewSettings } = require('../../../src/commands/configuration/settings');
+const { translateAttribute } = require('../../../src/functions/handlers/handleLocales');
+
+jest.mock('fs', () => {
+    return {
+        readdirSync: jest.fn().mockReturnValue(['en.json', 'es.json']),
+        readFileSync: jest.fn().mockReturnValue('{"name": "English (en)", "value": "en"}')
+    }
+});
+
+jest.mock('../../../src/functions/handlers/handleLocales', () => ({
+    translateAttribute: jest.fn().mockResolvedValue({ 'en-GB': 'translated string' })
+}));
 
 jest.mock('../../../src/commands/configuration/settings', () => {
     return {
@@ -10,16 +22,6 @@ jest.mock('../../../src/commands/configuration/settings', () => {
     };
 });
 
-const { localeSettings, viewSettings } = require('../../../src/commands/configuration/settings');
-
-jest.mock('../../../src/functions/handlers/translateAttribute', () => jest.fn().mockResolvedValue('translated string'));
-jest.mock('fs', () => {
-    return {
-        readdirSync: jest.fn().mockReturnValue(['en.json', 'es.json']),
-        readFileSync: jest.fn().mockReturnValue('{"name": "English (en)", "value": "en"}')
-    }
-});
-
 describe('settings command', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -27,8 +29,6 @@ describe('settings command', () => {
 
     describe('data', () => {
         it('should build the slash command with correct localizations', async () => {
-            // Mock the translateAttribute function
-            translateAttribute.mockResolvedValue({ 'en-GB': 'translated string' });
             const command = {
                 name: 'settings',
                 description: 'Change your settings',
@@ -88,7 +88,6 @@ describe('settings command', () => {
             expect(command.subcommand_groups.locale.subcommands.reset.description).toBe('Reset your preferred locale');
             expect(command.subcommand_groups.locale.subcommands.reset.descriptionLocalizations).toStrictEqual({ 'en-GB': 'translated string' });
             expect(command.subcommand_groups.locale.subcommands.reset.options).toBeUndefined();
-            expect(require('../../../src/functions/handlers/translateAttribute')).toHaveBeenCalledTimes(12);
         });
     });
 

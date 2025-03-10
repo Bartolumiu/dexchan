@@ -20,6 +20,10 @@ const commandDescriptions = {};
  */
 module.exports = (client) => {
     client.handleLocales = async () => {
+        await loadLocales(1);
+        return;
+
+        // Keeping this just in case (will be removed after testing)
         const chalk = (await import('chalk')).default;
         console.log(chalk.blueBright('[Locale Handler] Loading locales...'));
         const localePath = path.join(__dirname, '../../locales');
@@ -59,31 +63,6 @@ module.exports = (client) => {
     };
 
     /**
-     * Translates command attributes (name or description) for all supported Discord locales.
-     * @param {Object} data - The command data object.
-     * @param {string} command - The command name.
-     * @param {string} attribute - The attribute to translate ('name' or 'description').
-     */
-    client.translateCommand = async (data, command, attribute) => {
-        const chalk = (await import('chalk')).default;
-
-        const translations = Object.fromEntries(
-            discordLocales.map(locale => [locale, translate(locale, 'commands', `${command}.${attribute}`)]).filter(([, translation]) => translation)
-        );
-
-        try {
-            if (attribute === 'name') {
-                data.setNameLocalizations(translations);
-            } else if (attribute === 'description') {
-                data.setDescriptionLocalizations(translations);
-            }
-        } catch (e) {
-            console.log(chalk.redBright(`[Command Handler] Error setting ${attribute} localizations for command ${command}`));
-            console.error(e);
-        }
-    };
-
-    /**
      * Get the user's preferred locale based on their profile or interaction.
      * 
      * @param {Object} userProfile - The user's profile containing their settings.
@@ -91,9 +70,36 @@ module.exports = (client) => {
      * @returns {string} - The preferred locale of the user or the interaction locale.
      */
     client.getLocale = (userProfile, interaction) => {
-        return userProfile.preferredLocale || interaction.locale;
-    }
+        return getLocale(userProfile, interaction);
+    };
 };
+
+const loadLocales = async (log = 0) => {
+    const chalk = (await import('chalk')).default;
+    if (log) console.log(chalk.blueBright('[Locale Handler] Loading locales...'));
+
+    const localePath = path.join(__dirname, '../../locales');
+    const localeFiles = readdirSync(localePath).filter(file => file.endsWith('.json'));
+    if (log) console.log(chalk.blueBright(`[Locale Handler] Found ${localeFiles.length} locales.`));
+
+    localeFiles.forEach(file => {
+        const filePath = path.join(localePath, file);
+        const localeName = path.basename(file, '.json');
+        const localeData = JSON.parse(readFileSync(filePath, 'utf8'));
+
+
+        locales[localeName] = localeData;
+
+
+        if (localeData.commands) {
+            commandDescriptions[localeName] = Object.fromEntries(
+                Object.entries(localeData.commands).map(([command, commandData]) => [command, commandData.description])
+            );
+        }
+
+        if (log) console.log(chalk.greenBright(`[Locale Handler] Locale ${localeName} loaded.`));
+    });
+}
 
 /**
  * Translates a given key within a specified category for a given locale, with optional replacements.
@@ -138,3 +144,43 @@ const getNestedTranslation = (translations, nestedKeys) => {
         return Array.isArray(translation) ? translation[parseInt(trimmedKey)] : translation[trimmedKey];
     }, translations);
 };
+
+/**
+ * Translates a given attribute for a command into all available Discord locales.
+ * 
+ * @param {*} command - The command to translate.
+ * @param {*} attribute - The attribute to translate for the command.
+ * @returns {Promise<Object|null>} - An object containing the translations for each locale.
+ */
+const translateAttribute = async (command, attribute) => {
+    await loadLocales();
+    console.log(locales);
+    console.log(`[Locale Handler] Translating ${command}.${attribute}...`);
+    const translations = {};
+
+    for (const locale of discordLocales) {
+        const translation = translate(locale, 'commands', `${command}.${attribute}`);
+
+        // If translation is available, add it to the map
+        if (translation) {
+            console.log(`[Locale Handler] Translated ${command}.${attribute} for ${locale}: ${translation}`);
+            translations[locale] = translation;
+        }
+    }
+    
+    return translations;
+}
+
+/**
+ * Get the user's preferred locale based on their profile or interaction.
+ * 
+ * @param {Object} userProfile - The user's profile containing their settings.
+ * @param {Object} interaction - The interaction object from the Discord API.
+ * @returns {string} - The preferred locale of the user or the interaction locale.
+ */
+const getLocale = (userProfile, interaction) => {
+    return userProfile.preferredLocale || interaction.locale;
+}
+
+module.exports.getLocale = getLocale;
+module.exports.translateAttribute = translateAttribute;

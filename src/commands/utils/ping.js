@@ -20,8 +20,8 @@ module.exports = {
             .setDescriptionLocalizations(localizations.description);
     },
     async execute(interaction, client) {
-        const userSettings = await client.getMongoUserData(interaction.user);
-        const locale = userSettings.preferredLocale || interaction.locale;
+        const userProfile = await client.getMongoUserData(interaction.user);
+        const locale = client.getLocale(userProfile, interaction);
 
         const content = client.translate(locale, 'commands', 'ping.response.ping');
         const message = await interaction.deferReply({ content: content, fetchReply: true });
@@ -51,7 +51,6 @@ module.exports = {
                 value: null,
                 inline: true
             },
-            not_ok: await client.translate(locale, 'commands', 'ping.response.not_ok'),
             footer: await client.translate(locale, 'commands', 'ping.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username })
         };
 
@@ -59,41 +58,39 @@ module.exports = {
             .setTitle(fields.title)
             .addFields(fields.ws, fields.discord)
             .setFooter({ text: fields.footer, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
-            .setColor(Colors.Blurple)
-            .setTimestamp();
+            .setColor(Colors.Blurple);
 
         try {
-            fields.md.value = await client.translate(locale, 'commands', 'ping.response.fields.api.mangadex.value', { mdPing: await getPing(API_URLS.MANGADEX) });
-            embed.addFields(fields.md);
+            const mdPing = await getPing(API_URLS.MANGADEX);
+            fields.md.value = await client.translate(locale, 'commands', 'ping.response.fields.api.mangadex.value', { mdPing: mdPing });
         } catch (e) {
-            console.error('Error while fetching Mangadex API ping:', e);
-            embed.addFields({ name: fields.md.name, value: fields.not_ok, inline: true });
-        } finally {
-            try {
-                fields.nami.value = await client.translate(locale, 'commands', 'ping.response.fields.api.namicomi.value', { ncPing: await getPing(API_URLS.NAMICOMI) });
-                embed.addFields(fields.nami);
-            } catch (e) {
-                console.error('Error while fetching Namicomi API ping:', e);
-                embed.addFields({ name: fields.nami.name, value: fields.not_ok, inline: true });
-            }
-        }   
+            console.error(e);
+            fields.md.value = await client.translate(locale, 'commands', 'ping.response.not_ok');
+        }
 
+        try {
+            const namiPing = await getPing(API_URLS.NAMICOMI);
+            fields.nami.value = await client.translate(locale, 'commands', 'ping.response.fields.api.namicomi.value', { ncPing: namiPing });
+        } catch (e) {
+            console.error(e);
+            fields.nami.value = await client.translate(locale, 'commands', 'ping.response.not_ok');
+        }
+
+        embed.addFields(fields.md, fields.nami);
         await interaction.editReply({ embeds: [embed] });
     }
 };
 
-async function getPing(url) {
-    return new Promise((resolve, reject) => {
-        const start = Date.now();
-        https.get(url, { headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` } }, (res) => {
-            res.on('data', () => { });
-            res.on('end', () => {
-                resolve(Date.now() - start);
-            });
-        }).on('error', (e) => {
-            reject(e);
-        });
+const getPing = async (url) => {
+    const start = Date.now();
+
+    const res = await fetch(url, {
+        headers: { 'User-Agent': `Dex-chan/${version} by Bartolumiu` }
     });
+
+    if (!res.ok) throw new Error('Fetch failed');
+
+    return Date.now() - start;
 };
 
 module.exports.getPing = getPing;

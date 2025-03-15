@@ -160,7 +160,7 @@ describe('checkUpdates', () => {
 
         expect(result.isOutdated).toBeNull();
         expect(result.latestVersion).toBeNull();
-        expect(consoleErrorSpy).toHaveBeenCalledWith('[GitHub] Failed to check for updates:', 'API request failed');
+        expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('[GitHub] Failed to check for updates: API request failed'));
         consoleErrorSpy.mockRestore();
     });
 });

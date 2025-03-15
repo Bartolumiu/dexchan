@@ -1,4 +1,5 @@
 const axios = require('axios');
+const getChalk = require('./getChalk');
 
 module.exports = async function checkUpdates() {
     try {
@@ -58,7 +59,9 @@ module.exports = async function checkUpdates() {
         // The current version is up-to-date
         return { isOutdated: false, latestVersion: latestVersion };
     } catch (e) {
-        console.error('[GitHub] Failed to check for updates:', e.message);
+        const chalk = await getChalk();
+        console.error(chalk.redBright('[GitHub] Failed to check for updates:', e.message));
+
         return { isOutdated: null, latestVersion: null };
     }
 };

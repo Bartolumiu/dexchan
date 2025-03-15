@@ -1,6 +1,7 @@
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v10');
 const { readdirSync } = require('fs');
+const getChalk = require('../tools/getChalk');
 
 /**
  * Handles the loading and registration of Discord commands for the client.
@@ -25,8 +26,7 @@ const { readdirSync } = require('fs');
  */
 module.exports = (client) => {
     client.handleCommands = async () => {
-        const chalkInstance = await import('chalk');
-        const chalk = chalkInstance.default;
+        const chalk = await getChalk();
         console.log(chalk.blueBright('[Command Handler] Loading commands...'));
         const { commands } = client;
 

@@ -21,32 +21,7 @@ const commandDescriptions = {};
 module.exports = (client) => {
     client.handleLocales = async () => {
         await loadLocales(1);
-        return;
-
-        // Keeping this just in case (will be removed after testing)
-        const chalk = (await import('chalk')).default;
-        console.log(chalk.blueBright('[Locale Handler] Loading locales...'));
-        const localePath = path.join(__dirname, '../../locales');
-        const localeFiles = readdirSync(localePath).filter(file => file.endsWith('.json'));
-        console.log(chalk.blueBright(`[Locale Handler] Found ${localeFiles.length} locales.`));
-
-        localeFiles.forEach(file => {
-            const filePath = path.join(localePath, file);
-            const localeName = path.basename(file, '.json');
-            const localeData = JSON.parse(readFileSync(filePath, 'utf8'));
-
-            // Initialize locale data
-            locales[localeName] = localeData;
-
-            // Load command translations
-            if (localeData.commands) {
-                commandDescriptions[localeName] = Object.fromEntries(
-                    Object.entries(localeData.commands).map(([command, commandData]) => [command, commandData.description])
-                );
-            }
-
-            console.log(chalk.greenBright(`[Locale Handler] Locale ${localeName} loaded.`));
-        });
+        return locales;
     };
 
     /**
@@ -87,9 +62,7 @@ const loadLocales = async (log = 0) => {
         const localeName = path.basename(file, '.json');
         const localeData = JSON.parse(readFileSync(filePath, 'utf8'));
 
-
         locales[localeName] = localeData;
-
 
         if (localeData.commands) {
             commandDescriptions[localeName] = Object.fromEntries(
@@ -154,8 +127,6 @@ const getNestedTranslation = (translations, nestedKeys) => {
  */
 const translateAttribute = async (command, attribute) => {
     await loadLocales();
-    console.log(locales);
-    console.log(`[Locale Handler] Translating ${command}.${attribute}...`);
     const translations = {};
 
     for (const locale of discordLocales) {
@@ -163,11 +134,10 @@ const translateAttribute = async (command, attribute) => {
 
         // If translation is available, add it to the map
         if (translation) {
-            console.log(`[Locale Handler] Translated ${command}.${attribute} for ${locale}: ${translation}`);
             translations[locale] = translation;
         }
     }
-    
+
     return translations;
 }
 

@@ -14,6 +14,8 @@ const loadHandlerOnClient = () => {
 describe('handleLocales', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        console.log = jest.fn();
+        console.error = jest.fn();
     });
 
     describe('getLocale', () => {

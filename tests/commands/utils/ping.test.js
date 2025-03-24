@@ -1,6 +1,6 @@
 const { Colors } = require('discord.js');
 const pingCommand = require('../../../src/commands/utils/ping');
-const { translateAttribute, getLocale } = require('../../../src/functions/handlers/handleLocales');
+const { translateAttribute } = require('../../../src/functions/handlers/handleLocales');
 
 jest.mock('../../../src/functions/handlers/handleLocales', () => ({
     translateAttribute: jest.fn().mockResolvedValue({ 'en-GB': 'translated string' }),

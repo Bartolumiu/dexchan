@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors } = require('discord.js');
-const translateAttribute = require('../../functions/handlers/translateAttribute');
+const { translateAttribute } = require('../../functions/handlers/handleLocales');
 let version = require('../../../package.json').version;
 const https = require('https');
 

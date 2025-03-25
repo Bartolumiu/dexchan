@@ -1,11 +1,12 @@
 const checkUpdates = require('../../functions/tools/checkUpdates');
+const getChalk = require('../../functions/tools/getChalk');
 
 module.exports = {
     name: 'ready',
     once: true,
     async execute(client) {
         setInterval(client.pickPresence, 10 * 1000)
-        const chalk = await import('chalk');
+        const chalk = await getChalk();
         console.log(chalk.default.greenBright(`[Discord] Ready as ${client.user.tag}`));
         console.log(chalk.default.greenBright(`[Discord] Version: ${client.version}`));
 

@@ -5,7 +5,14 @@ const loadFunctions = async (client) => {
     const chalk = await getChalk();
     console.log(chalk.blueBright('[Function Loader] Loading functions...'));
 
-    const skipCheck = ['checkUpdates', 'urlParser', 'handleFunctions', 'search', 'capitalizeFirstLetter'];
+    const skipCheck = [
+        'checkUpdates',
+        'urlParser',
+        'handleFunctions',
+        'search',
+        'capitalizeFirstLetter',
+        'details'
+    ];
 
     const functionFolders = readdirSync('./src/functions');
     for (const folder of functionFolders) {

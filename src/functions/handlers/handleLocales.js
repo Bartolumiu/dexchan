@@ -1,5 +1,6 @@
 const { readdirSync, readFileSync } = require('fs');
 const path = require('path');
+const getChalk = require('../tools/getChalk');
 
 // Language mapping for certain languages
 const languageMap = {
@@ -50,7 +51,7 @@ module.exports = (client) => {
 };
 
 const loadLocales = async (log = 0) => {
-    const chalk = (await import('chalk')).default;
+    const chalk = await getChalk();
     if (log) console.log(chalk.blueBright('[Locale Handler] Loading locales...'));
 
     const localePath = path.join(__dirname, '../../locales');

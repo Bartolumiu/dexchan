@@ -1,7 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require('discord.js');
 const translateAttribute = require('../../functions/handlers/translateAttribute');
+const search = require('../../functions/titles/search');
 const path = require('path');
 const { parseURL, checkID } = require('../../functions/parsers/urlParser');
+const getTitleDetails = require('../../functions/titles/details');
 let version = require('../../../package.json').version;
 const USER_AGENT = `Dex-chan/${version} by Bartolumiu`;
 
@@ -128,7 +130,7 @@ module.exports = {
         if (!query && !id && !url) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.empty');
 
         if (query) {
-            const searchResults = await searchTitle(query, locale);
+            const searchResults = await search(query, 'namicomi', locale);
             if (!searchResults) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.no_results');
             const fields = Array.from(searchResults, ([title, id]) => {
                 if (typeof title !== 'string' || typeof id !== 'string') return null;
@@ -169,7 +171,7 @@ module.exports = {
         const titleID = id || await parseURL(url, 'namicomi');
         if (!(await checkID(titleID, 'namicomi'))) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.invalid_id');
 
-        const [title, stats] = await Promise.all([getTitle(titleID), getStats(titleID)]);
+        const [title, stats] = await Promise.all([getTitleDetails(titleID, 'namicomi'), getStats(titleID)]);
         if (!title || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.invalid_id');
 
         await buildTitleEmbed(embed, client, locale, title, stats, translations);
@@ -493,29 +495,6 @@ async function getCoverURL(title, locale) {
 };
 
 /**
- * Fetches the title information from the NamiComi API.
- *
- * @param {string} titleID - The ID of the title to fetch.
- * @returns {Promise<Object|null>} A promise that resolves to the title data object if the request is successful, or null if the request fails.
- */
-async function getTitle(titleID) {
-    const url = new URL(`https://api.namicomi.com/title/${titleID}`);
-    url.searchParams.append('includes[]', 'organization');
-    url.searchParams.append('includes[]', 'cover_art');
-    url.searchParams.append('includes[]', 'tag');
-
-    try {
-        const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-        if (!response.ok) return null;
-        const data = await response.json();
-
-        return data.data;
-    } catch (error) {
-        return null;
-    };
-};
-
-/**
  * Fetches and returns statistics for a given title from the NamiComi API.
  *
  * @async
@@ -566,43 +545,4 @@ async function getLocalizedDescription(title, locale, translations) {
     if (!description) description = title.attributes.description['en'];
 
     return description || translations.embed.error.no_description;
-};
-
-/**
- * Searches for titles based on the given query and locale.
- *
- * @async
- * @function searchTitle
- * @param {string} query - The title query to search for.
- * @param {string} locale - The locale to use for the title search.
- * @returns {Promise<Map<string, string>|null>} A promise that resolves to a Map of localized titles and their IDs, or null if no results are found.
- */
-async function searchTitle(query, locale) {
-    const url = new URL('https://api.namicomi.com/title/search');
-    url.searchParams.append('title', query);
-    url.searchParams.append('limit', 10);
-    url.searchParams.append('contentRatings[]', 'safe');
-    url.searchParams.append('contentRatings[]', 'mature');
-    url.searchParams.append('contentRatings[]', 'restricted');
-
-    try {
-        const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-        if (!response.ok) return null;
-        const data = await response.json();
-        
-        if (data.data.length === 0) return null;
-        const results = new Map(data.data.map(title => {
-            if (title?.attributes?.title) {
-                let localizedTitle = title.attributes.title[locale];
-                if (!localizedTitle && locale === 'es') localizedTitle = title.attributes.title['es-419'];
-                if (!localizedTitle) localizedTitle = title.attributes.title['en'];
-                if (!localizedTitle) localizedTitle = title.attributes.title[Object.keys(title.attributes.title)[0]];
-                return [localizedTitle, title.id];
-            };
-        }));
-    
-        return results;
-    } catch (error) {
-        return null;
-    };
 };

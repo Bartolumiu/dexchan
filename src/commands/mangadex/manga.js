@@ -1,5 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require("discord.js");
 const translateAttribute = require('../../functions/handlers/translateAttribute');
+const capitalizeFirstLetter = require('../../functions/tools/capitalizeFirstLetter');
+const search = require('../../functions/titles/search');
+const getTitleDetails = require('../../functions/titles/details');
 const path = require('path');
 const { parseURL, checkID } = require('../../functions/parsers/urlParser');
 let version = require('../../../package.json').version;
@@ -120,7 +123,7 @@ module.exports = {
         if (!query && !id && !url) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.empty');
 
         if (query) {
-            const searchResults = await searchManga(query);
+            const searchResults = await search(query, 'mangadex');
             if (!searchResults) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.no_results');
             const fields = Array.from(searchResults, ([title, id]) => {
                 if (typeof title !== 'string' || typeof id !== 'string') return null;
@@ -161,7 +164,7 @@ module.exports = {
         const mangaID = id || await parseURL(url, 'mangadex');
         if (!(await checkID(mangaID, 'mangadex'))) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.invalid_id');
 
-        const [manga, stats] = await Promise.all([getManga(mangaID), getStats(mangaID)]);
+        const [manga, stats] = await Promise.all([getTitleDetails(mangaID, 'mangadex'), getStats(mangaID)]);
         if (!manga || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.invalid_id');
 
         await buildMangaEmbed(embed, client, locale, manga, stats, translations);
@@ -227,9 +230,9 @@ async function buildMangaEmbed(embed, client, locale, manga, stats, translations
         { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
         { name: translations.embed.fields.follows, value: `${stats.follows}`, inline: true },
         { name: translations.embed.fields.year, value: `${manga.attributes.year}`, inline: true },
-        { name: translations.embed.fields.pub_status, value: await capitalizeFirstLetter(await client.translate(locale, 'commands', `manga.response.found.pub_status.${manga.attributes.status}`) || manga.attributes.status), inline: true },
-        { name: translations.embed.fields.demographic, value: await capitalizeFirstLetter(manga.attributes.publicationDemographic || 'N/A'), inline: true },
-        { name: translations.embed.fields.content_rating, value: await capitalizeFirstLetter(manga.attributes.contentRating), inline: true }
+        { name: translations.embed.fields.pub_status, value: capitalizeFirstLetter(await client.translate(locale, 'commands', `manga.response.found.pub_status.${manga.attributes.status}`) || manga.attributes.status), inline: true },
+        { name: translations.embed.fields.demographic, value: capitalizeFirstLetter(manga.attributes.publicationDemographic || 'N/A'), inline: true },
+        { name: translations.embed.fields.content_rating, value: capitalizeFirstLetter(manga.attributes.contentRating), inline: true }
     ];
 
     embed.setTitle(title)
@@ -290,16 +293,6 @@ async function setImages(manga, embed, translations) {
         return [mangadexIcon];
     }
 
-}
-
-/**
- * Capitalizes the first letter of a given string.
- *
- * @param {string} string - The string to capitalize.
- * @returns {Promise<string>} A promise that resolves to the string with the first letter capitalized.
- */
-async function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 /**
@@ -379,29 +372,6 @@ async function getCoverURL(manga) {
 }
 
 /**
- * Fetches manga details from the MangaDex API.
- *
- * @param {string} mangaID - The ID of the manga to fetch.
- * @returns {Promise<Object|null>} A promise that resolves to the manga data object if the request is successful, or null if the request fails.
- */
-async function getManga(mangaID) {
-    const url = new URL(`https://api.mangadex.org/manga/${mangaID}`);
-    url.searchParams.append('includes[]', 'author');
-    url.searchParams.append('includes[]', 'artist');
-    url.searchParams.append('includes[]', 'cover_art');
-    url.searchParams.append('includes[]', 'tag');
-
-    try {
-        const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-        if (!response.ok) return null;
-        const data = await response.json();
-        return data.data;
-    } catch (error) {
-        return null;
-    }
-}
-
-/**
  * Fetches and returns the statistics for a given manga from the MangaDex API.
  *
  * @async
@@ -439,35 +409,4 @@ async function getLocalizedDescription(manga, locale, translations) {
     if (!description) description = manga.attributes.description['en'];
 
     return description || translations.embed.error.no_description;
-}
-
-/**
- * Searches for manga titles on MangaDex based on the provided query.
- *
- * @param {string} query - The title or keyword to search for.
- * @returns {Promise<Map<string, string> | null>} A promise that resolves to a Map object containing manga titles as keys and their IDs as values, or null if no results are found or the request fails.
- */
-async function searchManga(query) {
-    const url = new URL('https://api.mangadex.org/manga');
-    url.searchParams.append('title', query);
-    url.searchParams.append('limit', 10);
-    url.searchParams.append('contentRating[]', 'safe');
-    url.searchParams.append('contentRating[]', 'suggestive');
-    url.searchParams.append('contentRating[]', 'erotica');
-    url.searchParams.append('contentRating[]', 'pornographic');
-
-    try {
-        const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-        if (!response.ok) return null;
-        const data = await response.json();
-
-        if (data.data.length === 0) return null;
-        // Map the results to a Map object with the title as the key and the ID as the value
-        // The title location is in manga.attributes.title (sometimes it's .en, sometimes it's .ja-ro, etc. so we'll fetch the first one)
-        const results = new Map(data.data.map(manga => [manga.attributes.title[Object.keys(manga.attributes.title)[0]], manga.id]));
-    
-        return results;
-    } catch (error) {
-        return null;
-    }
 }

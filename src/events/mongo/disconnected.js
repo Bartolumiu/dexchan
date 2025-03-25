@@ -1,7 +1,9 @@
+const getChalk = require('../../functions/tools/getChalk');
+
 module.exports = {
     name: 'disconnected',
     async execute() {
-        const chalk = await import('chalk');
-        console.log(chalk.default.red('[Database Status] Disconnected from MongoDB!'));
+        const chalk = await getChalk();
+        console.log(chalk.red('[Database Status] Disconnected from MongoDB!'));
     }
 }

@@ -1,8 +1,8 @@
 const { readdirSync } = require('fs');
+const getChalk = require('../tools/getChalk');
 
 const loadFunctions = async (client) => {
-    const chalkInstance = await import('chalk');
-    const chalk = chalkInstance.default;
+    const chalk = await getChalk();
     console.log(chalk.blueBright('[Function Loader] Loading functions...'));
 
     const skipCheck = ['checkUpdates', 'urlParser', 'handleFunctions'];

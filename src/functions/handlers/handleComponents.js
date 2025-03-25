@@ -1,4 +1,5 @@
 const { readdirSync } = require('fs');
+const getChalk = require('../tools/getChalk');
 const path = require('path');
 
 /**
@@ -14,8 +15,7 @@ const path = require('path');
  */
 module.exports = (client) => {
     client.handleComponents = async () => {
-        const chalkInstance = await import('chalk');
-        const chalk = chalkInstance.default;
+        const chalk = await getChalk();
         console.log(chalk.blueBright('[Component Handler] Loading components...'));
 
         const componentFolders = readdirSync('./src/components');

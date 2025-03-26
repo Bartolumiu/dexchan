@@ -10,9 +10,10 @@ const loadFunctions = async (client) => {
         'urlParser',
         'handleFunctions',
         'capitalizeFirstLetter',
-        'search',
-        'details',
-        'stats'
+        'titleSearch',
+        'titleDetails',
+        'titleStats',
+        'titleCover'
     ];
 
     const functionFolders = readdirSync('./src/functions');

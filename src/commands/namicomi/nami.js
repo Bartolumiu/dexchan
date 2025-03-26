@@ -8,6 +8,10 @@ const getTitleDetails = require('../../functions/titles/titleDetails');
 const getTitleStats = require('../../functions/titles/titleStats');
 const getCover = require('../../functions/titles/titleCover');
 const getBanner = require('../../functions/titles/titleBanner');
+const getLocalizedDescription = require('../../functions/titles/localizedDescription');
+const getTitleTags = require('../../functions/titles/titleTags');
+const getTitleCreators = require('../../functions/titles/titleCreators');
+const getLocalizedTitle = require('../../functions/titles/localizedTitle');
 let version = require('../../../package.json').version;
 const USER_AGENT = `Dex-chan/${version} by Bartolumiu`;
 
@@ -179,7 +183,7 @@ module.exports = {
         if (!title || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.invalid_id');
 
         await buildTitleEmbed(embed, client, locale, title, stats, translations);
-        const attachments = await setImages(title, embed, locale, translations);
+        const attachments = await setImages(title, embed, locale);
 
         const buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
@@ -229,9 +233,8 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
  * @returns {Promise<void>} A promise that resolves when the embed has been built.
  */
 async function buildTitleEmbed(embed, client, locale, title, stats, translations) {
-    const embedTitle = await getLocalizedTitle(title, locale);
-    const description = await getLocalizedDescription(title, locale, translations) || translations.embed.error.no_description;
-    const author = await getCreators(title, translations);
+    const embedTitle = getLocalizedTitle(title, 'namicomi', locale);
+    const description = getLocalizedDescription(title, 'namicomi', locale) || translations.embed.error.no_description;
 
     const fields = [
         { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
@@ -248,7 +251,7 @@ async function buildTitleEmbed(embed, client, locale, title, stats, translations
         .addFields(fields)
         .setColor(Colors.Blurple);
 
-    await addTitleTags(title, embed, locale, client, translations);
+    await addTitleTags(title, embed, locale, translations);
 
     // Reading mode (Vertical, Horizontal: Left to Right, Horizontal: Right to Left)
     switch (title.attributes.readingMode) {
@@ -262,43 +265,6 @@ async function buildTitleEmbed(embed, client, locale, title, stats, translations
             embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.left_to_right, inline: true });
             break;
     };
-    embed.setAuthor({ name: author, iconURL: 'attachment://namicomi.png' });
-};
-
-/**
- * Retrieves the localized title based on the provided locale.
- * If the title is not available in the specified locale, it falls back to 'es-419' for Spanish,
- * then to English ('en'), and finally to the first available title.
- *
- * @param {Object} title - The title object containing localized titles.
- * @param {Object} title.attributes - The attributes of the title.
- * @param {Object} title.attributes.title - An object where keys are locale codes and values are titles.
- * @param {string} locale - The locale code to retrieve the title for.
- * @returns {Promise<string>} - The localized title.
- */
-async function getLocalizedTitle(title, locale) {
-    let localizedTitle = title.attributes.title[locale];
-    if (!localizedTitle && locale === 'es') localizedTitle = title.attributes.title['es-419'];
-    if (!localizedTitle) localizedTitle = title.attributes.title['en'];
-    return localizedTitle || title.attributes.title[Object.keys(title.attributes.title)[0]];
-};
-
-/**
- * Retrieves a list of unique creators (organizations) associated with a given title.
- * If the list of creators exceeds 256 characters, a translated message indicating too many authors is returned.
- *
- * @param {Object} title - The title object containing relationships.
- * @param {Object} translations - The translations object containing localized strings.
- * @returns {Promise<string>} A comma-separated string of unique creators or a translated message if too many.
- */
-async function getCreators(title, translations) {
-    const creators = Array.from(new Set([
-        ...title.relationships.filter(rel => rel.type === 'organization').map(rel => rel.attributes.name)
-    ])).join(', ');
-
-    return (creators.length > 256)
-        ? translations.embed.error.too_many_authors
-        : creators;
 };
 
 /**
@@ -311,12 +277,11 @@ async function getCreators(title, translations) {
  * @param {Object} title - The title object containing information about the manga.
  * @param {Object} embed - The embed object to set the images on.
  * @param {string} locale - The locale string for fetching localized data.
- * @param {Object} translations - The translations object containing localized strings.
  * @returns {Promise<Array>} A promise that resolves to an array of AttachmentBuilder objects.
  */
-async function setImages(title, embed, locale, translations) {
+async function setImages(title, embed, locale) {
     // NamiComi logo as the author icon
-    const author = await getCreators(title, translations);
+    const author = getTitleCreators(title, 'namicomi');
     const namiIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/namicomi.png'), 'namicomi.png');
     embed.setAuthor({ name: author, iconURL: 'attachment://namicomi.png' });
 
@@ -343,150 +308,20 @@ async function setImages(title, embed, locale, translations) {
  * @param {Object} title - The title object containing relationships and other metadata.
  * @param {Object} embed - The embed object to which the tags will be added.
  * @param {string} locale - The locale to be used for tag names.
- * @param {Object} client - The client object used for translation.
+ * @param {Object} translations - The translations object containing localized strings.
  * @returns {Promise<void>} - A promise that resolves when the tags have been added to the embed.
  */
-async function addTitleTags(title, embed, locale, client, translations) {
-    // Get the primary and secondary tag IDs
-    const primaryTagID = title.relationships.find(rel => rel.type === 'primary_tag')?.id;
-    const secondaryTagID = title.relationships.find(rel => rel.type === 'secondary_tag')?.id;
-    const tagIDs = title.relationships.filter(rel => rel.type === 'tag').map(rel => rel.id);
+async function addTitleTags(title, embed, locale, translations) {
+    const groups = getTitleTags(title, 'namicomi', locale);
+    if (!groups) return;
 
-    // Merge all tag IDs into a single array
-    const tags = [...new Set([primaryTagID, secondaryTagID, ...tagIDs])];
+    const fields = [
+        { name: translations.embed.fields.format, value: groups.format, inline: true },
+        { name: translations.embed.fields.genres, value: groups.genre, inline: true },
+        { name: translations.embed.fields.themes, value: groups.theme, inline: true },
+        { name: translations.embed.fields.content_warning, value: groups.content_warning, inline: true },
+        { name: translations.embed.fields.other_tags, value: groups.other, inline: true }
+    ]
 
-    // NamiComi tag list: https://api.namicomi.com/title/tags
-    // Fetch the tag list and filter out the tags that are not in the tag list
-    try {
-        const tagList = await fetch('https://api.namicomi.com/title/tags', { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 }).then(res => res.ok ? res.json() : null);
-        if (!tagList) return;
-
-        // Filter out the tag IDs that are not in the tag list
-        const validTags = tags.filter(tag => tagList.data.find(t => t.id === tag));
-
-        // Organize the tags into groups (attributes.group attribute in the tag element)
-        const tagGroups = {
-            theme: [],
-            genre: [],
-            content_warning: [],
-            format: []
-        };
-
-        // Sort the tags into their respective groups
-        validTags.forEach(tag => {
-            const tagData = tagList.data.find(t => t.id === tag);
-            if (!tagData) return;
-
-            const group = tagData.attributes.group;
-            if (!group) return;
-
-            if (!tagGroups[group]) tagGroups[group] = [];
-            tagGroups[group].push(tagData.attributes.name[locale] || tagData.attributes.name.en);
-        });
-
-        // Create the fields for the embed
-        const fields = [
-            {
-                name: translations.embed.fields.format, // Format
-                value: tagGroups.format.join(', ') || 'N/A',
-                inline: true
-            },
-            {
-                name: translations.embed.fields.genres, // Genre
-                value: tagGroups.genre.join(', ') || 'N/A',
-                inline: true
-            },
-            {
-                name: translations.embed.fields.themes, // Theme
-                value: tagGroups.theme.join(', ') || 'N/A',
-                inline: true
-            },
-            {
-                name: translations.embed.fields.content_warning, // Content Warning
-                value: tagGroups.content_warning.join(', ') || 'N/A',
-                inline: true
-            },
-        ];
-
-        // Add tags from extra groups (if any)
-        const otherTags = [];
-        for (const [group, tags] of Object.entries(tagGroups)) {
-            if (['theme', 'genre', 'content_warning', 'format'].includes(group)) continue;
-            otherTags.push(...tags);
-        };
-
-        if (otherTags.length > 0) {
-            fields.push({
-                name: translations.embed.fields.other_tags, // Other Tags
-                value: otherTags.join(', '),
-                inline: true
-            });
-        };
-
-        embed.addFields(fields);
-    } catch (error) {
-        return;
-    };
-};
-
-/**
- * Fetches the cover URL for a given title and locale.
- *
- * @param {Object} title - The title object containing the ID and relationships.
- * @param {string} title.id - The ID of the title.
- * @param {Array} title.relationships - The relationships of the title.
- * @param {string} locale - The locale to match the cover art.
- * @returns {Promise<string|null>} - A promise that resolves to the cover URL or null if not found.
- */
-async function getCoverURL(title, locale) {
-    locale = languageMap[locale] || locale;
-
-    const titleID = title.id;
-    const coverArtRelationships = title.relationships.filter(rel => rel.type === 'cover_art');
-
-    if (!coverArtRelationships) return null;
-
-    // Fetch all cover arts in parallel
-    const coverArtPromises = coverArtRelationships.map(async rel => {
-        try {
-            const res = await fetch(`https://api.namicomi.com/cover/${rel.id}`, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-            if (!res.ok) return null;
-            return res.json();
-        } catch (error) {
-            return null;
-        };
-    });
-
-    // Resolve all promises and filter out the ones that are not ok
-    const coverArtDataList = (await Promise.all(coverArtPromises)).filter(data => data);
-
-    // Find the cover art with the correct locale
-    let selectedCoverArt = coverArtDataList.find(data => data?.data?.attributes?.locale === locale);
-
-    // If no cover art matches the locale, return the first one
-    if (!selectedCoverArt && coverArtDataList.length > 0) selectedCoverArt = coverArtDataList[0];
-    if (!selectedCoverArt) return null;
-
-    const fileName = selectedCoverArt.data.attributes.fileName;
-
-    return `https://uploads.namicomi.com/covers/${titleID}/${fileName}`;
-};
-
-/**
- * Retrieves a localized description for a given title.
- *
- * @param {Object} title - The title object containing attribute descriptions.
- * @param {string} locale - The locale code to retrieve the description for.
- * @param {Object} translations - The translations object containing localized strings.
- * @returns {Promise<string>} - A promise that resolves to the localized description.
- */
-async function getLocalizedDescription(title, locale, translations) {
-    locale = languageMap[locale] || locale;
-
-    let description = title.attributes.description[locale];
-
-    if (!description && locale === 'es') description = title.attributes.description['es-419'];
-    if (!description) description = title.attributes.description['en'];
-
-    return description || translations.embed.error.no_description;
+    embed.addFields(fields);
 };

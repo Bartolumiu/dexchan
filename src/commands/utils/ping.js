@@ -1,7 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors } = require('discord.js');
 const { translateAttribute } = require('../../functions/handlers/handleLocales');
 let version = require('../../../package.json').version;
-const https = require('https');
 
 const API_URLS = {
     MANGADEX: 'https://api.mangadex.org/ping',

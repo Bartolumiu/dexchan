@@ -1,3 +1,17 @@
+/**
+ * Retrieves title tags based on the specified type and locale.
+ *
+ * For 'mangadex' type, it extracts tag names from title.attributes.tags;
+ * for 'namicomi' type, it extracts tag names from title.relationships using the provided locale.
+ *
+ * @param {object} title - The title object containing tag data.
+ * @param {string} type - The type of title. Supported values are 'mangadex' and 'namicomi'.
+ * @param {string} [locale=null] - The locale identifier for localized tag names (only used for 'namicomi').
+ * @returns {object} An object containing grouped tag strings. For 'mangadex', keys include theme, genre, content, and format.
+ *                   For 'namicomi', keys include content_warning, format, genre, theme, and other.
+ *                   If a particular group has no tags, its value will be 'N/A'.
+ * @throws {Error} Throws an error if the provided type is unsupported.
+ */
 const getTitleTags = (title, type, locale = null) => {
     switch (type) {
         case 'mangadex':
@@ -9,6 +23,15 @@ const getTitleTags = (title, type, locale = null) => {
     }
 }
 
+/**
+ * Extracts and formats MangaDex-specific tags from the title.
+ *
+ * Processes the title.attributes.tags array, grouping tag names by their attribute group,
+ * and returns an object with comma-separated tag strings. If a group has no tags, its value is set to 'N/A'.
+ *
+ * @param {object} title - The MangaDex title object containing an attributes.tags array.
+ * @returns {object} An object with keys: theme, genre, content, and format, each containing comma-separated tag names or 'N/A' if empty.
+ */
 const getMangaDexTags = (title) => {
     const groups = {
         theme: [],
@@ -35,6 +58,18 @@ const getMangaDexTags = (title) => {
     return groups;
 }
 
+/**
+ * Extracts and formats NamiComi-specific tags based on the provided locale.
+ *
+ * Processes the title.relationships array by filtering for tag relationships. Based on the tag's group,
+ * it selects a localized tag name (if available) or falls back to the English name. The tags are grouped
+ * into content_warning, format, genre, theme, and other, with each group's names joined by commas.
+ * Empty groups are represented by 'N/A'.
+ *
+ * @param {object} title - The NamiComi title object containing a relationships array with tag attributes.
+ * @param {string} locale - The locale identifier to retrieve proper localized tag names.
+ * @returns {object} An object with keys: content_warning, format, genre, theme, and other, each containing comma-separated tag names or 'N/A' if empty.
+ */
 const getNamiComiTags = (title, locale) => {
     const groups = {
         content_warning: [],

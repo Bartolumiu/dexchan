@@ -8,14 +8,16 @@ jest.mock('../../../src/functions/tools/checkUpdates');
 describe('Ready Event', () => {
     let consoleLogSpy;
     let consoleWarnSpy;
+    let setIntervalMock = jest.spyOn(global, 'setInterval');
 
     beforeEach(() => {
         consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
         consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-        setInterval = jest.fn((callback, interval) => {
+        setIntervalMock = jest.fn((callback, interval) => {
             callback(); // Call the callback immediately for testing purposes
             return 1; // Return a mock interval ID
         });
+        global.setInterval = setIntervalMock;
     });
 
     afterEach(() => {

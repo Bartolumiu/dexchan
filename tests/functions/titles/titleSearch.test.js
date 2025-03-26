@@ -1,4 +1,4 @@
-const search = require('../../../src/functions/titles/search');
+const search = require('../../../src/functions/titles/titleSearch');
 
 describe('search function', () => {
     const originalFetch = global.fetch;

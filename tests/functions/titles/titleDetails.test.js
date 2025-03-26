@@ -1,4 +1,4 @@
-const getTitleDetails = require('../../../src/functions/titles/details');
+const getTitleDetails = require('../../../src/functions/titles/titleDetails');
 
 describe('getTitleDetails', () => {
     beforeEach(() => {

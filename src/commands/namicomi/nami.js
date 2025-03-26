@@ -1,9 +1,11 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require('discord.js');
 const translateAttribute = require('../../functions/handlers/translateAttribute');
 const search = require('../../functions/titles/search');
+const capitalizeFirstLetter = require('../../functions/tools/capitalizeFirstLetter');
 const path = require('path');
 const { parseURL, checkID } = require('../../functions/parsers/urlParser');
 const getTitleDetails = require('../../functions/titles/details');
+const getTitleStats = require('../../functions/titles/stats');
 let version = require('../../../package.json').version;
 const USER_AGENT = `Dex-chan/${version} by Bartolumiu`;
 
@@ -171,7 +173,7 @@ module.exports = {
         const titleID = id || await parseURL(url, 'namicomi');
         if (!(await checkID(titleID, 'namicomi'))) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.invalid_id');
 
-        const [title, stats] = await Promise.all([getTitleDetails(titleID, 'namicomi'), getStats(titleID)]);
+        const [title, stats] = await Promise.all([getTitleDetails(titleID, 'namicomi'), getTitleStats(titleID, 'namicomi')]);
         if (!title || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.invalid_id');
 
         await buildTitleEmbed(embed, client, locale, title, stats, translations);
@@ -350,16 +352,6 @@ async function setImages(title, embed, locale, client, translations) {
 };
 
 /**
- * Capitalizes the first letter of a given string.
- *
- * @param {string} string - The string to capitalize.
- * @returns {string} The string with the first letter capitalized.
- */
-async function capitalizeFirstLetter(string) {
-    return (typeof string === 'string' ? string.charAt(0).toUpperCase() + string.slice(1) : string);
-};
-
-/**
  * Adds title tags to the provided embed object.
  *
  * @param {Object} title - The title object containing relationships and other metadata.
@@ -492,40 +484,6 @@ async function getCoverURL(title, locale) {
     const fileName = selectedCoverArt.data.attributes.fileName;
 
     return `https://uploads.namicomi.com/covers/${titleID}/${fileName}`;
-};
-
-/**
- * Fetches and returns statistics for a given title from the NamiComi API.
- *
- * @async
- * @function getStats
- * @param {string} titleID - The ID of the title to fetch statistics for.
- * @returns {Promise<Object|null>} An object containing the title's statistics or null if the fetch fails.
- */
-async function getStats(titleID) {
-    const ratingsURL = new URL(`https://api.namicomi.com/title/${titleID}/rating`);
-    const statsURL = new URL(`https://api.namicomi.com/statistics/title/${titleID}`);
-
-    const [ratingsResponse, statsResponse] = await Promise.all([fetch(ratingsURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 }), fetch(statsURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 })]);
-    if (!ratingsResponse.ok || !statsResponse.ok) return null;
-    const [ratingsData, statsData] = await Promise.all([ratingsResponse.json(), statsResponse.json()]);
-
-    return {
-        comments: {
-            /**
-             * Placeholder for thread ID (data consistency).
-             */
-            threadId: null, // Data consistency
-            repliesCount: statsData.data.attributes.commentCount,
-        },
-        rating: {
-            average: 0, // Data consistency
-            bayesian: ratingsData.data.attributes.rating,
-            distribution: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] // Data consistency
-        },
-        follows: statsData.data.attributes.followCount,
-        views: statsData.data.attributes.viewCount
-    };
 };
 
 /**

@@ -9,7 +9,7 @@ const URL_FORMATS = {
     }
 };
 
-const getStats = async (id, type) => {
+const getTitleStats = async (id, type) => {
     switch (type) {
         case 'mangadex':
             return await getMangaDexStats(id);
@@ -95,4 +95,4 @@ const getNamiComiStats = async (id) => {
     };
 };
 
-module.exports = getStats;
+module.exports = getTitleStats;

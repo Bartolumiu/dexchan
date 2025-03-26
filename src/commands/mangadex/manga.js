@@ -3,6 +3,7 @@ const translateAttribute = require('../../functions/handlers/translateAttribute'
 const capitalizeFirstLetter = require('../../functions/tools/capitalizeFirstLetter');
 const search = require('../../functions/titles/search');
 const getTitleDetails = require('../../functions/titles/details');
+const getTitleStats = require('../../functions/titles/stats');
 const path = require('path');
 const { parseURL, checkID } = require('../../functions/parsers/urlParser');
 let version = require('../../../package.json').version;
@@ -164,7 +165,7 @@ module.exports = {
         const mangaID = id || await parseURL(url, 'mangadex');
         if (!(await checkID(mangaID, 'mangadex'))) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.invalid_id');
 
-        const [manga, stats] = await Promise.all([getTitleDetails(mangaID, 'mangadex'), getStats(mangaID)]);
+        const [manga, stats] = await Promise.all([getTitleDetails(mangaID, 'mangadex'), getTitleStats(mangaID, 'mangadex')]);
         if (!manga || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.invalid_id');
 
         await buildMangaEmbed(embed, client, locale, manga, stats, translations);
@@ -366,27 +367,6 @@ async function getCoverURL(manga) {
         const data = await response.json();
         const fileName = data.data.attributes.fileName;
         return `https://mangadex.org/covers/${mangaID}/${fileName}.512.jpg`;
-    } catch (error) {
-        return null;
-    }
-}
-
-/**
- * Fetches and returns the statistics for a given manga from the MangaDex API.
- *
- * @async
- * @function getStats
- * @param {string} mangaID - The ID of the manga to fetch statistics for.
- * @returns {Promise<Object|null>} A promise that resolves to the statistics object for the manga, or null if the request fails.
- */
-async function getStats(mangaID) {
-    const url = new URL(`https://api.mangadex.org/statistics/manga/${mangaID}`);
-
-    try {
-        const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-        if (!response.ok) return null;
-        const data = await response.json();
-        return data.statistics[mangaID];
     } catch (error) {
         return null;
     }

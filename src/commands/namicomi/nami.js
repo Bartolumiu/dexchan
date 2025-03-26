@@ -1,11 +1,12 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require('discord.js');
 const translateAttribute = require('../../functions/handlers/translateAttribute');
-const search = require('../../functions/titles/search');
+const search = require('../../functions/titles/titleSearch');
 const capitalizeFirstLetter = require('../../functions/tools/capitalizeFirstLetter');
 const path = require('path');
 const { parseURL, checkID } = require('../../functions/parsers/urlParser');
-const getTitleDetails = require('../../functions/titles/details');
-const getTitleStats = require('../../functions/titles/stats');
+const getTitleDetails = require('../../functions/titles/titleDetails');
+const getTitleStats = require('../../functions/titles/titleStats');
+const getCover = require('../../functions/titles/titleCover');
 let version = require('../../../package.json').version;
 const USER_AGENT = `Dex-chan/${version} by Bartolumiu`;
 
@@ -185,11 +186,11 @@ module.exports = {
                 .setURL(urlFormats.shortened.replace('{id}', title.id))
                 .setStyle(ButtonStyle.Link),
             new ButtonBuilder()
-            .setLabel(translations.button.stats)
-            .setCustomId(`nami_stats_${title.id}`)
-            .setStyle(ButtonStyle.Secondary)
-            .setDisabled(false)
-            .setEmoji('📊')
+                .setLabel(translations.button.stats)
+                .setCustomId(`nami_stats_${title.id}`)
+                .setStyle(ButtonStyle.Secondary)
+                .setDisabled(false)
+                .setEmoji('📊')
         )
 
         if (interaction.type === 3) return interaction.reply({ embeds: [embed], files: attachments, components: [buttons] });
@@ -319,35 +320,26 @@ async function setImages(title, embed, locale, client, translations) {
     const namiIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/namicomi.png'), 'namicomi.png');
     embed.setAuthor({ name: author, iconURL: 'attachment://namicomi.png' });
 
-    const coverURL = await getCoverURL(title, locale);
-    if (!coverURL) return [namiIcon];
-
     // Cover image as the thumbnail
+    const coverBuffer = await getCover(title, 'namicomi', locale);
+    if (!coverBuffer) return [namiIcon];
+
+    const coverImage = new AttachmentBuilder(Buffer.from(coverBuffer), { name: 'cover.png' });
+    embed.setThumbnail('attachment://cover.png');
+
+    // Title banner as the image
+    const bannerURL = `https://uploads.namicomi.com/media/manga/${title.id}/banner/${title.attributes.bannerFileName}`;
     try {
-        const cover = await fetch(coverURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-        if (!cover.ok) return [namiIcon];
-        
-        const coverBuffer = await cover.arrayBuffer();
-        const coverImage = new AttachmentBuilder(Buffer.from(coverBuffer), { name: 'cover.png' });
-        embed.setThumbnail('attachment://cover.png');
-        
-        // Title banner as the image
-        const bannerURL = `https://uploads.namicomi.com/media/manga/${title.id}/banner/${title.attributes.bannerFileName}`;
-            
-        try {
-            const banner = await fetch(bannerURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-            if (!banner.ok) return [namiIcon, coverImage];
-        
-            const bannerBuffer = await banner.arrayBuffer();
-            const bannerImage = new AttachmentBuilder(Buffer.from(bannerBuffer), { name: 'banner.png' });
-            embed.setImage('attachment://banner.png');
-        
-            return [namiIcon, coverImage, bannerImage];
-        } catch (error) {
-            return [namiIcon, coverImage];
-        };
+        const banner = await fetch(bannerURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
+        if (!banner.ok) return [namiIcon, coverImage];
+
+        const bannerBuffer = await banner.arrayBuffer();
+        const bannerImage = new AttachmentBuilder(Buffer.from(bannerBuffer), { name: 'banner.png' });
+        embed.setImage('attachment://banner.png');
+
+        return [namiIcon, coverImage, bannerImage];
     } catch (error) {
-        return [namiIcon];
+        return [namiIcon, coverImage];
     };
 };
 
@@ -390,10 +382,10 @@ async function addTitleTags(title, embed, locale, client, translations) {
         validTags.forEach(tag => {
             const tagData = tagList.data.find(t => t.id === tag);
             if (!tagData) return;
-    
+
             const group = tagData.attributes.group;
             if (!group) return;
-    
+
             if (!tagGroups[group]) tagGroups[group] = [];
             tagGroups[group].push(tagData.attributes.name[locale] || tagData.attributes.name.en);
         });
@@ -428,7 +420,7 @@ async function addTitleTags(title, embed, locale, client, translations) {
             if (['theme', 'genre', 'content_warning', 'format'].includes(group)) continue;
             otherTags.push(...tags);
         };
-        
+
         if (otherTags.length > 0) {
             fields.push({
                 name: translations.embed.fields.other_tags, // Other Tags
@@ -436,7 +428,7 @@ async function addTitleTags(title, embed, locale, client, translations) {
                 inline: true
             });
         };
-        
+
         embed.addFields(fields);
     } catch (error) {
         return;

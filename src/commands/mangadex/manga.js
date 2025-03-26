@@ -1,11 +1,12 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require("discord.js");
 const translateAttribute = require('../../functions/handlers/translateAttribute');
 const capitalizeFirstLetter = require('../../functions/tools/capitalizeFirstLetter');
-const search = require('../../functions/titles/search');
-const getTitleDetails = require('../../functions/titles/details');
-const getTitleStats = require('../../functions/titles/stats');
+const search = require('../../functions/titles/titleSearch');
+const getTitleDetails = require('../../functions/titles/titleDetails');
+const getTitleStats = require('../../functions/titles/titleStats');
 const path = require('path');
 const { parseURL, checkID } = require('../../functions/parsers/urlParser');
+const getCover = require("../../functions/titles/titleCover");
 let version = require('../../../package.json').version;
 const USER_AGENT = `Dex-chan/${version} by Bartolumiu`;
 
@@ -278,22 +279,13 @@ async function setImages(manga, embed, translations) {
     const mangadexIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/mangadex.png'), 'mangadex.png');
     embed.setAuthor({ name: author, iconURL: 'attachment://mangadex.png' })
 
-    const coverURL = await getCoverURL(manga);
-    if (!coverURL) return [mangadexIcon];
+    const coverBuffer = await getCover(manga, 'mangadex');
+    if (!coverBuffer) return [mangadexIcon];
 
-    try {
-        const cover = await fetch(coverURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-        if (!cover.ok) return [mangadexIcon];
+    const coverImage = new AttachmentBuilder(coverBuffer, { name: 'cover.png' });
+    embed.setThumbnail('attachment://cover.png');
 
-        const coverBuffer = await cover.arrayBuffer();
-        const coverImage = new AttachmentBuilder(Buffer.from(coverBuffer), { name: 'cover.png' });
-        embed.setThumbnail('attachment://cover.png');
-    
-        return [mangadexIcon, coverImage];
-    } catch (error) {
-        return [mangadexIcon];
-    }
-
+    return [mangadexIcon, coverImage];
 }
 
 /**

@@ -70,10 +70,7 @@ const getMangaDexCover = async (title) => {
         const res = await fetch(url, {
             method: 'GET',
             timeout: 5000,
-            headers: {
-                'User-Agent': USER_AGENT,
-                'Accept': 'application/json'
-            }
+            headers: { 'User-Agent': USER_AGENT }
         });
         if (!res.ok) return null;
         const buffer = await res.arrayBuffer();
@@ -100,10 +97,7 @@ const getNamiComiCover = async (title, locale) => {
         const res = await fetch(url, {
             method: 'GET',
             timeout: 5000,
-            headers: {
-                'User-Agent': USER_AGENT,
-                'Accept': 'application/json'
-            }
+            headers: { 'User-Agent': USER_AGENT }
         });
         if (!res.ok) return null;
         const buffer = await res.arrayBuffer();

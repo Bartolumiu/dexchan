@@ -1,5 +1,5 @@
 const getChalk = require('../../../src/functions/tools/getChalk');
-const readyEvent = require('../../../src/events/client/ready');
+const { execute } = require('../../../src/events/client/ready');
 const checkUpdates = require('../../../src/functions/tools/checkUpdates');
 
 jest.mock('../../../src/functions/tools/getChalk');
@@ -33,14 +33,12 @@ describe('Ready Event', () => {
         const mockBlueBright = jest.fn((msg) => msg);
 
         getChalk.mockResolvedValue({
-            default: {
-                greenBright: mockGreenBright,
-                blueBright: mockBlueBright,
-            },
+            greenBright: mockGreenBright,
+            blueBright: mockBlueBright
         });
         checkUpdates.mockResolvedValue({ isOutdated: false, latestVersion: '0.0.0' });
 
-        await readyEvent.execute(client);
+        await execute(client);
 
         expect(getChalk).toHaveBeenCalled();
         expect(mockGreenBright).toHaveBeenCalledWith(`[Discord] Ready as ${client.user.tag}`);
@@ -62,15 +60,13 @@ describe('Ready Event', () => {
         const mockBlueBright = jest.fn((msg) => msg);
 
         getChalk.mockResolvedValue({
-            default: {
-                greenBright: mockGreenBright,
-                blueBright: mockBlueBright,
-                yellowBright: mockYellowBright,
-            },
+            greenBright: mockGreenBright,
+            blueBright: mockBlueBright,
+            yellowBright: mockYellowBright,
         });
         checkUpdates.mockResolvedValue({ isOutdated: true, latestVersion: '0.0.1' });
 
-        await readyEvent.execute(client);
+        await execute(client);
 
         expect(getChalk).toHaveBeenCalled();
         expect(mockBlueBright).toHaveBeenCalledWith('[GitHub] Checking for updates...');
@@ -92,14 +88,12 @@ describe('Ready Event', () => {
         const mockBlueBright = jest.fn((msg) => msg);
 
         getChalk.mockResolvedValue({
-            default: {
-                greenBright: mockGreenBright,
-                blueBright: mockBlueBright,
-            },
+            greenBright: mockGreenBright,
+            blueBright: mockBlueBright,
         });
         checkUpdates.mockResolvedValue({ isOutdated: null });
 
-        await readyEvent.execute(client);
+        await execute(client);
 
         expect(getChalk).toHaveBeenCalled();
         expect(mockBlueBright).toHaveBeenCalledWith('[GitHub] Checking for updates...');

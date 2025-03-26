@@ -7,6 +7,7 @@ const { parseURL, checkID } = require('../../functions/parsers/urlParser');
 const getTitleDetails = require('../../functions/titles/titleDetails');
 const getTitleStats = require('../../functions/titles/titleStats');
 const getCover = require('../../functions/titles/titleCover');
+const getBanner = require('../../functions/titles/titleBanner');
 let version = require('../../../package.json').version;
 const USER_AGENT = `Dex-chan/${version} by Bartolumiu`;
 
@@ -178,7 +179,7 @@ module.exports = {
         if (!title || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.invalid_id');
 
         await buildTitleEmbed(embed, client, locale, title, stats, translations);
-        const attachments = await setImages(title, embed, locale, client, translations);
+        const attachments = await setImages(title, embed, locale, translations);
 
         const buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
@@ -310,11 +311,10 @@ async function getCreators(title, translations) {
  * @param {Object} title - The title object containing information about the manga.
  * @param {Object} embed - The embed object to set the images on.
  * @param {string} locale - The locale string for fetching localized data.
- * @param {Object} client - The client object used for fetching data.
  * @param {Object} translations - The translations object containing localized strings.
  * @returns {Promise<Array>} A promise that resolves to an array of AttachmentBuilder objects.
  */
-async function setImages(title, embed, locale, client, translations) {
+async function setImages(title, embed, locale, translations) {
     // NamiComi logo as the author icon
     const author = await getCreators(title, translations);
     const namiIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/namicomi.png'), 'namicomi.png');
@@ -328,19 +328,13 @@ async function setImages(title, embed, locale, client, translations) {
     embed.setThumbnail('attachment://cover.png');
 
     // Title banner as the image
-    const bannerURL = `https://uploads.namicomi.com/media/manga/${title.id}/banner/${title.attributes.bannerFileName}`;
-    try {
-        const banner = await fetch(bannerURL, { headers: { 'User-Agent': USER_AGENT }, timeout: 5000 });
-        if (!banner.ok) return [namiIcon, coverImage];
+    const bannerBuffer = await getBanner(title, 'namicomi');
+    if (!bannerBuffer) return [namiIcon, coverImage];
 
-        const bannerBuffer = await banner.arrayBuffer();
-        const bannerImage = new AttachmentBuilder(Buffer.from(bannerBuffer), { name: 'banner.png' });
-        embed.setImage('attachment://banner.png');
+    const bannerImage = new AttachmentBuilder(Buffer.from(bannerBuffer), { name: 'banner.png' });
+    embed.setImage('attachment://banner.png');
 
-        return [namiIcon, coverImage, bannerImage];
-    } catch (error) {
-        return [namiIcon, coverImage];
-    };
+    return [namiIcon, coverImage, bannerImage];
 };
 
 /**

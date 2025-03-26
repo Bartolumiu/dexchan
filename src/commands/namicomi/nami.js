@@ -236,9 +236,9 @@ async function buildTitleEmbed(embed, client, locale, title, stats, translations
         { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
         { name: translations.embed.fields.follows, value: `${stats.follows}`, inline: true },
         { name: translations.embed.fields.year, value: `${title.attributes.year}`, inline: true },
-        { name: translations.embed.fields.pub_status, value: await capitalizeFirstLetter(await client.translate(locale, 'commands', `nami.response.found.pub_status.${title.attributes.publicationStatus}`) || title.attributes.publicationStatus), inline: true },
-        { name: translations.embed.fields.demographic, value: await capitalizeFirstLetter(title.attributes.publicationDemographic || 'N/A'), inline: true },
-        { name: translations.embed.fields.content_rating, value: await capitalizeFirstLetter(title.attributes.contentRating), inline: true }
+        { name: translations.embed.fields.pub_status, value: capitalizeFirstLetter(await client.translate(locale, 'commands', `nami.response.found.pub_status.${title.attributes.publicationStatus}`) || title.attributes.publicationStatus), inline: true },
+        { name: translations.embed.fields.demographic, value: capitalizeFirstLetter(title.attributes.publicationDemographic || 'N/A'), inline: true },
+        { name: translations.embed.fields.content_rating, value: capitalizeFirstLetter(title.attributes.contentRating), inline: true }
     ];
 
     embed.setTitle(embedTitle)

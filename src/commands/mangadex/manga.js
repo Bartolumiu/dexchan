@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require("discord.js");
-const translateAttribute = require('../../functions/handlers/translateAttribute');
+const { translateAttribute } = require('../../functions/handlers/handleLocales');
 const capitalizeFirstLetter = require('../../functions/tools/capitalizeFirstLetter');
 const search = require('../../functions/titles/titleSearch');
 const getTitleDetails = require('../../functions/titles/titleDetails');

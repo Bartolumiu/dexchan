@@ -6,23 +6,14 @@ const URL_FORMATS = {
 }
 
 const getBanner = async (title, type) => {
-    switch (type) {
-        case 'namicomi':
-            return await getNamiComiBanner(title);
-        default:
-            throw new Error('Unsupported type');
-    }
+    return await getNamiComiBanner(title);
 }
 
 const buildURL = (title, type) => {
-    switch (type) {
-        case 'namicomi': {
-            const id = title.id;
-            const fileName = title.attributes?.bannerFileName;
-            if (!fileName) return null;
-            return new URL(`${URL_FORMATS.namicomi}${id}/banner/${fileName}`);
-        }
-    };
+    const id = title.id;
+    const fileName = title.attributes?.bannerFileName;
+    if (!fileName) return null;
+    return new URL(`${URL_FORMATS.namicomi}${id}/banner/${fileName}`);
 };
 
 const getNamiComiBanner = async (title) => {

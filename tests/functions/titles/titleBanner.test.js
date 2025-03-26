@@ -13,11 +13,6 @@ describe('titleBanner', () => {
         jest.resetAllMocks();
     });
 
-    test('throws error for unsupported type', async () => {
-        const title = { id: 'test', attributes: { bannerFileName: 'banner.jpg' } };
-        await expect(getBanner(title, 'unsupported')).rejects.toThrow('Unsupported type');
-    });
-
     describe('NamiComi', () => {
         it('should return a Buffer if fetch is successful', async () => {
             const bannerData = new Uint8Array([1, 2, 3]).buffer;

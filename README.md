@@ -21,7 +21,14 @@
   </p>
 </p>
 
-![Contributors](https://img.shields.io/github/contributors/Bartolumiu/dexchan?color=dark-green) ![Issues](https://img.shields.io/github/issues/Bartolumiu/dexchan) ![License](https://img.shields.io/github/license/Bartolumiu/dexchan) [![CodeFactor](https://www.codefactor.io/repository/github/Bartolumiu/dexchan/badge/main)](https://www.codefactor.io/repository/github/Bartolumiu/dexchan/overview/main)
+<p align="center">
+  <img src="https://img.shields.io/github/contributors/Bartolumiu/dexchan?color=dark-green"/>
+  <img src="https://img.shields.io/github/issues/Bartolumiu/dexchan"/>
+  <img src="https://img.shields.io/github/license/Bartolumiu/dexchan"/>
+  <a href="https://www.codefactor.io/repository/github/Bartolumiu/dexchan/overview/main">
+    <img src="https://www.codefactor.io/repository/github/Bartolumiu/dexchan/badge/main"/>
+  </a>
+</p>
 
 ## Table Of Contents
 

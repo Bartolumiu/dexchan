@@ -76,6 +76,7 @@ const getMangaDexCover = async (title) => {
         const buffer = await res.arrayBuffer();
         return Buffer.from(buffer);
     } catch (err) {
+        // NOSONAR: Ignore error (fetch error will be handled in the calling function)
         return null;
     };
 }
@@ -103,8 +104,9 @@ const getNamiComiCover = async (title, locale) => {
         const buffer = await res.arrayBuffer();
         return Buffer.from(buffer);
     } catch (err) {
+        // NOSONAR: Ignore error (fetch error will be handled in the calling function)
         return null;
-    };
+    }
 }
 
 module.exports = getCover;

@@ -75,7 +75,7 @@ const searchMangaDex = async (query) => {
 
         const results = new Map(data.data.map((item) => [item.attributes.title[Object.keys(item.attributes.title)[0]], item.id]));
         return results;
-    } catch (err) {
+    } catch {
         return null;
     };
 };
@@ -120,7 +120,7 @@ const searchNamiComi = async (query, locale) => {
         }));
 
         return results;
-    } catch (err) {
+    } catch {
         return null;
     };
 };

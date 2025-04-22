@@ -28,7 +28,7 @@ const getNamiComiBanner = async (title) => {
         if (!res.ok) return null;
         const buffer = await res.arrayBuffer();
         return Buffer.from(buffer);
-    } catch (err) {
+    } catch {
         return null;
     };
 };

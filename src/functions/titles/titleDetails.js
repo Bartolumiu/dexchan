@@ -79,7 +79,7 @@ const getMangaDexDetails = async (id) => {
         if (!response.ok) return null;
         const data = await response.json();
         return data.data;
-    } catch (err) {
+    } catch {
         return null;
     }
 };
@@ -111,7 +111,7 @@ const getNamiComiDetails = async (id) => {
         if (!response.ok) return null;
         const data = await response.json();
         return data.data;
-    } catch (err) {
+    } catch {
         return null;
     };
 };

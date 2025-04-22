@@ -70,7 +70,7 @@ const getMangaDexStats = async (id) => {
         if (!res.ok) return null;
         const data = await res.json();
         return data.statistics[id] || null;
-    } catch (err) {
+    } catch {
         return null;
     };
 };
@@ -126,7 +126,7 @@ const getNamiComiStats = async (id) => {
             follows: statsData.data.attributes.followCount,
             views: statsData.data.attributes.viewCount
         };
-    } catch (err) {
+    } catch {
         return null;
     };
 };

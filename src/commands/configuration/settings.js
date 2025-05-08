@@ -151,7 +151,7 @@ async function localeSettings(interaction, client, userProfile, embed) {
                 embed.setTitle(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.success'));
                 embed.setDescription(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.success', { locale: locale }));
                 embed.setColor(Colors.Green);
-            } catch (e) {
+            } catch {
                 embed.setTitle(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error.unknown'));
                 embed.setDescription(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error.unknown'));
                 embed.setColor(Colors.Red);
@@ -164,7 +164,7 @@ async function localeSettings(interaction, client, userProfile, embed) {
                 embed.setTitle(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.success'));
                 embed.setDescription(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.success'));
                 embed.setColor(Colors.Green);
-            } catch (e) {
+            } catch {
                 const currentLocale = (await client.getMongoUserData(interaction.user)).preferredLocale || interaction.locale;
                 embed.setTitle(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.error'));
                 embed.setDescription(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.error'));

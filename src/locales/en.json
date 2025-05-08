@@ -190,11 +190,22 @@
                         },
                         "pub_status": {
                             "name": "Publication Status",
-                            "value": "%status%"
+                            "value": {
+                                "ongoing": "Ongoing",
+                                "completed": "Completed",
+                                "hiatus": "Hiatus",
+                                "cancelled": "Cancelled"
+                            }
                         },
                         "demographic": {
                             "name": "Demographic",
-                            "value": "%demographic%"
+                            "value": {
+                                "none": "None",
+                                "shounen": "Shounen",
+                                "shoujo": "Shoujo",
+                                "seinen": "Seinen",
+                                "josei": "Josei"
+                            }
                         },
                         "content_rating": {
                             "name": "Content Rating",
@@ -324,15 +335,30 @@
                         },
                         "pub_status": {
                             "name": "Publication Status",
-                            "value": "%status%"
+                            "value": {
+                                "ongoing": "Ongoing",
+                                "completed": "Completed",
+                                "hiatus": "Hiatus",
+                                "cancelled": "Cancelled"
+                            }
                         },
                         "demographic": {
                             "name": "Demographic",
-                            "value": "%demographic%"
+                            "value": {
+                                "none": "None",
+                                "shounen": "Shounen",
+                                "shoujo": "Shoujo",
+                                "seinen": "Seinen",
+                                "josei": "Josei"
+                            }
                         },
                         "content_rating": {
                             "name": "Content Rating",
-                            "value": "%contentRating%"
+                            "value": {
+                                "safe": "Safe",
+                                "mature": "Mature",
+                                "restricted": "Restricted"
+                            }
                         },
                         "reading_mode": {
                             "name": "Reading Mode",

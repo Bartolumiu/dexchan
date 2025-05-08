@@ -190,11 +190,22 @@
                         },
                         "pub_status": {
                             "name": "Estado de Publicación",
-                            "value": "%status%"
+                            "value": {
+                                "ongoing": "En curso",
+                                "completed": "Completado",
+                                "hiatus": "En pausa",
+                                "cancelled": "Cancelado"
+                            }
                         },
                         "demographic": {
                             "name": "Demografía",
-                            "value": "%demographic%"
+                            "value": {
+                                "none": "Ninguna",
+                                "shounen": "Shounen",
+                                "shoujo": "Shoujo",
+                                "seinen": "Seinen",
+                                "josei": "Josei"
+                            }
                         },
                         "content_rating": {
                             "name": "Calificación de Contenido",
@@ -324,15 +335,30 @@
                         },
                         "pub_status": {
                             "name": "Estado de Publicación",
-                            "value": "%status%"
+                            "value": {
+                                "ongoing": "En curso",
+                                "completed": "Completado",
+                                "hiatus": "En pausa",
+                                "cancelled": "Cancelado"
+                            }
                         },
                         "demographic": {
                             "name": "Demografía",
-                            "value": "%demographic%"
+                            "value": {
+                                "none": "Ninguna",
+                                "shounen": "Shounen",
+                                "shoujo": "Shoujo",
+                                "seinen": "Seinen",
+                                "josei": "Josei"
+                            }
                         },
                         "content_rating": {
                             "name": "Calificación de Contenido",
-                            "value": "%contentRating%"
+                            "value": {
+                                "safe": "Seguro",
+                                "mature": "Para Adultos",
+                                "restricted": "Restringido"
+                            }
                         },
                         "reading_mode": {
                             "name": "Modo de Lectura",

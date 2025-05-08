@@ -89,8 +89,24 @@ module.exports = {
                     follows: await client.translate(locale, 'commands', 'nami.response.found.fields.follows.name'),
                     year: await client.translate(locale, 'commands', 'nami.response.found.fields.year.name'),
                     pub_status: await client.translate(locale, 'commands', 'nami.response.found.fields.pub_status.name'),
-                    demographic: await client.translate(locale, 'commands', 'nami.response.found.fields.demographic.name'),
-                    content_rating: await client.translate(locale, 'commands', 'nami.response.found.fields.content_rating.name'),
+                    demographic: {
+                        name: await client.translate(locale, 'commands', 'nami.response.found.fields.demographic.name'),
+                        value: {
+                            none: await client.translate(locale, 'commands', 'nami.response.found.fields.demographic.value.none'),
+                            shounen: await client.translate(locale, 'commands', 'nami.response.found.fields.demographic.value.shounen'),
+                            shoujo: await client.translate(locale, 'commands', 'nami.response.found.fields.demographic.value.shoujo'),
+                            seinen: await client.translate(locale, 'commands', 'nami.response.found.fields.demographic.value.seinen'),
+                            josei: await client.translate(locale, 'commands', 'nami.response.found.fields.demographic.value.josei')
+                        }
+                    },
+                    content_rating: {
+                        name: await client.translate(locale, 'commands', 'nami.response.found.fields.content_rating.name'),
+                        value: {
+                            safe: await client.translate(locale, 'commands', 'nami.response.found.fields.content_rating.value.safe'),
+                            mature: await client.translate(locale, 'commands', 'nami.response.found.fields.content_rating.value.mature'),
+                            restricted: await client.translate(locale, 'commands', 'nami.response.found.fields.content_rating.value.restricted')
+                        }
+                    },
                     reading_mode: {
                         name: await client.translate(locale, 'commands', 'nami.response.found.fields.reading_mode.name'),
                         vertical: await client.translate(locale, 'commands', 'nami.response.found.fields.reading_mode.value.vertical'),
@@ -241,8 +257,8 @@ async function buildTitleEmbed(embed, client, locale, title, stats, translations
         { name: translations.embed.fields.follows, value: `${stats.follows}`, inline: true },
         { name: translations.embed.fields.year, value: `${title.attributes.year}`, inline: true },
         { name: translations.embed.fields.pub_status, value: capitalizeFirstLetter(await client.translate(locale, 'commands', `nami.response.found.pub_status.${title.attributes.publicationStatus}`) || title.attributes.publicationStatus), inline: true },
-        { name: translations.embed.fields.demographic, value: capitalizeFirstLetter(title.attributes.publicationDemographic || 'N/A'), inline: true },
-        { name: translations.embed.fields.content_rating, value: capitalizeFirstLetter(title.attributes.contentRating), inline: true }
+        { name: translations.embed.fields.demographic.name, value: translations.embed.fields.demographic.value[title.attributes.demographic] || 'N/A', inline: true },
+        { name: translations.embed.fields.content_rating.name, value: capitalizeFirstLetter(title.attributes.contentRating), inline: true }
     ];
 
     embed.setTitle(embedTitle)

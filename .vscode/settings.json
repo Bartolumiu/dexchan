@@ -1,7 +1,0 @@
-{
-    "sonarlint.connectedMode.project": {
-        "connectionId": "bartolumiu",
-        "projectKey": "Bartolumiu_dexchan_rework"
-    },
-    "sarif-viewer.connectToGithubCodeScanning": "off"
-}

@@ -185,7 +185,7 @@ module.exports = {
             const row = new ActionRowBuilder().addComponents(menu);
 
             embed.setTitle(translations.embed.query.title)
-                .setDescription(translations.embed.query.description.replace('%query%', query))
+                .setDescription(translations.embed.query.description.replace('{query}', query))
                 .addFields(fields)
                 .setColor(Colors.Blurple);
 

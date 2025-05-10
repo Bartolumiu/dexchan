@@ -100,7 +100,7 @@ const translate = (locale, category, key, replacements = {}) => {
     if (!translation) return null;
 
     return Object.entries(replacements).reduce(
-        (translatedText, [placeholder, value]) => translatedText.replace(new RegExp(`%${placeholder}%`, 'g'), value),
+        (translatedText, [placeholder, value]) => translatedText.replace(new RegExp(`{${placeholder}}`, 'g'), value),
         translation
     );
 };

@@ -16,24 +16,24 @@
                 "fields": {
                     "bot_latency": {
                         "name": "Bot Latency",
-                        "value": "%ping%ms"
+                        "value": "{ping}ms"
                     },
                     "api": {
                         "discord": {
                             "name": "Discord API",
-                            "value": "%apiPing%ms"
+                            "value": "{apiPing}ms"
                         },
                         "mangadex": {
                             "name": "MangaDex API",
-                            "value": "%mdPing%ms"
+                            "value": "{mdPing}ms"
                         },
                         "namicomi": {
                             "name": "NamiComi API",
-                            "value": "%ncPing%ms"
+                            "value": "{ncPing}ms"
                         }
                     }
                 },
-                "footer": "%commandName% - Requested by %user%",
+                "footer": "{commandName} - Requested by {user}",
                 "not_ok": "Fetch failed"
             }
         },
@@ -66,7 +66,7 @@
                         "value": "To view the bot's uptime, use `/uptime`."
                     }
                 },
-                "footer": "%commandName% - Requested by %user%"
+                "footer": "{commandName} - Requested by {user}"
             }
         },
         "commands": {
@@ -77,7 +77,7 @@
             "response": {
                 "title": "Commands",
                 "fields": {},
-                "footer": "%commandName% - Requested by %user%"
+                "footer": "{commandName} - Requested by {user}"
             }
         },
         "invite": {
@@ -87,8 +87,8 @@
             "options": {},
             "response": {
                 "title": "Invite",
-                "description": "You can invite the bot to your server by clicking [here](%inviteLink%).",
-                "footer": "%commandName% - Requested by %user%"
+                "description": "You can invite the bot to your server by clicking [here]({inviteLink}).",
+                "footer": "{commandName} - Requested by {user}"
             }
         },
         "stats": {
@@ -112,7 +112,7 @@
                         "name": "Uptime"
                     }
                 },
-                "footer": "%commandName% - Requested by %user%"
+                "footer": "{commandName} - Requested by {user}"
             }
         },
         "support": {
@@ -122,8 +122,8 @@
             "options": {},
             "response": {
                 "title": "Support",
-                "description": "You can join the bot's support server by clicking [here](%supportLink%).",
-                "footer": "%commandName% - Requested by %user%"
+                "description": "You can join the bot's support server by clicking [here]({supportLink}).",
+                "footer": "{commandName} - Requested by {user}"
             }
         },
         "uptime": {
@@ -133,8 +133,8 @@
             "options": {},
             "response": {
                 "title": "Uptime",
-                "description": "The bot has been online for %uptime%.",
-                "footer": "%commandName% - Requested by %user%"
+                "description": "The bot has been online for {uptime}.",
+                "footer": "{commandName} - Requested by {user}"
             }
         },
         "manga": {
@@ -225,13 +225,13 @@
                 },
                 "query": {
                     "title": "Search Results",
-                    "description": "Here are the search results for `%query%`.",
+                    "description": "Here are the search results for `{query}`.",
                     "fields": {},
                     "placeholder": "Select a manga to view more information..."
                 },
                 "stats": {
                     "title": "Manga Stats",
-                    "description": "Here are the stats for the manga with ID `%mangaId%`.",
+                    "description": "Here are the stats for the manga with ID `{mangaId}`.",
                     "fields": {
                         "average": {
                             "name": "Average Rating"
@@ -270,7 +270,7 @@
                         "empty": "Please provide either a query, ID, or URL."
                     }
                 },
-                "footer": "%commandName% - Requested by %user%"
+                "footer": "{commandName} - Requested by {user}"
             }
         },
         "nami": {
@@ -373,13 +373,13 @@
                 },
                 "query": {
                     "title": "Search Results",
-                    "description":"Here are the search results for `%query%`.",
+                    "description":"Here are the search results for `{query}`.",
                     "fields": {},
                     "placeholder": "Select a title to view more information."
                 },
                 "stats": {
                     "title": "Title Stats",
-                    "description": "Here are the stats for the title with ID `%titleId%`.",
+                    "description": "Here are the stats for the title with ID `{titleId}`.",
                     "fields": {
                         "rating": {
                             "name": "Rating"
@@ -416,11 +416,11 @@
                         "url": "The provided URL is invalid.",
                         "invalid_id": "The provided ID is invalid.",
                         "no_results": "The query returned no results. That's all we know.",
-                        "api": "An error occurred while fetching the title data.\nPlease try again later.\nStatus code: %statusCode%",
+                        "api": "An error occurred while fetching the title data.\nPlease try again later.\nStatus code: {statusCode}",
                         "empty": "Please provide either a query, ID, or URL."
                     }
                 },
-                "footer": "%commandName% - Requested by %user%"
+                "footer": "{commandName} - Requested by {user}"
             }
         },
         "settings": {
@@ -467,15 +467,15 @@
                                     }
                                 },
                                 "description": {
-                                    "success": "Your preferred language has been set to `%locale%`.",
+                                    "success": "Your preferred language has been set to `{locale}`.",
                                     "error": {
-                                        "invalid_locale": "The language `%locale%` is not valid.",
-                                        "no_changes": "No changes made. The language remains set to `%locale%`.",
+                                        "invalid_locale": "The language `{locale}` is not valid.",
+                                        "no_changes": "No changes made. The language remains set to `{locale}`.",
                                         "unknown": "An unknown error occurred while changing the language."
                                     }
                                 },
                                 "fields": {},
-                                "footer": "%commandName% - Requested by %user%"
+                                "footer": "{commandName} - Requested by {user}"
                             }
                         },
                         "reset": {
@@ -492,7 +492,7 @@
                                     "error": "An error occurred while resetting your preferred language."
                                 },
                                 "fields": {},
-                                "footer": "%commandName% - Requested by %user%"
+                                "footer": "{commandName} - Requested by {user}"
                             }
                         }
                     }
@@ -500,7 +500,7 @@
             },
             "options": {},
             "response": {
-                "footer": "%commandName% - Requested by %user%"
+                "footer": "{commandName} - Requested by {user}"
             }
         }
     },
@@ -510,12 +510,12 @@
         "message": "Error message",
         "stack": "Error stack trace",
         "no_stack": "No stack trace available",
-        "err_int_ch_input": "Error in command %commandName%",
-        "err_int_btn": "Error in button %buttonId%",
-        "err_int_slct": "Error in select menu %selectId%",
-        "err_int_ctx": "Error in context command %contextId%",
-        "err_int_mod": "Error in modal %modalId%",
-        "err_int_aut": "Error in autocomplete %autocompleteId%",
+        "err_int_ch_input": "Error in command {commandName}",
+        "err_int_btn": "Error in button {buttonId}",
+        "err_int_slct": "Error in select menu {selectId}",
+        "err_int_ctx": "Error in context command {contextId}",
+        "err_int_mod": "Error in modal {modalId}",
+        "err_int_aut": "Error in autocomplete {autocompleteId}",
         "timeout": {
             "title": "Timeout",
             "description": "A timeout occured while fetching data from an external API. Please try again later.",
@@ -532,7 +532,7 @@
                     "value": "We don't have an ETA for this command yet. Please be patient."
                 }
             ],
-            "footer": "%commandName% - Requested by %user%"
+            "footer": "{commandName} - Requested by {user}"
         }
     }
 }

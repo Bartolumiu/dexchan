@@ -16,24 +16,24 @@
                 "fields": {
                     "bot_latency": {
                         "name": "Latencia del Bot",
-                        "value": "%ping%ms"
+                        "value": "{ping}ms"
                     },
                     "api": {
                         "discord": {
                             "name": "API Discord",
-                            "value": "%apiPing%ms"
+                            "value": "{apiPing}ms"
                         },
                         "mangadex": {
                             "name": "API MangaDex",
-                            "value": "%mdPing%ms"
+                            "value": "{mdPing}ms"
                         },
                         "namicomi": {
                             "name": "API NamiComi",
-                            "value": "%ncPing%ms"
+                            "value": "{ncPing}ms"
                         }
                     }
                 },
-                "footer": "%commandName% - Solicitado por %user%",
+                "footer": "{commandName} - Solicitado por {user}",
                 "not_ok": "Error al obtener los datos"
             }
         },
@@ -66,7 +66,7 @@
                         "value": "Para ver el tiempo de actividad del bot, usa `/uptime`."
                     }
                 },
-                "footer": "%commandName% - Solicitado por %user%"
+                "footer": "{commandName} - Solicitado por {user}"
             }
         },
         "commands": {
@@ -77,7 +77,7 @@
             "response": {
                 "title": "Comandos",
                 "fields": {},
-                "footer": "%commandName% - Solicitado por %user%"
+                "footer": "{commandName} - Solicitado por {user}"
             }
         },
         "invite": {
@@ -87,8 +87,8 @@
             "options": [],
             "response": {
                 "title": "Invitar",
-                "description": "Puedes invitar al bot a tu servidor haciendo clic [aquí](%inviteLink%).",
-                "footer": "%commandName% - Solicitado por %user%"
+                "description": "Puedes invitar al bot a tu servidor haciendo clic [aquí]({inviteLink}).",
+                "footer": "{commandName} - Solicitado por {user}"
             }
         },
         "stats": {
@@ -112,7 +112,7 @@
                         "name": "Tiempo de actividad"
                     }
                 },
-                "footer": "%commandName% - Solicitado por %user%"
+                "footer": "{commandName} - Solicitado por {user}"
             }
         },
         "support": {
@@ -122,8 +122,8 @@
             "options": {},
             "response": {
                 "title": "Soporte",
-                "description": "Puedes unirte al servidor de soporte del bot haciendo clic [aquí](%supportLink%).",
-                "footer": "%commandName% - Solicitado por %user%"
+                "description": "Puedes unirte al servidor de soporte del bot haciendo clic [aquí]({supportLink}).",
+                "footer": "{commandName} - Solicitado por {user}"
             }
         },
         "uptime": {
@@ -133,8 +133,8 @@
             "options": [],
             "response": {
                 "title": "Tiempo de Actividad",
-                "description": "El bot ha estado en línea por %uptime%.",
-                "footer": "%commandName% - Solicitado por %user%"
+                "description": "El bot ha estado en línea por {uptime}.",
+                "footer": "{commandName} - Solicitado por {user}"
             }
         },
         "manga": {
@@ -225,13 +225,13 @@
                 },
                 "query": {
                     "title": "Resultados de la Búsqueda",
-                    "description": "Aquí están los resultados de la búsqueda para `%query%`.",
+                    "description": "Aquí están los resultados de la búsqueda para `{query}`.",
                     "fields": {},
                     "placeholder": "Selecciona un manga para ver más información..."
                 },
                 "stats": {
                     "title": "Estadísticas del Manga",
-                    "description": "Aquí están las estadísticas para el manga con ID `%mangaId%`.",
+                    "description": "Aquí están las estadísticas para el manga con ID `{mangaId}`.",
                     "fields": {
                         "average": {
                             "name": "Valoración Media"
@@ -270,7 +270,7 @@
                         "empty": "Por favor, proporciona una consulta, ID o URL."
                     }
                 },
-                "footer": "%commandName% - Solicitado por %user%"
+                "footer": "{commandName} - Solicitado por {user}"
             }
         },
         "nami": {
@@ -373,13 +373,13 @@
                 },
                 "query": {
                     "title": "Resultados de la Búsqueda",
-                    "description": "Aquí están los resultados de la búsqueda para `%query%`.",
+                    "description": "Aquí están los resultados de la búsqueda para `{query}`.",
                     "fields": {},
                     "placeholder": "Selecciona un título para ver más información..."
                 },
                 "stats": {
                     "title": "Estadísticas del Título",
-                    "description": "Aquí están las estadísticas para el título con ID `%titleId%`.",
+                    "description": "Aquí están las estadísticas para el título con ID `{titleId}`.",
                     "fields": {
                         "rating": {
                             "name": "Valoraciones"
@@ -416,11 +416,11 @@
                         "url": "La URL proporcionada no es válida.",
                         "invalid_id": "La ID proporcionada no es válida.",
                         "no_results": "La consulta no devolvió resultados. Es todo lo que sabemos.",
-                        "api": "Ha ocurrido un error al obtener los datos del título.\nPor favor, inténtalo de nuevo más tarde.\nCódigo de estado: %statusCode%",
+                        "api": "Ha ocurrido un error al obtener los datos del título.\nPor favor, inténtalo de nuevo más tarde.\nCódigo de estado: {statusCode}",
                         "empty": "Por favor, proporciona una consulta, ID o URL."
                     }
                 },
-                "footer": "%commandName% - Solicitado por %user%"
+                "footer": "{commandName} - Solicitado por {user}"
             }
         },
         "settings": {
@@ -467,15 +467,15 @@
                                     }
                                 },
                                 "description": {
-                                    "success": "El idioma ha sido cambiado a `%locale%`.",
+                                    "success": "El idioma ha sido cambiado a `{locale}`.",
                                     "error": {
-                                        "invalid_locale": "El idioma `%locale%` no es válido.",
-                                        "no_changes": "No se realizaron cambios. El idioma establecido sigue siendo `%locale%`.",
+                                        "invalid_locale": "El idioma `{locale}` no es válido.",
+                                        "no_changes": "No se realizaron cambios. El idioma establecido sigue siendo `{locale}`.",
                                         "unknown": "Ha ocurrido un error desconocido al cambiar el idioma."
                                     }
                                 },
                                 "fields": {},
-                                "footer": "%commandName% - Solicitado por %user%"
+                                "footer": "{commandName} - Solicitado por {user}"
                             }
                         },
                         "reset": {
@@ -492,7 +492,7 @@
                                     "error": "Ha ocurrido un error al restablecer el idioma."
                                 },
                                 "fields": {},
-                                "footer": "%commandName% - Solicitado por %user%"
+                                "footer": "{commandName} - Solicitado por {user}"
                             }
                         }
                     }
@@ -500,7 +500,7 @@
             },
             "options": {},
             "response": {
-                "footer": "%commandName% - Solicitado por %user%"
+                "footer": "{commandName} - Solicitado por {user}"
             }
         }
     },
@@ -510,12 +510,12 @@
         "message": "Mensaje de error",
         "stack": "Pila del error",
         "no_stack": "No se ha proporcionado una pila de error.",
-        "err_int_ch_input": "Error en el comando %commandName%",
-        "err_int_btn": "Error en el botón %buttonId%",
-        "err_int_slct": "Error en el menú de selección %selectId%",
-        "err_int_ctx": "Error en el comando de contexto %contextId%",
-        "err_int_mod": "Error en el modal %modalId%",
-        "err_int_aut": "Error en la autocompletación %autocompleteId%",
+        "err_int_ch_input": "Error en el comando {commandName}",
+        "err_int_btn": "Error en el botón {buttonId}",
+        "err_int_slct": "Error en el menú de selección {selectId}",
+        "err_int_ctx": "Error en el comando de contexto {contextId}",
+        "err_int_mod": "Error en el modal {modalId}",
+        "err_int_aut": "Error en la autocompletación {autocompleteId}",
         "timeout": {
             "title": "Timeout",
             "description": "Se ha agotado el tiempo de espera al obtener los datos desde la API externa. Por favor, inténtalo de nuevo más tarde.",
@@ -532,7 +532,7 @@
                     "value": "No hay una fecha de lanzamiento prevista en este momento. Por favor, sé paciente."
                 }
             ],
-            "footer": "%commandName% - Solicitado por %user%"
+            "footer": "{commandName} - Solicitado por {user}"
         }
     }
 }

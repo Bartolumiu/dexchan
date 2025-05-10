@@ -107,7 +107,7 @@ describe('settings command', () => {
                         case 'settings.subcommand_groups.locale.subcommands.set.response.title.success':
                             return 'Language Set';
                         case 'settings.subcommand_groups.locale.subcommands.set.response.description.success':
-                            return 'Your preferred language has been set to `%locale%`.'.replace('%locale%', 'es');
+                            return 'Your preferred language has been set to `{locale}`.'.replace('{locale}', 'es');
                         case 'settings.response.footer':
                             return '/settings - Requested by test-user';
                         default:
@@ -216,7 +216,7 @@ describe('settings command', () => {
                         case 'settings.subcommand_groups.locale.subcommands.set.response.title.error.invalid_locale':
                             return 'Invalid Language';
                         case 'settings.subcommand_groups.locale.subcommands.set.response.description.error.invalid_locale':
-                            return 'The language `%locale%` is not valid.'.replace('%locale%', 'xx');
+                            return 'The language `{locale}` is not valid.'.replace('{locale}', 'xx');
                         case 'settings.response.footer':
                             return '/settings - Requested by test-user';
                         default:
@@ -315,7 +315,7 @@ describe('settings command', () => {
                         case 'settings.subcommand_groups.locale.subcommands.set.response.title.success':
                             return 'Language Set';
                         case 'settings.subcommand_groups.locale.subcommands.set.response.description.success':
-                            return 'Your preferred language has been set to `%locale%`.'.replace('%locale%', 'es');
+                            return 'Your preferred language has been set to `{locale}`.'.replace('{locale}', 'es');
                         case 'settings.response.footer':
                             return '/settings - Requested by test-user';
                         default:
@@ -458,7 +458,7 @@ describe('settings command', () => {
                         case 'settings.subcommand_groups.locale.subcommands.set.response.title.error.invalid_locale':
                             return 'Invalid Language';
                         case 'settings.subcommand_groups.locale.subcommands.set.response.description.error.invalid_locale':
-                            return 'The language `%locale%` is not valid.'.replace('%locale%', 'xx');
+                            return 'The language `{locale}` is not valid.'.replace('{locale}', 'xx');
                         case 'settings.response.footer':
                             return '/settings - Requested by test-user';
                         default:
@@ -602,7 +602,7 @@ describe('settings command', () => {
                         case 'settings.subcommand_groups.locale.subcommands.set.response.title.error.no_changes':
                             return 'No Changes';
                         case 'settings.subcommand_groups.locale.subcommands.set.response.description.error.no_changes':
-                            return 'No changes made. The language remains set to `%locale%`.'.replace('%locale%', 'en');
+                            return 'No changes made. The language remains set to `{locale}`.'.replace('{locale}', 'en');
                         case 'settings.response.footer':
                             return '/settings - Requested by test-user';
                         default:

@@ -68,7 +68,7 @@ module.exports = {
         // Create an embed with the statistics data
         const embed = new EmbedBuilder()
             .setTitle(translations.embed.title)
-            .setDescription(translations.embed.description.replace('%mangaId%', title))
+            .setDescription(translations.embed.description.replace('{mangaId}', title))
             .addFields(
                 { name: translations.embed.fields.average, value: `${averageRating}/10.00 (${totalVotes} ${translations.embed.units.votes})`, inline: true },
                 { name: translations.embed.fields.bayesian, value: `${bayesianRating}/10.00`, inline: true },

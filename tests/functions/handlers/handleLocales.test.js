@@ -130,7 +130,7 @@ describe('handleLocales', () => {
             path.join.mockImplementation((...args) => args.join('/'));
             fs.readdirSync.mockReturnValue(['en.json']);
             fs.readFileSync.mockImplementation((filePath, encoding) => {
-                return JSON.stringify({ commands: { testCommand: { description: '%test% Description3' } }  });
+                return JSON.stringify({ commands: { testCommand: { description: '{test} Description3' } }  });
             });
 
             await client.handleLocales();

@@ -57,7 +57,7 @@ module.exports = {
         // Create an embed with the rating and statistics data
         const embed = new EmbedBuilder()
             .setTitle(translations.embed.title)
-            .setDescription(translations.embed.description.replace('%titleId%', title))
+            .setDescription(translations.embed.description.replace('{titleId}', title))
             .addFields(
                 {
                     name: translations.embed.fields.rating,

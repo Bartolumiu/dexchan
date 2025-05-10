@@ -2,7 +2,6 @@
     "locale": {
         "name": "English",
         "english": "English",
-        "flag": "🇬🇧",
         "code": "en"
     },
     "commands": {
@@ -99,24 +98,20 @@
             "options": {},
             "response": {
                 "title": "Stats",
-                "fields": [
-                    {
-                        "name": "Servers",
-                        "value": "%guilds%"
+                "fields": {
+                    "guilds": {
+                        "name": "Guilds"
                     },
-                    {
-                        "name": "Users",
-                        "value": "%users%"
+                    "users": {
+                        "name": "Users"
                     },
-                    {
-                        "name": "Commands",
-                        "value": "%commands%"
+                    "commands": {
+                        "name": "Commands"
                     },
-                    {
-                        "name": "Uptime",
-                        "value": "%uptime%"
+                    "uptime": {
+                        "name": "Uptime"
                     }
-                ],
+                },
                 "footer": "%commandName% - Requested by %user%"
             }
         },
@@ -173,20 +168,15 @@
                         "too_many": "Multiple Authors",
                         "error": "Unknown Author"
                     },
-                    "title": "%title%",
-                    "description": "%description%",
                     "fields": {
                         "rating": {
-                            "name": "Rating",
-                            "value": "%rating%"
+                            "name": "Rating"
                         },
                         "follows": {
-                            "name": "Follows",
-                            "value": "%follows%"
+                            "name": "Follows"
                         },
                         "year": {
-                            "name": "Year",
-                            "value": "%year%"
+                            "name": "Year"
                         },
                         "pub_status": {
                             "name": "Publication Status",
@@ -208,24 +198,19 @@
                             }
                         },
                         "content_rating": {
-                            "name": "Content Rating",
-                            "value": "%contentRating%"
+                            "name": "Content Rating"
                         },
                         "format": {
-                            "name": "Format",
-                            "value": "%format%"
+                            "name": "Format"
                         },
                         "genres": {
-                            "name": "Genres",
-                            "value": "%genres%"
+                            "name": "Genres"
                         },
                         "themes": {
-                            "name": "Themes",
-                            "value": "%themes%"
+                            "name": "Themes"
                         },
                         "content_warning": {
-                            "name": "Content Warning",
-                            "value": "%contentWarning%"
+                            "name": "Content Warning"
                         }
                     },
                     "pub_status": {
@@ -249,24 +234,19 @@
                     "description": "Here are the stats for the manga with ID `%mangaId%`.",
                     "fields": {
                         "average": {
-                            "name": "Average Rating",
-                            "value": "%rating%"
+                            "name": "Average Rating"
                         },
                         "bayesian": {
-                            "name": "Bayesian Rating",
-                            "value": "%bayesian%"
+                            "name": "Bayesian Rating"
                         },
                         "follows": {
-                            "name": "Follows",
-                            "value": "%follows%"
+                            "name": "Follows"
                         },
                         "distribution": {
-                            "name": "Rating Distribution",
-                            "value": "%ratingDistribution%"
+                            "name": "Rating Distribution"
                         },
                         "comments": {
-                            "name": "Comments",
-                            "value": "%comments%"
+                            "name": "Comments"
                         }
                     },
                     "units": {
@@ -318,20 +298,15 @@
                         "too_many": "Multiple Authors",
                         "error": "Unknown Author"
                     },
-                    "title": "%title%",
-                    "description": "%description%",
                     "fields": {
                         "rating": {
-                            "name": "Rating",
-                            "value": "%rating%"
+                            "name": "Rating"
                         },
                         "follows": {
-                            "name": "Follows",
-                            "value": "%follows%"
+                            "name": "Follows"
                         },
                         "year": {
-                            "name": "Year",
-                            "value": "%year%"
+                            "name": "Year"
                         },
                         "pub_status": {
                             "name": "Publication Status",
@@ -371,24 +346,19 @@
                             }
                         },
                         "format": {
-                            "name": "Format",
-                            "value": "%format%"
+                            "name": "Format"
                         },
                         "genres": {
-                            "name": "Genres",
-                            "value": "%genres%"
+                            "name": "Genres"
                         },
                         "themes": {
-                            "name": "Themes",
-                            "value": "%themes%"
+                            "name": "Themes"
                         },
                         "content_warning": {
-                            "name": "Content Warning",
-                            "value": "%contentWarning%"
+                            "name": "Content Warning"
                         },
                         "other_tags": {
-                            "name": "Other Tags",
-                            "value": "%otherTags%"
+                            "name": "Other Tags"
                         }
                     },
                     "pub_status": {
@@ -412,32 +382,25 @@
                     "description": "Here are the stats for the title with ID `%titleId%`.",
                     "fields": {
                         "rating": {
-                            "name": "Rating",
-                            "value": "%rating%"
+                            "name": "Rating"
                         },
                         "views": {
-                            "name": "Views",
-                            "value": "%views%"
+                            "name": "Views"
                         },
                         "follows": {
-                            "name": "Follows",
-                            "value": "%follows%"
+                            "name": "Follows"
                         },
                         "comments": {
-                            "name": "Comments",
-                            "value": "%comments%"
+                            "name": "Comments"
                         },
                         "chapterViews": {
-                            "name": "Chapter Views",
-                            "value": "%chapterViews%"
+                            "name": "Chapter Views"
                         },
                         "chapterComments": {
-                            "name": "Chapter Comments",
-                            "value": "%chapterComments%"
+                            "name": "Chapter Comments"
                         },
                         "chapterReactions": {
-                            "name": "Chapter Reactions",
-                            "value": "%chapterReactions%"
+                            "name": "Chapter Reactions"
                         }
                     },
                     "units": {
@@ -474,8 +437,7 @@
                         "description": "Here are your current settings.",
                         "fields": {
                             "locale": {
-                                "name": "Language",
-                                "value": "%locale%"
+                                "name": "Language"
                             }
                         }
                     }

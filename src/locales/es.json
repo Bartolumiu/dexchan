@@ -2,7 +2,6 @@
     "locale": {
         "name": "Español",
         "english": "Spanish",
-        "flag": "🇪🇸",
         "code": "es"
     },
     "commands": {
@@ -99,32 +98,28 @@
             "options": [],
             "response": {
                 "title": "Estadísticas",
-                "fields": [
-                    {
-                        "name": "Servidores",
-                        "value": "%guilds%"
+                "fields": {
+                    "guilds": {
+                        "name": "Servidores"
                     },
-                    {
-                        "name": "Usuarios",
-                        "value": "%users%"
+                    "users": {
+                        "name": "Usuarios"
                     },
-                    {
-                        "name": "Comandos",
-                        "value": "%commands%"
+                    "commands": {
+                        "name": "Comandos"
                     },
-                    {
-                        "name": "Tiempo de actividad",
-                        "value": "%uptime%"
+                    "uptime": {
+                        "name": "Tiempo de actividad"
                     }
-                ],
+                },
                 "footer": "%commandName% - Solicitado por %user%"
             }
         },
         "support": {
             "name": "support",
             "description": "Obtén la invitación al servidor de soporte del bot.",
-            "subcommands": [],
-            "options": [],
+            "subcommands": {},
+            "options": {},
             "response": {
                 "title": "Soporte",
                 "description": "Puedes unirte al servidor de soporte del bot haciendo clic [aquí](%supportLink%).",
@@ -173,20 +168,15 @@
                         "too_many": "Múltiples Autores",
                         "error": "Autor Desconocido"
                     },
-                    "title": "%title%",
-                    "description": "%description%",
                     "fields": {
                         "rating": {
-                            "name": "Calificación",
-                            "value": "%rating%"
+                            "name": "Calificación"
                         },
                         "follows": {
-                            "name": "Seguidores",
-                            "value": "%follows%"
+                            "name": "Seguidores"
                         },
                         "year": {
-                            "name": "Año",
-                            "value": "%year%"
+                            "name": "Año"
                         },
                         "pub_status": {
                             "name": "Estado de Publicación",
@@ -208,24 +198,19 @@
                             }
                         },
                         "content_rating": {
-                            "name": "Calificación de Contenido",
-                            "value": "%contentRating%"
+                            "name": "Calificación de Contenido"
                         },
                         "format": {
-                            "name": "Formato",
-                            "value": "%format%"
+                            "name": "Formato"
                         },
                         "genres": {
-                            "name": "Géneros",
-                            "value": "%genres%"
+                            "name": "Géneros"
                         },
                         "themes": {
-                            "name": "Temas",
-                            "value": "%themes%"
+                            "name": "Temas"
                         },
                         "content_warning": {
-                            "name": "Advertencia de Contenido",
-                            "value": "%contentWarning%"
+                            "name": "Advertencia de Contenido"
                         }
                     },
                     "pub_status": {
@@ -247,28 +232,23 @@
                 "stats": {
                     "title": "Estadísticas del Manga",
                     "description": "Aquí están las estadísticas para el manga con ID `%mangaId%`.",
-                    "fields": [
-                        {
-                            "name": "Valoración Media",
-                            "value": "%rating%"
+                    "fields": {
+                        "average": {
+                            "name": "Valoración Media"
                         },
-                        {
-                            "name": "Valoración Bayesiana",
-                            "value": "%bayesian%"
+                        "bayesian": {
+                            "name": "Valoración Bayesiana"
                         },
-                        {
-                            "name": "Seguidores",
-                            "value": "%follows%"
+                        "follows": {
+                            "name": "Seguidores"
                         },
-                        {
-                            "name": "Distribución de Valoraciones",
-                            "value": "%ratingDistribution%"
+                        "distribution": {
+                            "name": "Distribución de Valoraciones"
                         },
-                        {
-                            "name": "Comentarios",
-                            "value": "%comments%"
+                        "comments": {
+                            "name": "Comentarios"
                         }
-                    ],
+                    },
                     "units": {
                         "votes": "valoraciones",
                         "comments": "comentarios"
@@ -318,20 +298,15 @@
                         "too_many": "Múltiples Autores",
                         "error": "Autor Desconocido"
                     },
-                    "title": "%title%",
-                    "description": "%description%",
                     "fields": {
                         "rating": {
-                            "name": "Calificación",
-                            "value": "%rating%"
+                            "name": "Calificación"
                         },
                         "follows": {
-                            "name": "Seguidores",
-                            "value": "%follows%"
+                            "name": "Seguidores"
                         },
                         "year": {
-                            "name": "Año",
-                            "value": "%year%"
+                            "name": "Año"
                         },
                         "pub_status": {
                             "name": "Estado de Publicación",
@@ -371,24 +346,19 @@
                             }
                         },
                         "format": {
-                            "name": "Formato",
-                            "value": "%format%"
+                            "name": "Formato"
                         },
                         "genres": {
-                            "name": "Géneros",
-                            "value": "%genres%"
+                            "name": "Géneros"
                         },
                         "themes": {
-                            "name": "Temas",
-                            "value": "%themes%"
+                            "name": "Temas"
                         },
                         "content_warning": {
-                            "name": "Advertencia de Contenido",
-                            "value": "%contentWarning%"
+                            "name": "Advertencia de Contenido"
                         },
                         "other_tags": {
-                            "name": "Otras Etiquetas",
-                            "value": "%otherTags%"
+                            "name": "Otras Etiquetas"
                         }
                     },
                     "pub_status": {
@@ -410,36 +380,29 @@
                 "stats": {
                     "title": "Estadísticas del Título",
                     "description": "Aquí están las estadísticas para el título con ID `%titleId%`.",
-                    "fields": [
-                        {
-                            "name": "Valoraciones",
-                            "value": "%ratings%"
+                    "fields": {
+                        "rating": {
+                            "name": "Valoraciones"
                         },
-                        {
-                            "name": "Visualizaciones",
-                            "value": "%views%"
+                        "views": {
+                            "name": "Visualizaciones"
                         },
-                        {
-                            "name": "Seguidores",
-                            "value": "%follows%"
+                        "follows": {
+                            "name": "Seguidores"
                         },
-                        {
-                            "name": "Comentarios",
-                            "value": "%comments%"
+                        "comments": {
+                            "name": "Comentarios"
                         },
-                        {
-                            "name": "Visualizaciones de Capítulos",
-                            "value": "%chapterViews%"
+                        "chapterViews": {
+                            "name": "Visualizaciones de Capítulos"
                         },
-                        {
-                            "name": "Comentarios de Capítulos",
-                            "value": "%chapterComments%"
+                        "chapterComments": {
+                            "name": "Comentarios de Capítulos"
                         },
-                        {
-                            "name": "Reacciones de Capítulos",
-                            "value": "%chapterReactions%"
+                        "chapterReactions": {
+                            "name": "Reacciones de Capítulos"
                         }
-                    ],
+                    },
                     "units": {
                         "votes": "valoraciones",
                         "views": "visualizaciones",
@@ -474,8 +437,7 @@
                         "description": "Aquí tienes tus ajustes actuales.",
                         "fields": {
                             "locale": {
-                                "name": "Idioma",
-                                "value": "%locale%"
+                                "name": "Idioma"
                             }
                         }
                     }
@@ -545,9 +507,9 @@
     "error_embed": {
         "title": "Error",
         "description": "Ha ocurrido un error al ejecutar este comando, a continuación se muestra el mensaje de error. Por favor, informa de esto al desarrollador del bot. ¡Gracias!",
-        "external_timeout": "Se ha agotado el tiempo de espera al obtener datos de una API externa. Por favor, vuelve a intentarlo más tarde.",
         "message": "Mensaje de error",
         "stack": "Pila del error",
+        "no_stack": "No se ha proporcionado una pila de error.",
         "err_int_ch_input": "Error en el comando %commandName%",
         "err_int_btn": "Error en el botón %buttonId%",
         "err_int_slct": "Error en el menú de selección %selectId%",

@@ -61,7 +61,7 @@ const getMangaDexTitle = (title, locale) => {
 const getNamiComiTitle = (title, locale) => {
     if (locale === 'es') locale = 'es-es'; // NamiComi uses "es-es" for Spanish (I got scammed by this, and I'm not happy about it, hmph >:( )
     let localizedTitle = title.attributes.title[locale];
-    if (!localizedTitle && locale === 'es') localizedTitle = title.attributes.title['es-419'];
+    if (!localizedTitle && locale === 'es-es') localizedTitle = title.attributes.title['es-419'];
     if (!localizedTitle) localizedTitle = title.attributes.title['en'];
     if (!localizedTitle) localizedTitle = title.attributes.title[Object.keys(title?.attributes.title)[0]];
     return localizedTitle || null;

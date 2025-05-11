@@ -32,8 +32,8 @@ describe('getLocalizedTitle', () => {
             const title = {
                 attributes: {
                     title: {
-                        es: "Título en Español",
-                        en: "English Title",
+                        "es-es": "Título en Español",
+                        "en": "English Title",
                         "es-419": "Título Latinoamericano"
                     }
                 }
@@ -47,7 +47,7 @@ describe('getLocalizedTitle', () => {
                 attributes: {
                     title: {
                         "es-419": "Título Latinoamericano",
-                        en: "English Title"
+                        "en": "English Title"
                     }
                 }
             };
@@ -59,8 +59,8 @@ describe('getLocalizedTitle', () => {
             const title = {
                 attributes: {
                     title: {
-                        en: "English Title",
-                        fr: "Titre Français"
+                        "en": "English Title",
+                        "fr": "Titre Français"
                     }
                 }
             };
@@ -72,8 +72,8 @@ describe('getLocalizedTitle', () => {
             const title = {
                 attributes: {
                     title: {
-                        fr: "Titre Français",
-                        de: "Deutscher Titel"
+                        "fr": "Titre Français",
+                        "de": "Deutscher Titel"
                     }
                 }
             };
@@ -86,7 +86,7 @@ describe('getLocalizedTitle', () => {
             const title = {
                 attributes: {
                     title: {
-                        en: "English Title"
+                        "en": "English Title"
                     }
                 }
             };
@@ -111,7 +111,7 @@ describe('getLocalizedTitle', () => {
             const title = {
                 attributes: {
                     title: {
-                        en: "English Title"
+                        "en": "English Title"
                     }
                 }
             };

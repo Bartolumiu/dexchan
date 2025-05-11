@@ -14,7 +14,7 @@ module.exports = {
     },
     async execute(interaction, client) {
         const userSettings = await client.getMongoUserData(interaction.user);
-        const locale = userSettings.preferredLocale || interaction.locale;
+        const locale = client.getLocale(userSettings, interaction);
         const translations = {
             title: await client.translate(locale, 'commands', 'commands.response.title'),
             description: await client.translate(locale, 'commands', 'commands.response.description'),
@@ -96,3 +96,6 @@ const hasUserPermission = (commandPermissions, interaction) => {
     const userPermissions = commandPermissions.filter(p => p.type === 2 && p.permission === true);
     return userPermissions.some(p => p.id === interaction.user.id);
 };
+
+module.exports.hasRolePermission = hasRolePermission;
+module.exports.hasUserPermission = hasUserPermission;

@@ -68,8 +68,9 @@ const getMangaDexDescription = (title, locale) => {
  * @returns {string|null} The localized description if available; otherwise, null.
  */
 const getNamiComiDescription = (title, locale) => {
+    if (locale === 'es') locale = 'es-es'; // NamiComi uses 'es-es' for Spanish (I got scammed by this, and I'm not happy about it, hmph >:( )
     let description = title.attributes.description[locale];
-    if (!description && locale === 'es') description = title.attributes.description['es-419'];
+    if (!description && locale === 'es-es') description = title.attributes.description['es-419'];
     if (!description) description = title.attributes.description['en'];
 
     return description || null;

@@ -7,7 +7,7 @@
         "start": "node --no-warnings --experimental-vm-modules ./src/index.js",
         "test": "node --no-warnings --experimental-vm-modules ./node_modules/jest/bin/jest.js --coverage",
         "generate-template": "node --no-warnings --experimental-vm-modules ./src/i18n/generate-template.js",
-        "prepare": "pnpm generate-template",
+        "prepare": "npm run generate-template",
         "update": "pnpm up"
     },
     "jest": {

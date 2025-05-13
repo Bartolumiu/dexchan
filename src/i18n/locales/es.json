@@ -8,8 +8,6 @@
         "ping": {
             "name": "ping",
             "description": "Verifica la latencia del bot.",
-            "subcommands": {},
-            "options": {},
             "response": {
                 "ping": "Haciendo ping...",
                 "title": "¡Pong!",
@@ -40,8 +38,6 @@
         "help": {
             "name": "help",
             "description": "Obtén ayuda con el bot.",
-            "subcommands": {},
-            "options": {},
             "response": {
                 "title": "Ayuda",
                 "fields": {
@@ -72,19 +68,14 @@
         "commands": {
             "name": "commands",
             "description": "Obtén la lista de comandos que puedes usar.",
-            "subcommands": {},
-            "options": {},
             "response": {
                 "title": "Comandos",
-                "fields": {},
                 "footer": "{commandName} - Solicitado por {user}"
             }
         },
         "invite": {
             "name": "invite",
             "description": "Invita al bot a tu servidor.",
-            "subcommands": [],
-            "options": [],
             "response": {
                 "title": "Invitar",
                 "description": "Puedes invitar al bot a tu servidor haciendo clic [aquí]({inviteLink}).",
@@ -94,8 +85,6 @@
         "stats": {
             "name": "stats",
             "description": "Obtén las estadísticas del bot.",
-            "subcommands": [],
-            "options": [],
             "response": {
                 "title": "Estadísticas",
                 "fields": {
@@ -118,8 +107,6 @@
         "support": {
             "name": "support",
             "description": "Obtén la invitación al servidor de soporte del bot.",
-            "subcommands": {},
-            "options": {},
             "response": {
                 "title": "Soporte",
                 "description": "Puedes unirte al servidor de soporte del bot haciendo clic [aquí]({supportLink}).",
@@ -129,8 +116,6 @@
         "uptime": {
             "name": "uptime",
             "description": "Obtén el tiempo de actividad del bot.",
-            "subcommands": [],
-            "options": [],
             "response": {
                 "title": "Tiempo de Actividad",
                 "description": "El bot ha estado en línea por {uptime}.",
@@ -143,9 +128,7 @@
             "subcommands": {
                 "random": {
                     "name": "random",
-                    "description": "Obtén un manga aleatorio",
-                    "subcommands": {},
-                    "options": {}
+                    "description": "Obtén un manga aleatorio"
                 }
             },
             "options": {
@@ -226,7 +209,6 @@
                 "query": {
                     "title": "Resultados de la Búsqueda",
                     "description": "Aquí están los resultados de la búsqueda para `{query}`.",
-                    "fields": {},
                     "placeholder": "Selecciona un manga para ver más información..."
                 },
                 "stats": {
@@ -276,8 +258,6 @@
         "nami": {
             "name": "nami",
             "description": "Busca un título en NamiComi.",
-            "subcommands": {},
-            "subcommand_groups": {},
             "options": {
                 "query": {
                     "name": "query",
@@ -374,7 +354,6 @@
                 "query": {
                     "title": "Resultados de la Búsqueda",
                     "description": "Aquí están los resultados de la búsqueda para `{query}`.",
-                    "fields": {},
                     "placeholder": "Selecciona un título para ver más información..."
                 },
                 "stats": {
@@ -430,8 +409,6 @@
                 "view": {
                     "name": "view",
                     "description": "Revisa tus ajustes",
-                    "subcommands": {},
-                    "options": {},
                     "response": {
                         "title": "Ajustes de Usuario",
                         "description": "Aquí tienes tus ajustes actuales.",
@@ -474,14 +451,12 @@
                                         "unknown": "Ha ocurrido un error desconocido al cambiar el idioma."
                                     }
                                 },
-                                "fields": {},
                                 "footer": "{commandName} - Solicitado por {user}"
                             }
                         },
                         "reset": {
                             "name": "reset",
                             "description": "Restablece tu idioma preferido",
-                            "options": {},
                             "response": {
                                 "title": {
                                     "success": "Idioma Restablecido",
@@ -491,14 +466,12 @@
                                     "success": "Tu idioma ha sido restablecido al idioma predeterminado.",
                                     "error": "Ha ocurrido un error al restablecer el idioma."
                                 },
-                                "fields": {},
                                 "footer": "{commandName} - Solicitado por {user}"
                             }
                         }
                     }
                 }
             },
-            "options": {},
             "response": {
                 "footer": "{commandName} - Solicitado por {user}"
             }

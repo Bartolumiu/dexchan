@@ -94,11 +94,11 @@ module.exports = {
  */
 async function getLocaleList(interaction) {
     // Get locale files
-    const files = fs.readdirSync(__dirname+'/../../locales').filter(file => file.endsWith('.json'));
+    const files = fs.readdirSync(__dirname+'/../../i18n/locales').filter(file => file.endsWith('.json'));
     const locales = files.map(file => file.split('.')[0]);
     // Read locale files and get the locale name
     const localeList = locales.map(locale => {
-        const localeData = require(__dirname+`/../../locales/${locale}.json`);
+        const localeData = require(__dirname+`/../../i18n/locales/${locale}.json`);
         return {
             name: `${localeData.locale.name} (${localeData.locale.code})`,
             value: localeData.locale.code

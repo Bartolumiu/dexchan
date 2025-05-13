@@ -54,7 +54,7 @@ const loadLocales = async (log = 0) => {
     const chalk = await getChalk();
     if (log) console.log(chalk.blueBright('[Locale Handler] Loading locales...'));
 
-    const localePath = path.join(__dirname, '../../locales');
+    const localePath = path.join(__dirname, '../../i18n/locales');
     const localeFiles = readdirSync(localePath).filter(file => file.endsWith('.json'));
     if (log) console.log(chalk.blueBright(`[Locale Handler] Found ${localeFiles.length} locales.`));
 

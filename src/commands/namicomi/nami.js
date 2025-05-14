@@ -250,7 +250,13 @@ async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
  */
 async function buildTitleEmbed(embed, client, locale, title, stats, translations) {
     const embedTitle = getLocalizedTitle(title, 'namicomi', locale);
-    const description = getLocalizedDescription(title, 'namicomi', locale) || translations.embed.error.no_description;
+    let description = getLocalizedDescription(title, 'namicomi', locale) || translations.embed.error.no_description;
+
+    // Temporary fix: Truncate the description if it's too long
+    if (description.length > 4096) {
+        const truncatedDescription = description.slice(0, 4000).split(' ').slice(0, -1).join(' ');
+        description = `${truncatedDescription} (...)`;
+    }
 
     const fields = [
         { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },

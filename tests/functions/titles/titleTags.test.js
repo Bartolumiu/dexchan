@@ -1,4 +1,4 @@
-const getTitleTags = require('../../../src/functions/titles/titleTags');
+const { getTitleTags, addTitleTags } = require('../../../src/functions/titles/titleTags');
 
 describe('getTitleTags', () => {
     describe('MangaDex', () => {
@@ -170,3 +170,82 @@ describe('getTitleTags', () => {
         });
     });
 });
+
+describe('addTitleTags', () => {
+    let embed;
+    let translations;
+
+    beforeEach(() => {
+        embed = { addFields: jest.fn() };
+        translations = {
+            embed: {
+                fields: {
+                    format: 'Format',
+                    genres: 'Genres',
+                    themes: 'Themes',
+                    content_warning: 'Content Warning',
+                    other_tags: 'Other'
+                }
+            }
+        };
+    });
+
+    describe('MangaDex', () => {
+        const sampleTitle = {
+            attributes: {
+                tags: [
+                    { attributes: { group: 'genre', name: { en: 'Action' } } },
+                    { attributes: { group: 'theme', name: { en: 'Fantasy' } } }
+                ]
+            }
+        };
+
+        it('should add correct fields for mangadex', () => {
+            addTitleTags(sampleTitle, embed, translations, 'mangadex');
+            expect(embed.addFields).toHaveBeenCalledWith([
+                { name: 'Format', value: 'N/A', inline: true },
+                { name: 'Genres', value: 'Action', inline: true },
+                { name: 'Themes', value: 'Fantasy', inline: true },
+                { name: 'Content Warning', value: 'N/A', inline: true }
+            ]);
+        });
+
+        it('should return early if there are no tags', () => {
+            const emptyTitle = { attributes: { tags: [] } };
+            addTitleTags(emptyTitle, embed, translations, 'mangadex');
+            expect(embed.addFields).toHaveBeenCalledWith([
+                { name: 'Format', value: 'N/A', inline: true },
+                { name: 'Genres', value: 'N/A', inline: true },
+                { name: 'Themes', value: 'N/A', inline: true },
+                { name: 'Content Warning', value: 'N/A', inline: true }
+            ]);
+        });
+    });
+
+    describe('NamiComi', () => {
+        const sampleTitle = {
+            relationships: [
+                { type: 'tag', attributes: { group: 'format', name: { en: 'Webtoon', ja: 'ウェブトゥーン' } } },
+                { type: 'primary_tag', attributes: { group: 'genre', name: { en: 'Romance', ja: 'ロマンス' } } },
+                { type: 'secondary_tag', attributes: { group: 'content-warnings', name: { en: 'Mild Violence' } } },
+                { type: 'tag', attributes: { group: 'admin-only', name: { en: "Nami's TT Gold Winner", ja: 'ナミのTTゴールドウィナー' } } },
+                { type: 'tag', attributes: { group: 'theme', name: { en: 'Vampires', ja: 'バンパイア' } } }
+            ]
+        };
+
+        it('should add correct fields for namicomi with locale', () => {
+            addTitleTags(sampleTitle, embed, translations, 'namicomi', 'ja');
+            expect(embed.addFields).toHaveBeenCalledWith([
+                { name: 'Format', value: 'ウェブトゥーン', inline: true },
+                { name: 'Genres', value: 'ロマンス', inline: true },
+                { name: 'Themes', value: 'バンパイア', inline: true },
+                { name: 'Content Warning', value: 'Mild Violence', inline: true },
+                { name: 'Other', value: 'ナミのTTゴールドウィナー', inline: true }
+            ]);
+        });
+    });
+
+    it('should throw for unsupported type', () => {
+        expect(() => addTitleTags({}, embed, translations, 'unsupported')).toThrow('Unsupported type');
+    });
+})

@@ -1,3 +1,14 @@
+const urlFormats = {
+    namicomi: {
+        primary: 'https://namicomi.com/{locale}/title/{id}/{slug}',
+        semi_shortened: 'https://namicomi.com/t/{id}',
+        shortened: 'https://nami.moe/t/{id}'
+    },
+    mangadex: {
+        primary: 'https://mangadex.org/title/{id}/{title}'
+    }
+}
+
 /**
  * @typedef {Object} RegexComponents
  * @property {Object} protocol - Regular expressions for URL protocols.
@@ -191,5 +202,6 @@ module.exports = {
     parseURL,
     parseNamiComiURL,
     parseMangaDexURL,
-    checkID
+    checkID,
+    urlFormats
 };

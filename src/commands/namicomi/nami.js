@@ -1,48 +1,15 @@
-const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder, InteractionType } = require('discord.js');
 const { translateAttribute } = require('../../functions/handlers/handleLocales');
 const search = require('../../functions/titles/titleSearch');
-const capitalizeFirstLetter = require('../../functions/tools/capitalizeFirstLetter');
 const path = require('path');
-const { parseURL, checkID } = require('../../functions/parsers/urlParser');
+const { parseURL, checkID, urlFormats } = require('../../functions/parsers/urlParser');
 const getTitleDetails = require('../../functions/titles/titleDetails');
 const getTitleStats = require('../../functions/titles/titleStats');
 const getCover = require('../../functions/titles/titleCover');
 const getBanner = require('../../functions/titles/titleBanner');
-const getLocalizedDescription = require('../../functions/titles/localizedDescription');
-const getTitleTags = require('../../functions/titles/titleTags');
 const getTitleCreators = require('../../functions/titles/titleCreators');
-const getLocalizedTitle = require('../../functions/titles/localizedTitle');
-let version = require('../../../package.json').version;
-const USER_AGENT = `Dex-chan/${version} by Bartolumiu`;
-
-/**
- * An object containing different URL formats for accessing titles on the Namicomi website.
- * 
- * @property {string} primary - The primary URL format, which includes locale, title ID, and slug.
- * @property {string} semi_shortened - A semi-shortened URL format that includes only the title ID.
- * @property {string} shortened - A shortened URL format that uses a different domain and includes only the title ID.
- */
-const urlFormats = {
-    primary: 'https://namicomi.com/{locale}/title/{id}/{slug}',
-    semi_shortened: 'https://namicomi.com/t/{id}',
-    shortened: 'https://nami.moe/t/{id}'
-};
-
-/**
- * A mapping of locale codes to their corresponding language codes.
- * 
- * @constant {Object.<string, string>}
- * @property {string} en-GB - Maps to 'en' for English (Great Britain).
- * @property {string} en-US - Maps to 'en' for English (United States).
- * @property {string} es-ES - Maps to 'es' for Spanish (Spain).
- * @property {string} es-419 - Maps to 'es' for Spanish (Latin America and Caribbean).
- */
-const languageMap = {
-    'en-GB': 'en',
-    'en-US': 'en',
-    'es-ES': 'es',
-    'es-419': 'es'
-};
+const buildTitleEmbed = require('../../functions/titles/titleEmbed');
+const sendErrorEmbed = require('../../functions/titles/errorEmbed');
 
 module.exports = {
     global: true,
@@ -88,7 +55,15 @@ module.exports = {
                     rating: await client.translate(locale, 'commands', 'nami.response.found.fields.rating.name'),
                     follows: await client.translate(locale, 'commands', 'nami.response.found.fields.follows.name'),
                     year: await client.translate(locale, 'commands', 'nami.response.found.fields.year.name'),
-                    pub_status: await client.translate(locale, 'commands', 'nami.response.found.fields.pub_status.name'),
+                    pub_status: {
+                        name: await client.translate(locale, 'commands', 'nami.response.found.fields.pub_status.name'),
+                        value: {
+                            ongoing: await client.translate(locale, 'commands', 'nami.response.found.fields.pub_status.value.ongoing'),
+                            completed: await client.translate(locale, 'commands', 'nami.response.found.fields.pub_status.value.completed'),
+                            hiatus: await client.translate(locale, 'commands', 'nami.response.found.fields.pub_status.value.hiatus'),
+                            cancelled: await client.translate(locale, 'commands', 'nami.response.found.fields.pub_status.value.cancelled')
+                        }
+                    },
                     demographic: {
                         name: await client.translate(locale, 'commands', 'nami.response.found.fields.demographic.name'),
                         value: {
@@ -124,10 +99,16 @@ module.exports = {
                 },
                 query: {
                     title: await client.translate(locale, 'commands', 'nami.response.query.title'),
-                    description: await client.translate(locale, 'commands', 'nami.response.query.description'),
+                    description: await client.translate(locale, 'commands', 'nami.response.query.description', { query: interaction.options.getString('query') }),
                 },
                 error: {
                     title: await client.translate(locale, 'commands', 'nami.response.error.title'),
+                    description: {
+                        empty: await client.translate(locale, 'commands', 'nami.response.error.description.empty'),
+                        no_results: await client.translate(locale, 'commands', 'nami.response.error.description.no_results'),
+                        invalid_id: await client.translate(locale, 'commands', 'nami.response.error.description.invalid_id'),
+                        api: await client.translate(locale, 'commands', 'nami.response.error.description.api')
+                    },
                     no_description: await client.translate(locale, 'commands', 'nami.response.found.no_description'),
                     too_many_authors: await client.translate(locale, 'commands', 'nami.response.found.author.too_many')
                 },
@@ -141,6 +122,7 @@ module.exports = {
                 stats: await client.translate(locale, 'commands', 'nami.response.found.stats_button')
             }
         }
+
         const embed = new EmbedBuilder()
             .setFooter({
                 text: translations.embed.footer,
@@ -151,11 +133,11 @@ module.exports = {
         const id = interaction.options.getString('id');
         const url = interaction.options.getString('url');
 
-        if (!query && !id && !url) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.empty');
+        if (!query && !id && !url) return sendErrorEmbed(interaction, translations, locale, embed, 'empty');
 
         if (query) {
             const searchResults = await search(query, 'namicomi', locale);
-            if (!searchResults) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.no_results');
+            if (!searchResults) return sendErrorEmbed(interaction, translations, locale, embed, 'no_results');
             const fields = Array.from(searchResults, ([title, id]) => {
                 if (typeof title !== 'string' || typeof id !== 'string') return null;
                 if (title.length > 256) {
@@ -163,7 +145,7 @@ module.exports = {
                     title = `${truncatedTitle} (...)`;
                 }
 
-                return { name: title, value: `[View Title](${urlFormats.shortened.replace('{id}', id)})` };
+                return { name: title, value: `[View Title](${urlFormats.namicomi.shortened.replace('{id}', id)})` };
             }).filter(Boolean);
 
             const menu = new StringSelectMenuBuilder()
@@ -185,7 +167,7 @@ module.exports = {
             const row = new ActionRowBuilder().addComponents(menu);
 
             embed.setTitle(translations.embed.query.title)
-                .setDescription(translations.embed.query.description.replace('{query}', query))
+                .setDescription(translations.embed.query.description)
                 .addFields(fields)
                 .setColor(Colors.Blurple);
 
@@ -193,18 +175,18 @@ module.exports = {
         }
 
         const titleID = id || await parseURL(url, 'namicomi');
-        if (!(await checkID(titleID, 'namicomi'))) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.invalid_id');
+        if (!(await checkID(titleID, 'namicomi'))) return sendErrorEmbed(interaction, translations, locale, embed, 'invalid_id');
 
         const [title, stats] = await Promise.all([getTitleDetails(titleID, 'namicomi'), getTitleStats(titleID, 'namicomi')]);
-        if (!title || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'nami.response.error.description.invalid_id');
+        if (!title || !stats) return sendErrorEmbed(interaction, translations, locale, embed, 'invalid_id');
 
-        await buildTitleEmbed(embed, client, locale, title, stats, translations);
+        buildTitleEmbed(embed, locale, title, stats, translations, 'namicomi');
         const attachments = await setImages(title, embed, locale);
 
         const buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setLabel(translations.button.open)
-                .setURL(urlFormats.shortened.replace('{id}', title.id))
+                .setURL(urlFormats.namicomi.shortened.replace('{id}', title.id))
                 .setStyle(ButtonStyle.Link),
             new ButtonBuilder()
                 .setLabel(translations.button.stats)
@@ -214,79 +196,9 @@ module.exports = {
                 .setEmoji('📊')
         )
 
-        if (interaction.type === 3) return interaction.reply({ embeds: [embed], files: attachments, components: [buttons] });
+        if (interaction.type === InteractionType.MessageComponent) return interaction.reply({ embeds: [embed], files: attachments, components: [buttons] });
         return interaction.editReply({ embeds: [embed], files: attachments, components: [buttons] });
     }
-};
-
-/**
- * Sends an error embed message in response to an interaction.
- *
- * @param {Object} interaction - The interaction object from Discord.
- * @param {Object} client - The Discord client instance.
- * @param {string} locale - The locale string for translation.
- * @param {Object} embed - The embed object to be modified and sent.
- * @param {string} errorKey - The key for the error message to be translated.
- * @returns {Promise<Object>} - A promise that resolves to the edited interaction reply.
- */
-async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
-    embed.setTitle(await client.translate(locale, 'commands', 'nami.response.error.title'))
-        .setDescription(await client.translate(locale, 'commands', errorKey))
-        .setColor(Colors.Red);
-
-    return interaction.editReply({ embeds: [embed] });
-};
-
-/**
- * Builds an embed message for a title with localized information.
- *
- * @param {Object} embed - The embed object to be modified.
- * @param {Object} client - The client object used for translations and other utilities.
- * @param {string} locale - The locale string for translations.
- * @param {Object} title - The title object containing information about the title.
- * @param {Object} stats - The stats object containing statistical information about the title.
- * @param {Object} translations - The translations object containing localized strings.
- * @returns {Promise<void>} A promise that resolves when the embed has been built.
- */
-async function buildTitleEmbed(embed, client, locale, title, stats, translations) {
-    const embedTitle = getLocalizedTitle(title, 'namicomi', locale);
-    let description = getLocalizedDescription(title, 'namicomi', locale) || translations.embed.error.no_description;
-
-    // Temporary fix: Truncate the description if it's too long
-    if (description.length > 4096) {
-        const truncatedDescription = description.slice(0, 4000).split(' ').slice(0, -1).join(' ');
-        description = `${truncatedDescription} (...)`;
-    }
-
-    const fields = [
-        { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
-        { name: translations.embed.fields.follows, value: `${stats.follows}`, inline: true },
-        { name: translations.embed.fields.year, value: `${title.attributes.year}`, inline: true },
-        { name: translations.embed.fields.pub_status, value: capitalizeFirstLetter(await client.translate(locale, 'commands', `nami.response.found.pub_status.${title.attributes.publicationStatus}`) || title.attributes.publicationStatus), inline: true },
-        { name: translations.embed.fields.demographic.name, value: translations.embed.fields.demographic.value[title.attributes.demographic] || 'N/A', inline: true },
-        { name: translations.embed.fields.content_rating.name, value: capitalizeFirstLetter(title.attributes.contentRating), inline: true }
-    ];
-
-    embed.setTitle(embedTitle)
-        .setURL(urlFormats.shortened.replace('{id}', title.id))
-        .setDescription(description)
-        .addFields(fields)
-        .setColor(Colors.Blurple);
-
-    await addTitleTags(title, embed, locale, translations);
-
-    // Reading mode (Vertical, Horizontal: Left to Right, Horizontal: Right to Left)
-    switch (title.attributes.readingMode) {
-        case 'vls':
-            embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.vertical, inline: true });
-            break;
-        case 'rtl':
-            embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.right_to_left, inline: true });
-            break;
-        case 'ltr':
-            embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.left_to_right, inline: true });
-            break;
-    };
 };
 
 /**
@@ -322,28 +234,4 @@ async function setImages(title, embed, locale) {
     embed.setImage('attachment://banner.png');
 
     return [namiIcon, coverImage, bannerImage];
-};
-
-/**
- * Adds title tags to the provided embed object.
- *
- * @param {Object} title - The title object containing relationships and other metadata.
- * @param {Object} embed - The embed object to which the tags will be added.
- * @param {string} locale - The locale to be used for tag names.
- * @param {Object} translations - The translations object containing localized strings.
- * @returns {Promise<void>} - A promise that resolves when the tags have been added to the embed.
- */
-async function addTitleTags(title, embed, locale, translations) {
-    const groups = getTitleTags(title, 'namicomi', locale);
-    if (!groups) return;
-
-    const fields = [
-        { name: translations.embed.fields.format, value: groups.format, inline: true },
-        { name: translations.embed.fields.genres, value: groups.genre, inline: true },
-        { name: translations.embed.fields.themes, value: groups.theme, inline: true },
-        { name: translations.embed.fields.content_warning, value: groups.content_warning, inline: true },
-        { name: translations.embed.fields.other_tags, value: groups.other, inline: true }
-    ]
-
-    embed.addFields(fields);
 };

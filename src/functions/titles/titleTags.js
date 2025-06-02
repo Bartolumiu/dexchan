@@ -114,4 +114,41 @@ const getNamiComiTags = (title, locale) => {
     return groups;
 }
 
-module.exports = getTitleTags;
+
+const addTitleTags = (title, embed, translations, type, locale) => {
+    switch (type) {
+        case 'mangadex':
+            return addMangaDexTags(title, embed, translations);
+        case 'namicomi':
+            return addNamiComiTags(title, embed, translations, locale);
+        default:
+            throw new Error('Unsupported type');
+    }
+}
+
+const addMangaDexTags = (title, embed, translations) => {
+    const groups = getTitleTags(title, 'mangadex');
+    const fields = [
+        { name: translations.embed.fields.format, value: groups.format, inline: true },
+        { name: translations.embed.fields.genres, value: groups.genre, inline: true },
+        { name: translations.embed.fields.themes, value: groups.theme, inline: true },
+        { name: translations.embed.fields.content_warning, value: groups.content, inline: true }
+    ];
+
+    embed.addFields(fields);
+};
+
+const addNamiComiTags = (title, embed, translations, locale) => {
+    const groups = getTitleTags(title, 'namicomi', locale);
+    const fields = [
+        { name: translations.embed.fields.format, value: groups.format, inline: true },
+        { name: translations.embed.fields.genres, value: groups.genre, inline: true },
+        { name: translations.embed.fields.themes, value: groups.theme, inline: true },
+        { name: translations.embed.fields.content_warning, value: groups.content_warning, inline: true },
+        { name: translations.embed.fields.other_tags, value: groups.other, inline: true }
+    ];
+
+    embed.addFields(fields);
+}
+
+module.exports = { getTitleTags, addTitleTags }

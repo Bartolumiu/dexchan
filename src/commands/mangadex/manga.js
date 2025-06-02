@@ -1,29 +1,14 @@
-const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder, InteractionType } = require("discord.js");
 const { translateAttribute } = require('../../functions/handlers/handleLocales');
-const capitalizeFirstLetter = require('../../functions/tools/capitalizeFirstLetter');
 const search = require('../../functions/titles/titleSearch');
 const getTitleDetails = require('../../functions/titles/titleDetails');
 const getTitleStats = require('../../functions/titles/titleStats');
 const path = require('path');
-const { parseURL, checkID } = require('../../functions/parsers/urlParser');
+const { parseURL, checkID, urlFormats } = require('../../functions/parsers/urlParser');
 const getCover = require("../../functions/titles/titleCover");
-const getLocalizedDescription = require('../../functions/titles/localizedDescription');
-const getLocalizedTitle = require("../../functions/titles/localizedTitle");
-const getTitleTags = require("../../functions/titles/titleTags");
 const getTitleCreators = require("../../functions/titles/titleCreators");
-
-/**
- * An object containing URL formats for different MangaDex environments.
- * 
- * @property {string} primary - The URL format for the primary MangaDex environment.
- * @property {string} canary - The URL format for the canary MangaDex environment.
- * @property {string} sandbox - The URL format for the sandbox MangaDex environment.
- */
-const urlFormats = {
-    primary: 'https://mangadex.org/title/{id}/{title}',
-    canary: 'https://canary.mangadex.dev/title/{id}/{title}',
-    sandbox: 'https://sandbox.mangadex.dev/title/{id}/{title}'
-};
+const buildTitleEmbed = require('../../functions/titles/titleEmbed');
+const sendErrorEmbed = require('../../functions/titles/errorEmbed');
 
 module.exports = {
     global: true,
@@ -69,10 +54,34 @@ module.exports = {
                     rating: await client.translate(locale, 'commands', 'manga.response.found.fields.rating.name'),
                     follows: await client.translate(locale, 'commands', 'manga.response.found.fields.follows.name'),
                     year: await client.translate(locale, 'commands', 'manga.response.found.fields.year.name'),
-                    pub_status: await client.translate(locale, 'commands', 'manga.response.found.fields.pub_status.name'),
-                    demographic: await client.translate(locale, 'commands', 'manga.response.found.fields.demographic.name'),
-                    content_rating: await client.translate(locale, 'commands', 'manga.response.found.fields.content_rating.name'),
-
+                    pub_status: {
+                        name: await client.translate(locale, 'commands', 'manga.response.found.fields.pub_status.name'),
+                        value: {
+                            ongoing: await client.translate(locale, 'commands', 'manga.response.found.fields.pub_status.value.ongoing'),
+                            completed: await client.translate(locale, 'commands', 'manga.response.found.fields.pub_status.value.completed'),
+                            hiatus: await client.translate(locale, 'commands', 'manga.response.found.fields.pub_status.value.hiatus'),
+                            cancelled: await client.translate(locale, 'commands', 'manga.response.found.fields.pub_status.value.cancelled')
+                        }
+                    },
+                    demographic: {
+                        name: await client.translate(locale, 'commands', 'manga.response.found.fields.demographic.name'),
+                        value: {
+                            none: await client.translate(locale, 'commands', 'manga.response.found.fields.demographic.value.none'),
+                            shounen: await client.translate(locale, 'commands', 'manga.response.found.fields.demographic.value.shounen'),
+                            shoujo: await client.translate(locale, 'commands', 'manga.response.found.fields.demographic.value.shoujo'),
+                            seinen: await client.translate(locale, 'commands', 'manga.response.found.fields.demographic.value.seinen'),
+                            josei: await client.translate(locale, 'commands', 'manga.response.found.fields.demographic.value.josei')
+                        },
+                    },
+                    content_rating: {
+                        name: await client.translate(locale, 'commands', 'manga.response.found.fields.content_rating.name'),
+                        value: {
+                            safe: await client.translate(locale, 'commands', 'manga.response.found.fields.content_rating.value.safe'),
+                            suggestive: await client.translate(locale, 'commands', 'manga.response.found.fields.content_rating.value.suggestive'),
+                            erotica: await client.translate(locale, 'commands', 'manga.response.found.fields.content_rating.value.erotica'),
+                            pornographic: await client.translate(locale, 'commands', 'manga.response.found.fields.content_rating.value.pornographic')
+                        }
+                    },
                     format: await client.translate(locale, 'commands', 'manga.response.found.fields.format.name'),
                     genres: await client.translate(locale, 'commands', 'manga.response.found.fields.genres.name'),
                     themes: await client.translate(locale, 'commands', 'manga.response.found.fields.themes.name'),
@@ -84,15 +93,15 @@ module.exports = {
                 },
                 error: {
                     title: await client.translate(locale, 'commands', 'manga.response.error.title'),
+                    description: {
+                        empty: await client.translate(locale, 'commands', 'manga.response.error.description.empty'),
+                        no_results: await client.translate(locale, 'commands', 'manga.response.error.description.no_results'),
+                        invalid_id: await client.translate(locale, 'commands', 'manga.response.error.description.invalid_id'),
+                        api: await client.translate(locale, 'commands', 'manga.response.error.description.api')
+                    },
                     no_description: await client.translate(locale, 'commands', 'manga.response.found.no_description'),
                     too_many_authors: await client.translate(locale, 'commands', 'manga.response.found.author.too_many'),
                     unknown_author: await client.translate(locale, 'commands', 'manga.response.found.author.unknown')
-                },
-                pub_status: {
-                    ongoing: await client.translate(locale, 'commands', 'manga.response.found.pub_status.ongoing'),
-                    completed: await client.translate(locale, 'commands', 'manga.response.found.pub_status.completed'),
-                    hiatus: await client.translate(locale, 'commands', 'manga.response.found.pub_status.hiatus'),
-                    cancelled: await client.translate(locale, 'commands', 'manga.response.found.pub_status.cancelled')
                 },
                 footer: await client.translate(locale, 'commands', 'manga.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username })
             },
@@ -115,11 +124,11 @@ module.exports = {
         const id = interaction.options.getString('id');
         const url = interaction.options.getString('url');
 
-        if (!query && !id && !url) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.empty');
+        if (!query && !id && !url) return sendErrorEmbed(interaction, translations, locale, embed, 'empty');
 
         if (query) {
             const searchResults = await search(query, 'mangadex');
-            if (!searchResults) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.no_results');
+            if (!searchResults) return sendErrorEmbed(interaction, translations, locale, embed, 'no_results');
             const fields = Array.from(searchResults, ([title, id]) => {
                 if (typeof title !== 'string' || typeof id !== 'string') return null;
                 if (title.length > 256) {
@@ -127,7 +136,7 @@ module.exports = {
                     title = `${truncatedTitle} (...)`;
                 }
 
-                return { name: title, value: `[View Manga](${urlFormats.primary.replace('{id}', id).replace('{title}', '')})` };
+                return { name: title, value: `[View Title](${urlFormats.mangadex.primary.replace('{id}', id).replace('{title}', '')})` };
             }).filter(Boolean);
 
             const menu = new StringSelectMenuBuilder()
@@ -157,18 +166,18 @@ module.exports = {
         }
 
         const mangaID = id || await parseURL(url, 'mangadex');
-        if (!(await checkID(mangaID, 'mangadex'))) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.invalid_id');
+        if (!(await checkID(mangaID, 'mangadex'))) return sendErrorEmbed(interaction, translations, locale, embed, 'invalid_id');
 
         const [manga, stats] = await Promise.all([getTitleDetails(mangaID, 'mangadex'), getTitleStats(mangaID, 'mangadex')]);
-        if (!manga || !stats) return sendErrorEmbed(interaction, client, locale, embed, 'manga.response.error.description.invalid_id');
+        if (!manga || !stats) return sendErrorEmbed(interaction, translations, locale, embed, 'invalid_id');
 
-        buildMangaEmbed(embed, locale, manga, stats, translations);
+        buildTitleEmbed(embed, locale, manga, stats, translations, 'mangadex');
         const attachments = await setImages(manga, embed, translations);
 
         const buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setLabel(translations.button.open)
-                .setURL(urlFormats.primary.replace('{id}', manga.id).replace('{title}', ''))
+                .setURL(urlFormats.mangadex.primary.replace('{id}', manga.id).replace('{title}', ''))
                 .setStyle(ButtonStyle.Link),
             new ButtonBuilder()
                 .setLabel(translations.button.stats)
@@ -177,69 +186,9 @@ module.exports = {
                 .setEmoji('📊')
         );
 
-        if (interaction.type === 3) return interaction.reply({ embeds: [embed], files: attachments, components: [buttons] });
+        if (interaction.type === InteractionType.MessageComponent) return interaction.reply({ embeds: [embed], files: attachments, components: [buttons] });
         return interaction.editReply({ embeds: [embed], files: attachments, components: [buttons] });
     }
-}
-
-/**
- * Sends an error embed message in response to an interaction.
- *
- * @param {Object} interaction - The interaction object from Discord.
- * @param {Object} client - The client instance for interacting with Discord API.
- * @param {string} locale - The locale string for translation.
- * @param {Object} embed - The embed object to be modified and sent.
- * @param {string} errorKey - The key for the error message to be translated.
- * @returns {Promise<Object>} - A promise that resolves to the edited interaction reply.
- */
-async function sendErrorEmbed(interaction, client, locale, embed, errorKey) {
-    embed.setTitle(await client.translate(locale, 'commands', 'manga.response.error.title'))
-        .setDescription(await client.translate(locale, 'commands', errorKey))
-        .setColor(Colors.Red);
-
-    // If it's an autocomplete interaction (selection menu), the error came from the API (probably a timeout), so API error message is sent instead
-    if (interaction.type === 3) {
-        embed.setDescription(await client.translate(locale, 'commands', 'manga.response.error.description.api'));
-        return interaction.reply({ embeds: [embed] });
-    }
-    return interaction.editReply({ embeds: [embed] });
-}
-
-/**
- * Builds an embed for a manga using the provided information.
- *
- * @param {Object} embed - The embed object to be built.
- * @param {string} locale - The locale string for translations.
- * @param {Object} manga - The manga object containing manga details.
- * @param {Object} stats - The stats object containing manga statistics.
- * @param {Object} translations - The translations object containing translated strings.
- */
-function buildMangaEmbed(embed, locale, manga, stats, translations) {
-    const title = getLocalizedTitle(manga, 'mangadex', locale);
-    let description = getLocalizedDescription(manga, 'mangadex', locale) || translations.embed.error.no_description;
-
-    // Temporary fix: Truncate the description if it's too long
-    if (description.length > 4096) {
-        const truncatedDescription = description.slice(0, 4000).split(' ').slice(0, -1).join(' ');
-        description = `${truncatedDescription} (...)`;
-    }
-
-    const fields = [
-        { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
-        { name: translations.embed.fields.follows, value: `${stats.follows}`, inline: true },
-        { name: translations.embed.fields.year, value: `${manga.attributes.year}`, inline: true },
-        { name: translations.embed.fields.pub_status, value: capitalizeFirstLetter(translations.embed.pub_status[manga.attributes.status]), inline: true },
-        { name: translations.embed.fields.demographic, value: capitalizeFirstLetter(manga.attributes.publicationDemographic || 'N/A'), inline: true },
-        { name: translations.embed.fields.content_rating, value: capitalizeFirstLetter(manga.attributes.contentRating), inline: true }
-    ];
-
-    embed.setTitle(title)
-        .setURL(urlFormats.primary.replace('{id}', manga.id).replace('{title}', ''))
-        .setDescription(description)
-        .addFields(fields)
-        .setColor(Colors.Blurple);
-
-    addMangaTags(manga, embed, translations);
 }
 
 /**
@@ -265,25 +214,4 @@ async function setImages(manga, embed, translations) {
     embed.setThumbnail('attachment://cover.png');
 
     return [mangadexIcon, coverImage];
-}
-
-/**
- * Adds manga tags to the provided embed object.
- *
- * @param {Object} manga - The manga object containing attributes and tags.
- * @param {Object} embed - The embed object to which the fields will be added.
- * @param {Object} translations - The translations object containing translated strings.
- */
-function addMangaTags(manga, embed, translations) {
-    const groups = getTitleTags(manga, 'mangadex');
-    if (!groups) return;
-
-    const fields = [
-        { name: translations.embed.fields.format, value: groups.format, inline: true },
-        { name: translations.embed.fields.genres, value: groups.genre, inline: true },
-        { name: translations.embed.fields.themes, value: groups.theme, inline: true },
-        { name: translations.embed.fields.content_warning, value: groups.content, inline: true }
-    ];
-
-    embed.addFields(fields);
 }

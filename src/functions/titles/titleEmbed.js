@@ -79,7 +79,7 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
 
 const sanitizeDescription = (description) => {
     description = description.replace(/<br\s*\/?>/g, '\n'); // Replace <br> tags with newlines
-    description = description.replace(/<[^>]+>/g, ''); // Remove any remaining HTML tags
+    description = description.replace(/<[^>]*?>/g, ''); // Remove any remaining HTML tags (non-greedy, prevents ReDoS)
     description = description.replace(/\n+/g, '\n'); // Normalize multiple newlines to a single newline
     description = description.trim(); // Trim leading and trailing whitespace
     return description;

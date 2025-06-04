@@ -73,9 +73,10 @@ const searchMangaDex = async (query) => {
         const data = await res.json();
         if (data.data?.length === 0) return null;
 
+        /** @type {Map<string, string>} */
         const results = new Map(data.data.map((item) => [item.attributes.title[Object.keys(item.attributes.title)[0]], item.id]));
         return results;
-    } catch {
+        } catch {
         return null;
     };
 };
@@ -111,6 +112,7 @@ const searchNamiComi = async (query, locale) => {
         const data = await res.json();
         if (data.data?.length === 0) return null;
 
+        /** @type {Map<string, string>} */
         const results = new Map(data.data.map((item) => {
             let localizedTitle = item.attributes.title[locale];
             if (!localizedTitle && locale === 'es') localizedTitle = item.attributes.title['es-419'];

@@ -132,8 +132,6 @@ module.exports = {
             const searchResults = await search(query, 'mangadex');
             if (!searchResults) return sendErrorEmbed(interaction, translations, locale, embed, 'no_results');
             const fields = Array.from(searchResults, ([title, id]) => {
-                if (typeof title !== 'string' || typeof id !== 'string') return null;
-
                 return {
                     name: truncateString(title, 256),
                     value: `[View Title](${urlFormats.mangadex.primary.replace('{id}', id).replace('{title}', '')})`

@@ -34,4 +34,12 @@ describe('truncateString', () => {
     it('handles strings with no spaces gracefully', () => {
         expect(truncateString('abcdefghijklmno', 10)).toBe(' (...)');
     });
+
+    it('returns null if str is null', () => {
+        expect(truncateString(null, 10)).toBeNull();
+    });
+
+    it('returns null if str is undefined', () => {
+        expect(truncateString(undefined, 10)).toBeNull();
+    });
 });

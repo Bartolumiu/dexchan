@@ -1,4 +1,5 @@
 const truncateString = (str, maxLength = 100) => {
+    if (str === null || str === undefined) return null;
     if (typeof str !== 'string') {
         throw new TypeError('Input must be a string');
     }

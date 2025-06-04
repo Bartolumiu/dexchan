@@ -10,6 +10,8 @@ const getBanner = require('../../functions/titles/titleBanner');
 const getTitleCreators = require('../../functions/titles/titleCreators');
 const buildTitleEmbed = require('../../functions/titles/titleEmbed');
 const sendErrorEmbed = require('../../functions/titles/errorEmbed');
+const truncateString = require('../../functions/tools/truncateString');
+const setImages = require('../../functions/titles/setImages');
 
 module.exports = {
     global: true,
@@ -140,12 +142,11 @@ module.exports = {
             if (!searchResults) return sendErrorEmbed(interaction, translations, locale, embed, 'no_results');
             const fields = Array.from(searchResults, ([title, id]) => {
                 if (typeof title !== 'string' || typeof id !== 'string') return null;
-                if (title.length > 256) {
-                    const truncatedTitle = title.slice(0, 250).split(' ').slice(0, -1).join(' ');
-                    title = `${truncatedTitle} (...)`;
-                }
 
-                return { name: title, value: `[View Title](${urlFormats.namicomi.shortened.replace('{id}', id)})` };
+                return {
+                    name: truncateString(title, 256),
+                    value: `[View Title](${urlFormats.namicomi.shortened.replace('{id}', id)})`
+                };
             }).filter(Boolean);
 
             const menu = new StringSelectMenuBuilder()
@@ -156,11 +157,10 @@ module.exports = {
 
             let menuOptions = [];
             searchResults.forEach((id, title) => {
-                if (typeof title === 'string' && title.length > 100) {
-                    const truncatedTitle = title.slice(0, 94).split(' ').slice(0, -1).join(' ');
-                    title = `${truncatedTitle} (...)`;
-                };
-                menuOptions.push({ label: title, value: id });
+                menuOptions.push({
+                    label: truncateString(title, 100),
+                    value: id
+                });
             });
             menu.setOptions(menuOptions);
 
@@ -181,7 +181,6 @@ module.exports = {
         if (!title || !stats) return sendErrorEmbed(interaction, translations, locale, embed, 'invalid_id');
 
         buildTitleEmbed(embed, locale, title, stats, translations, 'namicomi');
-        const attachments = await setImages(title, embed, locale);
 
         const buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
@@ -196,42 +195,18 @@ module.exports = {
                 .setEmoji('📊')
         )
 
-        if (interaction.type === InteractionType.MessageComponent) return interaction.reply({ embeds: [embed], files: attachments, components: [buttons] });
-        return interaction.editReply({ embeds: [embed], files: attachments, components: [buttons] });
+        if (interaction.type === InteractionType.MessageComponent) {
+            interaction.reply({
+                embeds: [embed],
+                files: await setImages(title, embed, 'namicomi', { locale }),
+                components: [buttons]
+            });
+        } else {
+            interaction.editReply({
+                embeds: [embed],
+                files: await setImages(title, embed, 'namicomi', { locale }),
+                components: [buttons]
+            });
+        };
     }
-};
-
-/**
- * Sets images for the embed based on the provided title.
- *
- * This function fetches and sets the author icon, cover image, and title banner
- * for the given embed. It returns an array of AttachmentBuilder objects containing
- * the images.
- *
- * @param {Object} title - The title object containing information about the manga.
- * @param {Object} embed - The embed object to set the images on.
- * @param {string} locale - The locale string for fetching localized data.
- * @returns {Promise<Array>} A promise that resolves to an array of AttachmentBuilder objects.
- */
-async function setImages(title, embed, locale) {
-    // NamiComi logo as the author icon
-    const author = getTitleCreators(title, 'namicomi');
-    const namiIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/namicomi.png'), 'namicomi.png');
-    embed.setAuthor({ name: author, iconURL: 'attachment://namicomi.png' });
-
-    // Cover image as the thumbnail
-    const coverBuffer = await getCover(title, 'namicomi', locale);
-    if (!coverBuffer) return [namiIcon];
-
-    const coverImage = new AttachmentBuilder(Buffer.from(coverBuffer), { name: 'cover.png' });
-    embed.setThumbnail('attachment://cover.png');
-
-    // Title banner as the image
-    const bannerBuffer = await getBanner(title, 'namicomi');
-    if (!bannerBuffer) return [namiIcon, coverImage];
-
-    const bannerImage = new AttachmentBuilder(Buffer.from(bannerBuffer), { name: 'banner.png' });
-    embed.setImage('attachment://banner.png');
-
-    return [namiIcon, coverImage, bannerImage];
 };

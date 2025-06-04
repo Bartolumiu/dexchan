@@ -9,6 +9,8 @@ const getCover = require("../../functions/titles/titleCover");
 const getTitleCreators = require("../../functions/titles/titleCreators");
 const buildTitleEmbed = require('../../functions/titles/titleEmbed');
 const sendErrorEmbed = require('../../functions/titles/errorEmbed');
+const truncateString = require('../../functions/tools/truncateString');
+const setImages = require('../../functions/titles/setImages');
 
 module.exports = {
     global: true,
@@ -131,12 +133,11 @@ module.exports = {
             if (!searchResults) return sendErrorEmbed(interaction, translations, locale, embed, 'no_results');
             const fields = Array.from(searchResults, ([title, id]) => {
                 if (typeof title !== 'string' || typeof id !== 'string') return null;
-                if (title.length > 256) {
-                    const truncatedTitle = title.slice(0, 250).split(' ').slice(0, -1).join(' ');
-                    title = `${truncatedTitle} (...)`;
-                }
 
-                return { name: title, value: `[View Title](${urlFormats.mangadex.primary.replace('{id}', id).replace('{title}', '')})` };
+                return {
+                    name: truncateString(title, 256),
+                    value: `[View Title](${urlFormats.mangadex.primary.replace('{id}', id).replace('{title}', '')})`
+                };
             }).filter(Boolean);
 
             const menu = new StringSelectMenuBuilder()
@@ -147,11 +148,10 @@ module.exports = {
 
             let menuOptions = [];
             searchResults.forEach((id, title) => {
-                if (title.length > 100) {
-                    const truncatedTitle = title.slice(0, 94).split(' ').slice(0, -1).join(' ');
-                    title = `${truncatedTitle} (...)`;
-                };
-                menuOptions.push({ label: title, value: id });
+                menuOptions.push({
+                    label: truncateString(title, 100),
+                    value: id
+                });
             });
             menu.setOptions(menuOptions);
 
@@ -172,7 +172,6 @@ module.exports = {
         if (!manga || !stats) return sendErrorEmbed(interaction, translations, locale, embed, 'invalid_id');
 
         buildTitleEmbed(embed, locale, manga, stats, translations, 'mangadex');
-        const attachments = await setImages(manga, embed, translations);
 
         const buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
@@ -186,32 +185,18 @@ module.exports = {
                 .setEmoji('📊')
         );
 
-        if (interaction.type === InteractionType.MessageComponent) return interaction.reply({ embeds: [embed], files: attachments, components: [buttons] });
-        return interaction.editReply({ embeds: [embed], files: attachments, components: [buttons] });
+        if (interaction.type === InteractionType.MessageComponent) {
+            await interaction.reply({
+                embeds: [embed],
+                files: await setImages(manga, embed, 'mangadex', { translations }),
+                components: [buttons]
+            });
+        } else {
+            await interaction.editReply({
+                embeds: [embed],
+                files: await setImages(manga, embed, 'mangadex', { translations }),
+                components: [buttons]
+            });
+        };
     }
-}
-
-/**
- * Sets the images for the given manga embed.
- *
- * @param {Object} manga - The manga object containing manga details.
- * @param {Object} embed - The embed object to set images on.
- * @param {Object} translations - The translations object containing translated strings.
- * @returns {Promise<Array<AttachmentBuilder>>} - A promise that resolves to an array of AttachmentBuilder objects.
- */
-async function setImages(manga, embed, translations) {
-    let authors = getTitleCreators(manga, 'mangadex');
-    if (!authors) authors = translations.embed.error.unknown_author;
-    if (authors.length > 256) authors = translations.embed.error.too_many_authors;
-
-    const mangadexIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/mangadex.png'), 'mangadex.png');
-    embed.setAuthor({ name: authors, iconURL: 'attachment://mangadex.png' })
-
-    const coverBuffer = await getCover(manga, 'mangadex');
-    if (!coverBuffer) return [mangadexIcon];
-
-    const coverImage = new AttachmentBuilder(coverBuffer, { name: 'cover.png' });
-    embed.setThumbnail('attachment://cover.png');
-
-    return [mangadexIcon, coverImage];
-}
+};

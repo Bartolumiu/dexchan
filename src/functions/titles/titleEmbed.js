@@ -4,6 +4,7 @@ const capitalizeFirstLetter = require("../tools/capitalizeFirstLetter");
 const getLocalizedDescription = require("./localizedDescription");
 const getLocalizedTitle = require("./localizedTitle");
 const { urlFormats } = require('../parsers/urlParser');
+const truncateString = require("../tools/truncateString");
 
 const buildTitleEmbed = (embed, locale, title, stats, translations, type) => {
     switch (type) {
@@ -19,11 +20,8 @@ const buildTitleEmbed = (embed, locale, title, stats, translations, type) => {
 const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
     const embedTitle = getLocalizedTitle(title, 'mangadex', locale);
     let embedDescription = getLocalizedDescription(title, 'mangadex', locale) || translations.embed.error.no_description;
-
-    if (embedDescription.length > 4096) {
-        const truncated = embedDescription.slice(0, 4000).split(' ').slice(0, -1).join('...');
-        embedDescription = `${truncated} (...)`;
-    }
+    embedDescription = sanitizeDescription(embedDescription);
+    embedDescription = truncateString(embedDescription, 4096);
 
     const fields = [
         { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
@@ -46,11 +44,8 @@ const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
 const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
     const embedTitle = getLocalizedTitle(title, 'namicomi', locale);
     let embedDescription = getLocalizedDescription(title, 'namicomi', locale) || translations.embed.error.no_description;
-
-    if (embedDescription.length > 4096) {
-        const truncatedDescription = embedDescription.slice(0, 4000).split(' ').slice(0, -1).join('...');
-        embedDescription = `${truncatedDescription} (...)`;
-    }
+    embedDescription = sanitizeDescription(embedDescription);
+    embedDescription = truncateString(embedDescription, 4096);
 
     const fields = [
         { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
@@ -80,6 +75,14 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
             embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.left_to_right });
             break;
     };
+};
+
+const sanitizeDescription = (description) => {
+    description = description.replace(/<br\s*\/?>/g, '\n'); // Replace <br> tags with newlines
+    description = description.replace(/<[^>]+>/g, ''); // Remove any remaining HTML tags
+    description = description.replace(/\n+/g, '\n'); // Normalize multiple newlines to a single newline
+    description = description.trim(); // Trim leading and trailing whitespace
+    return description;
 };
 
 module.exports = buildTitleEmbed;

@@ -17,7 +17,8 @@ const loadFunctions = async (client) => {
         'titleBanner',
         'titleCreators',
         'titleTags',
-        'titleEmbed'
+        'titleEmbed',
+        'setImages'
     ];
 
     const functionFolders = readdirSync('./src/functions');

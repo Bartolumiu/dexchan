@@ -62,6 +62,46 @@ describe('getCover', () => {
             ]
         };
 
+        it('should use es-419 cover if locale is es and no es cover exists', async () => {
+            const title = {
+                id: '789',
+                relationships: [
+                    { type: 'cover_art', attributes: { fileName: 'cover-es-419', locale: 'es-419' } },
+                    { type: 'cover_art', attributes: { fileName: 'cover-en', locale: 'en' } }
+                ]
+            };
+            global.fetch.mockResolvedValue({
+                ok: true,
+                arrayBuffer: () => Promise.resolve(dummyBuffer)
+            });
+            const coverBuffer = await getCover(title, 'namicomi', 'es');
+            expect(global.fetch).toHaveBeenCalledTimes(1);
+            // The URL should contain 'cover-es-419'
+            const calledUrl = global.fetch.mock.calls[0][0].toString();
+            expect(calledUrl).toContain('cover-es-419');
+            expect(coverBuffer).toEqual(Buffer.from(dummyBuffer));
+        });
+
+        it('should use es cover if locale is es-419 and no es-419 cover exists', async () => {
+            const title = {
+                id: '790',
+                relationships: [
+                    { type: 'cover_art', attributes: { fileName: 'cover-es', locale: 'es' } },
+                    { type: 'cover_art', attributes: { fileName: 'cover-en', locale: 'en' } }
+                ]
+            };
+            global.fetch.mockResolvedValue({
+                ok: true,
+                arrayBuffer: () => Promise.resolve(dummyBuffer)
+            });
+            const coverBuffer = await getCover(title, 'namicomi', 'es-419');
+            expect(global.fetch).toHaveBeenCalledTimes(1);
+            // The URL should contain 'cover-es'
+            const calledUrl = global.fetch.mock.calls[0][0].toString();
+            expect(calledUrl).toContain('cover-es');
+            expect(coverBuffer).toEqual(Buffer.from(dummyBuffer));
+        });
+
         it('should return a buffer when fetching a NamiComi cover successfully', async () => {
             // Mock fetch response for successful namicomi cover
             global.fetch.mockResolvedValue({

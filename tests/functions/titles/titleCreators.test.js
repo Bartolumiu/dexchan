@@ -7,6 +7,13 @@ describe('getTitleCreators', () => {
     });
 
     describe('MangaDex', () => {
+        it('should return null if there are no authors or artists', () => {
+            const title = { relationships: [
+                { type: 'organization', attributes: { name: 'Org' } }
+            ] };
+            const result = getTitleCreators(title, 'mangadex');
+            expect(result).toBeNull();
+        });
         it('should return a comma-separated list of authors and artists', () => {
             const title = {
                 relationships: [

@@ -26,7 +26,7 @@ const getTitleCreators = (title, type) => {
  */
 const getMangaDexCreators = (title) => {
     const creatorsAndArtists = Array.from(new Set(title.relationships.filter(rel => rel.type === 'author' || rel.type === 'artist').map(rel => rel.attributes.name))).join(', ');
-    return creatorsAndArtists;
+    return creatorsAndArtists.length === 0 ? null : creatorsAndArtists;
 }
 
 /**

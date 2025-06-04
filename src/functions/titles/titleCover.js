@@ -1,5 +1,12 @@
 const getVersion = require('../tools/getVersion');
 
+const LOCALE_MAP = {
+    'en-US': 'en',
+    'en-GB': 'en',
+    'es-ES': 'es',
+    'es-419': 'es'
+}
+
 const USER_AGENT = `Dex-chan/${getVersion()} by Bartolumiu`;
 const URL_FORMATS = {
     mangadex: 'https://mangadex.org/covers/',
@@ -44,9 +51,11 @@ const buildURL = (title, type, locale = null) => {
             return new URL(`${URL_FORMATS.mangadex}${id}/${coverName}.512.jpg`);
         }
         case 'namicomi': {
+            locale = LOCALE_MAP[locale] || locale; // Normalize locale
             const id = title.id;
             const covers = title.relationships.filter(rel => rel.type === 'cover_art');
             let coverName = covers.find(rel => rel.attributes.locale === locale)?.attributes?.fileName;
+            if (!coverName && locale === 'es') coverName = covers.find(rel => rel.attributes.locale === 'es-419')?.attributes?.fileName; // Fallback for Spanish
             if (!coverName && covers.length > 0) coverName = covers[0]?.attributes?.fileName;
             if (!coverName) return null;
             return new URL(`${URL_FORMATS.namicomi}${id}/${coverName}.512.jpg`);

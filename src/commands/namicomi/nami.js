@@ -1,13 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder, InteractionType } = require('discord.js');
 const { translateAttribute } = require('../../functions/handlers/handleLocales');
 const search = require('../../functions/titles/titleSearch');
-const path = require('path');
 const { parseURL, checkID, urlFormats } = require('../../functions/parsers/urlParser');
 const getTitleDetails = require('../../functions/titles/titleDetails');
 const getTitleStats = require('../../functions/titles/titleStats');
-const getCover = require('../../functions/titles/titleCover');
-const getBanner = require('../../functions/titles/titleBanner');
-const getTitleCreators = require('../../functions/titles/titleCreators');
 const buildTitleEmbed = require('../../functions/titles/titleEmbed');
 const sendErrorEmbed = require('../../functions/titles/errorEmbed');
 const truncateString = require('../../functions/tools/truncateString');

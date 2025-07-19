@@ -2,7 +2,7 @@ const { EmbedBuilder, Colors } = require("discord.js");
 
 module.exports = {
     data: {
-        customId: /^nami_stats_/,
+        customId: /^namicomi_stats_/,
     },
     async execute(interaction, client) {
         await interaction.deferUpdate();
@@ -29,7 +29,7 @@ module.exports = {
             }
         }
 
-        const match = customId.match(/^nami_stats_(.+)$/);
+        const match = customId.match(/^namicomi_stats_(.+)$/);
         if (!match) return null; // This should never happen even if NamiComi changes their ID format (famous last words, I know)
         const title = match[1];
 

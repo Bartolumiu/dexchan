@@ -227,7 +227,8 @@
                     "title": "Search Results",
                     "description": "Here are the search results for `{query}`.",
                     "fields": {},
-                    "placeholder": "Select a manga to view more information..."
+                    "placeholder": "Select a manga to view more information...",
+                    "view": "View Title"
                 },
                 "stats": {
                     "title": "Manga Stats",
@@ -359,6 +360,15 @@
                         },
                         "other_tags": {
                             "name": "Other Tags"
+                        },
+                        "type": {
+                            "name": "Type",
+                            "value": {
+                                "manga": "Manga",
+                                "long_strip": "Long Strip",
+                                "comic": "Comic",
+                                "novel": "Novel"
+                            }
                         }
                     },
                     "pub_status": {

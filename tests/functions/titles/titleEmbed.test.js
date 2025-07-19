@@ -1,4 +1,4 @@
-const { Colors, EmbedBuilder } = require('discord.js');
+const { Colors, ButtonBuilder } = require('discord.js');
 const buildTitleEmbed = require('../../../src/functions/titles/titleEmbed');
 const getLocalizedTitle = require('../../../src/functions/titles/localizedTitle');
 const getLocalizedDescription = require('../../../src/functions/titles/localizedDescription');
@@ -259,10 +259,25 @@ describe('buildTitleEmbed', () => {
                     content_rating: {
                         name: 'Content Rating',
                         value: { safe: 'Safe' }
+                    },
+                    type: {
+                        name: 'Type',
+                        value: { manga: 'Manga', novel: 'Novel', manhwa: 'Long Strip', comic: 'Comic' }
                     }
                 }
+            },
+            button: {
+                open: 'View Title'
             }
         };
+        
+        ButtonBuilder.prototype.setLabel = jest.fn().mockReturnThis();
+        ButtonBuilder.prototype.setURL = jest.fn().mockReturnThis();
+        ButtonBuilder.prototype.setStyle = jest.fn().mockReturnThis();
+        ButtonBuilder.prototype.setCustomId = jest.fn().mockReturnThis();
+        ButtonBuilder.prototype.setEmoji = jest.fn().mockReturnThis();
+        ButtonBuilder.prototype.setDisabled = jest.fn().mockReturnThis();
+
         getLocalizedTitle.mockReset();
         getLocalizedDescription.mockReset();
     });

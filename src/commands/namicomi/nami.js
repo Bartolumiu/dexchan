@@ -1,13 +1,13 @@
-const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder, InteractionType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, InteractionType } = require('discord.js');
 const { translateAttribute } = require('../../functions/handlers/handleLocales');
 const search = require('../../functions/titles/titleSearch');
-const { parseURL, checkID, urlFormats } = require('../../functions/parsers/urlParser');
+const { parseURL, checkID } = require('../../functions/parsers/urlParser');
 const getTitleDetails = require('../../functions/titles/titleDetails');
 const getTitleStats = require('../../functions/titles/titleStats');
 const buildTitleEmbed = require('../../functions/titles/titleEmbed');
 const sendErrorEmbed = require('../../functions/titles/errorEmbed');
-const truncateString = require('../../functions/tools/truncateString');
 const setImages = require('../../functions/titles/setImages');
+const buildTitleListEmbed = require('../../functions/titles/titleListEmbed');
 
 module.exports = {
     global: true,
@@ -93,7 +93,18 @@ module.exports = {
                     genres: await client.translate(locale, 'commands', 'nami.response.found.fields.genres.name'),
                     themes: await client.translate(locale, 'commands', 'nami.response.found.fields.themes.name'),
                     content_warning: await client.translate(locale, 'commands', 'nami.response.found.fields.content_warning.name'),
-                    other_tags: await client.translate(locale, 'commands', 'nami.response.found.fields.other_tags.name')
+                    other_tags: await client.translate(locale, 'commands', 'nami.response.found.fields.other_tags.name'),
+
+                    type: {
+                        name: await client.translate(locale, 'commands', 'nami.response.found.fields.type.name'),
+                        value: {
+                            manga: await client.translate(locale, 'commands', 'nami.response.found.fields.type.value.manga'),
+                            manhwa: await client.translate(locale, 'commands', 'nami.response.found.fields.type.value.long_strip'),
+                            manwha: await client.translate(locale, 'commands', 'nami.response.found.fields.type.value.long_strip'), // Note: 'manwha' is intentionally duplicated to match the original code until it's fixed on NamiComi's side
+                            comic: await client.translate(locale, 'commands', 'nami.response.found.fields.type.value.comic'),
+                            novel: await client.translate(locale, 'commands', 'nami.response.found.fields.type.value.novel')
+                        }
+                    }
                 },
                 query: {
                     title: await client.translate(locale, 'commands', 'nami.response.query.title'),
@@ -131,63 +142,23 @@ module.exports = {
         const id = interaction.options.getString('id');
         const url = interaction.options.getString('url');
 
-        if (!query && !id && !url) return sendErrorEmbed(interaction, translations, locale, embed, 'empty');
+        if (!query && !id && !url) return sendErrorEmbed(interaction, translations, embed, 'empty');
 
         if (query) {
             const searchResults = await search(query, 'namicomi', locale);
-            if (!searchResults) return sendErrorEmbed(interaction, translations, locale, embed, 'no_results');
-            const fields = Array.from(searchResults, ([title, id]) => {
-                return {
-                    name: truncateString(title, 256),
-                    value: `[View Title](${urlFormats.namicomi.shortened.replace('{id}', id)})`
-                };
-            }).filter(Boolean);
-
-            const menu = new StringSelectMenuBuilder()
-                .setCustomId('nami_select')
-                .setPlaceholder(translations.menu.placeholder)
-                .setMinValues(1)
-                .setMaxValues(1);
-
-            let menuOptions = [];
-            searchResults.forEach((id, title) => {
-                menuOptions.push({
-                    label: truncateString(title, 100),
-                    value: id
-                });
-            });
-            menu.setOptions(menuOptions);
-
-            const row = new ActionRowBuilder().addComponents(menu);
-
-            embed.setTitle(translations.embed.query.title)
-                .setDescription(translations.embed.query.description)
-                .addFields(fields)
-                .setColor(Colors.Blurple);
+            if (!searchResults) return sendErrorEmbed(interaction, translations, embed, 'no_results');
+            const row = buildTitleListEmbed(embed, translations, searchResults, 'namicomi');
 
             return interaction.editReply({ embeds: [embed], components: [row] });
         }
 
         const titleID = id || await parseURL(url, 'namicomi');
-        if (!(await checkID(titleID, 'namicomi'))) return sendErrorEmbed(interaction, translations, locale, embed, 'invalid_id');
+        if (!(await checkID(titleID, 'namicomi'))) return sendErrorEmbed(interaction, translations, embed, 'invalid_id');
 
         const [title, stats] = await Promise.all([getTitleDetails(titleID, 'namicomi'), getTitleStats(titleID, 'namicomi')]);
-        if (!title || !stats) return sendErrorEmbed(interaction, translations, locale, embed, 'invalid_id');
+        if (!title || !stats) return sendErrorEmbed(interaction, translations, embed, 'invalid_id');
 
-        buildTitleEmbed(embed, locale, title, stats, translations, 'namicomi');
-
-        const buttons = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-                .setLabel(translations.button.open)
-                .setURL(urlFormats.namicomi.shortened.replace('{id}', title.id))
-                .setStyle(ButtonStyle.Link),
-            new ButtonBuilder()
-                .setLabel(translations.button.stats)
-                .setCustomId(`nami_stats_${title.id}`)
-                .setStyle(ButtonStyle.Secondary)
-                .setDisabled(false)
-                .setEmoji('📊')
-        )
+        const buttons = buildTitleEmbed(embed, locale, title, stats, translations, 'namicomi');
 
         if (interaction.type === InteractionType.MessageComponent) {
             interaction.reply({

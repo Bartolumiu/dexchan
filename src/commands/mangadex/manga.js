@@ -1,13 +1,13 @@
-const { SlashCommandBuilder, EmbedBuilder, Colors, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle, ButtonBuilder, InteractionType } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, InteractionType } = require("discord.js");
 const { translateAttribute } = require('../../functions/handlers/handleLocales');
 const search = require('../../functions/titles/titleSearch');
 const getTitleDetails = require('../../functions/titles/titleDetails');
 const getTitleStats = require('../../functions/titles/titleStats');
-const { parseURL, checkID, urlFormats } = require('../../functions/parsers/urlParser');
+const { parseURL, checkID } = require('../../functions/parsers/urlParser');
 const buildTitleEmbed = require('../../functions/titles/titleEmbed');
 const sendErrorEmbed = require('../../functions/titles/errorEmbed');
-const truncateString = require('../../functions/tools/truncateString');
 const setImages = require('../../functions/titles/setImages');
+const buildTitleListEmbed = require("../../functions/titles/titleListEmbed");
 
 module.exports = {
     global: true,
@@ -88,7 +88,8 @@ module.exports = {
                 },
                 query: {
                     title: await client.translate(locale, 'commands', 'manga.response.query.title'),
-                    description: await client.translate(locale, 'commands', 'manga.response.query.description', { query: interaction.options.getString('query') })
+                    description: await client.translate(locale, 'commands', 'manga.response.query.description', { query: interaction.options.getString('query') }),
+                    view: await client.translate(locale, 'commands', 'manga.response.query.view')
                 },
                 error: {
                     title: await client.translate(locale, 'commands', 'manga.response.error.title'),
@@ -123,62 +124,23 @@ module.exports = {
         const id = interaction.options.getString('id');
         const url = interaction.options.getString('url');
 
-        if (!query && !id && !url) return sendErrorEmbed(interaction, translations, locale, embed, 'empty');
+        if (!query && !id && !url) return sendErrorEmbed(interaction, translations, embed, 'empty');
 
         if (query) {
             const searchResults = await search(query, 'mangadex');
-            if (!searchResults) return sendErrorEmbed(interaction, translations, locale, embed, 'no_results');
-            const fields = Array.from(searchResults, ([title, id]) => {
-                return {
-                    name: truncateString(title, 256),
-                    value: `[View Title](${urlFormats.mangadex.primary.replace('{id}', id).replace('{title}', '')})`
-                };
-            }).filter(Boolean);
-
-            const menu = new StringSelectMenuBuilder()
-                .setCustomId('manga_select')
-                .setPlaceholder(translations.menu.placeholder)
-                .setMinValues(1)
-                .setMaxValues(1);
-
-            let menuOptions = [];
-            searchResults.forEach((id, title) => {
-                menuOptions.push({
-                    label: truncateString(title, 100),
-                    value: id
-                });
-            });
-            menu.setOptions(menuOptions);
-
-            const row = new ActionRowBuilder().addComponents(menu);
-
-            embed.setTitle(translations.embed.query.title)
-                .setDescription(translations.embed.query.description)
-                .addFields(fields)
-                .setColor(Colors.Blurple);
+            if (!searchResults) return sendErrorEmbed(interaction, translations, embed, 'no_results');
+            const row = buildTitleListEmbed(embed, translations, searchResults, 'mangadex');
 
             return interaction.editReply({ embeds: [embed], components: [row] });
         }
 
         const mangaID = id || await parseURL(url, 'mangadex');
-        if (!(await checkID(mangaID, 'mangadex'))) return sendErrorEmbed(interaction, translations, locale, embed, 'invalid_id');
+        if (!(await checkID(mangaID, 'mangadex'))) return sendErrorEmbed(interaction, translations, embed, 'invalid_id');
 
         const [manga, stats] = await Promise.all([getTitleDetails(mangaID, 'mangadex'), getTitleStats(mangaID, 'mangadex')]);
-        if (!manga || !stats) return sendErrorEmbed(interaction, translations, locale, embed, 'invalid_id');
+        if (!manga || !stats) return sendErrorEmbed(interaction, translations, embed, 'invalid_id');
 
-        buildTitleEmbed(embed, locale, manga, stats, translations, 'mangadex');
-
-        const buttons = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-                .setLabel(translations.button.open)
-                .setURL(urlFormats.mangadex.primary.replace('{id}', manga.id).replace('{title}', ''))
-                .setStyle(ButtonStyle.Link),
-            new ButtonBuilder()
-                .setLabel(translations.button.stats)
-                .setCustomId(`mangadex_stats_${manga.id}`)
-                .setStyle(ButtonStyle.Secondary)
-                .setEmoji('📊')
-        );
+        const buttons = buildTitleEmbed(embed, locale, manga, stats, translations, 'mangadex');
 
         if (interaction.type === InteractionType.MessageComponent) {
             await interaction.reply({

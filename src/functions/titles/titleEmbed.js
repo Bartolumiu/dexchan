@@ -1,4 +1,4 @@
-const { Colors } = require("discord.js");
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors } = require("discord.js");
 const { addTitleTags } = require("./titleTags");
 const capitalizeFirstLetter = require("../tools/capitalizeFirstLetter");
 const getLocalizedDescription = require("./localizedDescription");
@@ -39,6 +39,18 @@ const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
         .setColor(Colors.Blurple);
 
     addTitleTags(title, embed, translations, 'mangadex');
+
+    return new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setLabel(translations.button.open)
+            .setURL(urlFormats.mangadex.primary.replace('{id}', title.id).replace('{title}', ''))
+            .setStyle(ButtonStyle.Link),
+        new ButtonBuilder()
+            .setLabel(translations.button.stats)
+            .setCustomId(`mangadex_stats_${title.id}`)
+            .setStyle(ButtonStyle.Secondary)
+            .setEmoji('📊')
+    );
 };
 
 const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
@@ -53,7 +65,8 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
         { name: translations.embed.fields.year, value: `${title.attributes.year}`, inline: true },
         { name: translations.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.embed.fields.pub_status.value[title.attributes.publicationStatus] || title.attributes.publicationStatus}`), inline: true },
         { name: translations.embed.fields.demographic.name, value: title.attributes.demographic ? capitalizeFirstLetter(`${translations.embed.fields.demographic.value[title.attributes.demographic] || title.attributes.demographic}`) : 'N/A', inline: true },
-        { name: translations.embed.fields.content_rating.name, value: capitalizeFirstLetter(`${translations.embed.fields.content_rating.value[title.attributes.contentRating] || title.attributes.contentRating}`), inline: true }
+        { name: translations.embed.fields.content_rating.name, value: capitalizeFirstLetter(`${translations.embed.fields.content_rating.value[title.attributes.contentRating] || title.attributes.contentRating}`), inline: true },
+        { name: translations.embed.fields.type.name, value: capitalizeFirstLetter(`${translations.embed.fields.type.value[title.attributes.type] || title.attributes.type}`), inline: true }
     ];
 
     embed.setTitle(embedTitle)
@@ -75,6 +88,18 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
             embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.left_to_right });
             break;
     };
+
+    return new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setLabel(translations.button.open)
+            .setURL(urlFormats.namicomi.shortened.replace('{id}', title.id))
+            .setStyle(ButtonStyle.Link),
+        new ButtonBuilder()
+            .setLabel(translations.button.stats)
+            .setCustomId(`namicomi_stats_${title.id}`)
+            .setStyle(ButtonStyle.Secondary)
+            .setEmoji('📊')
+    )
 };
 
 const sanitizeDescription = (description) => {

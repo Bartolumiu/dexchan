@@ -101,15 +101,19 @@ async function getLocaleList(interaction) {
         const localeData = require(__dirname+`/../../i18n/locales/${locale}.json`);
         return {
             name: `${localeData.locale.name} (${localeData.locale.code})`,
-            value: localeData.locale.code
+            value: localeData.locale.code,
+            enabled: localeData.locale.enabled
         }
     });
 
-    // Filter locales based on the user's input
+    // Filter locales based on the user's input and return only enabled locales
     if (interaction.options.getString('locale')) {
         const input = interaction.options.getString('locale').toLowerCase();
-        return localeList.filter(locale => locale.name.toLowerCase().includes(input) || locale.value.toLowerCase().includes(input));
-    } else return localeList;
+        return localeList.filter(locale => {
+            const filtered = locale.name.toLowerCase().includes(input) || locale.value.toLowerCase().includes(input);
+            return filtered && locale.enabled;
+        });
+    } else return localeList.filter(locale => locale.enabled);
 }
 
 /**
@@ -148,8 +152,8 @@ async function localeSettings(interaction, client, userProfile, embed) {
 
                 userProfile.preferredLocale = locale; // Set the user's preferred locale
                 await userProfile.save();
-                embed.setTitle(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.success'));
-                embed.setDescription(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.success', { locale: locale }));
+                embed.setTitle(await client.translate(locale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.success'));
+                embed.setDescription(await client.translate(locale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.success', { locale: locale }));
                 embed.setColor(Colors.Green);
             } catch {
                 embed.setTitle(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error.unknown'));

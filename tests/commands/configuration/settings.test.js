@@ -695,7 +695,7 @@ describe('settings command', () => {
 
             await settingsCommand.autocomplete(interaction);
             const autocompletion = interaction.respond.mock.calls[0][0];
-            expect(autocompletion).toEqual([{ name: 'English (en)', value: 'en' }]);
+            expect(autocompletion).toEqual([{ name: 'English (en)', value: 'en', enabled: true }]);
         });
 
         it('should return the locale list if the user input is empty', async () => {
@@ -712,7 +712,7 @@ describe('settings command', () => {
 
             await settingsCommand.autocomplete(interaction);
             const autocompletion = interaction.respond.mock.calls[0][0];
-            expect(autocompletion).toContainEqual({ name: 'English (en)', value: 'en' });
+            expect(autocompletion).toContainEqual({ name: 'English (en)', value: 'en', enabled: true });
         });
 
         it('should not return any suggestions if the subcommand is not set or subcommand group is not locale', async () => {

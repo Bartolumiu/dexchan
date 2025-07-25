@@ -39,7 +39,7 @@ describe('generateTemplate()', () => {
         expect(parsed).toEqual({
             foo: 'bar',
             bar: 123,
-            locale: { name: '', english: '', code: '' }
+            locale: { enabled: false, name: '', englishName: '', code: '' }
         });
         expect(json.endsWith('\n')).toBe(true);
 

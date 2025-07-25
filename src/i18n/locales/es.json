@@ -1,7 +1,8 @@
 {
     "locale": {
+        "enabled": true,
         "name": "Español",
-        "english": "Spanish",
+        "englishName": "Spanish",
         "code": "es"
     },
     "commands": {

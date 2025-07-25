@@ -12,8 +12,9 @@ const generateTemplate = async ({ cwd }) => {
     }
 
     raw.locale = {
+        enabled: false,
         name: '',
-        english: '',
+        englishName: '',
         code: ''
     };
 

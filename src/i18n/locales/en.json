@@ -1,7 +1,8 @@
 {
     "locale": {
+        "enabled": true,
         "name": "English",
-        "english": "English",
+        "englishName": "English",
         "code": "en"
     },
     "commands": {

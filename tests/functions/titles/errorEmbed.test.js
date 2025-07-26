@@ -25,6 +25,12 @@ describe('sendErrorEmbed', () => {
         };
     });
 
+    it('should return early if embed is null', async () => {
+        embed = null;
+        await sendErrorEmbed(interaction, translations, embed, 'test');
+        expect(embed).toBeNull();
+    })
+
     it('should call editReply for normal interaction', async () => {
         interaction = {
             type: 4, // Not InteractionType.MessageComponent

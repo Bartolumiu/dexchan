@@ -43,10 +43,8 @@ describe('Ready Event', () => {
         await execute(client);
 
         expect(getChalk).toHaveBeenCalled();
-        expect(mockGreenBright).toHaveBeenCalledWith(`[Discord] Ready as ${client.user.tag}`);
-        expect(mockGreenBright).toHaveBeenCalledWith(`[Discord] Version: ${client.version}`);
         expect(mockBlueBright).toHaveBeenCalledWith('[GitHub] Checking for updates...');
-        expect(consoleLogSpy).toHaveBeenCalledTimes(4);
+        expect(consoleLogSpy).toHaveBeenCalledTimes(2);
         expect(client.pickPresence).toHaveBeenCalledTimes(1);
     });
 
@@ -72,10 +70,8 @@ describe('Ready Event', () => {
 
         expect(getChalk).toHaveBeenCalled();
         expect(mockBlueBright).toHaveBeenCalledWith('[GitHub] Checking for updates...');
-        expect(mockGreenBright).toHaveBeenCalledWith(`[Discord] Ready as ${client.user.tag}`);
-        expect(mockGreenBright).toHaveBeenCalledWith(`[Discord] Version: ${client.version}`);
         expect(mockYellowBright).toHaveBeenCalledWith('[GitHub] The bot is outdated! Current version: 0.0.0, Latest version: 0.0.1');
-        expect(consoleLogSpy).toHaveBeenCalledTimes(4);
+        expect(consoleLogSpy).toHaveBeenCalledTimes(2);
         expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -99,8 +95,6 @@ describe('Ready Event', () => {
 
         expect(getChalk).toHaveBeenCalled();
         expect(mockBlueBright).toHaveBeenCalledWith('[GitHub] Checking for updates...');
-        expect(mockGreenBright).toHaveBeenCalledWith(`[Discord] Ready as ${client.user.tag}`);
-        expect(mockGreenBright).toHaveBeenCalledWith(`[Discord] Version: ${client.version}`);
-        expect(consoleLogSpy).toHaveBeenCalledTimes(3);
+        expect(consoleLogSpy).toHaveBeenCalledTimes(1);
     });
 });

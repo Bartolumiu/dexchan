@@ -103,6 +103,9 @@ module.exports = {
                     too_many_authors: await client.translate(locale, 'commands', 'manga.response.found.author.too_many'),
                     unknown_author: await client.translate(locale, 'commands', 'manga.response.found.author.unknown')
                 },
+                units: {
+                    votes: await client.translate(locale, 'commands', 'manga.response.stats.units.votes')
+                },
                 footer: await client.translate(locale, 'commands', 'manga.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username })
             },
             menu: {

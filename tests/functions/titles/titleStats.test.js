@@ -47,12 +47,21 @@ describe('getTitleStats', () => {
         it('should return statistics when both fetch calls are successful', async () => {
             const ratingsResponse = {
                 ok: true,
-                json: async () => ({ data: { attributes: { rating: 4.5 } } })
+                json: async () => ({ data: { attributes: { rating: 4.5, count: 0 } } })
             };
             const statsResponse = {
                 ok: true,
                 json: async () => ({
-                    data: { attributes: { commentCount: 3, followCount: 150, viewCount: 3000 } }
+                    data: { attributes: { 
+                        commentCount: 3, 
+                        followCount: 150, 
+                        viewCount: 3000,
+                        extra: {
+                            totalChapterViews: { en: 10, ja: 5 },
+                            totalChapterComments: { en: 2, ja: 3 },
+                            totalChapterReactions: { en: 1, ja: 4 }
+                        }
+                    } }
                 })
             };
             // First call resolves to ratingsResponse, second to statsResponse
@@ -62,14 +71,22 @@ describe('getTitleStats', () => {
         
             const result = await getTitleStats('456', 'namicomi');
             expect(result).toEqual({
-                comments: { threadId: null, repliesCount: 3 },
-                rating: {
-                    average: 0,
-                    bayesian: 4.5,
-                    distribution: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                title: {
+                    comments: { threadId: null, repliesCount: 3 },
+                    rating: {
+                        average: 0,
+                        bayesian: 4.5,
+                        distribution: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        count: 0
+                    },
+                    follows: 150,
+                    views: 3000
                 },
-                follows: 150,
-                views: 3000
+                chapters: {
+                    views: 15,  // 10 + 5
+                    comments: 5,  // 2 + 3
+                    reactions: 5  // 1 + 4
+                }
             });
             expect(global.fetch).toHaveBeenCalledTimes(2);
         });

@@ -114,17 +114,25 @@ const getNamiComiStats = async (id) => {
             statsRes.json()
         ]);
         return {
-            comments: {
-                threadId: null,
-                repliesCount: statsData.data.attributes.commentCount,
+            title: {
+                comments: {
+                    threadId: null,
+                    repliesCount: statsData.data.attributes.commentCount,
+                },
+                rating: {
+                    average: 0,
+                    bayesian: ratingsData.data.attributes.rating,
+                    distribution: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    count: ratingsData.data.attributes.count
+                },
+                follows: statsData.data.attributes.followCount,
+                views: statsData.data.attributes.viewCount
             },
-            rating: {
-                average: 0,
-                bayesian: ratingsData.data.attributes.rating,
-                distribution: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            },
-            follows: statsData.data.attributes.followCount,
-            views: statsData.data.attributes.viewCount
+            chapters: {
+                views: Object.values(statsData.data.attributes.extra.totalChapterViews).reduce((total, count) => total + count, 0),
+                comments: Object.values(statsData.data.attributes.extra.totalChapterComments).reduce((total, count) => total + count, 0),
+                reactions: Object.values(statsData.data.attributes.extra.totalChapterReactions).reduce((total, count) => total + count, 0)
+            }
         };
     } catch {
         return null;

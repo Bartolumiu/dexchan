@@ -24,7 +24,7 @@ const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
     embedDescription = truncateString(embedDescription, 4096);
 
     const fields = [
-        { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
+        { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}/10.00`, inline: true },
         { name: translations.embed.fields.follows, value: `${stats.follows}`, inline: true },
         { name: translations.embed.fields.year, value: `${title.attributes.year}`, inline: true },
         { name: translations.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.embed.fields.pub_status.value[title.attributes.status] || title.attributes.status}`), inline: true },
@@ -60,8 +60,8 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
     embedDescription = truncateString(embedDescription, 4096);
 
     const fields = [
-        { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}`, inline: true },
-        { name: translations.embed.fields.follows, value: `${stats.follows}`, inline: true },
+        { name: translations.embed.fields.rating, value: `${stats.title.rating.bayesian.toFixed(2)}/5.00`, inline: true },
+        { name: translations.embed.fields.follows, value: `${stats.title.follows}`, inline: true },
         { name: translations.embed.fields.year, value: `${title.attributes.year}`, inline: true },
         { name: translations.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.embed.fields.pub_status.value[title.attributes.publicationStatus] || title.attributes.publicationStatus}`), inline: true },
         { name: translations.embed.fields.demographic.name, value: title.attributes.demographic ? capitalizeFirstLetter(`${translations.embed.fields.demographic.value[title.attributes.demographic] || title.attributes.demographic}`) : 'N/A', inline: true },

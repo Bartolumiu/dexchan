@@ -109,6 +109,7 @@ module.exports = {
                 query: {
                     title: await client.translate(locale, 'commands', 'nami.response.query.title'),
                     description: await client.translate(locale, 'commands', 'nami.response.query.description', { query: interaction.options.getString('query') }),
+                    view: await client.translate(locale, 'commands', 'nami.response.query.view')
                 },
                 error: {
                     title: await client.translate(locale, 'commands', 'nami.response.error.title'),

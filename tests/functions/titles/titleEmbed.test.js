@@ -49,8 +49,10 @@ describe('buildTitleEmbed', () => {
             relationships: []
         };
         const stats = {
-            rating: { bayesian: 8.8 },
-            follows: 88
+            title: {
+                rating: { bayesian: 8.8 },
+                follows: 88
+            }
         };
         translations.embed.fields.reading_mode = {
             name: 'Reading Mode',
@@ -78,8 +80,10 @@ describe('buildTitleEmbed', () => {
             relationships: []
         };
         const stats = {
-            rating: { bayesian: 3.3 },
-            follows: 33
+            title: {
+                rating: { bayesian: 3.3 },
+                follows: 33
+            }
         };
         translations.embed.fields.reading_mode = {
             name: 'Reading Mode',
@@ -167,8 +171,10 @@ describe('buildTitleEmbed', () => {
             relationships: []
         };
         const stats = {
-            rating: { bayesian: 4.2 },
-            follows: 1
+            title: {
+                rating: { bayesian: 4.2 },
+                follows: 1
+            }
         };
         // Remove translation values
         translations.embed.fields.pub_status.value = {};
@@ -210,8 +216,10 @@ describe('buildTitleEmbed', () => {
             ]
         };
         const stats = {
-            rating: { bayesian: 6.5 },
-            follows: 123
+            title: {
+                rating: { bayesian: 6.5 },
+                follows: 123
+            }
         };
         translations.embed.fields.reading_mode = {
             name: 'Reading Mode',
@@ -370,8 +378,10 @@ describe('buildTitleEmbed', () => {
             ]
         };
         const stats = {
-            rating: { bayesian: 6.5 },
-            follows: 123
+            title: {
+                rating: { bayesian: 6.5 },
+                follows: 123
+            }
         };
         // Add reading_mode translations for full coverage
         translations.embed.fields.reading_mode = {
@@ -418,8 +428,10 @@ describe('buildTitleEmbed', () => {
             ]
         };
         const stats = {
-            rating: { bayesian: 6.5 },
-            follows: 123
+            title: {
+                rating: { bayesian: 6.5 },
+                follows: 123
+            }
         };
         translations.embed.fields.reading_mode = {
             name: 'Reading Mode',

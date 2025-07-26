@@ -1,4 +1,5 @@
 const { Colors, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const getTitleStats = require("../../functions/titles/titleStats");
 
 module.exports = {
     data: {
@@ -41,11 +42,9 @@ module.exports = {
         if (!match) return null; // This should never happen even if MangaDex changes their ID format (famous last words, I know)
         const title = match[1];
 
-        const statsURL = `https://api.mangadex.org/statistics/manga/${title}`;
-        const stats = await fetch(statsURL).then(async (res) => await res.json());
+        const stats = await getTitleStats(title, 'mangadex');
 
-        // Check if the API returned an error
-        if (stats.result === 'error') {
+        if (!stats) {
             const embed = new EmbedBuilder()
                 .setTitle(translations.error.title)
                 .setDescription(translations.error.description)
@@ -55,14 +54,13 @@ module.exports = {
         }
 
         // Format the statistics data
-        const statsData = stats.statistics[title] || {};
-        const ratingData = statsData.rating || {};
+        const ratingData = stats.rating || {};
         const distribution = ratingData.distribution || {};
-        const distributionString = Object.entries(distribution).reverse().filter(([rating, count]) => count > 0).map(([rating, count]) => `${rating}/10: ${count}`).join('\n') || 'N/A';
         const totalVotes = Object.values(distribution).reduce((total, count) => total + count, 0) || 0;
+        const distributionString = Object.entries(distribution).reverse().filter(([, count]) => count > 0).map(([rating, count]) => `${rating}/10: \`${count}\` · (${(count / totalVotes * 100).toFixed(2)}%)`).join('\n') || 'N/A';
         const averageRating = ratingData.average?.toFixed(2) || 0.00;
         const bayesianRating = ratingData.bayesian?.toFixed(2) || 0.00;
-        const follows = statsData.follows || 0;
+        const follows = stats.follows || 0;
 
 
         // Create an embed with the statistics data
@@ -74,17 +72,17 @@ module.exports = {
                 { name: translations.embed.fields.bayesian, value: `${bayesianRating}/10.00`, inline: true },
                 { name: translations.embed.fields.follows, value: `${follows}`, inline: true },
                 { name: translations.embed.fields.distribution, value: distributionString, inline: true },
-                { name: translations.embed.fields.comments, value: `${statsData.comments?.repliesCount || 0}`, inline: true }
+                { name: translations.embed.fields.comments, value: `${stats.comments?.repliesCount || 0}`, inline: true }
             )
             .setColor(Colors.Blurple)
             .setFooter({ text: translations.embed.footer, iconURL: client.user.avatarURL({ dynamic: true }) });
 
             const buttons = new ActionRowBuilder();
-            if (statsData.comments?.threadId) {
+            if (stats.comments?.threadId) {
                 buttons.addComponents(
                     new ButtonBuilder()
                         .setLabel(translations.buttons.forum.open)
-                        .setURL(`https://forums.mangadex.org/threads/${statsData.comments.threadId}`)
+                        .setURL(`https://forums.mangadex.org/threads/${stats.comments.threadId}`)
                         .setStyle(ButtonStyle.Link)
                 );
             } else {

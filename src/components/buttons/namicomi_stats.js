@@ -1,4 +1,5 @@
 const { EmbedBuilder, Colors } = require("discord.js");
+const getTitleStats = require("../../functions/titles/titleStats");
 
 module.exports = {
     data: {
@@ -33,26 +34,16 @@ module.exports = {
         if (!match) return null; // This should never happen even if NamiComi changes their ID format (famous last words, I know)
         const title = match[1];
 
-        const ratingURL = `https://api.namicomi.com/title/${title}/rating`;
-        const statsURL = `https://api.namicomi.com/statistics/title/${title}`;
-
-        // Get both the rating and statistics of the title
-        const [rating, stats] = await Promise.all([
-            fetch(ratingURL).then(async (res) => await res.json()),
-            fetch(statsURL).then(async (res) => await res.json())
-        ]);
-
-        // Check if the API returned an error
-        if (rating.result === 'error' || stats.result === 'error') {
-            return interaction.editReply({ content: 'An error occurred while fetching the data.', ephemeral: true });
+        const stats = await getTitleStats(title, 'namicomi');
+        
+        if (!stats) {
+            const embed = new EmbedBuilder()
+                .setTitle(translations.embed.title)
+                .setDescription(translations.embed.description)
+                .setFooter({ text: translations.embed.footer, iconURL: client.user.avatarURL({ dynamic: true }) })
+                .setColor(Colors.Red);
+            return interaction.followUp({ embeds: [embed], ephemeral: true });
         }
-
-        // Format the rating and statistics data
-        const ratingData = rating.data.attributes;
-        const statsData = stats.data.attributes;
-        const chapterViewCounts = Object.values(statsData.extra.totalChapterViews).reduce((total, count) => total + count, 0);
-        const chapterCommentCounts = Object.values(statsData.extra.totalChapterComments).reduce((total, count) => total + count, 0);
-        const chapterReactionCounts = Object.values(statsData.extra.totalChapterReactions).reduce((total, count) => total + count, 0);
 
         // Create an embed with the rating and statistics data
         const embed = new EmbedBuilder()
@@ -61,37 +52,37 @@ module.exports = {
             .addFields(
                 {
                     name: translations.embed.fields.rating,
-                    value: `${ratingData.rating.toFixed(2)}/5.00 (${ratingData.count} ${translations.embed.units.votes})`,
+                    value: `${stats.title.rating.bayesian.toFixed(2)}/5.00 (${stats.title.rating.count} ${translations.embed.units.votes})`,
                     inline: true
                 },
                 {
                     name: translations.embed.fields.views,
-                    value: `${statsData.viewCount}`,
+                    value: `${stats.title.views}`,
                     inline: true
                 },
                 {
                     name: translations.embed.fields.follows,
-                    value: `${statsData.followCount}`,
+                    value: `${stats.title.follows}`,
                     inline: true
                 },
                 {
                     name: translations.embed.fields.comments,
-                    value: `${statsData.commentCount}`,
+                    value: `${stats.title.comments.repliesCount}`,
                     inline: true
                 },
                 {
                     name: translations.embed.fields.chapterViews,
-                    value: `${chapterViewCounts}`,
+                    value: `${stats.chapters.views}`,
                     inline: true
                 },
                 {
                     name: translations.embed.fields.chapterComments,
-                    value: `${chapterCommentCounts}`,
+                    value: `${stats.chapters.comments}`,
                     inline: true
                 },
                 {
                     name: translations.embed.fields.chapterReactions,
-                    value: `${chapterReactionCounts}`,
+                    value: `${stats.chapters.reactions}`,
                     inline: true
                 }
             )

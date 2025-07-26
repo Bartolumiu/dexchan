@@ -140,11 +140,11 @@
     },
     "manga": {
       "name": "manga",
-      "description": "Search for a manga on MangaDex.",
+      "description": "Search for a title on MangaDex.",
       "subcommands": {
         "random": {
           "name": "random",
-          "description": "Get a random manga",
+          "description": "Get a random title",
           "subcommands": {},
           "options": {}
         }
@@ -152,15 +152,15 @@
       "options": {
         "query": {
           "name": "query",
-          "description": "The manga you want to search for"
+          "description": "The title you want to search for"
         },
         "id": {
           "name": "id",
-          "description": "The ID of the manga you want to search for"
+          "description": "The ID of the title you want to search for"
         },
         "url": {
           "name": "url",
-          "description": "The URL of the manga you want to search for"
+          "description": "The URL of the title you want to search for"
         }
       },
       "response": {
@@ -228,12 +228,12 @@
           "title": "Search Results",
           "description": "Here are the search results for `{query}`.",
           "fields": {},
-          "placeholder": "Select a manga to view more information...",
-          "view": "View Title"
+          "placeholder": "Select a title to view more information...",
+          "view": "View Title on MangaDex"
         },
         "stats": {
-          "title": "Manga Stats",
-          "description": "Here are the stats for the manga with ID `{mangaId}`.",
+          "title": "Title Stats",
+          "description": "Here are the stats for the title with ID `{mangaId}`.",
           "fields": {
             "average": {
               "name": "Average Rating"
@@ -268,7 +268,7 @@
             "url": "The provided URL is invalid.",
             "invalid_id": "The provided ID is invalid.",
             "no_results": "The query returned no results. That's all we know.",
-            "api": "Couldn't fetch manga data from the external API.\nPlease try again later.",
+            "api": "Couldn't fetch title data from the external API.\nPlease try again later.",
             "empty": "Please provide either a query, ID, or URL."
           }
         },
@@ -386,7 +386,8 @@
           "title": "Search Results",
           "description": "Here are the search results for `{query}`.",
           "fields": {},
-          "placeholder": "Select a title to view more information."
+          "placeholder": "Select a title to view more information.",
+          "view": "View Title on NamiComi"
         },
         "stats": {
           "title": "Title Stats",

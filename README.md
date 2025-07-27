@@ -18,6 +18,8 @@
     <a href="https://github.com/Bartolumiu/dexchan/issues">Report Bug</a>
     ·
     <a href="https://github.com/Bartolumiu/dexchan/issues">Request Feature</a>
+    ·
+    <a href="https://weblate.tr25.es/engage/dexchan/">Translate Dex-chan</a>
   </p>
 </p>
 

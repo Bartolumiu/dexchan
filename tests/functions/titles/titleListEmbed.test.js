@@ -76,8 +76,8 @@ describe('buildTitleListEmbed', () => {
             expect(embed.setDescription).toHaveBeenCalledWith('Embed Description');
             expect(embed.setColor).toHaveBeenCalledWith(Colors.Blurple);
             const expectedFields = [
-                { name: 'RE: united', value: `[View](${urlFormats.namicomi.primary.replace('{id}', 'fQNjpmyE').replace('{title}', '')})` },
-                { name: 'Magical Girl Chronicles', value: `[View](${urlFormats.namicomi.primary.replace('{id}', 'XNcxN7JA').replace('{title}', '')})` }
+                { name: 'RE: united', value: `[View](${urlFormats.namicomi.shortened.replace('{id}', 'fQNjpmyE').replace('{title}', '')})` },
+                { name: 'Magical Girl Chronicles', value: `[View](${urlFormats.namicomi.shortened.replace('{id}', 'XNcxN7JA').replace('{title}', '')})` }
             ];
             expect(embed.addFields).toHaveBeenCalledWith(expectedFields);
 

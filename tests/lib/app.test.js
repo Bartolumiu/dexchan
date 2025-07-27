@@ -13,7 +13,14 @@ jest.mock('discord.js', () => ({
                 tag: 'Dex-chan#0000'
             },
             login: jest.fn().mockResolvedValue(),
-            on: jest.fn()
+            on: jest.fn(),
+            handleEvents: jest.fn(),
+            handleCommands: jest.fn(),
+            handleComponents: jest.fn(),
+            handleLocales: jest.fn(),
+            guilds: {
+                fetch: jest.fn()
+            }
         };
     }),
     Collection: jest.fn().mockImplementation(() => new Map())
@@ -87,14 +94,13 @@ describe('app.js - Application Module', () => {
         });
     });
 
-    describe('connectServices', () => {
+    describe('connectDB', () => {
         it('should connect to database successfully', async () => {
             const mongoose = require('mongoose');
             const dbToken = 'mongodb://test-connection';
-            const token = 'discord-token';
 
-            await app.connectServices(token, dbToken);
-
+            
+            await app.connectDB(dbToken);
             expect(mongoose.connect).toHaveBeenCalledWith(dbToken);
         });
     });
@@ -165,7 +171,7 @@ describe('app.js - Application Module', () => {
         it('should export all required functions', () => {
             expect(typeof app.createClient).toBe('function');
             expect(typeof app.loadApplicationHandlers).toBe('function');
-            expect(typeof app.connectServices).toBe('function');
+            expect(typeof app.connectDB).toBe('function');
             expect(typeof app.logMessage).toBe('function');
             expect(typeof app.logError).toBe('function');
             expect(typeof app.initializeApplication).toBe('function');

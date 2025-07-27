@@ -32,11 +32,10 @@ async function loadApplicationHandlers(client) {
 }
 
 /**
- * Connects to Discord and MongoDB
- * @param {string} token - Discord bot token
+ * Connects to MongoDB
  * @param {string} dbToken - MongoDB connection string
  */
-async function connectServices(token, dbToken) {
+async function connectDB(dbToken) {
     await connect(dbToken);
 }
 
@@ -82,15 +81,23 @@ async function initializeApplication({ token, dbToken }) {
     // Load all handlers and functions
     await loadApplicationHandlers(client);
     
-    // Connect to services
-    await connectServices(token, dbToken);
+    // Initialize all the handlers that set up the client's capabilities
+    await client.handleEvents();
+    await client.handleCommands();
+    await client.handleComponents();
+    await client.handleLocales();
+    
+    // Connect to Discord first
+    await logMessage('Logging in...');
     await client.login(token);
+    
+    // Then connect to MongoDB
+    await connectDB(dbToken);
+    
+    // Cache all guilds
+    client.guilds.fetch();
 
     await logMessage(`✅ Ready as ${client.user.tag}! Logged in and connected to MongoDB.`);
-
-    // Check for updates
-    const readyEvent = require('../events/client/ready');
-    client.on(readyEvent.name, readyEvent.execute.bind(null, client));
 
     return client;
 }
@@ -98,7 +105,7 @@ async function initializeApplication({ token, dbToken }) {
 module.exports = {
     createClient,
     loadApplicationHandlers,
-    connectServices,
+    connectDB,
     logMessage,
     logError,
     initializeApplication

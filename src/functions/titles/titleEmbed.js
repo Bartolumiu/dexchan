@@ -1,4 +1,4 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors } = require("discord.js");
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder } = require("discord.js");
 const { addTitleTags } = require("./titleTags");
 const capitalizeFirstLetter = require("../tools/capitalizeFirstLetter");
 const getLocalizedDescription = require("./localizedDescription");
@@ -6,6 +6,16 @@ const getLocalizedTitle = require("./localizedTitle");
 const { urlFormats } = require('../parsers/urlParser');
 const truncateString = require("../tools/truncateString");
 
+/**
+ * Builds the title embed for a specific type.
+ * @param {EmbedBuilder} embed Embed to build
+ * @param {string} locale Locale for the embed
+ * @param {Object} title Title data
+ * @param {Object} stats Statistics data
+ * @param {Object} translations Translations data
+ * @param {string} type Type of the embed
+ * @returns {ActionRowBuilder|null} Action row with buttons or null if type is unsupported
+ */
 const buildTitleEmbed = (embed, locale, title, stats, translations, type) => {
     switch (type) {
         case 'mangadex':
@@ -13,10 +23,19 @@ const buildTitleEmbed = (embed, locale, title, stats, translations, type) => {
         case 'namicomi':
             return buildNamiComiEmbed(embed, locale, title, stats, translations);
         default:
-            throw new Error('Unsupported type');
+            return null;
     }
 }
 
+/**
+ * Builds the MangaDex embed.
+ * @param {EmbedBuilder} embed Embed to build
+ * @param {string} locale Locale for the embed
+ * @param {Object} title Title data
+ * @param {Object} stats Statistics data
+ * @param {Object} translations Translations data
+ * @returns {ActionRowBuilder} Action row with buttons
+ */
 const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
     const embedTitle = getLocalizedTitle(title, 'mangadex', locale);
     let embedDescription = getLocalizedDescription(title, 'mangadex', locale) || translations.embed.error.no_description;
@@ -53,6 +72,15 @@ const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
     );
 };
 
+/**
+ * Builds the NamiComi embed.
+ * @param {EmbedBuilder} embed Embed to build
+ * @param {string} locale Locale for the embed
+ * @param {Object} title Title data
+ * @param {Object} stats Statistics data
+ * @param {Object} translations Translations data
+ * @returns {ActionRowBuilder} Action row with buttons
+ */
 const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
     const embedTitle = getLocalizedTitle(title, 'namicomi', locale);
     let embedDescription = getLocalizedDescription(title, 'namicomi', locale) || translations.embed.error.no_description;
@@ -102,11 +130,47 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
     )
 };
 
+/**
+ * Sanitizes the description by removing unwanted HTML tags and content.
+ * @param {string} description The description to sanitize
+ * @returns {string|null} The sanitized description or null if invalid
+ */
 const sanitizeDescription = (description) => {
-    description = description.replace(/<br\s*\/?>/g, '\n'); // Replace <br> tags with newlines
-    description = description.replace(/<[\w/!][^<>]*?>/g, ''); // Remove any remaining HTML tags (non-greedy, prevents ReDoS)
-    description = description.replace(/\n+/g, '\n'); // Normalize multiple newlines to a single newline
+    if (!description || typeof description !== 'string') {
+        return null;
+    }
+    
+    // First pass: Replace <br> tags with a placeholder to preserve line breaks
+    description = description.replace(/<br\s*\/?>/gi, '|||LINEBREAK|||');
+    
+    // Second pass: Remove all HTML tags and their content for dangerous tags
+    // Remove script, style, and other potentially dangerous tags with their content
+    description = description.replace(/<(script|style|object|embed|applet|iframe)[^>]*>[\s\S]*?<\/\1>/gi, '');
+    
+    // Remove remaining HTML tags (opening, closing, self-closing, comments)
+    description = description.replace(/<[^>]*>/g, '');
+    
+    // Third pass: Handle HTML entities more carefully
+    // Only decode safe, common entities - avoid decoding < > which could recreate tags
+    description = description
+        .replace(/&amp;/g, '&')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&apos;/g, "'")
+        .replace(/&nbsp;/g, ' ');
+    
+    // Fourth pass: Remove or neutralize potentially dangerous content
+    // Remove javascript: protocols and other suspicious patterns
+    description = description.replace(/javascript:/gi, '');
+    description = description.replace(/data:/gi, '');
+    description = description.replace(/vbscript:/gi, '');
+    
+    // Fifth pass: Restore line breaks and normalize whitespace
+    description = description.replace(/\|\|\|LINEBREAK\|\|\|/g, '\n');
+    description = description.replace(/\n+/g, '\n'); // Normalize multiple newlines
+    description = description.replace(/[ \t]+/g, ' '); // Normalize spaces and tabs (but preserve newlines)
     description = description.trim(); // Trim leading and trailing whitespace
+    
     return description;
 };
 

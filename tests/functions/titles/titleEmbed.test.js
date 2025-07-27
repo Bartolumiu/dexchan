@@ -448,9 +448,80 @@ describe('buildTitleEmbed', () => {
         expect(embed.setDescription).toHaveBeenCalledWith(expect.stringContaining('(...)'));
     });
 
-    it('should throw for unknown type', () => {
+    it('should return null for unknown type', () => {
         const title = { id: 'x', attributes: { title: { en: 'X' } } };
         const stats = {};
-        expect(() => buildTitleEmbed(embed, locale, title, stats, translations, 'unknown')).toThrow('Unsupported type');
+        const result = buildTitleEmbed(embed, locale, title, stats, translations, 'unknown');
+        expect(result).toBeNull();
+    });
+
+    it('should handle null/undefined description gracefully', () => {
+        const title = {
+            id: 'test-null',
+            attributes: {
+                title: { en: 'Test Title' },
+                year: 2024,
+                status: 'ongoing',
+                publicationDemographic: 'shounen',
+                contentRating: 'safe',
+                tags: []
+            }
+        };
+        const stats = {
+            rating: { bayesian: 8.0 },
+            follows: 100
+        };
+        
+        getLocalizedTitle.mockReturnValue('Test Title');
+        getLocalizedDescription.mockReturnValue(null); // Test null case
+        
+        expect(() => buildTitleEmbed(embed, locale, title, stats, translations, 'mangadex')).not.toThrow();
+        
+        getLocalizedDescription.mockReturnValue(undefined); // Test undefined case
+        expect(() => buildTitleEmbed(embed, locale, title, stats, translations, 'mangadex')).not.toThrow();
+    });
+
+    it('should handle non-string inputs in sanitizeDescription', () => {
+        // We need to access sanitizeDescription directly, but it's not exported
+        // So we'll test it through the main function by bypassing the fallback
+        const title = {
+            id: 'test-nonstring',
+            attributes: {
+                title: { en: 'Test Title' },
+                year: 2024,
+                status: 'ongoing',
+                publicationDemographic: 'shounen',
+                contentRating: 'safe',
+                tags: []
+            }
+        };
+        const stats = {
+            rating: { bayesian: 8.0 },
+            follows: 100
+        };
+        
+        // Mock translations to have a non-string fallback
+        const testTranslations = {
+            ...translations,
+            embed: {
+                ...translations.embed,
+                error: {
+                    no_description: 123 // Non-string value
+                }
+            }
+        };
+        
+        getLocalizedTitle.mockReturnValue('Test Title');
+        getLocalizedDescription.mockReturnValue(null); // This will trigger the fallback
+        
+        // This should handle the non-string fallback gracefully
+        expect(() => buildTitleEmbed(embed, locale, title, stats, testTranslations, 'mangadex')).not.toThrow();
+        
+        // Test with different non-string types
+        testTranslations.embed.error.no_description = false;
+        expect(() => buildTitleEmbed(embed, locale, title, stats, testTranslations, 'mangadex')).not.toThrow();
+        
+        testTranslations.embed.error.no_description = [];
+        expect(() => buildTitleEmbed(embed, locale, title, stats, testTranslations, 'mangadex')).not.toThrow();
     });
 });

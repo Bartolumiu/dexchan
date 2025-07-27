@@ -167,7 +167,7 @@
         "found": {
           "author": {
             "too_many": "Multiple Authors",
-            "error": "Unknown Author"
+            "unknown": "Unknown Author"
           },
           "fields": {
             "rating": {
@@ -298,7 +298,7 @@
         "found": {
           "author": {
             "too_many": "Multiple Authors",
-            "error": "Unknown Author"
+            "unknown": "Unknown Author"
           },
           "fields": {
             "rating": {

@@ -1,23 +1,40 @@
-const { AttachmentBuilder } = require("discord.js");
+const { AttachmentBuilder, EmbedBuilder } = require("discord.js");
 const getTitleCreators = require("./titleCreators");
 const getCover = require("./titleCover");
 const getBanner = require("./titleBanner");
 const path = require("path");
 
-const setImages = async (title, embed, type, { translations = null, locale = null }) => {
+/**
+ * Sets the images for the embed based on the title and type.
+ * @param {Object} title - The title object containing the necessary data.
+ * @param {EmbedBuilder} embed - The embed object to modify.
+ * @param {string} type - The type of title, either 'mangadex' or 'namicomi'.
+ * @param {Object} translations - The translations object for error messages.
+ * @param {string|null} [locale=null] - The locale to use for fetching the cover image.
+ * @returns {Promise<Array<AttachmentBuilder>>} A promise that resolves to an array of attachment builders containing the images or an empty array if the type is unsupported.
+ * If the type is unsupported, it returns an empty array immediately.
+ */
+const setImages = async (title, embed, type, translations, locale = null) => {
     switch (type) {
         case 'mangadex':
             return await setMangaDexImages(title, embed, translations);
         case 'namicomi':
-            return await setNamiComiImages(title, embed, locale);
+            return await setNamiComiImages(title, embed, translations, locale);
         default:
-            throw new Error('Unsupported type');
+            return []; // Unsupported type, return empty array
     }
 }
 
+/**
+ * Sets the MangaDex images for the embed.
+ * @param {Object} title - The title object containing the necessary data.
+ * @param {Object} embed - The embed object to modify.
+ * @param {Object} translations - The translations object for error messages.
+ * @returns {Promise<Array<AttachmentBuilder>>} A promise that resolves to an array of attachment builders.
+ */
 const setMangaDexImages = async (title, embed, translations) => {
     let authors = getTitleCreators(title, 'mangadex');
-    if (!authors) authors = translations.embed.error.no_authors;
+    if (!authors) authors = translations.embed.error.unknown_author;
     if (authors.length > 256) authors = translations.embed.error.too_many_authors;
 
     const mdIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/mangadex.png'), 'mangadex.png');
@@ -32,8 +49,19 @@ const setMangaDexImages = async (title, embed, translations) => {
     return [mdIcon, coverImage];
 };
 
-const setNamiComiImages = async (title, embed, locale) => {
-    const author = getTitleCreators(title, 'namicomi');
+/**
+ * Sets the NamiComi images for the embed.
+ * @param {Object} title - The title object containing the necessary data.
+ * @param {Object} embed - The embed object to modify.
+ * @param {Object} translations - The translations object for error messages.
+ * @param {string} locale - The locale to use for fetching the cover image.
+ * @returns {Promise<Array<AttachmentBuilder>>} A promise that resolves to an array of attachment builders.
+ */
+const setNamiComiImages = async (title, embed, translations, locale) => {
+    let author = getTitleCreators(title, 'namicomi');
+    if (!author) author = translations.embed.error.unknown_author;
+    if (author.length > 256) author = translations.embed.error.too_many_authors;
+
     const ncIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/namicomi.png'), 'namicomi.png');
     embed.setAuthor({ name: author, iconURL: 'attachment://namicomi.png' });
 

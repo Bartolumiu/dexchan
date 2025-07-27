@@ -148,13 +148,13 @@ module.exports = {
         if (interaction.type === InteractionType.MessageComponent) {
             await interaction.reply({
                 embeds: [embed],
-                files: await setImages(manga, embed, 'mangadex', { translations }),
+                files: await setImages(manga, embed, 'mangadex', translations),
                 components: [buttons]
             });
         } else {
             await interaction.editReply({
                 embeds: [embed],
-                files: await setImages(manga, embed, 'mangadex', { translations }),
+                files: await setImages(manga, embed, 'mangadex', translations),
                 components: [buttons]
             });
         };

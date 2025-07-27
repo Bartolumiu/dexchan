@@ -120,7 +120,8 @@ module.exports = {
                         api: await client.translate(locale, 'commands', 'nami.response.error.description.api')
                     },
                     no_description: await client.translate(locale, 'commands', 'nami.response.found.no_description'),
-                    too_many_authors: await client.translate(locale, 'commands', 'nami.response.found.author.too_many')
+                    too_many_authors: await client.translate(locale, 'commands', 'nami.response.found.author.too_many'),
+                    unknown_author: await client.translate(locale, 'commands', 'nami.response.found.author.unknown')
                 },
                 footer: await client.translate(locale, 'commands', 'nami.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username }),
             },
@@ -164,13 +165,13 @@ module.exports = {
         if (interaction.type === InteractionType.MessageComponent) {
             interaction.reply({
                 embeds: [embed],
-                files: await setImages(title, embed, 'namicomi', { locale }),
+                files: await setImages(title, embed, 'namicomi', translations, locale),
                 components: [buttons]
             });
         } else {
             interaction.editReply({
                 embeds: [embed],
-                files: await setImages(title, embed, 'namicomi', { locale }),
+                files: await setImages(title, embed, 'namicomi', translations, locale),
                 components: [buttons]
             });
         };

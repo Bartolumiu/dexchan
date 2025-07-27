@@ -165,8 +165,9 @@ describe('getTitleTags', () => {
 
     describe('unsupported type', () => {
         const sampleTitle = {};
-        it("should throw an error for unsupported type", () => {
-            expect(() => getTitleTags(sampleTitle, 'unsupported')).toThrow('Unsupported type');
+        it("should return null for unsupported type", () => {
+            const result = getTitleTags(sampleTitle, 'unsupported');
+            expect(result).toBeNull();
         });
     });
 });
@@ -245,7 +246,8 @@ describe('addTitleTags', () => {
         });
     });
 
-    it('should throw for unsupported type', () => {
-        expect(() => addTitleTags({}, embed, translations, 'unsupported')).toThrow('Unsupported type');
+    it('should return nothing for unsupported type', () => {
+        const result = addTitleTags({}, embed, translations, 'unsupported');
+        expect(result).toBeUndefined();
     });
 })

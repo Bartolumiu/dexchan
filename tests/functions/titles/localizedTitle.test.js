@@ -107,7 +107,7 @@ describe('getLocalizedTitle', () => {
     });
 
     describe('unsupported type', () => {
-        it('should return undefined for an unsupported title type', () => {
+        it('should return null for an unsupported title type', () => {
             const title = {
                 attributes: {
                     title: {
@@ -116,7 +116,7 @@ describe('getLocalizedTitle', () => {
                 }
             };
             const result = getLocalizedTitle(title, 'unsupported', 'en');
-            expect(result).toBeUndefined();
+            expect(result).toBeNull();
         });
     });
 });

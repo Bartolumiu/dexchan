@@ -20,9 +20,10 @@ describe('buildTitleListEmbed', () => {
         };
     });
 
-    it('should throw error for unsupported type', () => {
+    it('should return null for unsupported type', () => {
         const titles = new Map();
-        expect(() => buildTitleListEmbed(embed, translations, titles, 'unsupported')).toThrow('Unsupported type');
+        const result = buildTitleListEmbed(embed, translations, titles, 'unsupported');
+        expect(result).toBeNull();
     });
 
     describe('MangaDex', () => {

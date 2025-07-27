@@ -1,8 +1,15 @@
-const { ActionRowBuilder, Colors, StringSelectMenuBuilder } = require("discord.js");
+const { ActionRowBuilder, Colors, EmbedBuilder, StringSelectMenuBuilder } = require("discord.js");
 const { urlFormats } = require("../parsers/urlParser");
 const truncateString = require("../tools/truncateString");
-const { EmbedBuilder } = require("discord.js");
 
+/**
+ * Builds the title list embed.
+ * @param {EmbedBuilder} embed - The embed object to build.
+ * @param {Object} translations - Translations for the embed.
+ * @param {Map<string, string>} titles - Map of titles and their IDs.
+ * @param {string} type - The type of the embed.
+ * @returns {ActionRowBuilder|null} The action row containing the select menu or null if type is unsupported.
+ */
 const buildTitleListEmbed = (embed, translations, titles, type) => {
     switch (type) {
         case 'mangadex':
@@ -10,7 +17,7 @@ const buildTitleListEmbed = (embed, translations, titles, type) => {
         case 'namicomi':
             return buildNamiComiTitleListEmbed(embed, translations, titles);
         default:
-            throw new Error('Unsupported type');
+            return null; // Unsupported type
     }
 }
 

@@ -1,6 +1,10 @@
 const { readdirSync } = require('fs');
 const getChalk = require('../tools/getChalk');
 
+/**
+ * Loads all functions from the functions directory.
+ * @param {Object} client - The Discord client instance.
+ */
 const loadFunctions = async (client) => {
     const chalk = await getChalk();
     console.log(chalk.blueBright('[Function Loader] Loading functions...'));
@@ -32,6 +36,15 @@ const loadFunctions = async (client) => {
     }
 };
 
+/**
+ * Loads a single function from the specified folder and file.
+ * @param {Object} client - The Discord client instance.
+ * @param {string} folder - The folder containing the function file.
+ * @param {string} file - The function file to load.
+ * @param {Array<string>} skipCheck - An array of function names to skip.
+ * @param {Object} chalk - The chalk instance for logging.
+ * @returns {Promise<void>}
+ */
 const loadFunction = async (client, folder, file, skipCheck, chalk) => {
     try {
         const func = require(`../${folder}/${file}`);

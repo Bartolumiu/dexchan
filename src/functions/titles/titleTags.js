@@ -7,10 +7,9 @@
  * @param {object} title - The title object containing tag data.
  * @param {string} type - The type of title. Supported values are 'mangadex' and 'namicomi'.
  * @param {string} [locale=null] - The locale identifier for localized tag names (only used for 'namicomi').
- * @returns {object} An object containing grouped tag strings. For 'mangadex', keys include theme, genre, content, and format.
- *                   For 'namicomi', keys include content_warning, format, genre, theme, and other.
- *                   If a particular group has no tags, its value will be 'N/A'.
- * @throws {Error} Throws an error if the provided type is unsupported.
+ * @returns {object|null} An object containing grouped tag strings. For 'mangadex', keys include theme, genre, content, and format. 
+ * For 'namicomi', keys include content_warning, format, genre, theme, and other. If a particular group has no tags, its value will be 'N/A'. 
+ * Returns null if the type is unsupported.
  */
 const getTitleTags = (title, type, locale = null) => {
     switch (type) {
@@ -19,7 +18,7 @@ const getTitleTags = (title, type, locale = null) => {
         case 'namicomi':
             return getNamiComiTags(title, locale);
         default:
-            throw new Error('Unsupported type');
+            return null; // Unsupported type
     }
 }
 
@@ -114,7 +113,16 @@ const getNamiComiTags = (title, locale) => {
     return groups;
 }
 
-
+/**
+ * Adds title tags to the embed based on the title type.
+ *
+ * @param {object} title - The title object containing tag data.
+ * @param {object} embed - The embed object to add fields to.
+ * @param {object} translations - The translations object for field names.
+ * @param {string} type - The type of title. Supported values are 'mangadex' and 'namicomi'.
+ * @param {string} locale - The locale to use for tag names.
+ * @returns {void}
+ */
 const addTitleTags = (title, embed, translations, type, locale) => {
     switch (type) {
         case 'mangadex':
@@ -122,10 +130,17 @@ const addTitleTags = (title, embed, translations, type, locale) => {
         case 'namicomi':
             return addNamiComiTags(title, embed, translations, locale);
         default:
-            throw new Error('Unsupported type');
+            return; // Unsupported type
     }
 }
 
+/**
+ * Adds MangaDex-specific tags to the embed.
+ *
+ * @param {object} title - The MangaDex title object.
+ * @param {object} embed - The embed object to add fields to.
+ * @param {object} translations - The translations object for field names.
+ */
 const addMangaDexTags = (title, embed, translations) => {
     const groups = getTitleTags(title, 'mangadex');
     const fields = [
@@ -138,6 +153,14 @@ const addMangaDexTags = (title, embed, translations) => {
     embed.addFields(fields);
 };
 
+/**
+ * Adds NamiComi-specific tags to the embed.
+ *
+ * @param {object} title - The NamiComi title object.
+ * @param {object} embed - The embed object to add fields to.
+ * @param {object} translations - The translations object for field names.
+ * @param {string} locale - The locale to use for tag names.
+ */
 const addNamiComiTags = (title, embed, translations, locale) => {
     const groups = getTitleTags(title, 'namicomi', locale);
     const fields = [

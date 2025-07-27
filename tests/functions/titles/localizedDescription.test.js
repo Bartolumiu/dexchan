@@ -77,9 +77,9 @@ describe('getLocalizedDescription', () => {
         });
     });
 
-    it('should return undefined for an unknown type', () => {
+    it('should return null for an unknown type', () => {
         const title = { attributes: { description: { "en": "English description" } } };
-        expect(getLocalizedDescription(title, 'unknown', 'en')).toBeUndefined();
+        expect(getLocalizedDescription(title, 'unknown', 'en')).toBeNull();
     });
 
     it('should return null if description is missing for both types', () => {

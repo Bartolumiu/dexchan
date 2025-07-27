@@ -13,8 +13,7 @@ const URL_FORMATS = {
  * @function getTitleDetails
  * @param {string|number} id - The ID of the title.
  * @param {string} type - The service to use, either 'mangadex' or 'namicomi'.
- * @returns {Promise<Object|null>} A promise that resolves to the details object if successful, or null if the request fails or an error occurs.
- * @throws {Error} If the type is unsupported.
+ * @returns {Promise<Object|null>} A promise that resolves to the details object if successful, or null if the request fails or an error occurs or the type is unsupported.
  */
 const getTitleDetails = async (id, type) => {
     switch (type) {
@@ -23,7 +22,7 @@ const getTitleDetails = async (id, type) => {
         case 'namicomi':
             return await getNamiComiDetails(id);
         default:
-            throw new Error('Unsupported type');
+            return null; // Unsupported type
     }
 }
 
@@ -32,7 +31,7 @@ const getTitleDetails = async (id, type) => {
  * 
  * @param {string|number} id - The ID of the title.
  * @param {string} type - The type of search, expected to be either 'mangadex' or 'namicomi'.
- * @returns {URL} The constructed URL object with query parameters.
+ * @returns {URL|null} The constructed URL object with query parameters or null if the type is unsupported.
  */
 const buildURL = (id, type) => {
     const url = new URL(URL_FORMATS[type]);

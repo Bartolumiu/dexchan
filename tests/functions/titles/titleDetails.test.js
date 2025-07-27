@@ -9,8 +9,9 @@ describe('getTitleDetails', () => {
         jest.resetAllMocks();
     });
 
-    it('should throw error for unsupported type', async () => {
-        await expect(getTitleDetails('789', 'unsupported')).rejects.toThrow('Unsupported type');
+    it('should return null for unsupported type', async () => {
+        const result = await getTitleDetails('789', 'unsupported');
+        expect(result).toBeNull();
     });
 
     describe('MangaDex', () => {

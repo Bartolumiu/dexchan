@@ -5,8 +5,9 @@ describe('getTitleStats', () => {
         global.fetch = jest.fn();
     });
 
-    it('should throw an error for an unsupported type', async () => {
-        await expect(getTitleStats('789', 'unsupported')).rejects.toThrow('Unsupported type');
+    it('should return null for an unsupported type', async () => {
+        const result = await getTitleStats('789', 'unsupported');
+        expect(result).toBeNull();
     });
 
     describe('MangaDex', () => {

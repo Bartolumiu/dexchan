@@ -19,8 +19,8 @@ const URL_FORMATS = {
  * @param {string} title - The title for which the cover image is requested.
  * @param {string} type - The source type for the cover image. Supported values are "mangadex" and "namicomi".
  * @param {string|null} [locale=null] - The locale used for fetching the cover image, applicable for some types.
- * @returns {Promise<*>} A promise that resolves to the cover image data.
- * @throws {Error} If an unsupported type is provided.
+ * @returns {Promise<Buffer|null>|null} A promise that resolves to the cover image data as a Buffer, or null if the type is unsupported or the cover image cannot be retrieved.
+ * If the type is unsupported, it returns null immediately.
  */
 const getCover = async (title, type, locale = null) => {
     switch (type) {
@@ -29,7 +29,7 @@ const getCover = async (title, type, locale = null) => {
         case 'namicomi':
             return await getNamiComiCover(title, locale);
         default:
-            throw new Error('Unsupported type');
+            return null; // Unsupported type
     }
 }
 

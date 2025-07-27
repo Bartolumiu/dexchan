@@ -19,7 +19,7 @@ const languageMap = {
  * @param {Object} title - The title object containing language-specific title attributes.
  * @param {string} type - The type of title source ("mangadex" or "namicomi").
  * @param {string} locale - The requested locale code.
- * @returns {string|null} The localized title if found; otherwise, null.
+ * @returns {string|null} The localized title if found, or null if not found or the type is unsupported.
  */
 const getLocalizedTitle = (title, type, locale) => {
     locale = languageMap[locale] || locale;
@@ -29,6 +29,8 @@ const getLocalizedTitle = (title, type, locale) => {
             return getMangaDexTitle(title, locale);
         case 'namicomi':
             return getNamiComiTitle(title, locale);
+        default:
+            return null; // Unsupported type
     }
 };
 

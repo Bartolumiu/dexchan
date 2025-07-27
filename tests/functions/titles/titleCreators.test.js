@@ -1,9 +1,10 @@
 const getTitleCreators = require('../../../src/functions/titles/titleCreators');
 
 describe('getTitleCreators', () => {
-    it('should throw an error for unsupported type', () => {
+    it('should return null for unsupported type', () => {
         const title = { relationships: [] };
-        expect(() => getTitleCreators(title, 'unsupported')).toThrow('Unsupported type');
+        const result = getTitleCreators(title, 'unsupported');
+        expect(result).toBeNull();
     });
 
     describe('MangaDex', () => {
@@ -38,6 +39,12 @@ describe('getTitleCreators', () => {
             };
             const result = getTitleCreators(title, 'namicomi');
             expect(result).toBe('Org1, Org2');
+        });
+
+        it('should return null if there are no organizations (impossible case)', () => {
+            const title = { relationships: [] };
+            const result = getTitleCreators(title, 'namicomi');
+            expect(result).toBeNull();
         });
     });
 });

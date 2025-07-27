@@ -13,8 +13,9 @@ describe('getCover', () => {
         jest.clearAllMocks();
     });
 
-    it('should throw an error for unsupported cover types', async () => {
-        await expect(getCover({}, 'unsupported')).rejects.toThrow('Unsupported type');
+    it('should return null for unsupported cover types', async () => {
+        const result = await getCover({}, 'unsupported');
+        expect(result).toBeNull();
     });
 
     describe('MangaDex', () => {

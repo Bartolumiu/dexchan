@@ -20,7 +20,7 @@ const languageMap = {
  * @param {Object.<string, string>} title.attributes.description - Descriptions mapped by locale codes.
  * @param {string} type - The source type of the title ('mangadex' or 'namicomi').
  * @param {string} locale - The locale code (e.g., 'en-US', 'es-ES').
- * @returns {string|null} The localized description if available; otherwise, null.
+ * @returns {string|null} The localized description if available, or null if not found or the type is unsupported.
  */
 const getLocalizedDescription = (title, type, locale) => {
     locale = languageMap[locale] || locale;
@@ -30,6 +30,8 @@ const getLocalizedDescription = (title, type, locale) => {
             return getMangaDexDescription(title, locale);
         case 'namicomi':
             return getNamiComiDescription(title, locale);
+        default:
+            return null; // Unsupported type
     }
 }
 

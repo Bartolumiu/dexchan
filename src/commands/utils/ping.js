@@ -80,6 +80,12 @@ module.exports = {
     }
 };
 
+/**
+ * Gets the ping for a specific API endpoint.
+ * @param {string} url - The API endpoint URL.
+ * @returns {Promise<number>} - The ping time in milliseconds.
+ * @throws {Error} - If the fetch request fails or the response is not OK.
+ */
 const getPing = async (url) => {
     const start = Date.now();
 

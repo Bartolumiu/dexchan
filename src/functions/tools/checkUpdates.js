@@ -66,5 +66,10 @@ module.exports = async function checkUpdates() {
     }
 };
 
+/**
+ * Parses a version part and returns a numeric value.
+ * @param {*} part - The version part to parse.
+ * @returns {number} The parsed version part as a number.
+ */
 const parseVersionPart = (part) => isNaN(parseInt(part)) ? 0 : parseInt(part);
 module.exports.parseVersionPart = parseVersionPart;

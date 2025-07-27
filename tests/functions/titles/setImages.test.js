@@ -2,7 +2,6 @@ const setImages = require('../../../src/functions/titles/setImages');
 const getTitleCreators = require('../../../src/functions/titles/titleCreators');
 const getCover = require('../../../src/functions/titles/titleCover');
 const getBanner = require('../../../src/functions/titles/titleBanner');
-const { AttachmentBuilder } = require('discord.js');
 
 jest.mock('../../../src/functions/titles/titleCreators');
 jest.mock('../../../src/functions/titles/titleCover');
@@ -27,20 +26,20 @@ describe('setImages', () => {
     });
 
     describe('mangadex', () => {
-        it('should use no_authors translation if getTitleCreators returns falsy', async () => {
+        it('should use unknown_author translation if getTitleCreators returns falsy', async () => {
             getTitleCreators.mockReturnValue(null);
             getCover.mockResolvedValue(null);
-            const translations = { embed: { error: { no_authors: 'No authors', too_many_authors: 'Too many authors' } } };
-            const result = await setImages({}, embed, 'mangadex', { translations });
-            expect(embed.setAuthor).toHaveBeenCalledWith({ name: 'No authors', iconURL: 'attachment://mangadex.png' });
+            const translations = { embed: { error: { unknown_author: 'Unknown Author', too_many_authors: 'Too many authors' } } };
+            const result = await setImages({}, embed, 'mangadex', translations);
+            expect(embed.setAuthor).toHaveBeenCalledWith({ name: 'Unknown Author', iconURL: 'attachment://mangadex.png' });
             expect(result[0].data).toContain('mangadex.png');
         });
 
         it('should use too_many_authors translation if getTitleCreators returns a long string', async () => {
             getTitleCreators.mockReturnValue('a'.repeat(300));
             getCover.mockResolvedValue(null);
-            const translations = { embed: { error: { no_authors: 'No authors', too_many_authors: 'Too many authors' } } };
-            const result = await setImages({}, embed, 'mangadex', { translations });
+            const translations = { embed: { error: { unknown_author: 'Unknown Author', too_many_authors: 'Too many authors' } } };
+            const result = await setImages({}, embed, 'mangadex', translations);
             expect(embed.setAuthor).toHaveBeenCalledWith({ name: 'Too many authors', iconURL: 'attachment://mangadex.png' });
             expect(result[0].data).toContain('mangadex.png');
         });
@@ -67,6 +66,25 @@ describe('setImages', () => {
     });
 
     describe('namicomi', () => {
+        it('should use unknown_author translation if getTitleCreators returns falsy', async () => {
+            getTitleCreators.mockReturnValue(null);
+            getCover.mockResolvedValue(null);
+            const translations = { embed: { error: { unknown_author: 'Unknown Author', too_many_authors: 'Too many authors' } } };
+            const result = await setImages({}, embed, 'namicomi', translations);
+            expect(embed.setAuthor).toHaveBeenCalledWith({ name: 'Unknown Author', iconURL: 'attachment://namicomi.png' });
+            expect(result[0].data).toContain('namicomi.png');
+        });
+
+        it('should use too_many_authors translation if getTitleCreators returns a long string', async () => {
+            getTitleCreators.mockReturnValue('a'.repeat(300));
+            getCover.mockResolvedValue(null);
+            const translations = { embed: { error: { unknown_author: 'Unknown Author', too_many_authors: 'Too many authors' } } };
+            const result = await setImages({}, embed, 'namicomi', translations);
+            expect(embed.setAuthor).toHaveBeenCalledWith({ name: 'Too many authors', iconURL: 'attachment://namicomi.png' });
+            expect(result[0].data).toContain('namicomi.png');
+            expect(result.length).toBe(1);
+        });
+
         it('should set author and return only icon if no cover', async () => {
             getTitleCreators.mockReturnValue('Author');
             getCover.mockResolvedValue(null);
@@ -100,7 +118,8 @@ describe('setImages', () => {
         });
     });
 
-    it('should throw for unsupported type', async () => {
-        await expect(setImages({}, {}, 'unsupported', {})).rejects.toThrow('Unsupported type');
+    it('should return an empty array for unsupported type', async () => {
+        const result = await setImages({}, {}, 'unsupported', {});
+        expect(result).toEqual([]);
     });
 });

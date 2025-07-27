@@ -20,6 +20,10 @@ const commandDescriptions = {};
  * @param {*} client - The Discord client instance.
  */
 module.exports = (client) => {
+    /**
+     * Handles the loading of locale files.
+     * @returns {Promise<Object>} - A promise that resolves to the locales object containing all loaded translations.
+     */
     client.handleLocales = async () => {
         await loadLocales(1);
         return locales;
@@ -50,6 +54,10 @@ module.exports = (client) => {
     };
 };
 
+/**
+ * Loads the locale files and populates the locales object.
+ * @param {number} [log=0] - The log level (0 = no log, 1 = log loading).
+ */
 const loadLocales = async (log = 0) => {
     const chalk = await getChalk();
     if (log) console.log(chalk.blueBright('[Locale Handler] Loading locales...'));

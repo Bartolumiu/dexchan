@@ -13,7 +13,7 @@ const search = async (query, type, locale = null) => {
         case 'namicomi':
             return await searchNamiComi(query, locale || 'en');
         default:
-            throw new Error('Unsupported search type');
+            return null; // Unsupported type
     };
 };
 
@@ -22,7 +22,7 @@ const search = async (query, type, locale = null) => {
  *
  * @param {string} query - The search query string.
  * @param {string} type - The type of search, expected to be either 'mangadex' or 'namicomi'.
- * @returns {URL} The constructed URL object with query parameters.
+ * @returns {URL|null} The constructed URL object with query parameters, or null if the type is unsupported.
  */
 const buildURL = (query, type) => {
     const url = new URL(URL_FORMATS[type]);

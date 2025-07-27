@@ -14,8 +14,7 @@ const URL_FORMATS = {
  *
  * @param {(string|number)} id - The title ID to fetch statistics for.
  * @param {string} type - The source type to fetch statistics from. Accepted values are "mangadex" and "namicomi".
- * @returns {Promise<Object|null>} A promise that resolves with the title statistics, or null if an error occurs.
- * @throws {Error} If the provided type is not supported.
+ * @returns {Promise<Object|null>} A promise that resolves with the title statistics, or null if an error occurs or the type is unsupported.
  */
 const getTitleStats = async (id, type) => {
     switch (type) {
@@ -24,7 +23,7 @@ const getTitleStats = async (id, type) => {
         case 'namicomi':
             return await getNamiComiStats(id);
         default:
-            throw new Error('Unsupported type');
+            return null; // Unsupported type
     }
 }
 

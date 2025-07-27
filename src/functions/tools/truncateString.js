@@ -1,3 +1,11 @@
+/**
+ * Truncates a string to a specified maximum length, ensuring it does not cut off words.
+ * If the string exceeds the maximum length, it will be truncated and appended with ' (...)'.
+ * * @param {string} str The string to truncate
+ * @param {number} [maxLength=100] The maximum length of the string, defaults to 100
+ * @returns {string|null} The truncated string or null if input is invalid
+*/
+
 const truncateString = (str, maxLength = 100) => {
     if (str === null || str === undefined) return null;
     if (typeof str !== 'string') {

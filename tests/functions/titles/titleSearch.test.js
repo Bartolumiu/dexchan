@@ -8,8 +8,9 @@ describe('search function', () => {
         jest.resetAllMocks();
     });
 
-    it('should throw an error for unsupported search types', async () => {
-        await expect(search('Test', 'unsupportedType')).rejects.toThrow('Unsupported search type');
+    it('should return null for unsupported search types', async () => {
+        const result = await search('Test', 'unsupportedType');
+        expect(result).toBeNull();
     });
 
     describe('MangaDex', () => {
@@ -169,6 +170,6 @@ describe('search function', () => {
                 expect(result).toBeInstanceOf(Map);
                 expect(result.get('Titre en Français')).toEqual('101112');
             });
-        })
-    })
+        });
+    });
 });

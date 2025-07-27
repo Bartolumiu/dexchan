@@ -1,4 +1,4 @@
-const { EmbedBuilder, Colors } = require('discord.js');
+const { Client, Colors, Collection, EmbedBuilder, Interaction } = require('discord.js');
 const fs = require('fs');
 
 module.exports = {
@@ -45,6 +45,12 @@ module.exports = {
     }
 };
 
+/**
+ * Creates error embed messages for Discord interactions.
+ * @param {Client} client - The Discord client instance.
+ * @param {string} locale - The locale to use for translations.
+ * @returns {Promise<{errorEmbed: EmbedBuilder, errorStack: EmbedBuilder}>}
+ */
 async function createErrorEmbed(client, locale) {
     const errorTitle = await client.translate(locale, 'error_embed', 'title');
     const errorDescription = await client.translate(locale, 'error_embed', 'description');
@@ -61,6 +67,16 @@ async function createErrorEmbed(client, locale) {
     }
 }
 
+/**
+ * Handles interactions from Discord users.
+ * @param {Interaction} interaction - The interaction object from the Discord API.
+ * @param {Collection} collection - The collection of commands, buttons, or select menus.
+ * @param {string} id - The ID of the command or interaction.
+ * @param {string} errorType - The type of error (e.g., 'command', 'button').
+ * @param {Array<EmbedBuilder>} embeds - The array of embed objects to display error messages.
+ * @param {Client} client - The Discord client instance.
+ * @param {boolean} isAutocomplete - Whether the interaction is an autocomplete interaction.
+ */
 async function handleInteraction(interaction, collection, id, errorType, embeds, client, isAutocomplete = false) {
     let item = collection.get(id);
     if (!item) {
@@ -89,6 +105,16 @@ async function handleInteraction(interaction, collection, id, errorType, embeds,
     }
 }
 
+/**
+ * Updates the error embed and stack with the provided error information.
+ * @param {Client} client - The Discord client instance.
+ * @param {Interaction} interaction - The interaction object from the Discord API.
+ * @param {Error} error - The error object to extract information from.
+ * @param {string} errorType - The type of error (e.g., 'command', 'button').
+ * @param {string} id - The ID of the command or interaction.
+ * @param {EmbedBuilder} errorEmbed - The embed object to display the error message.
+ * @param {EmbedBuilder} errorStack - The embed object to display the error stack trace.
+ */
 async function updateErrorEmbed(client, interaction, error, errorType, id, errorEmbed, errorStack) {
     const locale = client.getMongoUserData(interaction.user) || interaction.locale;
     const replacements = { commandName: `/${id}`, buttonId: id, selectId: id, contextId: id, modalId: id };
@@ -104,6 +130,16 @@ async function updateErrorEmbed(client, interaction, error, errorType, id, error
     errorStack.setFooter({ text: `${errorType.toUpperCase()} - ${footer}`, iconURL: client.user.displayAvatarURL({ dynamic: true }) });
 }
 
+/**
+ * Updates the error embed and stack with the provided error information.
+ * @param {Client} client - The Discord client instance.
+ * @param {Interaction} interaction - The interaction object from the Discord API.
+ * @param {Error} error - The error object to extract information from.
+ * @param {string} errorType - The type of error (e.g., 'command', 'button').
+ * @param {string} id - The ID of the command or interaction.
+ * @param {EmbedBuilder} errorEmbed - The embed object to display the error message.
+ * @param {EmbedBuilder} errorStack - The embed object to display the error stack trace.
+ */
 async function errorTimeout(client, interaction, error, errorType, id, errorEmbed, errorStack) {
     const locale = client.getMongoUserData(interaction.user) || interaction.locale;
     const replacements = { commandName: `/${id}`, buttonId: id, selectId: id, contextId: id, modalId: id };

@@ -340,6 +340,11 @@
                         },
                         "other_tags": {
                             "name": "Otras Etiquetas"
+                        },
+                        "type": {
+                            "value": {
+                                "comic": "Cómic"
+                            }
                         }
                     },
                     "pub_status": {

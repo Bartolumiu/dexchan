@@ -1,14 +1,14 @@
 {
     "locale": {
         "enabled": false,
-        "name": "",
-        "englishName": "",
-        "code": ""
+        "name": "Euskara",
+        "englishName": "Basque",
+        "code": "eus"
     },
     "commands": {
         "ping": {
             "name": "",
-            "description": "",
+            "description": "Ikusi botaren latentzia.",
             "response": {
                 "ping": "",
                 "title": "",
@@ -19,7 +19,7 @@
                     },
                     "api": {
                         "discord": {
-                            "name": "",
+                            "name": "Discord APIa",
                             "value": ""
                         },
                         "mangadex": {
@@ -33,7 +33,7 @@
                     }
                 },
                 "footer": "",
-                "not_ok": ""
+                "not_ok": "Datu eskuratzeak huts egin du"
             }
         },
         "help": {
@@ -43,7 +43,7 @@
                 "title": "",
                 "fields": {
                     "commands": {
-                        "name": "",
+                        "name": "Komandoak",
                         "value": ""
                     },
                     "support": {
@@ -70,7 +70,7 @@
             "name": "",
             "description": "",
             "response": {
-                "title": "",
+                "title": "Komandoak",
                 "footer": ""
             }
         },
@@ -96,7 +96,7 @@
                         "name": ""
                     },
                     "commands": {
-                        "name": ""
+                        "name": "Komandoak"
                     },
                     "uptime": {
                         "name": ""
@@ -129,7 +129,7 @@
             "subcommands": {
                 "random": {
                     "name": "",
-                    "description": ""
+                    "description": "Ausazko titulu bat lortu"
                 }
             },
             "options": {
@@ -157,7 +157,7 @@
                             "name": ""
                         },
                         "follows": {
-                            "name": ""
+                            "name": "Jarraitzaileak"
                         },
                         "year": {
                             "name": ""
@@ -166,13 +166,13 @@
                             "name": "",
                             "value": {
                                 "ongoing": "",
-                                "completed": "",
+                                "completed": "Amaituta",
                                 "hiatus": "",
-                                "cancelled": ""
+                                "cancelled": "Bertan Behera"
                             }
                         },
                         "demographic": {
-                            "name": "",
+                            "name": "Demografia",
                             "value": {
                                 "none": "",
                                 "shounen": "",
@@ -182,26 +182,26 @@
                             }
                         },
                         "content_rating": {
-                            "name": ""
+                            "name": "Edukiaren Sailkapena"
                         },
                         "format": {
-                            "name": ""
+                            "name": "Formatua"
                         },
                         "genres": {
-                            "name": ""
+                            "name": "Generoak"
                         },
                         "themes": {
                             "name": ""
                         },
                         "content_warning": {
-                            "name": ""
+                            "name": "Edukiaren Abisuak"
                         }
                     },
                     "pub_status": {
                         "ongoing": "",
-                        "completed": "",
+                        "completed": "Amaituta",
                         "hiatus": "",
-                        "cancelled": ""
+                        "cancelled": "Bertan Behera"
                     },
                     "no_description": "",
                     "open_button": "",
@@ -224,13 +224,13 @@
                             "name": ""
                         },
                         "follows": {
-                            "name": ""
+                            "name": "Jarraitzaileak"
                         },
                         "distribution": {
                             "name": ""
                         },
                         "comments": {
-                            "name": ""
+                            "name": "Iruzkinak"
                         }
                     },
                     "units": {
@@ -245,12 +245,12 @@
                     }
                 },
                 "error": {
-                    "title": "",
+                    "title": "Errorea",
                     "description": {
                         "url": "",
                         "invalid_id": "",
                         "no_results": "",
-                        "api": "",
+                        "api": "Ezin izan dira tituluaren datuak eskuratu APItik.\nSaiatu berriro beranduago.",
                         "empty": ""
                     }
                 },
@@ -285,7 +285,7 @@
                             "name": ""
                         },
                         "follows": {
-                            "name": ""
+                            "name": "Jarraitzaileak"
                         },
                         "year": {
                             "name": ""
@@ -294,13 +294,13 @@
                             "name": "",
                             "value": {
                                 "ongoing": "",
-                                "completed": "",
+                                "completed": "Amaituta",
                                 "hiatus": "",
-                                "cancelled": ""
+                                "cancelled": "Bertan Behera"
                             }
                         },
                         "demographic": {
-                            "name": "",
+                            "name": "Demografia",
                             "value": {
                                 "none": "",
                                 "shounen": "",
@@ -310,7 +310,7 @@
                             }
                         },
                         "content_rating": {
-                            "name": "",
+                            "name": "Edukiaren Sailkapena",
                             "value": {
                                 "safe": "",
                                 "mature": "",
@@ -328,16 +328,16 @@
                             }
                         },
                         "format": {
-                            "name": ""
+                            "name": "Formatua"
                         },
                         "genres": {
-                            "name": ""
+                            "name": "Generoak"
                         },
                         "themes": {
                             "name": ""
                         },
                         "content_warning": {
-                            "name": ""
+                            "name": "Edukiaren Abisuak"
                         },
                         "other_tags": {
                             "name": ""
@@ -347,16 +347,16 @@
                             "value": {
                                 "manga": "",
                                 "long_strip": "",
-                                "comic": "",
+                                "comic": "Komikia",
                                 "novel": ""
                             }
                         }
                     },
                     "pub_status": {
                         "ongoing": "",
-                        "completed": "",
+                        "completed": "Amaituta",
                         "hiatus": "",
-                        "cancelled": ""
+                        "cancelled": "Bertan Behera"
                     },
                     "no_description": "",
                     "open_button": "",
@@ -379,19 +379,19 @@
                             "name": ""
                         },
                         "follows": {
-                            "name": ""
+                            "name": "Jarraitzaileak"
                         },
                         "comments": {
-                            "name": ""
+                            "name": "Iruzkinak"
                         },
                         "chapterViews": {
-                            "name": ""
+                            "name": "Kapitulu Bistaratzeak"
                         },
                         "chapterComments": {
-                            "name": ""
+                            "name": "Kapitulu Iruzkinak"
                         },
                         "chapterReactions": {
-                            "name": ""
+                            "name": "Kapitulu Erreakzioak"
                         }
                     },
                     "units": {
@@ -402,7 +402,7 @@
                     }
                 },
                 "error": {
-                    "title": "",
+                    "title": "Errorea",
                     "description": {
                         "url": "",
                         "invalid_id": "",
@@ -426,7 +426,7 @@
                         "description": "",
                         "fields": {
                             "locale": {
-                                "name": ""
+                                "name": "Hizkuntza"
                             }
                         }
                     }
@@ -472,7 +472,7 @@
                             "response": {
                                 "title": {
                                     "success": "",
-                                    "error": ""
+                                    "error": "Errorea hizkuntza berrezartzean"
                                 },
                                 "description": {
                                     "success": "",
@@ -490,17 +490,17 @@
         }
     },
     "error_embed": {
-        "title": "",
+        "title": "Errorea",
         "description": "",
-        "message": "",
-        "stack": "",
+        "message": "Errore mezua",
+        "stack": "Errorearen pila",
         "no_stack": "",
-        "err_int_ch_input": "",
-        "err_int_btn": "",
-        "err_int_slct": "",
-        "err_int_ctx": "",
-        "err_int_mod": "",
-        "err_int_aut": "",
+        "err_int_ch_input": "{commandName} komandoan errorea",
+        "err_int_btn": "{buttonId} botoian errorea",
+        "err_int_slct": "{selectId} hautaketa menuan errorea",
+        "err_int_ctx": "{contextId} testuinguru komandoan errorea",
+        "err_int_mod": "{modalId} modalean errorea",
+        "err_int_aut": "{autocompleteId} osatze automatikoan errorea",
         "timeout": {
             "title": "",
             "description": "",

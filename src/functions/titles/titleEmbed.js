@@ -131,7 +131,12 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
 };
 
 /**
- * Sanitizes the description by removing unwanted HTML tags and content.
+ * Sanitizes a Markdown description for Discord embeds.
+ * - Decodes safe HTML entities
+ * - Escapes &, <, and >
+ * - Preserves Markdown syntax
+ * - Normalizes whitespace and line breaks
+ * 
  * @param {string} description The description to sanitize
  * @returns {string|null} The sanitized description or null if invalid
  */
@@ -139,31 +144,22 @@ const sanitizeDescription = (description) => {
     if (!description || typeof description !== 'string') {
         return null;
     }
-    
-    // First pass: Replace <br> tags with a placeholder to preserve line breaks
-    description = description.replace(/<br\s*\/?>/gi, '|||LINEBREAK|||');
-    
-    // Second pass: Remove all HTML tags and their content for dangerous tags
-    // Remove script, style, and other potentially dangerous tags with their content
-    description = description.replace(/<(script|style|object|embed|applet|iframe)[^>]*>[\s\S]*?<\/\1>/gi, '');
-    
-    // Remove remaining HTML tags (opening, closing, self-closing, comments)
-    description = description.replace(/<[^>]*>/g, '');
-    
-    // Third pass: Handle HTML entities more carefully
-    // Only decode safe, common entities - avoid decoding < > which could recreate tags
+
+    // First pass: Decode safe HTML entities
     description = description
-        .replace(/&amp;/g, '&')
         .replace(/&quot;/g, '"')
         .replace(/&#39;/g, "'")
         .replace(/&apos;/g, "'")
         .replace(/&nbsp;/g, ' ');
     
-    // Fourth pass: Remove or neutralize potentially dangerous content
-    // Remove javascript: protocols and other suspicious patterns
-    description = description.replace(/javascript:/gi, '');
-    description = description.replace(/data:/gi, '');
-    description = description.replace(/vbscript:/gi, '');
+    // Second pass: Replace & with &amp;
+    description = description.replace(/&/g, '&amp;');
+
+    // Third pass: Replace <br> tags with a placeholder to preserve line breaks
+    description = description.replace(/<br\s*\/?>/gi, '|||LINEBREAK|||');
+
+    // Fourth pass: Escape all < and > characters to prevent HTML injection
+    description = description.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     
     // Fifth pass: Restore line breaks and normalize whitespace
     description = description.replace(/\|\|\|LINEBREAK\|\|\|/g, '\n');

@@ -1,4 +1,5 @@
 const { readdirSync } = require('fs');
+const getChalk = require('../tools/getChalk');
 const path = require('path');
 
 /**
@@ -14,6 +15,9 @@ const path = require('path');
  */
 module.exports = (client) => {
     client.handleComponents = async () => {
+        const chalk = await getChalk();
+        console.log(chalk.blueBright('[Component Handler] Loading components...'));
+
         const componentFolders = readdirSync('./src/components');
         const { buttons, selectMenus, modals } = client;
 
@@ -31,7 +35,7 @@ module.exports = (client) => {
             }
 
             const componentFiles = readdirSync(`./src/components/${folder}`).filter(file => file.endsWith('.js'));
-            await loadComponents(components, folder, componentFiles);
+            await loadComponents(components, folder, componentFiles, chalk);
         }
     }
 }
@@ -48,10 +52,7 @@ module.exports = (client) => {
  * @function loadComponents
  * @async
  */
-async function loadComponents(collection, folder, componentFiles) {
-    const chalkInstance = await import('chalk');
-    const chalk = chalkInstance.default;
-
+async function loadComponents(collection, folder, componentFiles, chalk) {
     for (const file of componentFiles) {
         const filePath = path.join(__dirname, `../../components/${folder}/${file}`);
 
@@ -59,7 +60,7 @@ async function loadComponents(collection, folder, componentFiles) {
             const component = require(filePath);
             collection.set(component.data.customId, component);
 
-            console.log(chalk.greenBright(`[Component Handler] Component ${component.data.customId} loaded.`));
+            console.log(chalk.greenBright(`[Component Handler] Component ${component.data.customId} loaded from ${file} in ${folder}.`));
         } catch (e) {
             console.error(chalk.redBright(`[Component Handler] Error loading ${file} in ${folder}: ${e.message}`));
         }

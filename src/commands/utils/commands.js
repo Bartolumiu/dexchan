@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors } = require('discord.js');
-const translateAttribute = require('../../functions/handlers/translateAttribute');
+const { translateAttribute } = require('../../functions/handlers/handleLocales');
 
 module.exports = {
     global: true,
@@ -14,11 +14,12 @@ module.exports = {
     },
     async execute(interaction, client) {
         const userSettings = await client.getMongoUserData(interaction.user);
-        const locale = userSettings.preferredLocale || interaction.locale;
-
-        const title = client.translate(locale, 'commands', 'commands.response.title');
-        const description = client.translate(locale, 'commands', 'commands.response.description');
-        const footer = client.translate(locale, 'commands', 'commands.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username });
+        const locale = client.getLocale(userSettings, interaction);
+        const translations = {
+            title: await client.translate(locale, 'commands', 'commands.response.title'),
+            description: await client.translate(locale, 'commands', 'commands.response.description'),
+            footer: await client.translate(locale, 'commands', 'commands.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username })
+        };
 
         // Retrieve both the global and guild commands, as well as the guild command permissions
         const globalCommands = await client.application.commands.fetch();
@@ -48,18 +49,18 @@ module.exports = {
         let fields = [];
 
         for (const command of availableCommands) {
-            const name = command.name;
-            const value = await client.translate(locale, 'commands', `${name}.description`);
+            const name = `/${command.name}`;
+            const value = await client.translate(locale, 'commands', `${command.name}.description`);
             fields.push({ name, value });
         }
 
         // Create the embed
         const embed = new EmbedBuilder()
-            .setTitle(title)
-            .setDescription(description)
+            .setTitle(translations.title)
+            .setDescription(translations.description)
             .addFields(fields)
             .setColor(Colors.Blurple)
-            .setFooter({ text: footer, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
+            .setFooter({ text: translations.footer, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
             .setTimestamp();
 
         await interaction.reply({ embeds: [embed] });
@@ -95,3 +96,6 @@ const hasUserPermission = (commandPermissions, interaction) => {
     const userPermissions = commandPermissions.filter(p => p.type === 2 && p.permission === true);
     return userPermissions.some(p => p.id === interaction.user.id);
 };
+
+module.exports.hasRolePermission = hasRolePermission;
+module.exports.hasUserPermission = hasUserPermission;

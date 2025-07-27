@@ -1,27 +1,48 @@
 <br/>
 <p align="center">
-  <a href="https://github.com/Bartolumiu/dexchan_rework">
+  <a href="https://github.com/Bartolumiu/dexchan">
     <img src="https://cdn.discordapp.com/avatars/794309204592033821/b1c4eda0575cd423a3f115c75c66f722.webp?size=4096" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Dex-chan (MangaDex ES)</h3>
+  <h3 align="center">Dex-chan</h3>
 
   <p align="center">
     Base code for the "Dex-chan" Discord bot
     <br/>
     <br/>
-    <a href="https://github.com/Bartolumiu/dexchan_rework"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Bartolumiu/dexchan"><strong>Explore the docs »</strong></a>
     <br/>
     <br/>
-    <a href="https://discord.gg/5MsyHbbvyc">View Demo</a>
-    .
-    <a href="https://github.com/Bartolumiu/dexchan_rework/issues">Report Bug</a>
-    .
-    <a href="https://github.com/Bartolumiu/dexchan_rework/issues">Request Feature</a>
+    <a href="https://discord.com/application-directory/810942628152868905">Add the bot</a>
+    ·
+    <a href="https://github.com/Bartolumiu/dexchan/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/Bartolumiu/dexchan/issues">Request Feature</a>
+    ·
+    <a href="https://weblate.tr25.es/engage/dexchan/">Translate Dex-chan</a>
   </p>
 </p>
 
-![Contributors](https://img.shields.io/github/contributors/Bartolumiu/dexchan_rework?color=dark-green) ![Issues](https://img.shields.io/github/issues/Bartolumiu/dexchan_rework) ![License](https://img.shields.io/github/license/Bartolumiu/dexchan_rework) [![CodeFactor](https://www.codefactor.io/repository/github/Bartolumiu/dexchan_rework/badge/main)](https://www.codefactor.io/repository/github/Bartolumiu/dexchan_rework/overview/main)
+<p align="center">
+  <img src="https://img.shields.io/github/contributors/Bartolumiu/dexchan?color=dark-green"/>
+  <img src="https://img.shields.io/github/issues/Bartolumiu/dexchan"/>
+  <img src="https://img.shields.io/github/license/Bartolumiu/dexchan"/>
+  <a href="https://www.codefactor.io/repository/github/Bartolumiu/dexchan/overview/main">
+    <img src="https://www.codefactor.io/repository/github/Bartolumiu/dexchan/badge/main"/>
+  </a>
+  <img src="https://img.shields.io/github/stars/Bartolumiu/dexchan?style=social"/>
+  <img src="https://img.shields.io/github/forks/Bartolumiu/dexchan?style=social"/>
+</p>
+
+<p align="center">
+  <a href="https://weblate.tr25.es/engage/dexchan/">
+    <img src="https://weblate.tr25.es/widget/dexchan/discord-bot/287x66-black.png" alt="Translation status" />
+  </a>
+  <a href="https://weblate.tr25.es/engage/dexchan/">
+    <img src="https://weblate.tr25.es/widget/dexchan/discord-bot/multi-auto.svg" alt="Translation status" />
+  </a>
+</p>
+
 
 ## Table Of Contents
 
@@ -33,7 +54,6 @@
 * [Contributing](#contributing)
 * [License](#license)
 * [Authors](#authors)
-* [Acknowledgements](#acknowledgements)
 
 ## Built With
 
@@ -64,7 +84,7 @@ npm install pm2 -g
 1. Clone the repo
 
 ```sh
-git clone https://github.com/Bartolumiu/dexchan_rework.git
+git clone https://github.com/Bartolumiu/dexchan.git
 ```
 
 2. Install NPM packages
@@ -83,8 +103,8 @@ npm install -g pm2
 
 ```env
 token=ULTRA_SECRET_BOT_TOKEN
-databaseToken=mongodbtoken
-clientId=0123456789011121314
+dbToken=mongodbtoken
+clientID=0123456789011121314
 ```
 
 4. Start the bot
@@ -108,26 +128,26 @@ pm2 start src/bot.js
 
 ## Roadmap
 
-See the [open issues](https://github.com/Bartolumiu/dexchan_rework/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/Bartolumiu/dexchan/issues) for a list of proposed features (and known issues).
 
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-* If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/Bartolumiu/dexchan_rework/issues/new) to discuss it, or directly create a pull request after you edit the *README.md* file with necessary changes.
+* If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/Bartolumiu/dexchan/issues/new) to discuss it, or directly create a pull request after you edit the *README.md* file with necessary changes.
 * Please make sure you check your spelling and grammar.
 * Create individual PR for each suggestion.
 
 ### Creating A Pull Request
 
 1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+2. Create your Feature Branch based on `develop` (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
 ## License
 
-Distributed under the Apache License 2.0. See [LICENSE](https://github.com/Bartolumiu/dexchan_rework/blob/main/LICENSE) for more information.
+Distributed under the Apache License 2.0. See [LICENSE](https://github.com/Bartolumiu/dexchan/blob/main/LICENSE) for more information.
 
 ## Authors
 

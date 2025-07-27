@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors } = require("discord.js");
-const translateAttribute = require('../../functions/handlers/translateAttribute');
+const { translateAttribute } = require('../../functions/handlers/handleLocales');
 const fs = require('fs');
 
 module.exports = {
@@ -7,44 +7,50 @@ module.exports = {
     data: async () => {
         const localizations = {
             description: await translateAttribute('settings', 'description'),
-            subcommand_groups: [
-                { // Locale
-                    description: await translateAttribute('settings', 'subcommand_groups[0].description'),
-                    subcommands: [
-                        { // Set locale
-                            description: await translateAttribute('settings', 'subcommand_groups[0].subcommands[0].description'),
-                            options: [
-                                {
-                                    description: await translateAttribute('settings', 'subcommand_groups[0].subcommands[0].options[0].description')
-                                }
-                            ]
-                        },
-                        { // Reset locale
-                            description: await translateAttribute('settings', 'subcommand_groups[0].subcommands[1].description')
-                        }
-                    ]
-                },
-                { // View settings
-                    description: await translateAttribute('settings', 'subcommand_groups[1].description')
+            subcommands: {
+                view: {
+                    description: await translateAttribute('settings', 'subcommands.view.description')
                 }
-            ]
+            },
+            subcommand_groups: {
+                locale: {
+                    description: await translateAttribute('settings', 'subcommand_groups.locale.description'),
+                    subcommands: {
+                        set: {
+                            description: await translateAttribute('settings', 'subcommand_groups.locale.subcommands.set.description'),
+                            options: {
+                                locale: {
+                                    description: await translateAttribute('settings', 'subcommand_groups.locale.subcommands.set.options.locale.description')
+                                }
+                            }
+                        },
+                        reset: {
+                            description: await translateAttribute('settings', 'subcommand_groups.locale.subcommands.reset.description')
+                        }
+                    }
+                }
+            }
         }
         return new SlashCommandBuilder()
             .setName('settings')
             .setDescription('Change your settings')
             .setDescriptionLocalizations(localizations.description)
+            .addSubcommand(command =>
+                command.setName('view')
+                    .setDescription('View your settings')
+                    .setDescriptionLocalizations(localizations.subcommands.view.description))
             .addSubcommandGroup(group =>
                 group.setName('locale')
                     .setDescription('Your preferred locale')
-                    .setDescriptionLocalizations(localizations.subcommand_groups[0].description)
+                    .setDescriptionLocalizations(localizations.subcommand_groups.locale.description)
                     .addSubcommand(command =>
                         command.setName('set')
                             .setDescription('Set your preferred locale')
-                            .setDescriptionLocalizations(localizations.subcommand_groups[0].subcommands[0].description)
+                            .setDescriptionLocalizations(localizations.subcommand_groups.locale.subcommands.set.description)
                             .addStringOption(option =>
                                 option.setName('locale')
                                     .setDescription('The language you want to set as your preferred language')
-                                    .setDescriptionLocalizations(localizations.subcommand_groups[0].subcommands[0].options[0].description)
+                                    .setDescriptionLocalizations(localizations.subcommand_groups.locale.subcommands.set.options.locale.description)
                                     .setAutocomplete(true)
                                     .setRequired(true)
                             )
@@ -52,13 +58,8 @@ module.exports = {
                     .addSubcommand(command =>
                         command.setName('reset')
                             .setDescription('Reset your preferred locale')
-                            .setDescriptionLocalizations(localizations.subcommand_groups[0].subcommands[1].description)
+                            .setDescriptionLocalizations(localizations.subcommand_groups.locale.subcommands.reset.description)
                     ),
-            )
-            .addSubcommand(command =>
-                command.setName('view')
-                    .setDescription('View your settings')
-                    .setDescriptionLocalizations(localizations.subcommand_groups[1].description)
             );
     },
     async execute(interaction, client) {
@@ -69,6 +70,7 @@ module.exports = {
 
         if (subcommandGroup === 'locale') await localeSettings(interaction, client, userProfile, embed);
         else if (subcommand === 'view') await viewSettings(interaction, client, userProfile, embed);
+        else return; // Return if the subcommand is not recognized (impossible case, but needed for coverage)
 
         embed.setFooter({ text: await client.translate((userProfile.preferredLocale || interaction.locale), 'commands', 'settings.response.footer', { commandName: `/${interaction.commandName}`, user: interaction.user.username }), iconURL: interaction.user.displayAvatarURL({ dynamic: true }) });
         interaction.reply({ embeds: [embed], ephemeral: true });
@@ -84,23 +86,34 @@ module.exports = {
     }
 }
 
+/**
+ * Get a list of locales based on the user's input.
+ * 
+ * @param {*} interaction - The interaction object from the Discord API.
+ * @returns 
+ */
 async function getLocaleList(interaction) {
-    // Current working directory for fs
-    //process.chdir('./src');
-    console.log(process.cwd());
     // Get locale files
-    const files = fs.readdirSync(__dirname+'/../../locales').filter(file => file.endsWith('.json'));
+    const files = fs.readdirSync(__dirname+'/../../i18n/locales').filter(file => file.endsWith('.json'));
     const locales = files.map(file => file.split('.')[0]);
     // Read locale files and get the locale name
     const localeList = locales.map(locale => {
-        const localeData = require(__dirname+`/../../locales/${locale}.json`);
+        const localeData = require(__dirname+`/../../i18n/locales/${locale}.json`);
         return {
             name: `${localeData.locale.name} (${localeData.locale.code})`,
-            value: localeData.locale.code
+            value: localeData.locale.code,
+            enabled: localeData.locale.enabled
         }
     });
 
-    return localeList;
+    // Filter locales based on the user's input and return only enabled locales
+    if (interaction.options.getString('locale')) {
+        const input = interaction.options.getString('locale').toLowerCase();
+        return localeList.filter(locale => {
+            const filtered = locale.name.toLowerCase().includes(input) || locale.value.toLowerCase().includes(input);
+            return filtered && locale.enabled;
+        });
+    } else return localeList.filter(locale => locale.enabled);
 }
 
 /**
@@ -112,18 +125,39 @@ async function getLocaleList(interaction) {
  * @param {Object} embed - The embed object used to send responses.
  */
 async function localeSettings(interaction, client, userProfile, embed) {
+    const currentLocale = client.getLocale(userProfile, interaction);
     switch (interaction.options.getSubcommand()) {
         case 'set':
             try {
                 const locale = interaction.options.getString('locale');
+
+                // Ensure the locale is valid before setting it
+                const validLocales = await getLocaleList(interaction);
+                const isValidLocale = validLocales.some(validLocale => validLocale.value === locale);
+                
+                if (!isValidLocale) {
+                    embed.setTitle(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error.invalid_locale'));
+                    embed.setDescription(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error.invalid_locale', { locale: locale }));
+                    embed.setColor(Colors.Red);
+                    return;
+                }
+
+                // Check if the user's preferred locale is already set
+                if (userProfile.preferredLocale === locale) {
+                    embed.setTitle(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error.no_changes'));
+                    embed.setDescription(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error.no_changes', { locale: locale }));
+                    embed.setColor(Colors.Red);
+                    return;
+                }
+
                 userProfile.preferredLocale = locale; // Set the user's preferred locale
                 await userProfile.save();
-                embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[0].response.title.success'));
-                embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[0].response.description.success', { locale: locale }));
+                embed.setTitle(await client.translate(locale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.success'));
+                embed.setDescription(await client.translate(locale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.success', { locale: locale }));
                 embed.setColor(Colors.Green);
-            } catch (e) {
-                embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[0].response.title.error'));
-                embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[0].response.description.error'));
+            } catch {
+                embed.setTitle(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error.unknown'));
+                embed.setDescription(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.error.unknown'));
                 embed.setColor(Colors.Red);
             }
             break;
@@ -131,21 +165,15 @@ async function localeSettings(interaction, client, userProfile, embed) {
             try {
                 userProfile.preferredLocale = null;
                 await userProfile.save();
-                embed.setTitle(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.title.success'));
-                embed.setDescription(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.description.success'));
+                embed.setTitle(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.success'));
+                embed.setDescription(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.success'));
                 embed.setColor(Colors.Green);
-            } catch (e) {
-                if (userProfile.preferredLocale) {
-                    embed.setTitle(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.title.error'));
-                    embed.setDescription(await client.translate(userProfile.preferredLocale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.description.error'));
-                } else {
-                    embed.setTitle(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.title.error'));
-                    embed.setDescription(await client.translate(interaction.locale, 'commands', 'settings.subcommand_groups[0].subcommands[1].response.description.error'));
-                }
+            } catch {
+                const currentLocale = (await client.getMongoUserData(interaction.user)).preferredLocale || interaction.locale;
+                embed.setTitle(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.title.error'));
+                embed.setDescription(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.reset.response.description.error'));
                 embed.setColor(Colors.Red);
             }
-            break;
-        default:
             break;
     }
 }
@@ -159,13 +187,13 @@ async function localeSettings(interaction, client, userProfile, embed) {
  * @param {Object} embed - The embed object to format the message.
  */
 async function viewSettings(interaction, client, userProfile, embed) {
-    const locale = userProfile.preferredLocale || interaction.locale;
-    embed.setTitle(await client.translate(locale, 'commands', 'settings.subcommands[0].response.title'));
-    embed.setDescription(await client.translate(locale, 'commands', 'settings.subcommands[0].response.description', { locale: locale }));
+    const locale = client.getLocale(userProfile, interaction);
+    embed.setTitle(await client.translate(locale, 'commands', 'settings.subcommands.view.response.title'));
+    embed.setDescription(await client.translate(locale, 'commands', 'settings.subcommands.view.response.description', { locale: locale }));
     embed.addFields(
         {
-            name: await client.translate(locale, 'commands', 'settings.subcommands[0].response.fields[0].name'),
-            value: await client.translate(locale, 'commands', 'settings.subcommands[0].response.fields[0].value', { locale: locale }),
+            name: await client.translate(locale, 'commands', 'settings.subcommands.view.response.fields.locale.name'),
+            value: await client.translate(locale, 'commands', 'settings.subcommands.view.response.fields.locale.value', { locale: locale }),
             inline: true
         }
     )

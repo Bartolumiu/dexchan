@@ -1,4 +1,5 @@
 const axios = require('axios');
+const getChalk = require('./getChalk');
 
 module.exports = async function checkUpdates() {
     try {
@@ -6,41 +7,69 @@ module.exports = async function checkUpdates() {
         const latestVersion = response.data.tag_name;
         const currentVersion = require('../../../package.json').version;
 
-        // Version string format: 1.0.0, 1.0.0-dev or 1.0.0-beta
         const latest = {
             version: latestVersion,
             parts: latestVersion.split('.'),
-            major: parseInt(latestVersion.split('.')[0]),
-            minor: parseInt(latestVersion.split('.')[1]),
-            patch: parseInt(latestVersion.split('.')[2]),
-            preRelease: latestVersion.split('-')[1] || null
+            major: parseVersionPart(latestVersion.split('.')[0]),
+            minor: parseVersionPart(latestVersion.split('.')[1]),
+            patch: parseVersionPart(latestVersion.split('.')[2]),
+            preRelease: latestVersion.split('-')[1] || ''
         };
 
         const current = {
             version: currentVersion,
             parts: currentVersion.split('.'),
-            major: parseInt(currentVersion.split('.')[0]),
-            minor: parseInt(currentVersion.split('.')[1]),
-            patch: parseInt(currentVersion.split('.')[2]),
-            preRelease: currentVersion.split('-')[1] || null
+            major: parseVersionPart(currentVersion.split('.')[0]),
+            minor: parseVersionPart(currentVersion.split('.')[1]),
+            patch: parseVersionPart(currentVersion.split('.')[2]),
+            preRelease: currentVersion.split('-')[1] || ''
         };
 
-        // Check the major, minor, and patch versions
-        if (latest.major > current.major ||
-            latest.major === current.major && latest.minor > current.minor ||
-            latest.major === current.major && latest.minor === current.minor && latest.patch > current.patch) {
+        // Compare major, minor, and patch versions first
+        const compareVersions = (latest, current) => {
+            if (latest.major > current.major) return 1;
+            if (latest.major < current.major) return -1;
+            if (latest.minor > current.minor) return 1;
+            if (latest.minor < current.minor) return -1;
+            if (latest.patch > current.patch) return 1;
+            if (latest.patch < current.patch) return -1;
+            return 0;
+        };
+
+        const versionComparison = compareVersions(latest, current);
+
+        // If the latest version is higher (stable > pre-release)
+        if (versionComparison > 0) {
             return { isOutdated: true, latestVersion: latestVersion };
         }
 
-        // Check the pre-release versions
-        // Order of precedence: dev > beta
-        if (!latest.preRelease && current.preRelease) return { isOutdated: true, latestVersion: latestVersion };
-        if (latest.preRelease === 'dev' && current.preRelease === 'beta') return { isOutdated: true, latestVersion: latestVersion };
+        // Handle pre-release versions comparison (stable > dev > beta)
+        if (versionComparison === 0) {
+            // If the latest version is a stable release and the current version is pre-release
+            if (!latest.preRelease && current.preRelease) {
+                return { isOutdated: true, latestVersion: latestVersion };
+            }
+
+            // dev > beta comparison
+            if (latest.preRelease === 'dev' && current.preRelease === 'beta') {
+                return { isOutdated: true, latestVersion: latestVersion };
+            }
+        }
 
         // The current version is up-to-date
         return { isOutdated: false, latestVersion: latestVersion };
     } catch (e) {
-        console.error('[GitHub] Failed to check for updates:', e.message);
+        const chalk = await getChalk();
+        console.error(chalk.redBright('[GitHub] Failed to check for updates:', e.message));
+
         return { isOutdated: null, latestVersion: null };
     }
-}
+};
+
+/**
+ * Parses a version part and returns a numeric value.
+ * @param {*} part - The version part to parse.
+ * @returns {number} The parsed version part as a number.
+ */
+const parseVersionPart = (part) => isNaN(parseInt(part)) ? 0 : parseInt(part);
+module.exports.parseVersionPart = parseVersionPart;

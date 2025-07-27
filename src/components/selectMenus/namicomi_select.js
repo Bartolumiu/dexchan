@@ -2,14 +2,14 @@ const { StringSelectMenuBuilder } = require("discord.js");
 
 module.exports = {
     data: {
-        customId: 'manga_select',
+        customId: 'namicomi_select',
     },
     async execute(interaction, client) {
         await interaction.deferUpdate();
 
-        const manga = interaction.values[0];
+        const title = interaction.values[0];
 
-        const command = client.commands.get('manga');
+        const command = client.commands.get('nami');
         if (command) {
             const mockInteraction = {
                 ...interaction,
@@ -19,7 +19,7 @@ module.exports = {
                      * @param {*} name - Option name
                      * @returns {string | null} - The value of the option or null if the option is not found.
                      */
-                    getString: (name) => (name === 'id' ? manga : null),
+                    getString: (name) => (name === 'id' ? title : null),
                 },
                 /**
                  * Mocks the reply method for the interaction
@@ -39,7 +39,7 @@ module.exports = {
                 await interaction.editReply({ components: [] });
             }
 
-            mockInteraction.commandName = 'manga';
+            mockInteraction.commandName = 'nami';
 
             await command.execute(mockInteraction, client);
         }

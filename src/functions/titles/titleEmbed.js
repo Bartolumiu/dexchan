@@ -1,0 +1,173 @@
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder } = require("discord.js");
+const { addTitleTags } = require("./titleTags");
+const capitalizeFirstLetter = require("../tools/capitalizeFirstLetter");
+const getLocalizedDescription = require("./localizedDescription");
+const getLocalizedTitle = require("./localizedTitle");
+const { urlFormats } = require('../parsers/urlParser');
+const truncateString = require("../tools/truncateString");
+
+/**
+ * Builds the title embed for a specific type.
+ * @param {EmbedBuilder} embed Embed to build
+ * @param {string} locale Locale for the embed
+ * @param {Object} title Title data
+ * @param {Object} stats Statistics data
+ * @param {Object} translations Translations data
+ * @param {string} type Type of the embed
+ * @returns {ActionRowBuilder|null} Action row with buttons or null if type is unsupported
+ */
+const buildTitleEmbed = (embed, locale, title, stats, translations, type) => {
+    switch (type) {
+        case 'mangadex':
+            return buildMangaDexEmbed(embed, locale, title, stats, translations);
+        case 'namicomi':
+            return buildNamiComiEmbed(embed, locale, title, stats, translations);
+        default:
+            return null;
+    }
+}
+
+/**
+ * Builds the MangaDex embed.
+ * @param {EmbedBuilder} embed Embed to build
+ * @param {string} locale Locale for the embed
+ * @param {Object} title Title data
+ * @param {Object} stats Statistics data
+ * @param {Object} translations Translations data
+ * @returns {ActionRowBuilder} Action row with buttons
+ */
+const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
+    const embedTitle = getLocalizedTitle(title, 'mangadex', locale);
+    let embedDescription = getLocalizedDescription(title, 'mangadex', locale) || translations.embed.error.no_description;
+    embedDescription = sanitizeDescription(embedDescription);
+    embedDescription = truncateString(embedDescription, 4096);
+
+    const fields = [
+        { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}/10.00`, inline: true },
+        { name: translations.embed.fields.follows, value: `${stats.follows}`, inline: true },
+        { name: translations.embed.fields.year, value: `${title.attributes.year}`, inline: true },
+        { name: translations.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.embed.fields.pub_status.value[title.attributes.status] || title.attributes.status}`), inline: true },
+        { name: translations.embed.fields.demographic.name, value: title.attributes.publicationDemographic ? capitalizeFirstLetter(`${translations.embed.fields.demographic.value[title.attributes.publicationDemographic] || title.attributes.publicationDemographic}`) : 'N/A', inline: true },
+        { name: translations.embed.fields.content_rating.name, value: capitalizeFirstLetter(`${translations.embed.fields.content_rating.value[title.attributes.contentRating] || title.attributes.contentRating}`), inline: true }
+    ];
+
+    embed.setTitle(embedTitle)
+        .setURL(urlFormats.mangadex.primary.replace('{id}', title.id).replace('{title}', ''))
+        .setDescription(embedDescription)
+        .addFields(fields)
+        .setColor(Colors.Blurple);
+
+    addTitleTags(title, embed, translations, 'mangadex');
+
+    return new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setLabel(translations.button.open)
+            .setURL(urlFormats.mangadex.primary.replace('{id}', title.id).replace('{title}', ''))
+            .setStyle(ButtonStyle.Link),
+        new ButtonBuilder()
+            .setLabel(translations.button.stats)
+            .setCustomId(`mangadex_stats_${title.id}`)
+            .setStyle(ButtonStyle.Secondary)
+            .setEmoji('📊')
+    );
+};
+
+/**
+ * Builds the NamiComi embed.
+ * @param {EmbedBuilder} embed Embed to build
+ * @param {string} locale Locale for the embed
+ * @param {Object} title Title data
+ * @param {Object} stats Statistics data
+ * @param {Object} translations Translations data
+ * @returns {ActionRowBuilder} Action row with buttons
+ */
+const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
+    const embedTitle = getLocalizedTitle(title, 'namicomi', locale);
+    let embedDescription = getLocalizedDescription(title, 'namicomi', locale) || translations.embed.error.no_description;
+    embedDescription = sanitizeDescription(embedDescription);
+    embedDescription = truncateString(embedDescription, 4096);
+
+    const fields = [
+        { name: translations.embed.fields.rating, value: `${stats.title.rating.bayesian.toFixed(2)}/5.00`, inline: true },
+        { name: translations.embed.fields.follows, value: `${stats.title.follows}`, inline: true },
+        { name: translations.embed.fields.year, value: `${title.attributes.year}`, inline: true },
+        { name: translations.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.embed.fields.pub_status.value[title.attributes.publicationStatus] || title.attributes.publicationStatus}`), inline: true },
+        { name: translations.embed.fields.demographic.name, value: title.attributes.demographic ? capitalizeFirstLetter(`${translations.embed.fields.demographic.value[title.attributes.demographic] || title.attributes.demographic}`) : 'N/A', inline: true },
+        { name: translations.embed.fields.content_rating.name, value: capitalizeFirstLetter(`${translations.embed.fields.content_rating.value[title.attributes.contentRating] || title.attributes.contentRating}`), inline: true },
+        { name: translations.embed.fields.type.name, value: capitalizeFirstLetter(`${translations.embed.fields.type.value[title.attributes.type] || title.attributes.type}`), inline: true }
+    ];
+
+    embed.setTitle(embedTitle)
+        .setURL(urlFormats.namicomi.shortened.replace('{id}', title.id))
+        .setDescription(embedDescription)
+        .addFields(fields)
+        .setColor(Colors.Blurple);
+
+    addTitleTags(title, embed, translations, 'namicomi', locale);
+
+    switch (title.attributes.readingMode) {
+        case 'vls':
+            embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.vertical });
+            break;
+        case 'rtl':
+            embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.right_to_left });
+            break;
+        case 'ltr':
+            embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.left_to_right });
+            break;
+    };
+
+    return new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setLabel(translations.button.open)
+            .setURL(urlFormats.namicomi.shortened.replace('{id}', title.id))
+            .setStyle(ButtonStyle.Link),
+        new ButtonBuilder()
+            .setLabel(translations.button.stats)
+            .setCustomId(`namicomi_stats_${title.id}`)
+            .setStyle(ButtonStyle.Secondary)
+            .setEmoji('📊')
+    )
+};
+
+/**
+ * Sanitizes a Markdown description for Discord embeds.
+ * - Decodes safe HTML entities
+ * - Escapes &, <, and >
+ * - Preserves Markdown syntax
+ * - Normalizes whitespace and line breaks
+ * 
+ * @param {string} description The description to sanitize
+ * @returns {string|null} The sanitized description or null if invalid
+ */
+const sanitizeDescription = (description) => {
+    if (!description || typeof description !== 'string') {
+        return null;
+    }
+
+    // First pass: Decode safe HTML entities
+    description = description
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&apos;/g, "'")
+        .replace(/&nbsp;/g, ' ');
+    
+    // Second pass: Replace & with &amp;
+    description = description.replace(/&/g, '&amp;');
+
+    // Third pass: Replace <br> tags with a placeholder to preserve line breaks
+    description = description.replace(/<br\s*\/?>/gi, '|||LINEBREAK|||');
+
+    // Fourth pass: Escape all < and > characters to prevent HTML injection
+    description = description.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    
+    // Fifth pass: Restore line breaks and normalize whitespace
+    description = description.replace(/\|\|\|LINEBREAK\|\|\|/g, '\n');
+    description = description.replace(/\n+/g, '\n'); // Normalize multiple newlines
+    description = description.replace(/[ \t]+/g, ' '); // Normalize spaces and tabs (but preserve newlines)
+    description = description.trim(); // Trim leading and trailing whitespace
+    
+    return description;
+};
+
+module.exports = buildTitleEmbed;

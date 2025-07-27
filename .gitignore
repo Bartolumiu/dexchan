@@ -134,3 +134,6 @@ dist
 
 # IntelliJ
 .idea/*
+
+# Code Coverage
+/coverage

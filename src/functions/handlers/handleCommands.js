@@ -1,6 +1,7 @@
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v10');
 const { readdirSync } = require('fs');
+const getChalk = require('../tools/getChalk');
 
 /**
  * Handles the loading and registration of Discord commands for the client.
@@ -25,9 +26,8 @@ const { readdirSync } = require('fs');
  */
 module.exports = (client) => {
     client.handleCommands = async () => {
-        const chalkInstance = await import('chalk');
-        const chalk = chalkInstance.default;
-
+        const chalk = await getChalk();
+        console.log(chalk.blueBright('[Command Handler] Loading commands...'));
         const { commands } = client;
 
         const commandFolders = readdirSync('./src/commands');
@@ -40,11 +40,11 @@ module.exports = (client) => {
             const commandFiles = readdirSync(`./src/commands/${folder}`).filter(file => file.endsWith('.js'));
 
             // File processing
-            await handleFiles(commandFiles, folder, commands, globalCommandList, guildCommandMap, chalk);
+            await handleFiles(commandFiles, folder, commands, globalCommandList, guildCommandMap);
         };
 
         // Register commands
-        await refreshCommands(globalCommandList, guildCommandMap, chalk);
+        await refreshCommands(globalCommandList, guildCommandMap);
     };
 };
 
@@ -53,14 +53,14 @@ module.exports = (client) => {
  *
  * @param {Array} globalCommandList - The list of global commands to be registered.
  * @param {Map} guildCommandMap - A map where the key is the guild ID and the value is the list of commands for that guild.
- * @param {Object} chalk - The chalk instance for colored console output.
  * @returns {Promise<void>} - A promise that resolves when the commands have been refreshed.
  */
-async function refreshCommands(globalCommandList, guildCommandMap, chalk) {
+async function refreshCommands(globalCommandList, guildCommandMap) {
+    const chalk = await getChalk();
     const clientID = `${process.env.clientID}`;
     const rest = new REST({ version: '10' }).setToken(process.env.token);
     try {
-        console.log(chalk.gray('[Command Handler] Started refreshing global application (/) commands.'));
+        console.log(chalk.blueBright('[Command Handler] Started refreshing global application (/) commands.'));
         await rest.put(Routes.applicationCommands(clientID), { body: globalCommandList });
 
         for (const [guildID, commands] of guildCommandMap) {
@@ -84,15 +84,15 @@ async function refreshCommands(globalCommandList, guildCommandMap, chalk) {
  * @param {Map} commands - The map of all commands.
  * @param {Array} globalCommandList - The list of global commands.
  * @param {Map} guildCommandMap - The map of guild-specific commands.
- * @param {import('chalk').ChalkInstance} chalk - The chalk instance for colorized console
  * @returns {Promise<void>} - A promise that resolves when all command files have been processed.
  * @throws {Error} - Throws an error if there is an issue requiring a command file.
  */
-async function handleFiles(commandFiles, folder, commands, globalCommandList, guildCommandMap, chalk) {
+async function handleFiles(commandFiles, folder, commands, globalCommandList, guildCommandMap) {
+    const chalk = await getChalk();
     for (const file of commandFiles) {
         try {
             const command = require(`../../commands/${folder}/${file}`);
-            if (command.data) await loadCommand(command, commands, globalCommandList, guildCommandMap, chalk);
+            if (command.data) await loadCommand(command, commands, globalCommandList, guildCommandMap);
             else console.warn(chalk.yellowBright(`[Command Handler] Command file ${file} in ${folder} does not have a data property. Skipping.`));
         } catch (e) {
             console.error(chalk.redBright(`[Command Handler] Error requiring ${file} in ${folder}: ${e.message}`));
@@ -108,10 +108,10 @@ async function handleFiles(commandFiles, folder, commands, globalCommandList, gu
  * @param {Map} commands - The map of all commands.
  * @param {Array} globalCommandList - The list of global commands.
  * @param {Map} guildCommandMap - The map of guild-specific commands.
- * @param {import('chalk').ChalkInstance} chalk - The chalk instance for colorized console
  * @returns {Promise<void>} - A promise that resolves when the command is loaded.
  */
-async function loadCommand(command, commands, globalCommandList, guildCommandMap, chalk) {
+async function loadCommand(command, commands, globalCommandList, guildCommandMap) {
+    const chalk = await getChalk();
     if (typeof command.data === 'function') command.data = await command.data();
     commands.set(command.data.name, command);
 

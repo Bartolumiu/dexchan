@@ -1,0 +1,523 @@
+{
+    "locale": {
+        "enabled": true,
+        "name": "Español",
+        "englishName": "Spanish",
+        "code": "es"
+    },
+    "commands": {
+        "ping": {
+            "name": "ping",
+            "description": "Verifica la latencia del bot.",
+            "response": {
+                "ping": "Haciendo ping...",
+                "title": "¡Pong!",
+                "fields": {
+                    "bot_latency": {
+                        "name": "Latencia del Bot",
+                        "value": "{ping}ms"
+                    },
+                    "api": {
+                        "discord": {
+                            "name": "API Discord",
+                            "value": "{apiPing}ms"
+                        },
+                        "mangadex": {
+                            "name": "API MangaDex",
+                            "value": "{mdPing}ms"
+                        },
+                        "namicomi": {
+                            "name": "API NamiComi",
+                            "value": "{ncPing}ms"
+                        }
+                    }
+                },
+                "footer": "{commandName} - Solicitado por {user}",
+                "not_ok": "Error al obtener los datos"
+            }
+        },
+        "help": {
+            "name": "help",
+            "description": "Obtén ayuda con el bot.",
+            "response": {
+                "title": "Ayuda",
+                "fields": {
+                    "commands": {
+                        "name": "Comandos",
+                        "value": "Para ver una lista de comandos, usa `/commands`."
+                    },
+                    "support": {
+                        "name": "Soporte",
+                        "value": "Para obtener soporte, usa `/support`."
+                    },
+                    "invite": {
+                        "name": "Invitar",
+                        "value": "Para invitar al bot a tu servidor, usa `/invite`."
+                    },
+                    "stats": {
+                        "name": "Estadísticas",
+                        "value": "Para ver las estadísticas del bot, usa `/stats`."
+                    },
+                    "uptime": {
+                        "name": "Tiempo de actividad",
+                        "value": "Para ver el tiempo de actividad del bot, usa `/uptime`."
+                    }
+                },
+                "footer": "{commandName} - Solicitado por {user}"
+            }
+        },
+        "commands": {
+            "name": "commands",
+            "description": "Obtén la lista de comandos que puedes usar.",
+            "response": {
+                "title": "Comandos",
+                "footer": "{commandName} - Solicitado por {user}"
+            }
+        },
+        "invite": {
+            "name": "invite",
+            "description": "Invita al bot a tu servidor.",
+            "response": {
+                "title": "Invitar",
+                "description": "Puedes invitar al bot a tu servidor haciendo clic [aquí]({inviteLink}).",
+                "footer": "{commandName} - Solicitado por {user}"
+            }
+        },
+        "stats": {
+            "name": "stats",
+            "description": "Obtén las estadísticas del bot.",
+            "response": {
+                "title": "Estadísticas",
+                "fields": {
+                    "guilds": {
+                        "name": "Servidores"
+                    },
+                    "users": {
+                        "name": "Usuarios"
+                    },
+                    "commands": {
+                        "name": "Comandos"
+                    },
+                    "uptime": {
+                        "name": "Tiempo de actividad"
+                    }
+                },
+                "footer": "{commandName} - Solicitado por {user}"
+            }
+        },
+        "support": {
+            "name": "support",
+            "description": "Obtén la invitación al servidor de soporte del bot.",
+            "response": {
+                "title": "Soporte",
+                "description": "Puedes unirte al servidor de soporte del bot haciendo clic [aquí]({supportLink}).",
+                "footer": "{commandName} - Solicitado por {user}"
+            }
+        },
+        "uptime": {
+            "name": "uptime",
+            "description": "Obtén el tiempo de actividad del bot.",
+            "response": {
+                "title": "Tiempo de Actividad",
+                "description": "El bot ha estado en línea por {uptime}.",
+                "footer": "{commandName} - Solicitado por {user}"
+            }
+        },
+        "manga": {
+            "name": "manga",
+            "description": "Busca un título en MangaDex.",
+            "subcommands": {
+                "random": {
+                    "name": "random",
+                    "description": "Obtén un título aleatorio"
+                }
+            },
+            "options": {
+                "query": {
+                    "name": "query",
+                    "description": "El título que quieres buscar"
+                },
+                "id": {
+                    "name": "id",
+                    "description": "ID del título que quieres buscar"
+                },
+                "url": {
+                    "name": "url",
+                    "description": "La URL del título que quieres buscar"
+                }
+            },
+            "response": {
+                "found": {
+                    "author": {
+                        "too_many": "Múltiples Autores",
+                        "error": "Autor Desconocido"
+                    },
+                    "fields": {
+                        "rating": {
+                            "name": "Calificación"
+                        },
+                        "follows": {
+                            "name": "Seguidores"
+                        },
+                        "year": {
+                            "name": "Año"
+                        },
+                        "pub_status": {
+                            "name": "Estado de Publicación",
+                            "value": {
+                                "ongoing": "En curso",
+                                "completed": "Completado",
+                                "hiatus": "En pausa",
+                                "cancelled": "Cancelado"
+                            }
+                        },
+                        "demographic": {
+                            "name": "Demografía",
+                            "value": {
+                                "none": "Ninguna",
+                                "shounen": "Shounen",
+                                "shoujo": "Shoujo",
+                                "seinen": "Seinen",
+                                "josei": "Josei"
+                            }
+                        },
+                        "content_rating": {
+                            "name": "Calificación de Contenido"
+                        },
+                        "format": {
+                            "name": "Formato"
+                        },
+                        "genres": {
+                            "name": "Géneros"
+                        },
+                        "themes": {
+                            "name": "Temas"
+                        },
+                        "content_warning": {
+                            "name": "Advertencia de Contenido"
+                        }
+                    },
+                    "pub_status": {
+                        "ongoing": "En curso",
+                        "completed": "Completado",
+                        "hiatus": "En pausa",
+                        "cancelled": "Cancelado"
+                    },
+                    "no_description": "No hay descripción disponible.",
+                    "open_button": "Abrir en MangaDex",
+                    "stats_button": "Ver Estadísticas"
+                },
+                "query": {
+                    "title": "Resultados de la Búsqueda",
+                    "description": "Aquí están los resultados de la búsqueda para `{query}`.",
+                    "placeholder": "Selecciona un título para ver más información...",
+                    "view": "Ver Título en MangaDex"
+                },
+                "stats": {
+                    "title": "Estadísticas del Título",
+                    "description": "Aquí están las estadísticas para el título con ID `{mangaId}`.",
+                    "fields": {
+                        "average": {
+                            "name": "Valoración Media"
+                        },
+                        "bayesian": {
+                            "name": "Valoración Bayesiana"
+                        },
+                        "follows": {
+                            "name": "Seguidores"
+                        },
+                        "distribution": {
+                            "name": "Distribución de Valoraciones"
+                        },
+                        "comments": {
+                            "name": "Comentarios"
+                        }
+                    },
+                    "units": {
+                        "votes": "valoraciones",
+                        "comments": "comentarios"
+                    },
+                    "buttons": {
+                        "forum": {
+                            "open": "Abrir el hilo del foro",
+                            "no_thread": "No hay hilo del foro"
+                        }
+                    }
+                },
+                "error": {
+                    "title": "Error",
+                    "description": {
+                        "url": "La URL proporcionada no es válida.",
+                        "invalid_id": "La ID proporcionada no es válida.",
+                        "no_results": "La consulta no devolvió resultados. Es todo lo que sabemos.",
+                        "api": "No se ha podido obtener los datos del título de la API externa.\nPor favor, inténtalo de nuevo más tarde.",
+                        "empty": "Por favor, proporciona una consulta, ID o URL."
+                    }
+                },
+                "footer": "{commandName} - Solicitado por {user}"
+            }
+        },
+        "nami": {
+            "name": "nami",
+            "description": "Busca un título en NamiComi.",
+            "options": {
+                "query": {
+                    "name": "query",
+                    "description": "El título que quieres buscar"
+                },
+                "id": {
+                    "name": "id",
+                    "description": "ID del título que quieres buscar"
+                },
+                "url": {
+                    "name": "url",
+                    "description": "La URL del título que quieres buscar"
+                }
+            },
+            "response": {
+                "found": {
+                    "author": {
+                        "too_many": "Múltiples Autores",
+                        "error": "Autor Desconocido"
+                    },
+                    "fields": {
+                        "rating": {
+                            "name": "Calificación"
+                        },
+                        "follows": {
+                            "name": "Seguidores"
+                        },
+                        "year": {
+                            "name": "Año"
+                        },
+                        "pub_status": {
+                            "name": "Estado de Publicación",
+                            "value": {
+                                "ongoing": "En curso",
+                                "completed": "Completado",
+                                "hiatus": "En pausa",
+                                "cancelled": "Cancelado"
+                            }
+                        },
+                        "demographic": {
+                            "name": "Demografía",
+                            "value": {
+                                "none": "Ninguna",
+                                "shounen": "Shounen",
+                                "shoujo": "Shoujo",
+                                "seinen": "Seinen",
+                                "josei": "Josei"
+                            }
+                        },
+                        "content_rating": {
+                            "name": "Calificación de Contenido",
+                            "value": {
+                                "safe": "Seguro",
+                                "mature": "Para Adultos",
+                                "restricted": "Restringido"
+                            }
+                        },
+                        "reading_mode": {
+                            "name": "Modo de Lectura",
+                            "value": {
+                                "vertical": "Vertical",
+                                "horizontal": {
+                                    "left_to_right": "Horizontal (Izquierda a Derecha)",
+                                    "right_to_left": "Horizontal (Derecha a Izquierda)"
+                                }
+                            }
+                        },
+                        "format": {
+                            "name": "Formato"
+                        },
+                        "genres": {
+                            "name": "Géneros"
+                        },
+                        "themes": {
+                            "name": "Temas"
+                        },
+                        "content_warning": {
+                            "name": "Advertencia de Contenido"
+                        },
+                        "other_tags": {
+                            "name": "Otras Etiquetas"
+                        },
+                        "type": {
+                            "value": {
+                                "comic": "Cómic",
+                                "long_strip": "Tira Larga",
+                                "manga": "Manga",
+                                "novel": "Novela"
+                            },
+                            "name": "Tipo"
+                        }
+                    },
+                    "pub_status": {
+                        "ongoing": "En curso",
+                        "completed": "Completado",
+                        "hiatus": "En pausa",
+                        "cancelled": "Cancelado"
+                    },
+                    "no_description": "No hay descripción disponible.",
+                    "open_button": "Abrir en NamiComi",
+                    "stats_button": "Ver Estadísticas"
+                },
+                "query": {
+                    "title": "Resultados de la Búsqueda",
+                    "description": "Aquí están los resultados de la búsqueda para `{query}`.",
+                    "placeholder": "Selecciona un título para ver más información...",
+                    "view": "Ver Título en NamiComi"
+                },
+                "stats": {
+                    "title": "Estadísticas del Título",
+                    "description": "Aquí están las estadísticas para el título con ID `{titleId}`.",
+                    "fields": {
+                        "rating": {
+                            "name": "Valoraciones"
+                        },
+                        "views": {
+                            "name": "Visualizaciones"
+                        },
+                        "follows": {
+                            "name": "Seguidores"
+                        },
+                        "comments": {
+                            "name": "Comentarios"
+                        },
+                        "chapterViews": {
+                            "name": "Visualizaciones de Capítulos"
+                        },
+                        "chapterComments": {
+                            "name": "Comentarios de Capítulos"
+                        },
+                        "chapterReactions": {
+                            "name": "Reacciones de Capítulos"
+                        }
+                    },
+                    "units": {
+                        "votes": "valoraciones",
+                        "views": "visualizaciones",
+                        "comments": "comentarios",
+                        "reactions": "reacciones"
+                    }
+                },
+                "error": {
+                    "title": "Error",
+                    "description": {
+                        "url": "La URL proporcionada no es válida.",
+                        "invalid_id": "La ID proporcionada no es válida.",
+                        "no_results": "La consulta no devolvió resultados. Es todo lo que sabemos.",
+                        "api": "Ha ocurrido un error al obtener los datos del título.\nPor favor, inténtalo de nuevo más tarde.\nCódigo de estado: {statusCode}",
+                        "empty": "Por favor, proporciona una consulta, ID o URL."
+                    }
+                },
+                "footer": "{commandName} - Solicitado por {user}"
+            }
+        },
+        "settings": {
+            "name": "settings",
+            "description": "Revisa o cambia los ajustes del bot.",
+            "subcommands": {
+                "view": {
+                    "name": "view",
+                    "description": "Revisa tus ajustes",
+                    "response": {
+                        "title": "Ajustes de Usuario",
+                        "description": "Aquí tienes tus ajustes actuales.",
+                        "fields": {
+                            "locale": {
+                                "name": "Idioma"
+                            }
+                        }
+                    }
+                }
+            },
+            "subcommand_groups": {
+                "locale": {
+                    "name": "locale",
+                    "description": "Ajustes de Idioma",
+                    "subcommands": {
+                        "set": {
+                            "name": "set",
+                            "description": "Cambia tu idioma preferido",
+                            "options": {
+                                "locale": {
+                                    "name": "locale",
+                                    "description": "El idioma que quieres usar"
+                                }
+                            },
+                            "response": {
+                                "title": {
+                                    "success": "¡Idioma cambiado!",
+                                    "error": {
+                                        "invalid_locale": "Idioma No Válido",
+                                        "no_changes": "Sin Cambios",
+                                        "unknown": "Error Desconocido"
+                                    }
+                                },
+                                "description": {
+                                    "success": "El idioma ha sido cambiado a `{locale}`.",
+                                    "error": {
+                                        "invalid_locale": "El idioma `{locale}` no es válido.",
+                                        "no_changes": "No se realizaron cambios. El idioma establecido sigue siendo `{locale}`.",
+                                        "unknown": "Ha ocurrido un error desconocido al cambiar el idioma."
+                                    }
+                                },
+                                "footer": "{commandName} - Solicitado por {user}"
+                            }
+                        },
+                        "reset": {
+                            "name": "reset",
+                            "description": "Restablece tu idioma preferido",
+                            "response": {
+                                "title": {
+                                    "success": "Idioma Restablecido",
+                                    "error": "Error al restablecer el idioma"
+                                },
+                                "description": {
+                                    "success": "Tu idioma ha sido restablecido al idioma predeterminado.",
+                                    "error": "Ha ocurrido un error al restablecer el idioma."
+                                },
+                                "footer": "{commandName} - Solicitado por {user}"
+                            }
+                        }
+                    }
+                }
+            },
+            "response": {
+                "footer": "{commandName} - Solicitado por {user}"
+            }
+        }
+    },
+    "error_embed": {
+        "title": "Error",
+        "description": "Ha ocurrido un error al ejecutar este comando, a continuación se muestra el mensaje de error. Por favor, informa de esto al desarrollador del bot. ¡Gracias!",
+        "message": "Mensaje de error",
+        "stack": "Pila del error",
+        "no_stack": "No se ha proporcionado una pila de error.",
+        "err_int_ch_input": "Error en el comando {commandName}",
+        "err_int_btn": "Error en el botón {buttonId}",
+        "err_int_slct": "Error en el menú de selección {selectId}",
+        "err_int_ctx": "Error en el comando de contexto {contextId}",
+        "err_int_mod": "Error en el modal {modalId}",
+        "err_int_aut": "Error en la autocompletación {autocompleteId}",
+        "timeout": {
+            "title": "Timeout",
+            "description": "Se ha agotado el tiempo de espera al obtener los datos desde la API externa. Por favor, inténtalo de nuevo más tarde.",
+            "note": "Este error puede deberse a la API externa siendo lenta o no respondiendo."
+        }
+    },
+    "errors": {
+        "working_on_cmd": {
+            "title": "Trabajando en ello...",
+            "description": "Este comando está siendo desarrollado actualmente. Por favor, inténtalo de nuevo más tarde.",
+            "fields": [
+                {
+                    "name": "¿Cuándo estará listo?",
+                    "value": "No hay una fecha de lanzamiento prevista en este momento. Por favor, sé paciente."
+                }
+            ],
+            "footer": "{commandName} - Solicitado por {user}"
+        }
+    }
+}

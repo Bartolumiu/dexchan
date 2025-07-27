@@ -1,7 +1,9 @@
+const getChalk = require("../../functions/tools/getChalk");
+
 module.exports = {
     name: 'connected',
     async execute() {
-        const chalk = await import('chalk');
-        console.log(chalk.default.green('[Database Status] Connected to MongoDB!'));
+        const chalk = await getChalk();
+        console.log(chalk.green('[Database Status] Connected to MongoDB!'));
     }
 }

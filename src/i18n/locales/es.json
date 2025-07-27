@@ -125,25 +125,25 @@
         },
         "manga": {
             "name": "manga",
-            "description": "Busca un manga en MangaDex.",
+            "description": "Busca un título en MangaDex.",
             "subcommands": {
                 "random": {
                     "name": "random",
-                    "description": "Obtén un manga aleatorio"
+                    "description": "Obtén un título aleatorio"
                 }
             },
             "options": {
                 "query": {
                     "name": "query",
-                    "description": "El manga que quieres buscar"
+                    "description": "El título que quieres buscar"
                 },
                 "id": {
                     "name": "id",
-                    "description": "ID del manga que quieres buscar"
+                    "description": "ID del título que quieres buscar"
                 },
                 "url": {
                     "name": "url",
-                    "description": "La URL del manga que quieres buscar"
+                    "description": "La URL del título que quieres buscar"
                 }
             },
             "response": {
@@ -210,11 +210,12 @@
                 "query": {
                     "title": "Resultados de la Búsqueda",
                     "description": "Aquí están los resultados de la búsqueda para `{query}`.",
-                    "placeholder": "Selecciona un manga para ver más información..."
+                    "placeholder": "Selecciona un título para ver más información...",
+                    "view": "Ver Título en MangaDex"
                 },
                 "stats": {
-                    "title": "Estadísticas del Manga",
-                    "description": "Aquí están las estadísticas para el manga con ID `{mangaId}`.",
+                    "title": "Estadísticas del Título",
+                    "description": "Aquí están las estadísticas para el título con ID `{mangaId}`.",
                     "fields": {
                         "average": {
                             "name": "Valoración Media"
@@ -249,7 +250,7 @@
                         "url": "La URL proporcionada no es válida.",
                         "invalid_id": "La ID proporcionada no es válida.",
                         "no_results": "La consulta no devolvió resultados. Es todo lo que sabemos.",
-                        "api": "No se ha podido obtener los datos del manga de la API externa.\nPor favor, inténtalo de nuevo más tarde.",
+                        "api": "No se ha podido obtener los datos del título de la API externa.\nPor favor, inténtalo de nuevo más tarde.",
                         "empty": "Por favor, proporciona una consulta, ID o URL."
                     }
                 },
@@ -340,6 +341,15 @@
                         },
                         "other_tags": {
                             "name": "Otras Etiquetas"
+                        },
+                        "type": {
+                            "value": {
+                                "comic": "Cómic",
+                                "long_strip": "Tira Larga",
+                                "manga": "Manga",
+                                "novel": "Novela"
+                            },
+                            "name": "Tipo"
                         }
                     },
                     "pub_status": {
@@ -355,7 +365,8 @@
                 "query": {
                     "title": "Resultados de la Búsqueda",
                     "description": "Aquí están los resultados de la búsqueda para `{query}`.",
-                    "placeholder": "Selecciona un título para ver más información..."
+                    "placeholder": "Selecciona un título para ver más información...",
+                    "view": "Ver Título en NamiComi"
                 },
                 "stats": {
                     "title": "Estadísticas del Título",
@@ -439,7 +450,7 @@
                                 "title": {
                                     "success": "¡Idioma cambiado!",
                                     "error": {
-                                        "invalid_locale": "Idioma Inválido",
+                                        "invalid_locale": "Idioma No Válido",
                                         "no_changes": "Sin Cambios",
                                         "unknown": "Error Desconocido"
                                     }

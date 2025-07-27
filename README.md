@@ -68,15 +68,34 @@ To get a local copy of the bot up and running follow these steps.
 
 ### Prerequisites
 
-* npm
+* Package Manager (choose one, but recommended to use either npm or pnpm)
 
-```sh
-npm install npm@latest -g
-```
+  * npm
+  ```sh
+  npm install -g npm@latest
+  ```
+
+  * pnpm (via npm)
+  ```sh
+  npm install -g pnpm
+  ```
+
+  * pnpm (via corepack)
+  ```sh
+  corepack enable pnpm
+  ```
+
+* MongoDB (for storing data)
+  * [MongoDB Atlas](https://www.mongodb.com/atlas/database) (recommended)
+  * [Self-hosted MongoDB](https://www.mongodb.com/docs/manual/installation/)
 
 * pm2 (optional)
 ```sh
 npm install pm2 -g
+```
+or
+```sh
+pnpm add -g pm2
 ```
 
 ### Installation
@@ -93,12 +112,6 @@ git clone https://github.com/Bartolumiu/dexchan.git
 npm install
 ```
 
-2.1 Install PM2 (Optional / Needed for 4.3)
-
-```sh
-npm install -g pm2
-```
-
 3. Rename `.env.template` to `.env` and enter the following:
 
 ```env
@@ -109,21 +122,25 @@ clientID=0123456789011121314
 
 4. Start the bot
 
-To start the bot, there are 3 different methods
+To start the bot, there are 4 different methods
 
-4.1. Node:
+* Node:
 ```sh
 node src/index.js
 ```
 
-4.2. npm command
+* npm command
 ```sh
-npm run test
+npm run start
+```
+* pnpm command
+```sh
+pnpm start
 ```
 
-4.3. pm2 (recommended)
+* pm2 (recommended)
 ```sh
-pm2 start src/bot.js
+pm2 start src/index.js
 ```
 
 ## Roadmap
@@ -132,10 +149,14 @@ See the [open issues](https://github.com/Bartolumiu/dexchan/issues) for a list o
 
 ## Contributing
 
+### Code Contributions
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 * If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/Bartolumiu/dexchan/issues/new) to discuss it, or directly create a pull request after you edit the *README.md* file with necessary changes.
 * Please make sure you check your spelling and grammar.
 * Create individual PR for each suggestion.
+
+### Translation Contributions
+If you want to help translate the bot, you can do so by visiting [Weblate](https://weblate.tr25.es/engage/dexchan/). You can translate the bot into any language you want, and it will be automatically updated in the bot once the translated strings are approved.
 
 ### Creating A Pull Request
 

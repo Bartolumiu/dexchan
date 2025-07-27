@@ -4,7 +4,7 @@
     <img src="https://cdn.discordapp.com/avatars/794309204592033821/b1c4eda0575cd423a3f115c75c66f722.webp?size=4096" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Dex-chan (MangaDex ES)</h3>
+  <h3 align="center">Dex-chan</h3>
 
   <p align="center">
     Base code for the "Dex-chan" Discord bot
@@ -13,10 +13,10 @@
     <a href="https://github.com/Bartolumiu/dexchan"><strong>Explore the docs »</strong></a>
     <br/>
     <br/>
-    <a href="https://discord.gg/5MsyHbbvyc">View Demo</a>
-    .
+    <a href="https://discord.com/application-directory/810942628152868905">Add the bot</a>
+    ·
     <a href="https://github.com/Bartolumiu/dexchan/issues">Report Bug</a>
-    .
+    ·
     <a href="https://github.com/Bartolumiu/dexchan/issues">Request Feature</a>
   </p>
 </p>
@@ -28,7 +28,19 @@
   <a href="https://www.codefactor.io/repository/github/Bartolumiu/dexchan/overview/main">
     <img src="https://www.codefactor.io/repository/github/Bartolumiu/dexchan/badge/main"/>
   </a>
+  <img src="https://img.shields.io/github/stars/Bartolumiu/dexchan?style=social"/>
+  <img src="https://img.shields.io/github/forks/Bartolumiu/dexchan?style=social"/>
 </p>
+
+<p align="center">
+  <a href="https://weblate.tr25.es/engage/dexchan/">
+    <img src="https://weblate.tr25.es/widget/dexchan/discord-bot/287x66-black.png" alt="Translation status" />
+  </a>
+  <a href="https://weblate.tr25.es/engage/dexchan/">
+    <img src="https://weblate.tr25.es/widget/dexchan/discord-bot/multi-auto.svg" alt="Translation status" />
+  </a>
+</p>
+
 
 ## Table Of Contents
 
@@ -40,7 +52,6 @@
 * [Contributing](#contributing)
 * [License](#license)
 * [Authors](#authors)
-* [Acknowledgements](#acknowledgements)
 
 ## Built With
 
@@ -90,8 +101,8 @@ npm install -g pm2
 
 ```env
 token=ULTRA_SECRET_BOT_TOKEN
-databaseToken=mongodbtoken
-clientId=0123456789011121314
+dbToken=mongodbtoken
+clientID=0123456789011121314
 ```
 
 4. Start the bot
@@ -127,7 +138,7 @@ Contributions are what make the open source community such an amazing place to b
 ### Creating A Pull Request
 
 1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+2. Create your Feature Branch based on `develop` (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request

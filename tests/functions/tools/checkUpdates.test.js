@@ -143,7 +143,7 @@ describe('checkUpdates', () => {
 
     describe('parseVersionPart', () => {
         it('should return the integer value of a version part', () => {
-            const parseVersionPart = require('../../../src/functions/tools/checkUpdates').parseVersionPart;
+            const { parseVersionPart } = require('../../../src/functions/tools/checkUpdates');
 
             expect(parseVersionPart('1')).toBe(1);
             expect(parseVersionPart('0')).toBe(0);

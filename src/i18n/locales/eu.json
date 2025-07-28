@@ -7,7 +7,7 @@
     },
     "commands": {
         "ping": {
-            "name": "",
+            "name": "ping",
             "description": "Ikusi botaren latentzia.",
             "response": {
                 "ping": "",
@@ -434,7 +434,7 @@
             },
             "subcommand_groups": {
                 "locale": {
-                    "name": "",
+                    "name": "locale",
                     "description": "",
                     "subcommands": {
                         "set": {
@@ -442,7 +442,7 @@
                             "description": "",
                             "options": {
                                 "locale": {
-                                    "name": "",
+                                    "name": "locale",
                                     "description": ""
                                 }
                             },

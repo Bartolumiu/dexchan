@@ -25,15 +25,28 @@ module.exports = (client) => {
  * @returns {Promise<Object>} - A promise that resolves to the user profile object.
  */
 async function getUserData(user) {
-    const userProfile = await User.findOne({ _id: user.id });
-    if (!userProfile) {
-        const newUser = new User({
+    // Use an atomic upsert to avoid race conditions where two parallel
+    // requests try to create the same user and one of them fails with
+    // a duplicate key error. $setOnInsert ensures fields are only set
+    // when a new document is inserted.
+    const update = {
+        $setOnInsert: {
             _id: user.id,
             username: user.username,
             preferredLocale: null
-        });
-        await newUser.save();
-        return newUser;
+        }
+    };
+    const options = { new: true, upsert: true, setDefaultsOnInsert: true };
+
+    try {
+        const userProfile = await User.findOneAndUpdate({ _id: user.id }, update, options);
+        return userProfile;
+    } catch (err) {
+        // If a duplicate key error still occurs (very unlikely with upsert),
+        // fall back to fetching the existing document.
+        if (err && (err.code === 11000 || err.name === 'MongoServerError')) {
+            return await User.findOne({ _id: user.id });
+        }
+        throw err;
     }
-    return userProfile;
 }

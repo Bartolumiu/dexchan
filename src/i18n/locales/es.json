@@ -150,7 +150,7 @@
                 "found": {
                     "author": {
                         "too_many": "Múltiples Autores",
-                        "error": "Autor Desconocido"
+                        "unknown": "Autor Desconocido"
                     },
                     "fields": {
                         "rating": {
@@ -278,7 +278,7 @@
                 "found": {
                     "author": {
                         "too_many": "Múltiples Autores",
-                        "error": "Autor Desconocido"
+                        "unknown": "Autor Desconocido"
                     },
                     "fields": {
                         "rating": {

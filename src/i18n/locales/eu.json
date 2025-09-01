@@ -1,0 +1,523 @@
+{
+    "locale": {
+        "enabled": false,
+        "name": "Euskara",
+        "englishName": "Basque",
+        "code": "eus"
+    },
+    "commands": {
+        "ping": {
+            "name": "ping",
+            "description": "Ikusi botaren latentzia.",
+            "response": {
+                "ping": "",
+                "title": "",
+                "fields": {
+                    "bot_latency": {
+                        "name": "",
+                        "value": ""
+                    },
+                    "api": {
+                        "discord": {
+                            "name": "Discord APIa",
+                            "value": ""
+                        },
+                        "mangadex": {
+                            "name": "",
+                            "value": ""
+                        },
+                        "namicomi": {
+                            "name": "",
+                            "value": ""
+                        }
+                    }
+                },
+                "footer": "",
+                "not_ok": "Datu eskuratzeak huts egin du"
+            }
+        },
+        "help": {
+            "name": "",
+            "description": "",
+            "response": {
+                "title": "",
+                "fields": {
+                    "commands": {
+                        "name": "Komandoak",
+                        "value": ""
+                    },
+                    "support": {
+                        "name": "",
+                        "value": ""
+                    },
+                    "invite": {
+                        "name": "",
+                        "value": ""
+                    },
+                    "stats": {
+                        "name": "",
+                        "value": ""
+                    },
+                    "uptime": {
+                        "name": "",
+                        "value": ""
+                    }
+                },
+                "footer": ""
+            }
+        },
+        "commands": {
+            "name": "",
+            "description": "",
+            "response": {
+                "title": "Komandoak",
+                "footer": ""
+            }
+        },
+        "invite": {
+            "name": "",
+            "description": "",
+            "response": {
+                "title": "",
+                "description": "",
+                "footer": ""
+            }
+        },
+        "stats": {
+            "name": "",
+            "description": "",
+            "response": {
+                "title": "",
+                "fields": {
+                    "guilds": {
+                        "name": ""
+                    },
+                    "users": {
+                        "name": ""
+                    },
+                    "commands": {
+                        "name": "Komandoak"
+                    },
+                    "uptime": {
+                        "name": ""
+                    }
+                },
+                "footer": ""
+            }
+        },
+        "support": {
+            "name": "",
+            "description": "",
+            "response": {
+                "title": "",
+                "description": "",
+                "footer": ""
+            }
+        },
+        "uptime": {
+            "name": "",
+            "description": "",
+            "response": {
+                "title": "",
+                "description": "",
+                "footer": ""
+            }
+        },
+        "manga": {
+            "name": "",
+            "description": "",
+            "subcommands": {
+                "random": {
+                    "name": "",
+                    "description": "Ausazko titulu bat lortu"
+                }
+            },
+            "options": {
+                "query": {
+                    "name": "",
+                    "description": ""
+                },
+                "id": {
+                    "name": "",
+                    "description": ""
+                },
+                "url": {
+                    "name": "",
+                    "description": ""
+                }
+            },
+            "response": {
+                "found": {
+                    "author": {
+                        "too_many": "",
+                        "unknown": ""
+                    },
+                    "fields": {
+                        "rating": {
+                            "name": ""
+                        },
+                        "follows": {
+                            "name": "Jarraitzaileak"
+                        },
+                        "year": {
+                            "name": ""
+                        },
+                        "pub_status": {
+                            "name": "",
+                            "value": {
+                                "ongoing": "",
+                                "completed": "Amaituta",
+                                "hiatus": "",
+                                "cancelled": "Bertan Behera"
+                            }
+                        },
+                        "demographic": {
+                            "name": "Demografia",
+                            "value": {
+                                "none": "",
+                                "shounen": "",
+                                "shoujo": "",
+                                "seinen": "",
+                                "josei": ""
+                            }
+                        },
+                        "content_rating": {
+                            "name": "Edukiaren Sailkapena"
+                        },
+                        "format": {
+                            "name": "Formatua"
+                        },
+                        "genres": {
+                            "name": "Generoak"
+                        },
+                        "themes": {
+                            "name": ""
+                        },
+                        "content_warning": {
+                            "name": "Edukiaren Abisuak"
+                        }
+                    },
+                    "pub_status": {
+                        "ongoing": "",
+                        "completed": "Amaituta",
+                        "hiatus": "",
+                        "cancelled": "Bertan Behera"
+                    },
+                    "no_description": "",
+                    "open_button": "",
+                    "stats_button": ""
+                },
+                "query": {
+                    "title": "",
+                    "description": "",
+                    "placeholder": "",
+                    "view": ""
+                },
+                "stats": {
+                    "title": "",
+                    "description": "",
+                    "fields": {
+                        "average": {
+                            "name": ""
+                        },
+                        "bayesian": {
+                            "name": ""
+                        },
+                        "follows": {
+                            "name": "Jarraitzaileak"
+                        },
+                        "distribution": {
+                            "name": ""
+                        },
+                        "comments": {
+                            "name": "Iruzkinak"
+                        }
+                    },
+                    "units": {
+                        "votes": "",
+                        "comments": ""
+                    },
+                    "buttons": {
+                        "forum": {
+                            "open": "",
+                            "no_thread": ""
+                        }
+                    }
+                },
+                "error": {
+                    "title": "Errorea",
+                    "description": {
+                        "url": "",
+                        "invalid_id": "",
+                        "no_results": "",
+                        "api": "Ezin izan dira tituluaren datuak eskuratu APItik.\nSaiatu berriro beranduago.",
+                        "empty": ""
+                    }
+                },
+                "footer": ""
+            }
+        },
+        "nami": {
+            "name": "",
+            "description": "",
+            "options": {
+                "query": {
+                    "name": "",
+                    "description": ""
+                },
+                "id": {
+                    "name": "",
+                    "description": ""
+                },
+                "url": {
+                    "name": "",
+                    "description": ""
+                }
+            },
+            "response": {
+                "found": {
+                    "author": {
+                        "too_many": "",
+                        "unknown": ""
+                    },
+                    "fields": {
+                        "rating": {
+                            "name": ""
+                        },
+                        "follows": {
+                            "name": "Jarraitzaileak"
+                        },
+                        "year": {
+                            "name": ""
+                        },
+                        "pub_status": {
+                            "name": "",
+                            "value": {
+                                "ongoing": "",
+                                "completed": "Amaituta",
+                                "hiatus": "",
+                                "cancelled": "Bertan Behera"
+                            }
+                        },
+                        "demographic": {
+                            "name": "Demografia",
+                            "value": {
+                                "none": "",
+                                "shounen": "",
+                                "shoujo": "",
+                                "seinen": "",
+                                "josei": ""
+                            }
+                        },
+                        "content_rating": {
+                            "name": "Edukiaren Sailkapena",
+                            "value": {
+                                "safe": "",
+                                "mature": "",
+                                "restricted": ""
+                            }
+                        },
+                        "reading_mode": {
+                            "name": "",
+                            "value": {
+                                "vertical": "",
+                                "horizontal": {
+                                    "left_to_right": "",
+                                    "right_to_left": ""
+                                }
+                            }
+                        },
+                        "format": {
+                            "name": "Formatua"
+                        },
+                        "genres": {
+                            "name": "Generoak"
+                        },
+                        "themes": {
+                            "name": ""
+                        },
+                        "content_warning": {
+                            "name": "Edukiaren Abisuak"
+                        },
+                        "other_tags": {
+                            "name": ""
+                        },
+                        "type": {
+                            "name": "",
+                            "value": {
+                                "manga": "",
+                                "long_strip": "",
+                                "comic": "Komikia",
+                                "novel": ""
+                            }
+                        }
+                    },
+                    "pub_status": {
+                        "ongoing": "",
+                        "completed": "Amaituta",
+                        "hiatus": "",
+                        "cancelled": "Bertan Behera"
+                    },
+                    "no_description": "",
+                    "open_button": "",
+                    "stats_button": ""
+                },
+                "query": {
+                    "title": "",
+                    "description": "",
+                    "placeholder": "",
+                    "view": ""
+                },
+                "stats": {
+                    "title": "",
+                    "description": "",
+                    "fields": {
+                        "rating": {
+                            "name": ""
+                        },
+                        "views": {
+                            "name": ""
+                        },
+                        "follows": {
+                            "name": "Jarraitzaileak"
+                        },
+                        "comments": {
+                            "name": "Iruzkinak"
+                        },
+                        "chapterViews": {
+                            "name": "Kapitulu Bistaratzeak"
+                        },
+                        "chapterComments": {
+                            "name": "Kapitulu Iruzkinak"
+                        },
+                        "chapterReactions": {
+                            "name": "Kapitulu Erreakzioak"
+                        }
+                    },
+                    "units": {
+                        "votes": "",
+                        "views": "",
+                        "comments": "",
+                        "reactions": ""
+                    }
+                },
+                "error": {
+                    "title": "Errorea",
+                    "description": {
+                        "url": "",
+                        "invalid_id": "",
+                        "no_results": "",
+                        "api": "",
+                        "empty": ""
+                    }
+                },
+                "footer": ""
+            }
+        },
+        "settings": {
+            "name": "",
+            "description": "",
+            "subcommands": {
+                "view": {
+                    "name": "",
+                    "description": "",
+                    "response": {
+                        "title": "",
+                        "description": "",
+                        "fields": {
+                            "locale": {
+                                "name": "Hizkuntza"
+                            }
+                        }
+                    }
+                }
+            },
+            "subcommand_groups": {
+                "locale": {
+                    "name": "locale",
+                    "description": "",
+                    "subcommands": {
+                        "set": {
+                            "name": "",
+                            "description": "",
+                            "options": {
+                                "locale": {
+                                    "name": "locale",
+                                    "description": ""
+                                }
+                            },
+                            "response": {
+                                "title": {
+                                    "success": "",
+                                    "error": {
+                                        "invalid_locale": "",
+                                        "no_changes": "",
+                                        "unknown": ""
+                                    }
+                                },
+                                "description": {
+                                    "success": "",
+                                    "error": {
+                                        "invalid_locale": "",
+                                        "no_changes": "",
+                                        "unknown": ""
+                                    }
+                                },
+                                "footer": ""
+                            }
+                        },
+                        "reset": {
+                            "name": "",
+                            "description": "",
+                            "response": {
+                                "title": {
+                                    "success": "",
+                                    "error": "Errorea hizkuntza berrezartzean"
+                                },
+                                "description": {
+                                    "success": "",
+                                    "error": ""
+                                },
+                                "footer": ""
+                            }
+                        }
+                    }
+                }
+            },
+            "response": {
+                "footer": ""
+            }
+        }
+    },
+    "error_embed": {
+        "title": "Errorea",
+        "description": "",
+        "message": "Errore mezua",
+        "stack": "Errorearen pila",
+        "no_stack": "",
+        "err_int_ch_input": "{commandName} komandoan errorea",
+        "err_int_btn": "{buttonId} botoian errorea",
+        "err_int_slct": "{selectId} hautaketa menuan errorea",
+        "err_int_ctx": "{contextId} testuinguru komandoan errorea",
+        "err_int_mod": "{modalId} modalean errorea",
+        "err_int_aut": "{autocompleteId} osatze automatikoan errorea",
+        "timeout": {
+            "title": "",
+            "description": "",
+            "note": ""
+        }
+    },
+    "errors": {
+        "working_on_cmd": {
+            "title": "",
+            "description": "",
+            "fields": [
+                {
+                    "name": "",
+                    "value": ""
+                }
+            ],
+            "footer": ""
+        }
+    }
+}

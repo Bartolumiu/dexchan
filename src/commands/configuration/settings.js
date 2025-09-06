@@ -152,8 +152,9 @@ async function localeSettings(interaction, client, userProfile, embed) {
 
                 userProfile.preferredLocale = locale; // Set the user's preferred locale
                 await userProfile.save();
+                const lang = await client.translate(locale, 'locale', 'name');
                 embed.setTitle(await client.translate(locale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.success'));
-                embed.setDescription(await client.translate(locale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.success', { locale: locale }));
+                embed.setDescription(await client.translate(locale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.description.success', { locale: lang }));
                 embed.setColor(Colors.Green);
             } catch {
                 embed.setTitle(await client.translate(currentLocale, 'commands', 'settings.subcommand_groups.locale.subcommands.set.response.title.error.unknown'));
@@ -184,7 +185,7 @@ async function localeSettings(interaction, client, userProfile, embed) {
  * @param {Object} interaction - The interaction object from the Discord API.
  * @param {Object} client - The Discord client instance.
  * @param {Object} userProfile - The user's profile containing their settings.
- * @param {Object} embed - The embed object to format the message.
+ * @param {EmbedBuilder} embed - The embed object to format the message.
  */
 async function viewSettings(interaction, client, userProfile, embed) {
     const locale = client.getLocale(userProfile, interaction);
@@ -193,7 +194,7 @@ async function viewSettings(interaction, client, userProfile, embed) {
     embed.addFields(
         {
             name: await client.translate(locale, 'commands', 'settings.subcommands.view.response.fields.locale.name'),
-            value: await client.translate(locale, 'commands', 'settings.subcommands.view.response.fields.locale.value', { locale: locale }),
+            value: await client.translate(locale, 'locale', 'name'),
             inline: true
         }
     )

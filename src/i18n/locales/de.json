@@ -1,0 +1,523 @@
+{
+    "locale": {
+        "enabled": false,
+        "name": "",
+        "englishName": "",
+        "code": ""
+    },
+    "commands": {
+        "ping": {
+            "name": "",
+            "description": "",
+            "response": {
+                "ping": "",
+                "title": "",
+                "fields": {
+                    "bot_latency": {
+                        "name": "",
+                        "value": ""
+                    },
+                    "api": {
+                        "discord": {
+                            "name": "",
+                            "value": ""
+                        },
+                        "mangadex": {
+                            "name": "",
+                            "value": ""
+                        },
+                        "namicomi": {
+                            "name": "",
+                            "value": ""
+                        }
+                    }
+                },
+                "footer": "",
+                "not_ok": ""
+            }
+        },
+        "help": {
+            "name": "",
+            "description": "",
+            "response": {
+                "title": "",
+                "fields": {
+                    "commands": {
+                        "name": "",
+                        "value": ""
+                    },
+                    "support": {
+                        "name": "",
+                        "value": ""
+                    },
+                    "invite": {
+                        "name": "",
+                        "value": ""
+                    },
+                    "stats": {
+                        "name": "",
+                        "value": ""
+                    },
+                    "uptime": {
+                        "name": "",
+                        "value": ""
+                    }
+                },
+                "footer": ""
+            }
+        },
+        "commands": {
+            "name": "",
+            "description": "",
+            "response": {
+                "title": "",
+                "footer": ""
+            }
+        },
+        "invite": {
+            "name": "",
+            "description": "",
+            "response": {
+                "title": "",
+                "description": "",
+                "footer": ""
+            }
+        },
+        "stats": {
+            "name": "",
+            "description": "",
+            "response": {
+                "title": "",
+                "fields": {
+                    "guilds": {
+                        "name": ""
+                    },
+                    "users": {
+                        "name": ""
+                    },
+                    "commands": {
+                        "name": ""
+                    },
+                    "uptime": {
+                        "name": ""
+                    }
+                },
+                "footer": ""
+            }
+        },
+        "support": {
+            "name": "",
+            "description": "",
+            "response": {
+                "title": "",
+                "description": "",
+                "footer": ""
+            }
+        },
+        "uptime": {
+            "name": "",
+            "description": "",
+            "response": {
+                "title": "",
+                "description": "",
+                "footer": ""
+            }
+        },
+        "manga": {
+            "name": "",
+            "description": "",
+            "subcommands": {
+                "random": {
+                    "name": "",
+                    "description": ""
+                }
+            },
+            "options": {
+                "query": {
+                    "name": "",
+                    "description": ""
+                },
+                "id": {
+                    "name": "",
+                    "description": ""
+                },
+                "url": {
+                    "name": "",
+                    "description": ""
+                }
+            },
+            "response": {
+                "found": {
+                    "author": {
+                        "too_many": "",
+                        "unknown": ""
+                    },
+                    "fields": {
+                        "rating": {
+                            "name": ""
+                        },
+                        "follows": {
+                            "name": ""
+                        },
+                        "year": {
+                            "name": ""
+                        },
+                        "pub_status": {
+                            "name": "",
+                            "value": {
+                                "ongoing": "",
+                                "completed": "",
+                                "hiatus": "",
+                                "cancelled": ""
+                            }
+                        },
+                        "demographic": {
+                            "name": "",
+                            "value": {
+                                "none": "",
+                                "shounen": "",
+                                "shoujo": "",
+                                "seinen": "",
+                                "josei": ""
+                            }
+                        },
+                        "content_rating": {
+                            "name": ""
+                        },
+                        "format": {
+                            "name": ""
+                        },
+                        "genres": {
+                            "name": ""
+                        },
+                        "themes": {
+                            "name": ""
+                        },
+                        "content_warning": {
+                            "name": ""
+                        }
+                    },
+                    "pub_status": {
+                        "ongoing": "",
+                        "completed": "",
+                        "hiatus": "",
+                        "cancelled": ""
+                    },
+                    "no_description": "",
+                    "open_button": "",
+                    "stats_button": ""
+                },
+                "query": {
+                    "title": "",
+                    "description": "",
+                    "placeholder": "",
+                    "view": ""
+                },
+                "stats": {
+                    "title": "",
+                    "description": "",
+                    "fields": {
+                        "average": {
+                            "name": ""
+                        },
+                        "bayesian": {
+                            "name": ""
+                        },
+                        "follows": {
+                            "name": ""
+                        },
+                        "distribution": {
+                            "name": ""
+                        },
+                        "comments": {
+                            "name": ""
+                        }
+                    },
+                    "units": {
+                        "votes": "",
+                        "comments": ""
+                    },
+                    "buttons": {
+                        "forum": {
+                            "open": "",
+                            "no_thread": ""
+                        }
+                    }
+                },
+                "error": {
+                    "title": "",
+                    "description": {
+                        "url": "",
+                        "invalid_id": "",
+                        "no_results": "",
+                        "api": "",
+                        "empty": ""
+                    }
+                },
+                "footer": ""
+            }
+        },
+        "nami": {
+            "name": "",
+            "description": "",
+            "options": {
+                "query": {
+                    "name": "",
+                    "description": ""
+                },
+                "id": {
+                    "name": "",
+                    "description": ""
+                },
+                "url": {
+                    "name": "",
+                    "description": ""
+                }
+            },
+            "response": {
+                "found": {
+                    "author": {
+                        "too_many": "",
+                        "unknown": ""
+                    },
+                    "fields": {
+                        "rating": {
+                            "name": ""
+                        },
+                        "follows": {
+                            "name": ""
+                        },
+                        "year": {
+                            "name": ""
+                        },
+                        "pub_status": {
+                            "name": "",
+                            "value": {
+                                "ongoing": "",
+                                "completed": "",
+                                "hiatus": "",
+                                "cancelled": ""
+                            }
+                        },
+                        "demographic": {
+                            "name": "",
+                            "value": {
+                                "none": "",
+                                "shounen": "",
+                                "shoujo": "",
+                                "seinen": "",
+                                "josei": ""
+                            }
+                        },
+                        "content_rating": {
+                            "name": "",
+                            "value": {
+                                "safe": "",
+                                "mature": "",
+                                "restricted": ""
+                            }
+                        },
+                        "reading_mode": {
+                            "name": "",
+                            "value": {
+                                "vertical": "",
+                                "horizontal": {
+                                    "left_to_right": "",
+                                    "right_to_left": ""
+                                }
+                            }
+                        },
+                        "format": {
+                            "name": ""
+                        },
+                        "genres": {
+                            "name": ""
+                        },
+                        "themes": {
+                            "name": ""
+                        },
+                        "content_warning": {
+                            "name": ""
+                        },
+                        "other_tags": {
+                            "name": ""
+                        },
+                        "type": {
+                            "name": "",
+                            "value": {
+                                "manga": "",
+                                "long_strip": "",
+                                "comic": "",
+                                "novel": ""
+                            }
+                        }
+                    },
+                    "pub_status": {
+                        "ongoing": "",
+                        "completed": "",
+                        "hiatus": "",
+                        "cancelled": ""
+                    },
+                    "no_description": "",
+                    "open_button": "",
+                    "stats_button": ""
+                },
+                "query": {
+                    "title": "",
+                    "description": "",
+                    "placeholder": "",
+                    "view": ""
+                },
+                "stats": {
+                    "title": "",
+                    "description": "",
+                    "fields": {
+                        "rating": {
+                            "name": ""
+                        },
+                        "views": {
+                            "name": ""
+                        },
+                        "follows": {
+                            "name": ""
+                        },
+                        "comments": {
+                            "name": ""
+                        },
+                        "chapterViews": {
+                            "name": ""
+                        },
+                        "chapterComments": {
+                            "name": ""
+                        },
+                        "chapterReactions": {
+                            "name": ""
+                        }
+                    },
+                    "units": {
+                        "votes": "",
+                        "views": "",
+                        "comments": "",
+                        "reactions": ""
+                    }
+                },
+                "error": {
+                    "title": "",
+                    "description": {
+                        "url": "",
+                        "invalid_id": "",
+                        "no_results": "",
+                        "api": "",
+                        "empty": ""
+                    }
+                },
+                "footer": ""
+            }
+        },
+        "settings": {
+            "name": "",
+            "description": "",
+            "subcommands": {
+                "view": {
+                    "name": "",
+                    "description": "",
+                    "response": {
+                        "title": "",
+                        "description": "",
+                        "fields": {
+                            "locale": {
+                                "name": ""
+                            }
+                        }
+                    }
+                }
+            },
+            "subcommand_groups": {
+                "locale": {
+                    "name": "",
+                    "description": "",
+                    "subcommands": {
+                        "set": {
+                            "name": "",
+                            "description": "",
+                            "options": {
+                                "locale": {
+                                    "name": "",
+                                    "description": ""
+                                }
+                            },
+                            "response": {
+                                "title": {
+                                    "success": "",
+                                    "error": {
+                                        "invalid_locale": "",
+                                        "no_changes": "",
+                                        "unknown": ""
+                                    }
+                                },
+                                "description": {
+                                    "success": "",
+                                    "error": {
+                                        "invalid_locale": "",
+                                        "no_changes": "",
+                                        "unknown": ""
+                                    }
+                                },
+                                "footer": ""
+                            }
+                        },
+                        "reset": {
+                            "name": "",
+                            "description": "",
+                            "response": {
+                                "title": {
+                                    "success": "",
+                                    "error": ""
+                                },
+                                "description": {
+                                    "success": "",
+                                    "error": ""
+                                },
+                                "footer": ""
+                            }
+                        }
+                    }
+                }
+            },
+            "response": {
+                "footer": ""
+            }
+        }
+    },
+    "error_embed": {
+        "title": "",
+        "description": "",
+        "message": "",
+        "stack": "",
+        "no_stack": "",
+        "err_int_ch_input": "",
+        "err_int_btn": "",
+        "err_int_slct": "",
+        "err_int_ctx": "",
+        "err_int_mod": "",
+        "err_int_aut": "",
+        "timeout": {
+            "title": "",
+            "description": "",
+            "note": ""
+        }
+    },
+    "errors": {
+        "working_on_cmd": {
+            "title": "",
+            "description": "",
+            "fields": [
+                {
+                    "name": "",
+                    "value": ""
+                }
+            ],
+            "footer": ""
+        }
+    }
+}

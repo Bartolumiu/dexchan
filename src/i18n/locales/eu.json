@@ -1,6 +1,6 @@
 {
     "locale": {
-        "enabled": false,
+        "enabled": true,
         "name": "Euskara",
         "englishName": "Basque",
         "code": "eus"
@@ -8,13 +8,13 @@
     "commands": {
         "ping": {
             "name": "ping",
-            "description": "Ikusi botaren latentzia.",
+            "description": "Botaren latentzia ikusi.",
             "response": {
                 "ping": "Ping egiten...",
                 "title": "Pong!",
                 "fields": {
                     "bot_latency": {
-                        "name": "",
+                        "name": "Botaren Latentzia",
                         "value": "{ping}ms"
                     },
                     "api": {
@@ -38,29 +38,29 @@
         },
         "help": {
             "name": "help",
-            "description": "",
+            "description": "Botarekin laguntza lortu.",
             "response": {
-                "title": "",
+                "title": "Laguntza",
                 "fields": {
                     "commands": {
                         "name": "Komandoak",
-                        "value": ""
+                        "value": "Komando zerrenda bat ikusteko, `/commands` erabili."
                     },
                     "support": {
-                        "name": "",
-                        "value": ""
+                        "name": "Laguntza",
+                        "value": "Laguntza eskuratzeko, `/support` erabili."
                     },
                     "invite": {
-                        "name": "",
-                        "value": ""
+                        "name": "Gonbidatu",
+                        "value": "Bota zure zerbitzarira gonbidatzeko, `/invite` erabili."
                     },
                     "stats": {
-                        "name": "",
-                        "value": ""
+                        "name": "Estatistikak",
+                        "value": "Botaren estatistikak ikusteko, `/stats` erabili."
                     },
                     "uptime": {
-                        "name": "",
-                        "value": ""
+                        "name": "Funtzionamendu Denbora",
+                        "value": "Botaren funtzionamendu-denbora ikusteko, `/uptime` erabili."
                     }
                 },
                 "footer": "{commandName} - {user}k eskatua"
@@ -68,7 +68,7 @@
         },
         "commands": {
             "name": "commands",
-            "description": "",
+            "description": "Erabil ditzakezun komandoen zerrenda eskuratu.",
             "response": {
                 "title": "Komandoak",
                 "footer": "{commandName} - {user}k eskatua"
@@ -76,30 +76,30 @@
         },
         "invite": {
             "name": "invite",
-            "description": "",
+            "description": "Bota zure zerbitzarira gonbidatu.",
             "response": {
-                "title": "",
-                "description": "",
+                "title": "Gonbidatu",
+                "description": "Bota zure zerbitzarira gonbida dezakezu [hemen]({inviteLink}) klik eginez.",
                 "footer": "{commandName} - {user}k eskatua"
             }
         },
         "stats": {
             "name": "stats",
-            "description": "",
+            "description": "Botaren estatistikak eskuratu.",
             "response": {
-                "title": "",
+                "title": "Estatistikak",
                 "fields": {
                     "guilds": {
-                        "name": ""
+                        "name": "Zerbitzariak"
                     },
                     "users": {
-                        "name": ""
+                        "name": "Erabiltzaileak"
                     },
                     "commands": {
                         "name": "Komandoak"
                     },
                     "uptime": {
-                        "name": ""
+                        "name": "Funtzionamendu Denbora"
                     }
                 },
                 "footer": "{commandName} - {user}k eskatua"
@@ -107,25 +107,25 @@
         },
         "support": {
             "name": "support",
-            "description": "",
+            "description": "Botaren laguntza zerbitzariaren gonbidapena lortu.",
             "response": {
-                "title": "",
-                "description": "",
+                "title": "Laguntza",
+                "description": "Botaren laguntza-zerbitzarian sartu zaitezke [hemen]({supportLink}) klik eginez.",
                 "footer": "{commandName} - {user}k eskatua"
             }
         },
         "uptime": {
             "name": "uptime",
-            "description": "",
+            "description": "Botaren funtzionamendu-denbora eskuratu.",
             "response": {
-                "title": "",
-                "description": "",
+                "title": "Funtzionamendu Denbora",
+                "description": "Bota {uptime} egon da konektatuta.",
                 "footer": "{commandName} - {user}k eskatua"
             }
         },
         "manga": {
             "name": "manga",
-            "description": "",
+            "description": "MangaDex-en titulu bat bilatu.",
             "subcommands": {
                 "random": {
                     "name": "random",
@@ -135,50 +135,50 @@
             "options": {
                 "query": {
                     "name": "query",
-                    "description": ""
+                    "description": "Bilatu nahi duzun titulua"
                 },
                 "id": {
                     "name": "id",
-                    "description": ""
+                    "description": "Bilatu nahi duzun tituluaren IDa"
                 },
                 "url": {
                     "name": "url",
-                    "description": ""
+                    "description": "Bilatu nahi duzun tituluaren URLa"
                 }
             },
             "response": {
                 "found": {
                     "author": {
-                        "too_many": "",
-                        "unknown": ""
+                        "too_many": "Egile Anitz",
+                        "unknown": "Egile Ezezaguna"
                     },
                     "fields": {
                         "rating": {
-                            "name": ""
+                            "name": "Balorazioa"
                         },
                         "follows": {
                             "name": "Jarraitzaileak"
                         },
                         "year": {
-                            "name": ""
+                            "name": "Urtea"
                         },
                         "pub_status": {
-                            "name": "",
+                            "name": "Argitalpen Egoera",
                             "value": {
-                                "ongoing": "",
+                                "ongoing": "Argitaratzen",
                                 "completed": "Amaituta",
-                                "hiatus": "",
+                                "hiatus": "Atsedenaldia",
                                 "cancelled": "Bertan Behera"
                             }
                         },
                         "demographic": {
                             "name": "Demografia",
                             "value": {
-                                "none": "",
-                                "shounen": "",
-                                "shoujo": "",
-                                "seinen": "",
-                                "josei": ""
+                                "none": "Bat ere ez",
+                                "shounen": "Shounen",
+                                "shoujo": "Shoujo",
+                                "seinen": "Seinen",
+                                "josei": "Josei"
                             }
                         },
                         "content_rating": {
@@ -191,31 +191,31 @@
                             "name": "Generoak"
                         },
                         "themes": {
-                            "name": ""
+                            "name": "Gaiak"
                         },
                         "content_warning": {
                             "name": "Edukiaren Abisuak"
                         }
                     },
                     "pub_status": {
-                        "ongoing": "",
+                        "ongoing": "Argitaratzen",
                         "completed": "Amaituta",
-                        "hiatus": "",
+                        "hiatus": "Atsedenaldia",
                         "cancelled": "Bertan Behera"
                     },
-                    "no_description": "",
-                    "open_button": "",
-                    "stats_button": ""
+                    "no_description": "Ez dago deskribapenik eskuragarri.",
+                    "open_button": "MangaDex-en Ireki",
+                    "stats_button": "Estatistikak Ikusi"
                 },
                 "query": {
-                    "title": "",
-                    "description": "",
-                    "placeholder": "",
-                    "view": ""
+                    "title": "Bilaketa-emaitzak",
+                    "description": "Hemen dituzu `{query}` bilaketaren emaitzak.",
+                    "placeholder": "Titulu bat hautatu informazio gehiago ikusteko...",
+                    "view": "Titulua Ikusi MangaDex-en"
                 },
                 "stats": {
-                    "title": "",
-                    "description": "",
+                    "title": "Tituluaren Estatistikak",
+                    "description": "Hemen dituzu `{mangaId}` IDa duen tituluaren estatistikak.",
                     "fields": {
                         "average": {
                             "name": "Batezbesteko Balorazioa"
@@ -227,31 +227,31 @@
                             "name": "Jarraitzaileak"
                         },
                         "distribution": {
-                            "name": ""
+                            "name": "Balorazioen Banaketa"
                         },
                         "comments": {
                             "name": "Iruzkinak"
                         }
                     },
                     "units": {
-                        "votes": "",
-                        "comments": ""
+                        "votes": "boto",
+                        "comments": "iruzkin"
                     },
                     "buttons": {
                         "forum": {
-                            "open": "",
-                            "no_thread": ""
+                            "open": "Foroaren Haria Ireki",
+                            "no_thread": "Foro-haririk Ez"
                         }
                     }
                 },
                 "error": {
                     "title": "Errorea",
                     "description": {
-                        "url": "",
-                        "invalid_id": "",
-                        "no_results": "",
+                        "url": "Emandako URLa baliogabea da.",
+                        "invalid_id": "Emandako IDa baliogabea da.",
+                        "no_results": "Kontsultak ez du emaitzarik itzuli. Hori da dakigun guztia.",
                         "api": "Ezin izan dira tituluaren datuak eskuratu APItik.\nSaiatu berriro beranduago.",
-                        "empty": ""
+                        "empty": "Mesedez, kontsulta, ID edo URL bat eman."
                     }
                 },
                 "footer": "{commandName} - {user}k eskatua"
@@ -259,71 +259,71 @@
         },
         "nami": {
             "name": "nami",
-            "description": "",
+            "description": "NamiComi-n titulu bat bilatu.",
             "options": {
                 "query": {
                     "name": "query",
-                    "description": ""
+                    "description": "Bilatu nahi duzun titulua"
                 },
                 "id": {
                     "name": "id",
-                    "description": ""
+                    "description": "Bilatu nahi duzun tituluarn IDa"
                 },
                 "url": {
                     "name": "url",
-                    "description": ""
+                    "description": "Bilatu nahi duzun tituluaren URLa"
                 }
             },
             "response": {
                 "found": {
                     "author": {
-                        "too_many": "",
-                        "unknown": ""
+                        "too_many": "Egile Anitz",
+                        "unknown": "Egile Ezezaguna"
                     },
                     "fields": {
                         "rating": {
-                            "name": ""
+                            "name": "Balorazioa"
                         },
                         "follows": {
                             "name": "Jarraitzaileak"
                         },
                         "year": {
-                            "name": ""
+                            "name": "Urtea"
                         },
                         "pub_status": {
-                            "name": "",
+                            "name": "Argitalpen Egoera",
                             "value": {
-                                "ongoing": "",
+                                "ongoing": "Argitaratzen",
                                 "completed": "Amaituta",
-                                "hiatus": "",
+                                "hiatus": "Atsedenaldia",
                                 "cancelled": "Bertan Behera"
                             }
                         },
                         "demographic": {
                             "name": "Demografia",
                             "value": {
-                                "none": "",
-                                "shounen": "",
-                                "shoujo": "",
-                                "seinen": "",
-                                "josei": ""
+                                "none": "Bat ere ez",
+                                "shounen": "Shounen",
+                                "shoujo": "Shoujo",
+                                "seinen": "Seinen",
+                                "josei": "Josei"
                             }
                         },
                         "content_rating": {
                             "name": "Edukiaren Sailkapena",
                             "value": {
-                                "safe": "",
-                                "mature": "",
-                                "restricted": ""
+                                "safe": "Segurua",
+                                "mature": "Helduentzat",
+                                "restricted": "Mugatuta"
                             }
                         },
                         "reading_mode": {
-                            "name": "",
+                            "name": "Irakurketa Modua",
                             "value": {
-                                "vertical": "",
+                                "vertical": "Bertikala",
                                 "horizontal": {
-                                    "left_to_right": "",
-                                    "right_to_left": ""
+                                    "left_to_right": "Horizontala (Ezkerretik Eskuinera)",
+                                    "right_to_left": "Horizontala (Eskuinetik Ezkerrera)"
                                 }
                             }
                         },
@@ -334,49 +334,49 @@
                             "name": "Generoak"
                         },
                         "themes": {
-                            "name": ""
+                            "name": "Gaiak"
                         },
                         "content_warning": {
                             "name": "Edukiaren Abisuak"
                         },
                         "other_tags": {
-                            "name": ""
+                            "name": "Beste Etiketak"
                         },
                         "type": {
-                            "name": "",
+                            "name": "Mota",
                             "value": {
-                                "manga": "",
-                                "long_strip": "",
+                                "manga": "Manga",
+                                "long_strip": "Tira Luzea",
                                 "comic": "Komikia",
-                                "novel": ""
+                                "novel": "Eleberria"
                             }
                         }
                     },
                     "pub_status": {
-                        "ongoing": "",
+                        "ongoing": "Argitaratzen",
                         "completed": "Amaituta",
-                        "hiatus": "",
+                        "hiatus": "Atsedenaldia",
                         "cancelled": "Bertan Behera"
                     },
-                    "no_description": "",
-                    "open_button": "",
-                    "stats_button": ""
+                    "no_description": "Ez dago deskribapenik eskuragarri.",
+                    "open_button": "NamiComi-n Ireki",
+                    "stats_button": "Estatistikak Ikusi"
                 },
                 "query": {
-                    "title": "",
-                    "description": "",
-                    "placeholder": "",
-                    "view": ""
+                    "title": "Bilaketa-emaitzak",
+                    "description": "Hemen dituzu `{query}` bilaketaren emaitzak.",
+                    "placeholder": "Titulu bat hautatu informazio gehiago ikusteko.",
+                    "view": "Titulua Ikusi NamiComi-n"
                 },
                 "stats": {
-                    "title": "",
-                    "description": "",
+                    "title": "Tituluaren Estatistikak",
+                    "description": "Hemen dituzu `{titleId}` IDa duen tituluaren estatistikak.",
                     "fields": {
                         "rating": {
-                            "name": ""
+                            "name": "Balorazioa"
                         },
                         "views": {
-                            "name": ""
+                            "name": "Bistaratzeak"
                         },
                         "follows": {
                             "name": "Jarraitzaileak"
@@ -395,20 +395,20 @@
                         }
                     },
                     "units": {
-                        "votes": "",
-                        "views": "",
-                        "comments": "",
-                        "reactions": ""
+                        "votes": "boto",
+                        "views": "bistaratze",
+                        "comments": "iruzkin",
+                        "reactions": "erreakzioak"
                     }
                 },
                 "error": {
                     "title": "Errorea",
                     "description": {
-                        "url": "",
-                        "invalid_id": "",
-                        "no_results": "",
-                        "api": "",
-                        "empty": ""
+                        "url": "Emandako URLa baliogabea da.",
+                        "invalid_id": "Emandako IDa baliogabea da.",
+                        "no_results": "Kontsultak ez du emaitzarik itzuli. Hori da dakigun guztia.",
+                        "api": "Errore bat gertatu da tituluaren datuak eskuratzerakoan.\nMesedez, berriro saiatu.\nEgoera-kodea: {statusCode}",
+                        "empty": "Mesedez, kontsulta, ID edo URL bat eman."
                     }
                 },
                 "footer": "{commandName} - {user}k eskatua"
@@ -416,14 +416,14 @@
         },
         "settings": {
             "name": "settings",
-            "description": "",
+            "description": "Botaren ezarpenak ikusi edo aldatu.",
             "subcommands": {
                 "view": {
                     "name": "view",
-                    "description": "",
+                    "description": "Zure ezarpenak ikusi",
                     "response": {
-                        "title": "",
-                        "description": "",
+                        "title": "Erabiltzailearen Ezarpenak",
+                        "description": "Hemen dituzu zure uneko ezarpenak.",
                         "fields": {
                             "locale": {
                                 "name": "Hizkuntza"
@@ -435,32 +435,32 @@
             "subcommand_groups": {
                 "locale": {
                     "name": "locale",
-                    "description": "",
+                    "description": "Hizkuntza Ezarpenak",
                     "subcommands": {
                         "set": {
                             "name": "set",
-                            "description": "",
+                            "description": "Zure hizkuntza lehenetsia ezarri",
                             "options": {
                                 "locale": {
                                     "name": "locale",
-                                    "description": ""
+                                    "description": "Erabili nahi duzun hizkuntza"
                                 }
                             },
                             "response": {
                                 "title": {
-                                    "success": "",
+                                    "success": "Hizkuntza Ezarrita",
                                     "error": {
-                                        "invalid_locale": "",
-                                        "no_changes": "",
-                                        "unknown": ""
+                                        "invalid_locale": "Hizkuntza Baliogabea",
+                                        "no_changes": "Aldaketarik Ez",
+                                        "unknown": "Errore Ezezaguna"
                                     }
                                 },
                                 "description": {
-                                    "success": "",
+                                    "success": "Zure lehenetsitako hizkuntza berria `{locale}` da.",
                                     "error": {
-                                        "invalid_locale": "",
-                                        "no_changes": "",
-                                        "unknown": ""
+                                        "invalid_locale": "`{locale}` hizkuntza baliogabea da.",
+                                        "no_changes": "Ez dira aldaketarik egin. Hizkuntza `{locale}` balioarekin mantendu da.",
+                                        "unknown": "Errore ezezagun bat gertatu da hizkuntza aldatzerakoan."
                                     }
                                 },
                                 "footer": "{commandName} - {user}k eskatua"
@@ -468,15 +468,15 @@
                         },
                         "reset": {
                             "name": "reset",
-                            "description": "",
+                            "description": "Zure lehenetsitako hizkuntza berrezarri",
                             "response": {
                                 "title": {
-                                    "success": "",
+                                    "success": "Hizkuntza Berrezarrita",
                                     "error": "Errorea hizkuntza berrezartzean"
                                 },
                                 "description": {
-                                    "success": "",
-                                    "error": ""
+                                    "success": "Zure lehenetsitako hizkuntza berrezarri da.",
+                                    "error": "Errore bat gertatu da zure lehenetsitako hizkuntza berrezartzean."
                                 },
                                 "footer": "{commandName} - {user}k eskatua"
                             }
@@ -491,10 +491,10 @@
     },
     "error_embed": {
         "title": "Errorea",
-        "description": "",
+        "description": "Errore bat gertatu da komando hau exekutatzerakoan. Behean duzu errorearen mezua. Mesedez, errore hau garatzaileari bidali. Mila esker!",
         "message": "Errore mezua",
         "stack": "Errorearen pila",
-        "no_stack": "",
+        "no_stack": "Ez dago errore-pilarik eskuragarri",
         "err_int_ch_input": "{commandName} komandoan errorea",
         "err_int_btn": "{buttonId} botoian errorea",
         "err_int_slct": "{selectId} hautaketa menuan errorea",
@@ -502,19 +502,19 @@
         "err_int_mod": "{modalId} modalean errorea",
         "err_int_aut": "{autocompleteId} osatze automatikoan errorea",
         "timeout": {
-            "title": "",
-            "description": "",
-            "note": ""
+            "title": "Timeout",
+            "description": "Timeout bat gertatu da kanpoko API batetik datuak eskuratzerakoan. Mesedez, saiatu berriro geroago.",
+            "note": "Errore hau normalean kanpoko APIa motela edo erantzuten ez duelako gertatzen da."
         }
     },
     "errors": {
         "working_on_cmd": {
-            "title": "",
-            "description": "",
+            "title": "Lanean...",
+            "description": "Komando hau garatzen ari gara. Saiatu berriro geroago.",
             "fields": [
                 {
-                    "name": "",
-                    "value": ""
+                    "name": "Noiz egongo da eskuragarri?",
+                    "value": "Ez dugu oraindik komando honetarako kaleratze datarik. Mesedez, pazientzia izan."
                 }
             ],
             "footer": "{commandName} - {user}k eskatua"

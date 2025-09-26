@@ -10,29 +10,29 @@
             "name": "ping",
             "description": "Ikusi botaren latentzia.",
             "response": {
-                "ping": "",
-                "title": "",
+                "ping": "Ping egiten...",
+                "title": "Pong!",
                 "fields": {
                     "bot_latency": {
                         "name": "",
-                        "value": ""
+                        "value": "{ping}ms"
                     },
                     "api": {
                         "discord": {
                             "name": "Discord APIa",
-                            "value": ""
+                            "value": "{apiPing}ms"
                         },
                         "mangadex": {
-                            "name": "",
-                            "value": ""
+                            "name": "MangaDex APIa",
+                            "value": "{mdPing}ms"
                         },
                         "namicomi": {
-                            "name": "",
-                            "value": ""
+                            "name": "NamiComi APIa",
+                            "value": "{ncPing}ms"
                         }
                     }
                 },
-                "footer": "",
+                "footer": "{commandName} - {user}k eskatua",
                 "not_ok": "Datu eskuratzeak huts egin du"
             }
         },
@@ -63,7 +63,7 @@
                         "value": ""
                     }
                 },
-                "footer": ""
+                "footer": "{commandName} - {user}k eskatua"
             }
         },
         "commands": {
@@ -71,7 +71,7 @@
             "description": "",
             "response": {
                 "title": "Komandoak",
-                "footer": ""
+                "footer": "{commandName} - {user}k eskatua"
             }
         },
         "invite": {
@@ -80,7 +80,7 @@
             "response": {
                 "title": "",
                 "description": "",
-                "footer": ""
+                "footer": "{commandName} - {user}k eskatua"
             }
         },
         "stats": {
@@ -102,7 +102,7 @@
                         "name": ""
                     }
                 },
-                "footer": ""
+                "footer": "{commandName} - {user}k eskatua"
             }
         },
         "support": {
@@ -111,7 +111,7 @@
             "response": {
                 "title": "",
                 "description": "",
-                "footer": ""
+                "footer": "{commandName} - {user}k eskatua"
             }
         },
         "uptime": {
@@ -120,7 +120,7 @@
             "response": {
                 "title": "",
                 "description": "",
-                "footer": ""
+                "footer": "{commandName} - {user}k eskatua"
             }
         },
         "manga": {
@@ -254,7 +254,7 @@
                         "empty": ""
                     }
                 },
-                "footer": ""
+                "footer": "{commandName} - {user}k eskatua"
             }
         },
         "nami": {
@@ -411,7 +411,7 @@
                         "empty": ""
                     }
                 },
-                "footer": ""
+                "footer": "{commandName} - {user}k eskatua"
             }
         },
         "settings": {
@@ -463,7 +463,7 @@
                                         "unknown": ""
                                     }
                                 },
-                                "footer": ""
+                                "footer": "{commandName} - {user}k eskatua"
                             }
                         },
                         "reset": {
@@ -478,14 +478,14 @@
                                     "success": "",
                                     "error": ""
                                 },
-                                "footer": ""
+                                "footer": "{commandName} - {user}k eskatua"
                             }
                         }
                     }
                 }
             },
             "response": {
-                "footer": ""
+                "footer": "{commandName} - {user}k eskatua"
             }
         }
     },
@@ -517,7 +517,7 @@
                     "value": ""
                 }
             ],
-            "footer": ""
+            "footer": "{commandName} - {user}k eskatua"
         }
     }
 }

@@ -37,7 +37,7 @@
             }
         },
         "help": {
-            "name": "",
+            "name": "help",
             "description": "",
             "response": {
                 "title": "",
@@ -67,7 +67,7 @@
             }
         },
         "commands": {
-            "name": "",
+            "name": "commands",
             "description": "",
             "response": {
                 "title": "Komandoak",
@@ -75,7 +75,7 @@
             }
         },
         "invite": {
-            "name": "",
+            "name": "invite",
             "description": "",
             "response": {
                 "title": "",
@@ -84,7 +84,7 @@
             }
         },
         "stats": {
-            "name": "",
+            "name": "stats",
             "description": "",
             "response": {
                 "title": "",
@@ -106,7 +106,7 @@
             }
         },
         "support": {
-            "name": "",
+            "name": "support",
             "description": "",
             "response": {
                 "title": "",
@@ -115,7 +115,7 @@
             }
         },
         "uptime": {
-            "name": "",
+            "name": "uptime",
             "description": "",
             "response": {
                 "title": "",
@@ -124,25 +124,25 @@
             }
         },
         "manga": {
-            "name": "",
+            "name": "manga",
             "description": "",
             "subcommands": {
                 "random": {
-                    "name": "",
+                    "name": "random",
                     "description": "Ausazko titulu bat lortu"
                 }
             },
             "options": {
                 "query": {
-                    "name": "",
+                    "name": "query",
                     "description": ""
                 },
                 "id": {
-                    "name": "",
+                    "name": "id",
                     "description": ""
                 },
                 "url": {
-                    "name": "",
+                    "name": "url",
                     "description": ""
                 }
             },
@@ -258,19 +258,19 @@
             }
         },
         "nami": {
-            "name": "",
+            "name": "nami",
             "description": "",
             "options": {
                 "query": {
-                    "name": "",
+                    "name": "query",
                     "description": ""
                 },
                 "id": {
-                    "name": "",
+                    "name": "id",
                     "description": ""
                 },
                 "url": {
-                    "name": "",
+                    "name": "url",
                     "description": ""
                 }
             },
@@ -415,11 +415,11 @@
             }
         },
         "settings": {
-            "name": "",
+            "name": "settings",
             "description": "",
             "subcommands": {
                 "view": {
-                    "name": "",
+                    "name": "view",
                     "description": "",
                     "response": {
                         "title": "",
@@ -438,7 +438,7 @@
                     "description": "",
                     "subcommands": {
                         "set": {
-                            "name": "",
+                            "name": "set",
                             "description": "",
                             "options": {
                                 "locale": {
@@ -467,7 +467,7 @@
                             }
                         },
                         "reset": {
-                            "name": "",
+                            "name": "reset",
                             "description": "",
                             "response": {
                                 "title": {

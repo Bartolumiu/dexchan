@@ -131,10 +131,11 @@ describe('getCover', () => {
             expect(coverBuffer).toBeNull();
         });
 
-        it('should fall back to default cover if no coverName is found', async () => {
+        it('should fall back to default (first) cover if no coverName is found', async () => {
             const titleWithNoCoverName = {
                 id: '456',
                 relationships: [
+                    { type: 'cover_art', attributes: { fileName: 'default-cover', locale: 'es' } },
                     { type: 'cover_art', attributes: { fileName: null, locale: 'en' } }
                 ]
             };

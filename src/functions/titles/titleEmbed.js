@@ -18,6 +18,8 @@ const truncateString = require("../tools/truncateString");
  */
 const buildTitleEmbed = (embed, locale, title, stats, translations, type) => {
     switch (type) {
+        case 'mangabaka':
+            return buildMangaBakaEmbed(embed, locale, title, stats, translations);
         case 'mangadex':
             return buildMangaDexEmbed(embed, locale, title, stats, translations);
         case 'namicomi':
@@ -25,6 +27,52 @@ const buildTitleEmbed = (embed, locale, title, stats, translations, type) => {
         default:
             return null;
     }
+}
+
+/**
+ * Builds the MangaBaka embed.
+ * @param {EmbedBuilder} embed Embed to build
+ * @param {string} locale Locale for the embed
+ * @param {Object} title Title data
+ * @param {Object} stats Statistics data
+ * @param {Object} translations Translations data
+ * @returns {ActionRowBuilder} Action row with buttons
+ */
+const buildMangaBakaEmbed = (embed, locale, title, stats, translations) => {
+    const embedTitle = getLocalizedTitle(title, 'mangabaka', locale);
+    let embedDescription = title.description;
+    embedDescription = sanitizeDescription(embedDescription);
+    embedDescription = truncateString(embedDescription, 4096);
+
+    const fields = [
+        { name: translations.embed.fields.rating, value: stats.rating ? `${stats.rating}/100.00` : 'N/A', inline: true },
+        { name: translations.embed.fields.follows, value: 'N/A', inline: true }, // Placeholder: Missing API endpoint
+        { name: translations.embed.fields.year, value: `${title.year}`, inline: true },
+        { name: translations.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.embed.fields.pub_status.value[title.status] || title.status}`), inline: true },
+        { name: translations.embed.fields.demographic.name, value: 'N/A', inline: true },
+        { name: translations.embed.fields.content_rating.name, value: capitalizeFirstLetter(`${translations.embed.fields.content_rating.value[title.content_rating] || title.content_rating}`), inline: true }
+    ];
+
+    embed.setTitle(embedTitle)
+        .setURL(urlFormats.mangabaka.primary.replace('{id}', title.id).replace('{title}', ''))
+        .setDescription(embedDescription)
+        .addFields(fields)
+        .setColor(Colors.Blurple);
+
+    addTitleTags(title, embed, translations, 'mangabaka', locale);
+
+    return new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setLabel(translations.button.open)
+            .setURL(urlFormats.mangabaka.primary.replace('{id}', title.id).replace('{title}', ''))
+            .setStyle(ButtonStyle.Link),
+        new ButtonBuilder()
+            .setLabel(translations.button.stats)
+            .setCustomId(`mangabaka_stats_${title.id}`)
+            .setStyle(ButtonStyle.Secondary)
+            .setEmoji('📊')
+            .setDisabled(true) // Placeholder: Missing API endpoint
+    )
 }
 
 /**

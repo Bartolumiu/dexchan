@@ -12,6 +12,8 @@ const truncateString = require("../tools/truncateString");
  */
 const buildTitleListEmbed = (embed, translations, titles, type) => {
     switch (type) {
+        case 'mangabaka':
+            return buildMangaBakaTitleListEmbed(embed, translations, titles);
         case 'mangadex':
             return buildMangaDexTitleListEmbed(embed, translations, titles);
         case 'namicomi':
@@ -19,6 +21,33 @@ const buildTitleListEmbed = (embed, translations, titles, type) => {
         default:
             return null; // Unsupported type
     }
+}
+
+/**
+ * Builds the title list for MangaBaka.
+ * @param {EmbedBuilder} embed - The embed object to build.
+ * @param {Object} translations - Translations for the embed.
+ * @param {Map<string, string>} titles - Map of titles and their IDs.
+ * @returns {ActionRowBuilder} The action row containing the select menu.
+ */
+const buildMangaBakaTitleListEmbed = (embed, translations, titles) => {
+    const fields = Array.from(titles, ([title, id]) => {
+        return {
+            name: truncateString(title, 256),
+            value: `[${translations.embed.query.view}](${urlFormats.mangabaka.primary.replace('{id}', id).replace('{title}', '')})`
+        };
+    }).filter(Boolean);
+
+    const menu = new StringSelectMenuBuilder()
+        .setCustomId('mangabaka_select')
+        .setPlaceholder(translations.menu.placeholder)
+        .setMinValues(1)
+        .setMaxValues(1);
+
+    populateMenuOptions(menu, titles);
+
+    buildEmbed(embed, translations, fields);
+    return new ActionRowBuilder().addComponents(menu);
 }
 
 /**
@@ -86,7 +115,7 @@ const populateMenuOptions = (menu, titles) => {
     titles.forEach((id, title) => {
         options.push({
             label: truncateString(title, 100),
-            value: id
+            value: id.toString()
         });
     });
 

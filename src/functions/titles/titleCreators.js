@@ -2,11 +2,13 @@
  * Returns a comma-separated string of title creators based on the provided type.
  *
  * @param {Object} title - The title object containing relationships.
- * @param {string} type - The type of title. Valid values are 'mangadex' and 'namicomi'.
+ * @param {string} type - The type of title. Valid values are 'mangabaka', 'mangadex' and 'namicomi'.
  * @returns {string|null} A comma-separated list of creators or null if no creators are found or the type is unsupported.
  */
 const getTitleCreators = (title, type) => {
     switch (type) {
+        case 'mangabaka':
+            return getMangaBakaCreators(title);
         case 'mangadex':
             return getMangaDexCreators(title);
         case 'namicomi':
@@ -14,6 +16,18 @@ const getTitleCreators = (title, type) => {
         default:
             return null; // Unsupported type
     }
+}
+
+/**
+ * Extracts and returns a comma-separated string of unique creators( authors and artists)
+ * from the provided title object for the 'mangabaka' type.
+ *
+ * @param {Object} title - The title object containing the necessary data.
+ * @returns {string|null} A comma-separated list of authors and artists, or null if no creators were found.
+ */
+const getMangaBakaCreators = (title) => {
+    const creatorsAndArtists = Array.from(new Set([...title.authors, ...title.artists])).join(', ');
+    return creatorsAndArtists.length === 0 ? null : creatorsAndArtists;
 }
 
 /**

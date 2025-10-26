@@ -8,7 +8,7 @@ const path = require("path");
  * Sets the images for the embed based on the title and type.
  * @param {Object} title - The title object containing the necessary data.
  * @param {EmbedBuilder} embed - The embed object to modify.
- * @param {string} type - The type of title, either 'mangadex' or 'namicomi'.
+ * @param {string} type - The type of title, 'mangabaka, 'mangadex' or 'namicomi'.
  * @param {Object} translations - The translations object for error messages.
  * @param {string|null} [locale=null] - The locale to use for fetching the cover image.
  * @returns {Promise<Array<AttachmentBuilder>>} A promise that resolves to an array of attachment builders containing the images or an empty array if the type is unsupported.
@@ -16,6 +16,8 @@ const path = require("path");
  */
 const setImages = async (title, embed, type, translations, locale = null) => {
     switch (type) {
+        case 'mangabaka':
+            return await setMangaBakaImages(title, embed, translations);
         case 'mangadex':
             return await setMangaDexImages(title, embed, translations);
         case 'namicomi':
@@ -23,6 +25,30 @@ const setImages = async (title, embed, type, translations, locale = null) => {
         default:
             return []; // Unsupported type, return empty array
     }
+}
+
+/**
+ * Sets the MangaBaka images for the embed.
+ * @param {Object} title - The title object containing the necessary data.
+ * @param {Object} embed - The embed object to modify.
+ * @param {Object} translations - The translations object for error messages.
+ * @returns {Promise<Array<AttachmentBuilder>>} A promise that resolves to an array of attachment builders.
+ */
+const setMangaBakaImages = async (title, embed, translations) => {
+    let authors = getTitleCreators(title, 'mangabaka');
+    if (!authors) authors = translations.embed.error.unknown_author;
+    if (authors.length > 256) authors = translations.embed.error.too_many_authors;
+
+    const mbIcon = new AttachmentBuilder(path.join(__dirname, '../../assets/logos/mangabaka.png'), 'mangabaka.png');
+    embed.setAuthor({ name: authors, iconURL: 'attachment://mangabaka.png'});
+
+    const coverBuffer = await getCover(title, 'mangabaka');
+    if (!coverBuffer) return [mbIcon];
+
+    const coverImage = new AttachmentBuilder(coverBuffer, { name: 'cover.jpg' });
+    embed.setThumbnail('attachment://cover.jpg');
+
+    return [mbIcon, coverImage];
 }
 
 /**

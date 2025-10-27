@@ -17,7 +17,7 @@ const search = async (query, type, locale = null) => {
             return await searchNamiComi(query, locale || 'en');
         default:
             return null; // Unsupported type
-    };
+    }
 };
 
 /**
@@ -118,12 +118,10 @@ const searchMangaDex = async (query) => {
         const data = await res.json();
         if (data.data?.length === 0) return null;
 
-        /** @type {Map<string, string>} */
-        const results = new Map(data.data.map((item) => [item.attributes.title[Object.keys(item.attributes.title)[0]], item.id]));
-        return results;
+        return new Map(data.data.map((item) => [item.attributes.title[Object.keys(item.attributes.title)[0]], item.id]));
         } catch {
         return null;
-    };
+    }
 };
 
 /**
@@ -157,19 +155,16 @@ const searchNamiComi = async (query, locale) => {
         const data = await res.json();
         if (data.data?.length === 0) return null;
 
-        /** @type {Map<string, string>} */
-        const results = new Map(data.data.map((item) => {
+        return new Map(data.data.map((item) => {
             let localizedTitle = item.attributes.title[locale];
             if (!localizedTitle && locale === 'es') localizedTitle = item.attributes.title['es-419'];
             if (!localizedTitle) localizedTitle = item.attributes.title['en'];
             if (!localizedTitle) localizedTitle = item.attributes.title[Object.keys(item.attributes.title)[0]];
             return [localizedTitle, item.id];
         }));
-
-        return results;
     } catch {
         return null;
-    };
+    }
 };
 
 module.exports = search;

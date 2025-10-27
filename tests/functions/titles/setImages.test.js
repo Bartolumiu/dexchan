@@ -25,6 +25,47 @@ describe('setImages', () => {
         jest.clearAllMocks();
     });
 
+    describe('mangabaka', () => {
+        it('should use unknown_author translation if getTitleCreators returns falsy', async () => {
+            getTitleCreators.mockReturnValue(null);
+            getCover.mockResolvedValue(null);
+            const translations = { embed: { error: { unknown_author: 'Unknown Author', too_many_authors: 'Too many authors' } } };
+            const result = await setImages({}, embed, 'mangabaka', translations);
+            expect(embed.setAuthor).toHaveBeenCalledWith({ name: 'Unknown Author', iconURL: 'attachment://mangabaka.png' });
+            expect(result[0].data).toContain('mangabaka.png');
+        });
+
+        it('should use too_many_authors translation if getTitleCreators returns a long string', async () => {
+            getTitleCreators.mockReturnValue('a'.repeat(300));
+            getCover.mockResolvedValue(null);
+            const translations = { embed: { error: { unknown_author: 'Unknown Author', too_many_authors: 'Too many authors' } } };
+            const result = await setImages({}, embed, 'mangabaka', translations);
+            expect(embed.setAuthor).toHaveBeenCalledWith({ name: 'Too many authors', iconURL: 'attachment://mangabaka.png' });
+            expect(result[0].data).toContain('mangabaka.png');
+        });
+
+        it('should set author and return only icon if no cover', async () => {
+            getTitleCreators.mockReturnValue('Author');
+            getCover.mockResolvedValue(null);
+            const translations = { embed: { error: { no_authors: 'No authors', too_many_authors: 'Too many authors' } } };
+            const result = await setImages({}, embed, 'mangabaka', { translations });
+            expect(embed.setAuthor).toHaveBeenCalledWith({ name: 'Author', iconURL: 'attachment://mangabaka.png' });
+            expect(result[0].data).toContain('mangabaka.png');
+            expect(result.length).toBe(1);
+        });
+
+        it('should set author, thumbnail, and return icon and cover if cover exists', async () => {
+            getTitleCreators.mockReturnValue('Author');
+            getCover.mockResolvedValue(Buffer.from([1,2,3]));
+            const translations = { embed: { error: { no_authors: 'No authors', too_many_authors: 'Too many authors' } } };
+            const result = await setImages({}, embed, 'mangabaka', { translations });
+            expect(embed.setAuthor).toHaveBeenCalledWith({ name: 'Author', iconURL: 'attachment://mangabaka.png' });
+            expect(embed.setThumbnail).toHaveBeenCalledWith('attachment://cover.jpg');
+            expect(result.length).toBe(2);
+            expect(result[1].name).toBe('cover.jpg');
+        });
+    });
+
     describe('mangadex', () => {
         it('should use unknown_author translation if getTitleCreators returns falsy', async () => {
             getTitleCreators.mockReturnValue(null);

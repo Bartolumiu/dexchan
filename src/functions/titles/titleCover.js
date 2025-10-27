@@ -48,15 +48,18 @@ const getCover = async (title, type, locale = null) => {
 const buildURL = (title, type, locale = null) => {
     switch (type) {
         case 'mangabaka':
-            return title.cover.default;
+            return title.cover?.default;
         case 'mangadex': {
-            const id = title.id;
-            const coverName = title.relationships.find(rel => rel.type === 'cover_art').attributes.fileName;
+            const id = title.id || null;
+            if (!id) return null;
+            const coverName = title.relationships?.find(rel => rel.type === 'cover_art')?.attributes?.fileName || null;
+            if (!coverName) return null;
             return new URL(`${URL_FORMATS.mangadex}${id}/${coverName}.512.jpg`);
         }
         case 'namicomi': {
             locale = LOCALE_MAP[locale] || locale; // Normalize locale
-            const id = title.id;
+            const id = title.id || null;
+            if (!id) return null;
             const covers = title.relationships.filter(rel => rel.type === 'cover_art');
             let coverName = covers.find(rel => rel.attributes.locale === locale)?.attributes?.fileName;
             if (!coverName && locale === 'es') coverName = covers.find(rel => rel.attributes.locale === 'es-419')?.attributes?.fileName; // Fallback for Spanish

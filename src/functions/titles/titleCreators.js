@@ -26,7 +26,9 @@ const getTitleCreators = (title, type) => {
  * @returns {string|null} A comma-separated list of authors and artists, or null if no creators were found.
  */
 const getMangaBakaCreators = (title) => {
-    const creatorsAndArtists = Array.from(new Set([...title.authors, ...title.artists])).join(', ');
+    const authors = title.authors || [];
+    const artists = title.artists || [];
+    const creatorsAndArtists = Array.from(new Set([...authors, ...artists])).join(', ');
     return creatorsAndArtists.length === 0 ? null : creatorsAndArtists;
 }
 

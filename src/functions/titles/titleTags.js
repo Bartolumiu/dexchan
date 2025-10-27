@@ -6,7 +6,7 @@
  *
  * @param {object} title - The title object containing tag data.
  * @param {string} type - The type of title. Supported values are 'mangadex' and 'namicomi'.
- * @param {string} [locale=null] - The locale identifier for localized tag names (only used for 'namicomi').
+ * @param {string|undefined|null} [locale=null] - The locale identifier for localized tag names (only used for 'namicomi').
  * @returns {object|null} An object containing grouped tag strings. For 'mangadex', keys include theme, genre, content, and format. 
  * For 'namicomi', keys include content_warning, format, genre, theme, and other. If a particular group has no tags, its value will be 'N/A'. 
  * Returns null if the type is unsupported.
@@ -25,13 +25,28 @@ const getTitleTags = (title, type, locale = null) => {
 }
 
 /**
+ * Merges arrays of tags into comma-separated strings or 'N/A' if empty.
+ * @param {object} groups - An object containing arrays of tags to be merged.
+ * @returns {void} Modifies the input object in place.
+ */
+const mergeTagArrays = (groups) => {
+    for (const key in groups) {
+        if (groups[key].length === 0) {
+            groups[key] = 'N/A';
+        } else {
+            groups[key] = groups[key].join(', ');
+        }
+    }
+}
+
+/**
  * Extracts and formats MangaBaka-specific tags from the title.
  *
  * Processes the title.tags, title.tags_v2, title.genres and title.genres_v2 arrays,
  * and returns an object with comma-separated tag strings. If a group has no tags, its value is set to 'N/A'.
  *
  * @param {object} title - The MangaBaka title object containing the necessary information.
- * @return {object} An object with keys: tags, tags_v2, gentes, and genres_v2, each containing comma-separated tag names or 'N/A' if empty.
+ * @return {object} An object with keys: tags, tags_v2, genres, and genres_v2, each containing comma-separated tag names or 'N/A' if empty.
  */
 const getMangaBakaTags = (title) => {
     const groups = {
@@ -54,15 +69,7 @@ const getMangaBakaTags = (title) => {
         groups.genres_v2.push(genre.name);
     });
 
-    Object.keys(groups).forEach(key => {
-        groups[key] = groups[key].join(', ');
-    });
-
-    for (const key in groups) {
-        if (groups[key].length === 0) {
-            groups[key] = 'N/A';
-        }
-    }
+    mergeTagArrays(groups);
 
     return groups;
 }
@@ -89,15 +96,7 @@ const getMangaDexTags = (title) => {
         groups[tag.attributes.group].push(tag.attributes.name.en);
     });
 
-    Object.keys(groups).forEach(key => {
-        groups[key] = groups[key].join(', ');
-    });
-
-    for (const key in groups) {
-        if (groups[key].length === 0) {
-            groups[key] = 'N/A';
-        }
-    }
+    mergeTagArrays(groups);
 
     return groups;
 }
@@ -145,15 +144,7 @@ const getNamiComiTags = (title, locale) => {
         }
     });
 
-    Object.keys(groups).forEach(key => {
-        groups[key] = groups[key].join(', ');
-    });
-
-    for (const key in groups) {
-        if (groups[key].length === 0) {
-            groups[key] = 'N/A';
-        }
-    }
+    mergeTagArrays(groups);
 
     return groups;
 }

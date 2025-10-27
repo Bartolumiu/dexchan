@@ -157,7 +157,7 @@ const getNamiComiTags = (title, locale) => {
  * @param {object} translations - The translations object for field names.
  * @param {string} type - The type of title. Supported values are 'mangadex' and 'namicomi'.
  * @param {string} locale - The locale to use for tag names.
- * @returns {void}
+ * @returns {boolean|null} True if tags were added successfully, null if the type is unsupported.
  */
 const addTitleTags = (title, embed, translations, type, locale) => {
     switch (type) {
@@ -168,7 +168,7 @@ const addTitleTags = (title, embed, translations, type, locale) => {
         case 'namicomi':
             return addNamiComiTags(title, embed, translations, locale);
         default:
-            return; // Unsupported type
+            return null; // Unsupported type
     }
 }
 
@@ -188,6 +188,7 @@ const addMangaBakaTags = (title, embed, translations) => {
         { name: translations.embed.fields.tags_v2, value: groups.tags_v2, inline: true }
     ];
     embed.addFields(fields);
+    return true;
 }
 
 /**
@@ -207,6 +208,7 @@ const addMangaDexTags = (title, embed, translations) => {
     ];
 
     embed.addFields(fields);
+    return true;
 };
 
 /**
@@ -228,6 +230,7 @@ const addNamiComiTags = (title, embed, translations, locale) => {
     ];
 
     embed.addFields(fields);
+    return true;
 }
 
 module.exports = { getTitleTags, addTitleTags }

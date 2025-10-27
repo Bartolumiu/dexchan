@@ -1,4 +1,5 @@
-const {StringSelectMenuBuilder} = require("discord.js");
+const { StringSelectMenuBuilder } = require("discord.js");
+
 module.exports = {
     data: {
         customId: 'mangabaka_select',
@@ -25,9 +26,10 @@ module.exports = {
                  * @param {*} response - The response to send to the interaction
                  * @returns {Promise<void>} - A promise that resolves when the interaction is replied to.
                  */
-                reply: (response) => interaction.reply(response),
+                reply: (response) => interaction.editReply(response),
             };
 
+            // Either lock the select menu or remove it
             const selectMenu = interaction.component;
 
             if (selectMenu instanceof StringSelectMenuBuilder) {

@@ -26,6 +26,43 @@ describe('buildTitleListEmbed', () => {
         expect(result).toBeNull();
     });
 
+    describe('MangaBaka', () => {
+        it('should build a MangaBaka embed with correct fieds and menu', () => {
+            const titles = new Map([
+                ['RE: united', 5258],
+                ['Example Title', '0']
+            ]);
+            const row = buildTitleListEmbed(embed, translations, titles, 'mangabaka');
+
+            // Embed fields
+            expect(embed.setTitle).toHaveBeenCalledWith('Embed Title');
+            expect(embed.setDescription).toHaveBeenCalledWith('Embed Description');
+            expect(embed.setColor).toHaveBeenCalledWith(Colors.Blurple);
+            const expectedFields = [
+                { name: 'RE: united', value: `[View](${urlFormats.mangabaka.primary.replace('{id}', '5258').replace('{title}', '')})` },
+                { name: 'Example Title', value: `[View](${urlFormats.mangabaka.primary.replace('{id}', '0').replace('{title}', '')})` }
+            ];
+            expect(embed.addFields).toHaveBeenCalledWith(expectedFields);
+
+            // Returned ActionRowBuilder with menu
+            expect(row).toBeInstanceOf(ActionRowBuilder);
+            const [menu] = row.components;
+            expect(menu).toBeInstanceOf(StringSelectMenuBuilder);
+            // Menu properties
+            expect(menu.data.custom_id).toBe('mangabaka_select');
+            expect(menu.data.placeholder).toBe('Select an option');
+            expect(menu.data.min_values).toBe(1);
+            expect(menu.data.max_values).toBe(1);
+            // Options
+            expect(menu.options).toHaveLength(2);
+            expect(menu.options.map(opt => opt.data)).toEqual(
+                [
+                    { emoji: undefined, label: 'RE: united', value: '5258' },
+                    { emoji: undefined, label: 'Example Title', value: '0' }
+                ]
+            );
+        });
+    });
     describe('MangaDex', () => {
         it('should build a MangaDex embed with correct fields and menu', () => {
             const titles = new Map([

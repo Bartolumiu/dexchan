@@ -154,7 +154,7 @@ const parseURL = async (url, type) => {
             return parseNamiComiURL(url);
         default:
             return null;
-    };
+    }
 };
 
 /**
@@ -222,7 +222,7 @@ const checkID = async (id, type) => {
             return checkNamiComiID(id);
         default:
             return null;
-    };
+    }
 }
 
 /**
@@ -257,8 +257,6 @@ const checkNamiComiID = async (id) => {
 
 module.exports = {
     parseURL,
-    parseNamiComiURL,
-    parseMangaDexURL,
     checkID,
     urlFormats
 };

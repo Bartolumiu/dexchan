@@ -2,7 +2,7 @@ const { AttachmentBuilder, EmbedBuilder } = require("discord.js");
 const getTitleCreators = require("./titleCreators");
 const getCover = require("./titleCover");
 const getBanner = require("./titleBanner");
-const path = require("path");
+const path = require("node:path");
 
 /**
  * Sets the images for the embed based on the title and type.

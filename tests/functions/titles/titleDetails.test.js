@@ -14,6 +14,32 @@ describe('getTitleDetails', () => {
         expect(result).toBeNull();
     });
 
+    describe('MangaBaka', () => {
+        it('should fetch details from MangaBaka successfully', async () => {
+            const fakeResponse = { data: { id: '123', name: 'Test Manga' } };
+            global.fetch.mockResolvedValue({
+                ok: true,
+                json: jest.fn().mockResolvedValue(fakeResponse),
+            });
+
+            const result = await getTitleDetails('123', 'mangabaka');
+            expect(global.fetch).toHaveBeenCalled();
+            expect(result).toEqual(fakeResponse.data);
+        });
+
+        it('should return null if MangaBaka fetch response is not ok', async () => {
+            global.fetch.mockResolvedValue({ ok: false });
+            const result = await getTitleDetails('123', 'mangabaka');
+            expect(result).toBeNull();
+        });
+
+        it('should return null if MangaBaka fetch fails', async () => {
+            global.fetch.mockRejectedValue(new Error('Timeout'));
+            const result = await getTitleDetails('123', 'mangabaka');
+            expect(result).toBeNull();
+        });
+    })
+
     describe('MangaDex', () => {
         it('should fetch details from MangaDex successfully', async () => {
             const fakeResponse = { data: { id: '123', name: 'Test Manga' } };

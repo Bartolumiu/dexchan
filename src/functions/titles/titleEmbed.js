@@ -163,7 +163,7 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
         case 'ltr':
             embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.left_to_right });
             break;
-    };
+    }
 
     return new ActionRowBuilder().addComponents(
         new ButtonBuilder()
@@ -195,22 +195,22 @@ const sanitizeDescription = (description) => {
 
     // First pass: Decode safe HTML entities
     description = description
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-        .replace(/&apos;/g, "'")
-        .replace(/&nbsp;/g, ' ');
+        .replaceAll('&quot;', '"')
+        .replaceAll('&#39;', "'")
+        .replaceAll('/&apos;', "'")
+        .replaceAll('&nbsp;', ' ');
     
     // Second pass: Replace & with &amp;
-    description = description.replace(/&/g, '&amp;');
+    description = description.replaceAll('&', '&amp;');
 
     // Third pass: Replace <br> tags with a placeholder to preserve line breaks
     description = description.replace(/<br\s*\/?>/gi, '|||LINEBREAK|||');
 
     // Fourth pass: Escape all < and > characters to prevent HTML injection
-    description = description.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    description = description.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
     
     // Fifth pass: Restore line breaks and normalize whitespace
-    description = description.replace(/\|\|\|LINEBREAK\|\|\|/g, '\n');
+    description = description.replaceAll('|||LINEBREAK', '\n');
     description = description.replace(/\n+/g, '\n'); // Normalize multiple newlines
     description = description.replace(/[ \t]+/g, ' '); // Normalize spaces and tabs (but preserve newlines)
     description = description.trim(); // Trim leading and trailing whitespace

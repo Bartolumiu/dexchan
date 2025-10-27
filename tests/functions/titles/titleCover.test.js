@@ -1,4 +1,5 @@
 const getCover = require('../../../src/functions/titles/titleCover');
+let { buildURL } = require('../../../src/functions/titles/titleCover');
 
 describe('getCover', () => {
     const originalFetch = global.fetch;
@@ -18,6 +19,48 @@ describe('getCover', () => {
         expect(result).toBeNull();
     });
 
+    describe('MangaBaka', () => {
+        const mangabakaTitle = {
+            id: '5258',
+            cover: { "default": "https://example.com/covers/5258-default.jpg" }
+        };
+
+        it('should return null if buildURL returns null for MangaBaka', async () => {
+            buildURL = jest.fn().mockReturnValue(null);
+            const title = { }; // Should return early due to null URL
+            const coverBuffer = await getCover(title, 'mangabaka');
+            expect(coverBuffer).toBeNull();
+        });
+
+        it('should return a buffer when fetching a MangaBaka cover successfully', async () => {
+            // Mock fetch response for successful mangabaka cover
+            global.fetch.mockResolvedValue({
+                ok: true,
+                arrayBuffer: () => Promise.resolve(dummyBuffer)
+            });
+
+            const coverBuffer = await getCover(mangabakaTitle, 'mangabaka');
+            expect(global.fetch).toHaveBeenCalledTimes(1);
+            expect(coverBuffer).toEqual(Buffer.from(dummyBuffer));
+        });
+
+        it('should return null when MangaBaka fetch response is not ok', async () => {
+            global.fetch.mockResolvedValue({
+                ok: false,
+                arrayBuffer: () => Promise.resolve(dummyBuffer)
+            });
+
+            const coverBuffer = await getCover(mangabakaTitle, 'mangabaka');
+            expect(coverBuffer).toBeNull();
+        });
+
+        it('should return null when MangaBaka fetch throws an error', async () => {
+            global.fetch.mockRejectedValue(new Error('network error'));
+            const coverBuffer = await getCover(mangabakaTitle, 'mangabaka');
+            expect(coverBuffer).toBeNull();
+        });
+    });
+
     describe('MangaDex', () => {
         const mangadexTitle = {
             id: '123',
@@ -25,6 +68,19 @@ describe('getCover', () => {
                 { type: 'cover_art', attributes: { fileName: 'cover1' } }
             ]
         };
+
+        it('should return null if buildURL returns null for MangaDex', async () => {
+            buildURL = jest.fn().mockReturnValue(null);
+            const title = { }; // Should return early due to null URL
+            const coverBuffer = await getCover(title, 'mangadex');
+            expect(coverBuffer).toBeNull();
+        });
+
+        it('should return null if title has no cover_art relationship for MangaDex', async () => {
+            const title = { id: '123', relationships: [] };
+            const coverBuffer = await getCover(title, 'mangadex');
+            expect(coverBuffer).toBeNull();
+        });
 
         it('should return a buffer when fetching a MangaDex cover successfully', async () => {
             // Mock fetch response for successful mangadex cover
@@ -62,6 +118,19 @@ describe('getCover', () => {
                 { type: 'cover_art', attributes: { fileName: 'cover2', locale: 'en' } }
             ]
         };
+
+        it('should return null if buildURL returns null for NamiComi', async () => {
+            buildURL = jest.fn().mockReturnValue(null);
+            const title = { }; // Should return early due to null URL
+            const coverBuffer = await getCover(title, 'namicomi', 'en');
+            expect(coverBuffer).toBeNull();
+        });
+
+        it('should return null if title has no cover_art relationship for NamiComi', async () => {
+            const title = { id: '456', relationships: [] };
+            const coverBuffer = await getCover(title, 'namicomi', 'en');
+            expect(coverBuffer).toBeNull();
+        });
 
         it('should use es-419 cover if locale is es and no es cover exists', async () => {
             const title = {

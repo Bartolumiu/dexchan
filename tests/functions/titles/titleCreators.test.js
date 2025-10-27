@@ -7,6 +7,24 @@ describe('getTitleCreators', () => {
         expect(result).toBeNull();
     });
 
+    describe('MangaBaka', () => {
+        it('should return null if there are no authors or artists', () => {
+            const title = { authors: [], artists: [] };
+            const result = getTitleCreators(title, 'mangabaka');
+            expect(result).toBeNull();
+        });
+        it('should return a comma-separated list of authors and artists', () => {
+            const title = { authors: ['Example Author'], artists: ['Example Artist', 'Example Author'] }; // duplicate, should appear only once
+            const result = getTitleCreators(title, 'mangabaka');
+            expect(result).toBe('Example Author, Example Artist');
+        });
+        it('should handle null values for authors or artists', () => {
+            const title = { authors: null, artists: null };
+            const result = getTitleCreators(title, 'mangabaka');
+            expect(result).toBeNull();
+        });
+    });
+
     describe('MangaDex', () => {
         it('should return null if there are no authors or artists', () => {
             const title = { relationships: [

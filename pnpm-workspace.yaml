@@ -1,0 +1,1 @@
+minimumReleaseAge: 10080 # 7 * 24 * 60 / Minimum age of a release in minutes (7 days)

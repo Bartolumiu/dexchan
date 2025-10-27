@@ -122,7 +122,7 @@ const translate = (locale, category, key, replacements = {}) => {
 const getNestedTranslation = (translations, nestedKeys) => {
     return nestedKeys.reduce((translation, key) => {
         if (!translation) return null;
-        const trimmedKey = key.replace(/\]/g, '');
+        const trimmedKey = key.replaceAll(']', '');
         return Array.isArray(translation) ? translation[parseInt(trimmedKey)] : translation[trimmedKey];
     }, translations);
 };

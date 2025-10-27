@@ -69,6 +69,44 @@ describe('buildTitleEmbed', () => {
         expect(result).toBeNull();
     });
 
+    describe('MangaBaka', () => {
+        it('should build a MangaBaka embed with all the fields', () => {
+            const title = { id: 'mb', rating: 7.5, year: 2025, status: 'hiatus', content_rating: 'safe', tags: [] };
+            getLocalizedTitle.mockReturnValue('Manga');
+            getLocalizedDescription.mockReturnValue('desc');
+            buildTitleEmbed(embed, locale, title, title, translations, 'mangabaka');
+            expect(embed.addFields).toHaveBeenCalledWith(
+                expect.arrayContaining([
+                    expect.objectContaining({ name: 'Demographic', value: 'N/A' })
+                ])
+            );
+        });
+
+        it('should display "N/A" for missing rating in MangaBaka', () => {
+            const title = { id: 'mb-norating', year: 2025, status: 'hiatus', content_rating: 'safe', tags: [] };
+            getLocalizedTitle.mockReturnValue('No Rating Manga');
+            getLocalizedDescription.mockReturnValue('desc');
+            buildTitleEmbed(embed, locale, title, title, translations, 'mangabaka');
+            expect(embed.addFields).toHaveBeenCalledWith(
+                expect.arrayContaining([
+                    expect.objectContaining({ name: 'Rating', value: 'N/A' })
+                ])
+            );
+        });
+
+        it('should handle unknown content rating values correctly in MangaBaka', () => {
+            const title = { id: 'mb-norating', year: 2025, status: 'hiatus', content_rating: 'value', tags: [] };
+            getLocalizedTitle.mockReturnValue('No Rating Manga');
+            getLocalizedDescription.mockReturnValue('desc');
+            buildTitleEmbed(embed, locale, title, title, translations, 'mangabaka');
+            expect(embed.addFields).toHaveBeenCalledWith(
+                expect.arrayContaining([
+                    expect.objectContaining({ name: 'Content Rating', value: 'Value' })
+                ])
+            );
+        });
+    });
+
     describe('MangaDex', () => {
         it('should use N/A for demographic if publicationDemographic is missing in MangaDex', () => {
             const title = {

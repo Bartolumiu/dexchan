@@ -43,6 +43,17 @@ module.exports = (client) => {
     };
 
     /**
+     * Get translations for a given locale, category, and key.
+     * @param {string} locale - The locale to retrieve translations for.
+     * @param {string} category - The category of the translation.
+     * @param {string} key - The key of the translation.
+     * @returns {Object|null} - The translations object or null if not found.
+     */
+    client.getTranslations = (locale, category, key) => {
+        return getTranslations(locale, category, key) || getTranslations('en', category, key);
+    }
+
+    /**
      * Get the user's preferred locale based on their profile or interaction.
      * 
      * @param {Object} userProfile - The user's profile containing their settings.
@@ -83,16 +94,7 @@ const loadLocales = async (log = 0) => {
     });
 }
 
-/**
- * Translates a given key within a specified category for a given locale, with optional replacements.
- * Falls back to English if the translation is not found.
- * @param {string} locale - The locale to translate to.
- * @param {string} category - The category of the translation.
- * @param {string} key - The key of the translation, which can be nested.
- * @param {Object} [replacements={}] - An object containing placeholder replacements for the translation.
- * @returns {string|null} - The translated string with placeholders replaced, or null if translation is not found.
- */
-const translate = (locale, category, key, replacements = {}) => {
+const getTranslations = (locale, category, key) => {
     // Use mapped parent language if available
     locale = languageMap[locale] || locale;
 
@@ -104,7 +106,20 @@ const translate = (locale, category, key, replacements = {}) => {
     if (!categoryTranslations) return null;
 
     // Retrieve the nested translation
-    const translation = getNestedTranslation(categoryTranslations, key.split(/[.[/]/));
+    return getNestedTranslation(categoryTranslations, key.split(/[.[/]/));
+}
+
+/**
+ * Translates a given key within a specified category for a given locale, with optional replacements.
+ * Falls back to English if the translation is not found.
+ * @param {string} locale - The locale to translate to.
+ * @param {string} category - The category of the translation.
+ * @param {string} key - The key of the translation, which can be nested.
+ * @param {Object} [replacements={}] - An object containing placeholder replacements for the translation.
+ * @returns {string|null} - The translated string with placeholders replaced, or null if translation is not found.
+ */
+const translate = (locale, category, key, replacements = {}) => {
+    const translation = getTranslations(locale, category, key);
     if (!translation) return null;
 
     return Object.entries(replacements).reduce(
@@ -117,7 +132,7 @@ const translate = (locale, category, key, replacements = {}) => {
  * Retrieves a nested translation from a given set of translations.
  * @param {Object} translations - The translations object.
  * @param {string[]} nestedKeys - An array of keys representing the nested path.
- * @returns {string|null} - The nested translation or null if not found.
+ * @returns {Object|string|null} - The nested translation object/string or null if not found.
  */
 const getNestedTranslation = (translations, nestedKeys) => {
     return nestedKeys.reduce((translation, key) => {
@@ -163,3 +178,4 @@ const getLocale = (userProfile, interaction) => {
 
 module.exports.getLocale = getLocale;
 module.exports.translateAttribute = translateAttribute;
+module.exports.getTranslations = getTranslations;

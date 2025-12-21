@@ -6,6 +6,103 @@
     "code": ""
   },
   "commands": {
+    "search": {
+      "name": "search",
+      "description": "Search for a title.",
+      "subcommands": {},
+      "options": {
+        "source": {
+          "name": "source",
+          "description": "The source to use for the search",
+          "values": {
+            "anilist": "AniList",
+            "kitsu": "Kitsu",
+            "mangabaka": "MangaBaka",
+            "mangadex": "MangaDex",
+            "mangaupdates": "MangaUpdates",
+            "namicomi": "NamiComi"
+          }
+        }
+      },
+      "response": {
+        "button": {
+          "open": "Open on {source}",
+          "stats": "View Stats"
+        },
+        "menu": {
+          "title": "Search Results",
+          "description": "Here are the search results for `{query}` on {source}.",
+          "placeholder": "Select a title to view more information...",
+          "view": "View Title on {source}"
+        },
+        "error": {
+          "title": "Uh-oh!",
+          "description": {
+            "command_disabled": "This command is currently disabled.\nPlease try again later.",
+            "invalid_source": "We don't support searching on `{source}` yet. Please choose a different source.",
+            "api": "Couldn't fetch title data from the external API.\nPlease try again later.",
+            "empty": "Please provide a query to search for.",
+            "no_results": "The query returned no results. That's all we know.",
+            "invalid_id": "The provided ID is invalid."
+          }
+        },
+        "embed": {
+          "author": {
+            "too_many": "Multiple Authors",
+            "unknown": "Unknown Author"
+          },
+          "description": {
+            "no_description": "No description available for {locale}."
+          },
+          "fields": {
+            "rating": "Rating",
+            "follows": "Follows",
+            "year": "Year",
+            "pub_status": {
+              "name": "Publication Status",
+              "value": {
+                "upcoming": "Upcoming",
+                "ongoing": "Ongoing",
+                "completed": "Completed",
+                "hiatus": "Hiatus",
+                "cancelled": "Cancelled",
+                "unknown": "Unknown"
+              }
+            },
+            "demographic": {
+              "name": "Demographic",
+              "value": {
+                "none": "None",
+                "shounen": "Shounen",
+                "shoujo": "Shoujo",
+                "seinen": "Seinen",
+                "josei": "Josei"
+              }
+            },
+            "content_rating": {
+              "name": "Content Rating",
+              "value": {
+                "safe": "Safe",
+                "suggestive": "Suggestive",
+                "erotica": "Erotica",
+                "pornographic": "Pornographic",
+                "mature": "Mature",
+                "restricted": "Restricted"
+              }
+            },
+            "format": "Format",
+            "genres": "Genres",
+            "genres_v2": "Genres (v2)",
+            "tags": "Tags",
+            "tags_v2": "Tags (v2)",
+            "themes": "Themes",
+            "content_warning": "Content Warning",
+            "other_tags": "Other Tags"
+          }
+        },
+        "footer": "/{commandName} - Requested by {user}"
+      }
+    },
     "ping": {
       "name": "ping",
       "description": "Check the bot's latency.",

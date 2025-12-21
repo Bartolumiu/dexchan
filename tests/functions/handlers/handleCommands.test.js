@@ -21,7 +21,7 @@ describe('handleCommands', () => {
     beforeEach(() => {
         jest.resetModules();
         client = { commands: new Map() };
-        require('fs').readdirSync = jest.fn((path) => {
+        require('node:fs').readdirSync = jest.fn((path) => {
             if (path === './src/commands') return ['configuration', 'utils'];
             if (path === './src/commands/configuration') return ['settings.js'];
             if (path === './src/commands/utils') return ['commands.js', 'help.js', 'ping.js'];
@@ -142,7 +142,7 @@ describe('handleCommands', () => {
             global: false
         }), { virtual: true });
 
-        require('fs').readdirSync = jest.fn((path) => {
+        require('node:fs').readdirSync = jest.fn((path) => {
             if (path === './src/commands') return ['test'];
             if (path === './src/commands/test') return ['invalid.js'];
             return [];
@@ -162,7 +162,7 @@ describe('handleCommands', () => {
             global: true
         }), { virtual: true });
 
-        require('fs').readdirSync = jest.fn((path) => {
+        require('node:fs').readdirSync = jest.fn((path) => {
             if (path === './src/commands') return ['test'];
             if (path === './src/commands/test') return ['function.js'];
             return [];
@@ -187,7 +187,7 @@ describe('handleCommands', () => {
             guildID: '000000000000000000'
         }), { virtual: true });
 
-        require('fs').readdirSync = jest.fn((path) => {
+        require('node:fs').readdirSync = jest.fn((path) => {
             if (path === './src/commands') return ['test'];
             if (path === './src/commands/test') return ['guild.js', 'guild2.js'];
             return [];

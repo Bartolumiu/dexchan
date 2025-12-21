@@ -1,5 +1,5 @@
 const { Client, Colors, Collection, EmbedBuilder, Interaction } = require('discord.js');
-const fs = require('fs');
+const fs = require('node:fs');
 
 module.exports = {
     name: 'interactionCreate',

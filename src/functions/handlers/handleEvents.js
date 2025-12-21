@@ -1,4 +1,4 @@
-const { readdirSync } = require('fs');
+const { readdirSync } = require('node:fs');
 const { connection } = require('mongoose');
 
 

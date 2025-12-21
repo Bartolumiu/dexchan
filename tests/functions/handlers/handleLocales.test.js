@@ -1,7 +1,7 @@
-jest.mock('fs');
+jest.mock('node:fs');
 jest.mock('path');
 
-const fs = require('fs');
+const fs = require('node:fs');
 const path = require('path');
 const { getLocale, translateAttribute } = require('../../../src/functions/handlers/handleLocales');
 

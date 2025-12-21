@@ -1,4 +1,4 @@
-const { readdirSync, readFileSync } = require('fs');
+const { readdirSync, readFileSync } = require('node:fs');
 const path = require('path');
 const getChalk = require('../tools/getChalk');
 

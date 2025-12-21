@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors } = require("discord.js");
 const { translateAttribute } = require('../../functions/handlers/handleLocales');
-const fs = require('fs');
+const fs = require('node:fs');
 
 module.exports = {
     global: true,

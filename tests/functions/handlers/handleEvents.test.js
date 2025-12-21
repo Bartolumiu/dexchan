@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('node:fs');
 const { connection } = require('mongoose');
 const initHandlers = require('../../../src/functions/handlers/handleEvents.js');
 const clientEvent = require('../../../src/events/client/clientEvent.js');
@@ -18,7 +18,7 @@ jest.mock('../../../src/events/mongo/mongoEvent.js', () => ({
 }), { virtual: true });
 
 // Mock fs
-jest.mock('fs', () => ({
+jest.mock('node:fs', () => ({
     readdirSync: jest.fn(),
 }));
 

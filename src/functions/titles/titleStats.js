@@ -2,6 +2,7 @@ const getVersion = require('../tools/getVersion');
 
 const USER_AGENT = `Dex-chan/${getVersion()} by Bartolumiu`;
 const URL_FORMATS = {
+    mangabaka: 'https://api.mangabaka.dev/v1/statistics/series/',
     mangadex: 'https://api.mangadex.org/statistics/manga/',
     namicomi: {
         ratings: 'https://api.namicomi.com/title/',
@@ -18,6 +19,8 @@ const URL_FORMATS = {
  */
 const getTitleStats = async (id, type) => {
     switch (type) {
+        case 'mangabaka':
+            return await getMangaBakaStats(id);
         case 'mangadex':
             return await getMangaDexStats(id);
         case 'namicomi':
@@ -36,6 +39,8 @@ const getTitleStats = async (id, type) => {
  */
 const buildURL = (id, type) => {
     switch (type) {
+        case 'mangabaka':
+            return new URL(`${URL_FORMATS.mangabaka}${id}`);
         case 'mangadex':
             return new URL(`${URL_FORMATS.mangadex}${id}`);
         case 'namicomi.ratings':
@@ -43,6 +48,14 @@ const buildURL = (id, type) => {
         case 'namicomi.stats':
             return new URL(`${URL_FORMATS.namicomi.stats}${id}`);
     }
+}
+
+const getMangaBakaStats = async (id) => {
+    const url = buildURL(id, 'mangabaka');
+    // MangaBaka does not provide statistics via their API as of now
+    // Return an empty object to avoid breaking the bot (will be handled as N/A in the embed)
+    // Jippi plz add stats endpoint ;_;
+    return {};
 }
 
 /**
@@ -71,7 +84,7 @@ const getMangaDexStats = async (id) => {
         return data.statistics[id] || null;
     } catch {
         return null;
-    };
+    }
 };
 
 /**
@@ -135,7 +148,7 @@ const getNamiComiStats = async (id) => {
         };
     } catch {
         return null;
-    };
+    }
 };
 
 module.exports = getTitleStats;

@@ -73,13 +73,7 @@ const buildMangaDexTitleListEmbed = (embed, translations, titles, query) => {
         };
     }).filter(Boolean);
 
-    const menu = new StringSelectMenuBuilder()
-        .setCustomId('mangadex_select')
-        .setPlaceholder(translations.response.menu.placeholder)
-        .setMinValues(1)
-        .setMaxValues(1);
-
-    populateMenuOptions(menu, titles);
+    const menu = buildSelectMenu('mangadex', translations, titles);
 
     buildEmbed(embed, translations, fields, { query: query, source: translations.options.source.values.mangadex });
     return new ActionRowBuilder().addComponents(menu);

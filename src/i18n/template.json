@@ -90,6 +90,25 @@
                 "restricted": "Restricted"
               }
             },
+            "type": {
+              "name": "Type",
+              "value": {
+                "manga": "Manga",
+                "long_strip": "Long Strip",
+                "comic": "Comic",
+                "novel": "Novel"
+              }
+            },
+            "reading_mode": {
+              "name": "Reading Mode",
+              "value": {
+                "vertical": "Vertical",
+                "horizontal": {
+                  "left_to_right": "Horizontal (Left to Right)",
+                  "right_to_left": "Horizontal (Right to Left)"
+                }
+              }
+            },
             "format": "Format",
             "genres": "Genres",
             "genres_v2": "Genres (v2)",

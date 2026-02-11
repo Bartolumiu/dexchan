@@ -95,13 +95,7 @@ const buildNamiComiTitleListEmbed = (embed, translations, titles, query) => {
         };
     }).filter(Boolean);
 
-    const menu = new StringSelectMenuBuilder()
-        .setCustomId('namicomi_select')
-        .setPlaceholder(translations.response.menu.placeholder)
-        .setMinValues(1)
-        .setMaxValues(1);
-
-    populateMenuOptions(menu, titles);
+    const menu = buildSelectMenu('namicomi', translations, titles);
 
     buildEmbed(embed, translations, fields, { query: query, source: translations.options.source.values.namicomi });
     return new ActionRowBuilder().addComponents(menu);

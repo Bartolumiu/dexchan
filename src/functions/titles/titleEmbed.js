@@ -156,23 +156,23 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
 
     switch (title.attributes.readingMode) {
         case 'vls':
-            embed.addFields({ name: translations.response.embed.fields.reading_mode.name, value: translations.response.embed.fields.reading_mode.vertical });
+            embed.addFields({ name: translations.response.embed.fields.reading_mode.name, value: translations.response.embed.fields.reading_mode.value.vertical });
             break;
         case 'rtl':
-            embed.addFields({ name: translations.response.embed.fields.reading_mode.name, value: translations.response.embed.fields.reading_mode.horizontal.right_to_left });
+            embed.addFields({ name: translations.response.embed.fields.reading_mode.name, value: translations.response.embed.fields.reading_mode.value.horizontal.right_to_left });
             break;
         case 'ltr':
-            embed.addFields({ name: translations.response.embed.fields.reading_mode.name, value: translations.response.embed.fields.reading_mode.horizontal.left_to_right });
+            embed.addFields({ name: translations.response.embed.fields.reading_mode.name, value: translations.response.embed.fields.reading_mode.value.horizontal.left_to_right });
             break;
     }
 
     return new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-            .setLabel(translations.button.open.replace('{source}', translations.options.source.values.namicomi))
+            .setLabel(translations.response.button.open.replace('{source}', translations.options.source.values.namicomi))
             .setURL(urlFormats.namicomi.shortened.replace('{id}', title.id))
             .setStyle(ButtonStyle.Link),
         new ButtonBuilder()
-            .setLabel(translations.button.stats)
+            .setLabel(translations.response.button.stats)
             .setCustomId(`namicomi_stats_${title.id}`)
             .setStyle(ButtonStyle.Secondary)
             .setEmoji('📊')

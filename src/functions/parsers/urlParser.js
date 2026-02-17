@@ -5,10 +5,12 @@ const urlFormats = {
         shortened: 'https://nami.moe/t/{id}'
     },
     mangadex: {
-        primary: 'https://mangadex.org/title/{id}/{title}'
+        primary: 'https://mangadex.org/title/{id}/{title}',
+        canary: 'https://canary.mangadex.dev/title/{id}/{title}',
+        forums: 'https://forums.mangadex.org/threads/{thread_id}'
     },
     mangabaka: {
-        primary: 'https://mangabaka.dev/{id}/{title}'
+        primary: 'https://mangabaka.org/{id}/{title}'
     }
 }
 
@@ -52,7 +54,7 @@ const regexComponents = {
     },
     mangabaka: {
         subdomain: '(?:dev\\.)?',
-        domain: 'mangabaka\\.dev',
+        domain: 'mangabaka\\.org',
         id: '(\\d+)',
         slugAndParams: '(?:\\/[^?]+)?(?:\\?.*)?'
     },

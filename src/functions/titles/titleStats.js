@@ -53,9 +53,9 @@ const buildURL = (id, type) => {
 const getMangaBakaStats = async (id) => {
     const url = buildURL(id, 'mangabaka');
     // MangaBaka does not provide statistics via their API as of now
-    // Return an empty object to avoid breaking the bot (will be handled as N/A in the embed)
+    // Return null to avoid breaking the bot (there's no "stats" button for MangaBaka entries anyway)
     // Jippi plz add stats endpoint ;_;
-    return {};
+    return null;
 }
 
 /**
@@ -81,7 +81,7 @@ const getMangaDexStats = async (id) => {
         });
         if (!res.ok) return null;
         const data = await res.json();
-        return data.statistics[id] || null;
+        return formatStats(data, null, 'mangadex');
     } catch {
         return null;
     }
@@ -125,30 +125,79 @@ const getNamiComiStats = async (id) => {
             ratingsRes.json(),
             statsRes.json()
         ]);
-        return {
-            title: {
-                comments: {
-                    threadId: null,
-                    repliesCount: statsData.data.attributes.commentCount,
-                },
-                rating: {
-                    average: 0,
-                    bayesian: ratingsData.data.attributes.rating,
-                    distribution: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    count: ratingsData.data.attributes.count
-                },
-                follows: statsData.data.attributes.followCount,
-                views: statsData.data.attributes.viewCount
-            },
-            chapters: {
-                views: Object.values(statsData.data.attributes.extra.totalChapterViews).reduce((total, count) => total + count, 0),
-                comments: Object.values(statsData.data.attributes.extra.totalChapterComments).reduce((total, count) => total + count, 0),
-                reactions: Object.values(statsData.data.attributes.extra.totalChapterReactions).reduce((total, count) => total + count, 0)
-            }
-        };
+        return formatStats(statsData, ratingsData, 'namicomi');
     } catch {
         return null;
     }
 };
+
+const formatStats = (stats, ratings, type) => {
+    switch (type) {
+        case 'mangadex':
+            return formatMangaDexStats(stats);
+        case 'namicomi':
+            return formatNamiComiStats(stats, ratings);
+        // No need for a default case since the type is already validated in getTitleStats
+    }
+}
+
+const formatMangaDexStats = (stats) => {
+    return {
+        title: {
+            comments: {
+                threadId: stats.comments?.id || null,
+                repliesCount: stats.comments?.repliesCount || 0,
+            },
+            rating: {
+                average: stats.rating?.average || 0.00,
+                bayesian: stats.rating?.bayesian || 0.00,
+                distribution: stats.rating?.distribution || {},
+                count: Object.values(stats.rating?.distribution || {}).reduce((total, count) => total + count, 0) || 0
+            },
+            follows: stats.follows || 0,
+            views: 0
+        },
+        chapters: {
+            views: 0,
+            comments: 0,
+            reactions: 0
+        }
+    };
+}
+
+const formatNamiComiStats = (stats, ratings) => {
+    return {
+        title: {
+            comments: {
+                threadId: null,
+                repliesCount: stats.data.attributes.commentCount || 0,
+            },
+            rating: {
+                average: 0,
+                bayesian: ratings.data.attributes.rating || 0,
+                distribution: {
+                    '1': 0,
+                    '2': 0,
+                    '3': 0,
+                    '4': 0,
+                    '5': 0,
+                    '6': 0,
+                    '7': 0,
+                    '8': 0,
+                    '9': 0,
+                    '10': 0
+                },
+                count: ratings.data.attributes.count || 0
+            },
+            follows: stats.data.attributes.followCount || 0,
+            views: stats.data.attributes.viewCount || 0
+        },
+        chapters: {
+            views: Object.values(stats.data.attributes.extra.totalChapterViews).reduce((total, count) => total + count, 0) || 0,
+            comments: Object.values(stats.data.attributes.extra.totalChapterComments).reduce((total, count) => total + count, 0) || 0,
+            reactions: Object.values(stats.data.attributes.extra.totalChapterReactions).reduce((total, count) => total + count, 0) || 0
+        }
+    };
+}
 
 module.exports = getTitleStats;

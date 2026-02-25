@@ -47,13 +47,13 @@ const buildMangaBakaTitleListEmbed = (embed, translations, titles, query) => {
     const fields = Array.from(titles, ([title, id]) => {
         return {
             name: truncateString(title, 256),
-            value: `[${translations.response.menu.view.replace('{source}', translations.options.source.values.mangabaka)}](${urlFormats.mangabaka.primary.replace('{id}', id).replace('{title}', '')})`
+            value: `[${translations.response.menu.view.replace('{source}', translations.sources.mangabaka)}](${urlFormats.mangabaka.primary.replace('{id}', id).replace('{title}', '')})`
         };
     }).filter(Boolean);
 
     const menu = buildSelectMenu('mangabaka', translations, titles);
 
-    buildEmbed(embed, translations, fields, { query: query, source: translations.options.source.values.mangabaka });
+    buildEmbed(embed, translations, fields, { query: query, source: translations.sources.mangabaka });
     return new ActionRowBuilder().addComponents(menu);
 }
 
@@ -69,13 +69,13 @@ const buildMangaDexTitleListEmbed = (embed, translations, titles, query) => {
     const fields = Array.from(titles, ([title, id]) => {
         return {
             name: truncateString(title, 256),
-            value: `[${translations.response.menu.view.replace('{source}', translations.options.source.values.mangadex)}](${urlFormats.mangadex.primary.replace('{id}', id).replace('{title}', '')})`
+            value: `[${translations.response.menu.view.replace('{source}', translations.sources.mangadex)}](${urlFormats.mangadex.primary.replace('{id}', id).replace('{title}', '')})`
         };
     }).filter(Boolean);
 
     const menu = buildSelectMenu('mangadex', translations, titles);
 
-    buildEmbed(embed, translations, fields, { query: query, source: translations.options.source.values.mangadex });
+    buildEmbed(embed, translations, fields, { query: query, source: translations.sources.mangadex });
     return new ActionRowBuilder().addComponents(menu);
 }
 
@@ -91,13 +91,13 @@ const buildNamiComiTitleListEmbed = (embed, translations, titles, query) => {
     const fields = Array.from(titles, ([title, id]) => {
         return {
             name: truncateString(title, 256),
-            value: `[${translations.response.menu.view.replace('´{source}', translations.options.source.values.namicomi)}](${urlFormats.namicomi.shortened.replace('{id}', id)})`
+            value: `[${translations.response.menu.view.replace('{source}', translations.sources.namicomi)}](${urlFormats.namicomi.shortened.replace('{id}', id)})`
         };
     }).filter(Boolean);
 
     const menu = buildSelectMenu('namicomi', translations, titles);
 
-    buildEmbed(embed, translations, fields, { query: query, source: translations.options.source.values.namicomi });
+    buildEmbed(embed, translations, fields, { query: query, source: translations.sources.namicomi });
     return new ActionRowBuilder().addComponents(menu);
 }
 

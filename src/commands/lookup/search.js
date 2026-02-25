@@ -53,7 +53,13 @@ module.exports = {
 
         const userSettings = await client.getMongoUserData(interaction.user);
         const locale = getLocale(userSettings, interaction);
-        const translations = await client.getTranslations(locale, 'commands', 'search');
+
+        // Inject source name translations to strings object
+        const translations = {
+            ...(await client.getTranslations(locale, 'commands', 'search')),
+            sources: await client.getTranslations(locale, 'generic', 'sources')
+        };
+
         const botSettings = await client.getMongoBotData();
         const sources = botSettings.settings.sources.filter(src => src.enabled).map(src => ({
             name: translations.options?.source?.values[src.name] ?? src.name,

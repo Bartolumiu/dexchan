@@ -158,7 +158,7 @@ const getNamiComiTags = (title, locale) => {
  * @param {object} embed - The embed object to add fields to.
  * @param {object} translations - The translations object for field names.
  * @param {string} type - The type of title. Supported values are 'mangadex' and 'namicomi'.
- * @param {string} locale - The locale to use for tag names.
+ * @param {string|null} locale - The locale to use for tag names.
  * @returns {boolean|null} True if tags were added successfully, null if the type is unsupported.
  */
 const addTitleTags = (title, embed, translations, type, locale) => {

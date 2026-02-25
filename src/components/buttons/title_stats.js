@@ -1,4 +1,4 @@
-const { EmbedBuilder, Colors, ButtonBuilder, ActionRowBuilder } = require("discord.js");
+const { EmbedBuilder, Colors, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require("discord.js");
 const { MessageFlags } = require("discord-api-types/v10");
 const { getLocale } = require("../../functions/handlers/handleLocales");
 const getTitleStats = require("../../functions/titles/titleStats");
@@ -11,7 +11,12 @@ module.exports = {
         await interaction.deferUpdate();
         const userSettings = await client.getMongoUserData(interaction.user);
         const locale = getLocale(userSettings, interaction);
-        const translations = client.getTranslations(locale, 'components', 'title_stats');
+
+        // Inject source name translations to strings object
+        const translations = {
+            ...(client.getTranslations(locale, 'components', 'title_stats')),
+            sources: client.getTranslations(locale, 'generic', 'sources')
+        };
 
         const customId = interaction.customId;
         const match = customId.match(/^(.+)_title_stats_(.+)$/);
@@ -34,12 +39,12 @@ module.exports = {
             .setTitle(translations.response.title)
             .setDescription(translations.response.description.replace('{titleId}', entryId).replace('{source}', source))
             .addFields(buildEmbedFields(stats, translations, source))
-            .setFooter({ text: translations.footer.replace('{user}', interaction.user.username), iconURL: client.user.avatarURL({ dynamic: true }) })
+            .setFooter({ text: translations.response.footer.replace('{user}', interaction.user.username), iconURL: client.user.avatarURL({ dynamic: true }) })
             .setColor(Colors.Blurple);
 
         const buttons = buildButtons(stats, translations, source);
 
-        await interaction.followUp({ embeds: [embed], components: [buttons] });
+        await interaction.followUp({ embeds: [embed], components: (buttons) ? [buttons] : null });
     }
 }
 
@@ -55,23 +60,23 @@ const buildEmbedFields = (stats, translations, type) => {
 
 const buildMangaDexEmbedFields = (stats, translations) => {
     return [
-        { name: translations.fields.average.name, value: `${stats.title.rating.average}/10.00 (${stats.title.rating.count} ${translations.units.votes})`, inline: true },
-        { name: translations.fields.bayesian.name, value: `${stats.title.rating.bayesian}/10.00`, inline: true },
-        { name: translations.fields.follows.name, value: `${stats.title.follows}`, inline: true },
-        { name: translations.fields.distribution.name, value: Object.entries(stats.title.rating.distribution).reverse().filter(([, count]) => count > 0).map(([rating, count]) => `${rating}/10: \`${count}\` · (${(count / stats.title.rating.count * 100).toFixed(2)}%)`).join('\n') || 'N/A' },
-        { name: translations.fields.comments.name, value: `${stats.title.comments.repliesCount}`, inline: true }
+        { name: translations.response.fields.average.name, value: `${stats.title.rating.average}/10.00 (${stats.title.rating.count} ${translations.response.units.votes})`, inline: true },
+        { name: translations.response.fields.bayesian.name, value: `${stats.title.rating.bayesian}/10.00`, inline: true },
+        { name: translations.response.fields.follows.name, value: `${stats.title.follows}`, inline: true },
+        { name: translations.response.fields.distribution.name, value: Object.entries(stats.title.rating.distribution).reverse().filter(([, count]) => count > 0).map(([rating, count]) => `${rating}/10: \`${count}\` · (${(count / stats.title.rating.count * 100).toFixed(2)}%)`).join('\n') || 'N/A' },
+        { name: translations.response.fields.comments.name, value: `${stats.title.comments.repliesCount}`, inline: true }
     ];
 }
 
 const buildNamiComiEmbedFields = (stats, translations) => {
     return [
-        { name: translations.fields.rating.name, value: `${stats.title.rating.bayesian.toFixed(2)}/5.00 (${stats.title.rating.count} ${translations.units.votes})`, inline: true },
-        { name: translations.fields.views.name, value: `${stats.title.views}`, inline: true },
-        { name: translations.fields.follows.name, value: `${stats.title.follows}`, inline: true },
-        { name: translations.fields.comments.name, value: `${stats.title.comments.repliesCount}`, inline: true },
-        { name: translations.fields.chapter_views.name, value: `${stats.chapters.views}`, inline: true },
-        { name: translations.fields.chapter_comments.name, value: `${stats.chapters.comments}`, inline: true },
-        { name: translations.fields.chapter_reactions.name, value: `${stats.chapters.reactions}`, inline: true }
+        { name: translations.response.fields.rating.name, value: `${stats.title.rating.bayesian}/5.00 (${stats.title.rating.count} ${translations.response.units.votes})`, inline: true },
+        { name: translations.response.fields.views.name, value: `${stats.title.views}`, inline: true },
+        { name: translations.response.fields.follows.name, value: `${stats.title.follows}`, inline: true },
+        { name: translations.response.fields.comments.name, value: `${stats.title.comments.repliesCount}`, inline: true },
+        { name: translations.response.fields.chapter_views.name, value: `${stats.chapters.views}`, inline: true },
+        { name: translations.response.fields.chapter_comments.name, value: `${stats.chapters.comments}`, inline: true },
+        { name: translations.response.fields.chapter_reactions.name, value: `${stats.chapters.reactions}`, inline: true }
     ];
 }
 
@@ -90,14 +95,14 @@ const buildMangaDexButtons = (stats, translations) => {
     if (stats.title.comments.threadId) {
         buttons.addComponents(
             new ButtonBuilder()
-                .setLabel(translations.mangadex.forum.open)
+                .setLabel(translations.response.buttons.mangadex.forum.open)
                 .setURL(`https://forums.mangadex.org/threads/${stats.title.comments.threadId}`)
                 .setStyle(ButtonStyle.Link)
         )
     } else {
         buttons.addComponents(
             new ButtonBuilder()
-                .setLabel(translations.mangadex.forum.no_thread)
+                .setLabel(translations.response.buttons.mangadex.forum.no_thread)
                 .setURL('https://forums.mangadex.org/')
                 .setStyle(ButtonStyle.Link)
                 .setDisabled(true)
@@ -107,7 +112,7 @@ const buildMangaDexButtons = (stats, translations) => {
 }
 
 const buildNamiComiButtons = (stats, translations) => {
-    // Return an empty array for now since I can't reliably build any buttons for the comment section.
+    // Return an null for now since I can't reliably build any buttons for the comment section.
     // Current URL format: https://namicomi.com/{locale}/title/{titleId}/{slug}/comments
-    return [];
+    return null;
 }

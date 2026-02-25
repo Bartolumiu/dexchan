@@ -53,9 +53,9 @@ const buildURL = (id, type) => {
 const getMangaBakaStats = async (id) => {
     const url = buildURL(id, 'mangabaka');
     // MangaBaka does not provide statistics via their API as of now
-    // Return null to avoid breaking the bot (there's no "stats" button for MangaBaka entries anyway)
+    // Return empty object to avoid breaking the bot (there's no "stats" button for MangaBaka entries anyway)
     // Jippi plz add stats endpoint ;_;
-    return null;
+    return {};
 }
 
 /**
@@ -81,7 +81,7 @@ const getMangaDexStats = async (id) => {
         });
         if (!res.ok) return null;
         const data = await res.json();
-        return formatStats(data, null, 'mangadex');
+        return formatStats(data.statistics[id], null, 'mangadex');
     } catch {
         return null;
     }
@@ -145,12 +145,12 @@ const formatMangaDexStats = (stats) => {
     return {
         title: {
             comments: {
-                threadId: stats.comments?.id || null,
+                threadId: stats.comments?.threadId || null,
                 repliesCount: stats.comments?.repliesCount || 0,
             },
             rating: {
-                average: stats.rating?.average || 0.00,
-                bayesian: stats.rating?.bayesian || 0.00,
+                average: stats.rating?.average.toFixed(2) || 0.00,
+                bayesian: stats.rating?.bayesian.toFixed(2) || 0.00,
                 distribution: stats.rating?.distribution || {},
                 count: Object.values(stats.rating?.distribution || {}).reduce((total, count) => total + count, 0) || 0
             },
@@ -173,8 +173,8 @@ const formatNamiComiStats = (stats, ratings) => {
                 repliesCount: stats.data.attributes.commentCount || 0,
             },
             rating: {
-                average: 0,
-                bayesian: ratings.data.attributes.rating || 0,
+                average: 0.00,
+                bayesian: ratings.data.attributes.rating.toFixed(2) || 0.00,
                 distribution: {
                     '1': 0,
                     '2': 0,

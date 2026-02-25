@@ -761,12 +761,22 @@
             }
         }
     },
+    "generic": {
+        "sources": {
+            "mangadex": "MangaDex",
+            "namicomi": "NamiComi",
+            "mangabaka": "MangaBaka"
+        }
+    },
     "components": {
         "title_stats": {
             "response": {
                 "title": "Title Stats",
                 "description": "Here are the stats for the title with ID `{titleId}` from {source}.",
                 "fields": {
+                    "rating": {
+                        "name": "Rating"
+                    },
                     "average": {
                         "name": "Average Rating"
                     },
@@ -790,6 +800,9 @@
                     },
                     "chapter_reactions": {
                         "name": "Chapter Reactions"
+                    },
+                    "views": {
+                        "name": "Views"
                     }
                 },
                 "units": {
@@ -829,7 +842,7 @@
         "err_int_aut": "Error in autocomplete {autocompleteId}",
         "timeout": {
             "title": "Timeout",
-            "description": "A timeout occured while fetching data from an external API. Please try again later.",
+            "description": "A timeout occurred while fetching data from an external API. Please try again later.",
             "note": "This error is usually caused by the external API being slow or unresponsive."
         }
     },

@@ -68,7 +68,7 @@ const buildMangaBakaEmbed = (embed, locale, title, stats, translations) => {
             .setStyle(ButtonStyle.Link),
         new ButtonBuilder()
             .setLabel(translations.response.button.stats)
-            .setCustomId(`mangabaka_stats_${title.id}`)
+            .setCustomId(`mangabaka_title_stats_${title.id}`)
             .setStyle(ButtonStyle.Secondary)
             .setEmoji('📊')
             .setDisabled(true) // Placeholder: Missing API endpoint
@@ -92,8 +92,8 @@ const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
 
     console.log(translations);
     const fields = [
-        { name: translations.response.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}/10.00`, inline: true },
-        { name: translations.response.embed.fields.follows, value: `${stats.follows}`, inline: true },
+        { name: translations.response.embed.fields.rating, value: `${stats.title.rating.bayesian}/10.00`, inline: true },
+        { name: translations.response.embed.fields.follows, value: `${stats.title.follows}`, inline: true },
         { name: translations.response.embed.fields.year, value: `${title.attributes.year}`, inline: true },
         { name: translations.response.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.response.embed.fields.pub_status.value[title.attributes.status] || title.attributes.status}`), inline: true },
         { name: translations.response.embed.fields.demographic.name, value: title.attributes.publicationDemographic ? capitalizeFirstLetter(`${translations.response.embed.fields.demographic.value[title.attributes.publicationDemographic] || title.attributes.publicationDemographic}`) : 'N/A', inline: true },
@@ -106,7 +106,7 @@ const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
         .addFields(fields)
         .setColor(Colors.Blurple);
 
-    addTitleTags(title, embed, translations, 'mangadex');
+    addTitleTags(title, embed, translations, 'mangadex', null);
 
     return new ActionRowBuilder().addComponents(
         new ButtonBuilder()
@@ -115,7 +115,7 @@ const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
             .setStyle(ButtonStyle.Link),
         new ButtonBuilder()
             .setLabel(translations.response.button.stats)
-            .setCustomId(`mangadex_stats_${title.id}`)
+            .setCustomId(`mangadex_title_stats_${title.id}`)
             .setStyle(ButtonStyle.Secondary)
             .setEmoji('📊')
     );
@@ -137,7 +137,7 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
     embedDescription = truncateString(embedDescription, 4096);
 
     const fields = [
-        { name: translations.response.embed.fields.rating, value: `${stats.title.rating.bayesian.toFixed(2)}/5.00`, inline: true },
+        { name: translations.response.embed.fields.rating, value: `${stats.title.rating.bayesian}/5.00`, inline: true },
         { name: translations.response.embed.fields.follows, value: `${stats.title.follows}`, inline: true },
         { name: translations.response.embed.fields.year, value: `${title.attributes.year}`, inline: true },
         { name: translations.response.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.response.embed.fields.pub_status.value[title.attributes.publicationStatus] || title.attributes.publicationStatus}`), inline: true },
@@ -173,7 +173,7 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
             .setStyle(ButtonStyle.Link),
         new ButtonBuilder()
             .setLabel(translations.response.button.stats)
-            .setCustomId(`namicomi_stats_${title.id}`)
+            .setCustomId(`namicomi_title_stats_${title.id}`)
             .setStyle(ButtonStyle.Secondary)
             .setEmoji('📊')
     )

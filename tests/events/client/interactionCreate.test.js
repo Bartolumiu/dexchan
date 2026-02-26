@@ -1,5 +1,5 @@
 const fs = require('node:fs');
-const path = require('path');
+const path = require('node:path');
 const { execute } = require('../../../src/events/client/interactionCreate');
 const { name } = require('../../../src/events/client/ready');
 

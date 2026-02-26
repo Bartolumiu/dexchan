@@ -102,7 +102,6 @@ module.exports = {
 
         const titleID = id || await parseURL(url, source);
         if (!(await checkID(titleID, source))) return sendErrorEmbed(interaction, translations, embed, 'invalid_id');
-        console.log(`Fetching details for ID: ${titleID} from source: ${source}`);
         const [entry, stats] = await Promise.all([getTitleDetails(titleID, source), getTitleStats(titleID, source)]);
         if (!entry || !stats) return sendErrorEmbed(interaction, translations, embed, 'invalid_id');
 

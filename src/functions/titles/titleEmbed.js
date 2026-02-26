@@ -90,7 +90,6 @@ const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
     embedDescription = sanitizeDescription(embedDescription);
     embedDescription = truncateString(embedDescription, 4096);
 
-    console.log(translations);
     const fields = [
         { name: translations.response.embed.fields.rating, value: `${stats.title.rating.bayesian}/10.00`, inline: true },
         { name: translations.response.embed.fields.follows, value: `${stats.title.follows}`, inline: true },

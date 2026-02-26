@@ -182,7 +182,6 @@ const addTitleTags = (title, embed, translations, type, locale) => {
  * @param {object} translations - The translations object for field names.
  */
 const addMangaBakaTags = (title, embed, translations) => {
-    console.log('Adding MangaBaka tags');
     const groups = getTitleTags(title, 'mangabaka');
     const fields = [
         { name: translations.response.embed.fields.genres, value: groups.genres, inline: true },
@@ -190,7 +189,6 @@ const addMangaBakaTags = (title, embed, translations) => {
         { name: translations.response.embed.fields.genres_v2, value: groups.genres_v2, inline: true },
         { name: translations.response.embed.fields.tags_v2, value: groups.tags_v2, inline: true }
     ];
-    console.log(fields);
     embed.addFields(fields);
     return true;
 }

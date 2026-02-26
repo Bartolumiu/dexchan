@@ -131,7 +131,7 @@ const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
  */
 const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
     const embedTitle = getLocalizedTitle(title, 'namicomi', locale);
-    let embedDescription = getLocalizedDescription(title, 'namicomi', locale) || translations.response.embed.error.no_description;
+    let embedDescription = getLocalizedDescription(title, 'namicomi', locale) || translations.response.embed.description.no_description;
     embedDescription = sanitizeDescription(embedDescription);
     embedDescription = truncateString(embedDescription, 4096);
 

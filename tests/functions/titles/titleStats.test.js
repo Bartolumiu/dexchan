@@ -34,7 +34,7 @@ describe('getTitleStats', () => {
             expect(result).toBeNull();
         });
 
-        it('should return null if the statistics object is empty (impossible case under normal circunstances)', async () => {
+        it('should return null if the statistics object is empty (impossible case under normal circumstances)', async () => {
             global.fetch.mockResolvedValue({
                 ok: true,
                 json: async () => ({ statistics: {} })

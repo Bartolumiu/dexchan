@@ -35,11 +35,13 @@ describe('getTitleStats', () => {
                         },
                         count: 0
                     },
-                    chapters: {
-                        comments: 0,
-                        reactions: 0,
-                        views: 0
-                    }
+                    follows: 0,
+                    views: 0
+                },
+                chapters: {
+                    comments: 0,
+                    reactions: 0,
+                    views: 0
                 }
             };
             global.fetch.mockResolvedValue({

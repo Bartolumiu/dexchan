@@ -48,7 +48,7 @@ describe('buildTitleEmbed', () => {
                         unknown: 'Unknown Author'
                     },
                     description: {
-                        no_description: 'No description available for {locale}.'
+                        no_description: 'No description available for English.'
                     },
                     fields: {
                         rating: 'Rating',
@@ -194,8 +194,10 @@ describe('buildTitleEmbed', () => {
                 }
             };
             const stats = {
-                rating: { bayesian: 7.7 },
-                follows: 77
+                title: {
+                    rating: { bayesian: 7.7 },
+                    follows: 77
+                }
             };
             getLocalizedTitle.mockReturnValue('No Demographic Manga');
             getLocalizedDescription.mockReturnValue('desc');
@@ -220,13 +222,15 @@ describe('buildTitleEmbed', () => {
                 }
             };
             const stats = {
-                rating: { bayesian: 9.1 },
-                follows: 42
+                title: {
+                    rating: { bayesian: 9.1 },
+                    follows: 42
+                }
             };
             getLocalizedTitle.mockReturnValue('No Desc Manga');
             getLocalizedDescription.mockReturnValue(undefined);
             buildTitleEmbed(embed, locale, title, stats, translations, 'mangadex');
-            expect(embed.setDescription).toHaveBeenCalledWith('No description available.');
+            expect(embed.setDescription).toHaveBeenCalledWith('No description available for English.');
         });
 
         it('should use raw status/demographic/contentRating if translation missing for MangaDex', () => {
@@ -242,13 +246,15 @@ describe('buildTitleEmbed', () => {
                 }
             };
             const stats = {
-                rating: { bayesian: 5.5 },
-                follows: 7
+                title: {
+                    rating: { bayesian: 5.5 },
+                    follows: 7
+                }
             };
             // Remove translation values
-            translations.embed.fields.pub_status.value = {};
-            translations.embed.fields.demographic.value = {};
-            translations.embed.fields.content_rating.value = {};
+            translations.response.embed.fields.pub_status.value = {};
+            translations.response.embed.fields.demographic.value = {};
+            translations.response.embed.fields.content_rating.value = {};
             getLocalizedTitle.mockReturnValue('Raw Manga');
             getLocalizedDescription.mockReturnValue('desc');
             buildTitleEmbed(embed, locale, title, stats, translations, 'mangadex');
@@ -278,8 +284,10 @@ describe('buildTitleEmbed', () => {
                 }
             };
             const stats = {
-                rating: { bayesian: 8.5 },
-                follows: 1000
+                title: {
+                    rating: { bayesian: 8.5 },
+                    follows: 1000
+                }
             };
             getLocalizedTitle.mockReturnValue('Test Manga');
             getLocalizedDescription.mockReturnValue('A test manga description.');
@@ -317,8 +325,10 @@ describe('buildTitleEmbed', () => {
                 }
             };
             const stats = {
-                rating: { bayesian: 7.2 },
-                follows: 500
+                title: {
+                    rating: { bayesian: 7.2 },
+                    follows: 500
+                }
             };
             getLocalizedTitle.mockReturnValue('Long Desc Manga');
             // Simulate a too-long description
@@ -342,8 +352,10 @@ describe('buildTitleEmbed', () => {
                 }
             };
             const stats = {
-                rating: { bayesian: 8.0 },
-                follows: 100
+                title: {
+                    rating: { bayesian: 8.0 },
+                    follows: 100
+                }
             };
 
             getLocalizedTitle.mockReturnValue('Test Title');
@@ -370,8 +382,10 @@ describe('buildTitleEmbed', () => {
                 }
             };
             const stats = {
-                rating: { bayesian: 8.0 },
-                follows: 100
+                title: {
+                    rating: { bayesian: 8.0 },
+                    follows: 100
+                }
             };
 
             // Mock translations to have a non-string fallback
@@ -424,7 +438,7 @@ describe('buildTitleEmbed', () => {
             getLocalizedTitle.mockReturnValue('No Desc Nami');
             getLocalizedDescription.mockReturnValue(undefined);
             buildTitleEmbed(embed, locale, title, stats, translations, 'namicomi');
-            expect(embed.setDescription).toHaveBeenCalledWith('No description available.');
+            expect(embed.setDescription).toHaveBeenCalledWith('No description available for English.');
         });
 
         it('should use N/A for demographic if missing in NamiComi', () => {

@@ -221,13 +221,15 @@ describe('addTitleTags', () => {
     beforeEach(() => {
         embed = { addFields: jest.fn() };
         translations = {
-            embed: {
-                fields: {
-                    format: 'Format',
-                    genres: 'Genres',
-                    themes: 'Themes',
-                    content_warning: 'Content Warning',
-                    other_tags: 'Other'
+            response: {
+                embed: {
+                    fields: {
+                        format: 'Format',
+                        genres: 'Genres',
+                        themes: 'Themes',
+                        content_warning: 'Content Warning',
+                        other_tags: 'Other'
+                    }
                 }
             }
         };

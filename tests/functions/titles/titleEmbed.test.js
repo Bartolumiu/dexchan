@@ -20,34 +20,107 @@ describe('buildTitleEmbed', () => {
         };
         locale = 'en';
         translations = {
-            embed: {
-                error: {
-                    no_description: 'No description available.'
+            response: {
+                button: {
+                    open: 'Open on {source}',
+                    stats: 'View Stats'
                 },
-                fields: {
-                    rating: 'Rating',
-                    follows: 'Follows',
-                    year: 'Year',
-                    pub_status: {
-                        name: 'Status',
-                        value: { ongoing: 'Ongoing', completed: 'Completed' }
-                    },
-                    demographic: {
-                        name: 'Demographic',
-                        value: { shounen: 'Shounen' }
-                    },
-                    content_rating: {
-                        name: 'Content Rating',
-                        value: { safe: 'Safe' }
-                    },
-                    type: {
-                        name: 'Type',
-                        value: { manga: 'Manga', novel: 'Novel', manhwa: 'Long Strip', comic: 'Comic' }
+                menu: {
+                    title: 'Search Results',
+                    description: 'Here are the search results for `{query}` on {source}.',
+                    placeholder: 'Select a title to view more information...',
+                    view: 'View Title on {source}'
+                },
+                error: {
+                    title: 'Uh-oh!',
+                    description: {
+                        command_disabled: 'This command is currently disabled.\nPlease try again later.',
+                        invalid_source: 'We don\'t support searching on `{source}` yet. Please choose a different source.',
+                        api: 'Couldn\'t fetch title data from the external API.\nPlease try again later.',
+                        empty: 'Please provie a query to search for.',
+                        no_results: 'The query returned no results. That\'s all we know.',
+                        invalid_id: 'The provided ID is invalid.'
                     }
-                }
+                },
+                embed: {
+                    author: {
+                        too_many: 'Multiple Authors',
+                        unknown: 'Unknown Author'
+                    },
+                    description: {
+                        no_description: 'No description available for {locale}.'
+                    },
+                    fields: {
+                        rating: 'Rating',
+                        follows: 'Follows',
+                        year: 'Year',
+                        pub_status: {
+                            name: 'Publication Status',
+                            value: {
+                                upcoming: 'Upcoming',
+                                ongoing: 'Ongoing',
+                                completed: 'Completed',
+                                hiatus: 'Hiatus',
+                                cancelled: 'Cancelled',
+                                unknown: 'Unknown'
+                            }
+                        },
+                        demographic: {
+                            name: 'Demographic',
+                            value: {
+                                none: 'None',
+                                shounen: 'Shounen',
+                                shoujo: 'Shoujo',
+                                seinen: 'Seinen',
+                                josei: 'Josei'
+                            }
+                        },
+                        content_rating: {
+                            name: 'Content Rating',
+                            value: {
+                                safe: 'Safe',
+                                suggestive: 'Suggestive',
+                                erotica: 'Erotica',
+                                pornographic: 'Pornographic',
+                                mature: 'Mature',
+                                restricted: 'Restricted'
+                            }
+                        },
+                        type: {
+                            name: 'Type',
+                            value: {
+                                manga: 'Manga',
+                                long_strip: 'Long Strip',
+                                comic: 'Comic',
+                                novel: 'Novel'
+                            }
+                        },
+                        reading_mode: {
+                            name: 'Reading Mode',
+                            value: {
+                                vertical: 'Vertical',
+                                horizontal: {
+                                    left_to_right: 'Horizontal (Left to Right)',
+                                    right_to_left: 'Horizontal (Right to Left)',
+                                }
+                            }
+                        },
+                        format: 'Format',
+                        genres: 'Genres',
+                        genres_v2: 'Genres (v2)',
+                        tags: 'Tags',
+                        tags_v2: 'Tags (v2)',
+                        themes: 'Themes',
+                        content_warning: 'Content Warning',
+                        other_tags: 'Other Tags'
+                    }
+                },
+                footer: '/{commandName} - Requested by {user}'
             },
-            button: {
-                open: 'View Title'
+            sources: {
+                mangabaka: 'MangaBaka',
+                mangadex: 'MangaDex',
+                namicomi: 'NamiComi'
             }
         };
 
@@ -348,11 +421,6 @@ describe('buildTitleEmbed', () => {
                     follows: 88
                 }
             };
-            translations.embed.fields.reading_mode = {
-                name: 'Reading Mode',
-                vertical: 'Vertical',
-                horizontal: { right_to_left: 'RTL', left_to_right: 'LTR' }
-            };
             getLocalizedTitle.mockReturnValue('No Desc Nami');
             getLocalizedDescription.mockReturnValue(undefined);
             buildTitleEmbed(embed, locale, title, stats, translations, 'namicomi');
@@ -378,11 +446,6 @@ describe('buildTitleEmbed', () => {
                     rating: { bayesian: 3.3 },
                     follows: 33
                 }
-            };
-            translations.embed.fields.reading_mode = {
-                name: 'Reading Mode',
-                vertical: 'Vertical',
-                horizontal: { right_to_left: 'RTL', left_to_right: 'LTR' }
             };
             getLocalizedTitle.mockReturnValue('No Demographic Nami');
             getLocalizedDescription.mockReturnValue('desc');
@@ -416,14 +479,9 @@ describe('buildTitleEmbed', () => {
                 }
             };
             // Remove translation values
-            translations.embed.fields.pub_status.value = {};
-            translations.embed.fields.demographic.value = {};
-            translations.embed.fields.content_rating.value = {};
-            translations.embed.fields.reading_mode = {
-                name: 'Reading Mode',
-                vertical: 'Vertical',
-                horizontal: { right_to_left: 'RTL', left_to_right: 'LTR' }
-            };
+            translations.response.embed.fields.pub_status.value = {};
+            translations.response.embed.fields.demographic.value = {};
+            translations.response.embed.fields.content_rating.value = {};
             getLocalizedTitle.mockReturnValue('Raw Nami');
             getLocalizedDescription.mockReturnValue('desc');
             buildTitleEmbed(embed, locale, title, stats, translations, 'namicomi');
@@ -461,14 +519,6 @@ describe('buildTitleEmbed', () => {
                     follows: 123
                 }
             };
-            translations.embed.fields.reading_mode = {
-                name: 'Reading Mode',
-                vertical: 'Vertical',
-                horizontal: {
-                    right_to_left: 'RTL',
-                    left_to_right: 'LTR'
-                }
-            };
             getLocalizedTitle.mockReturnValue('Nami Longdesc');
             // Simulate a too-long description
             getLocalizedDescription.mockReturnValue('a'.repeat(5000));
@@ -478,7 +528,7 @@ describe('buildTitleEmbed', () => {
 
         it('should call buildNamiComiEmbed for namicomi type', () => {
             // This test just ensures no error is thrown for namicomi type (actual logic is stubbed)
-            const title = {
+            let title = {
                 id: 'nami1',
                 attributes: {
                     title: { en: 'Nami Title' },
@@ -502,15 +552,6 @@ describe('buildTitleEmbed', () => {
                     follows: 123
                 }
             };
-            // Add reading_mode translations for full coverage
-            translations.embed.fields.reading_mode = {
-                name: 'Reading Mode',
-                vertical: 'Vertical',
-                horizontal: {
-                    right_to_left: 'RTL',
-                    left_to_right: 'LTR'
-                }
-            };
             getLocalizedTitle.mockReturnValue('Nami Title');
             getLocalizedDescription.mockReturnValue('desc');
             buildTitleEmbed(embed, locale, title, stats, translations, 'namicomi');
@@ -519,12 +560,14 @@ describe('buildTitleEmbed', () => {
 
             // Now test 'rtl' and 'ltr' branches
             title.attributes.readingMode = 'rtl';
+
+            console.log(JSON.stringify(title));
             buildTitleEmbed(embed, locale, title, stats, translations, 'namicomi');
-            expect(embed.addFields).toHaveBeenCalledWith({ name: 'Reading Mode', value: 'RTL' });
+            expect(embed.addFields).toHaveBeenCalledWith({ name: 'Reading Mode', value: 'Horizontal (Right to Left)' });
 
             title.attributes.readingMode = 'ltr';
             buildTitleEmbed(embed, locale, title, stats, translations, 'namicomi');
-            expect(embed.addFields).toHaveBeenCalledWith({ name: 'Reading Mode', value: 'LTR' });
+            expect(embed.addFields).toHaveBeenCalledWith({ name: 'Reading Mode', value: 'Horizontal (Left to Right)' });
         });
 
         it('should truncate NamiComi description if too long', () => {
@@ -550,14 +593,6 @@ describe('buildTitleEmbed', () => {
                 title: {
                     rating: { bayesian: 6.5 },
                     follows: 123
-                }
-            };
-            translations.embed.fields.reading_mode = {
-                name: 'Reading Mode',
-                vertical: 'Vertical',
-                horizontal: {
-                    right_to_left: 'RTL',
-                    left_to_right: 'LTR'
                 }
             };
             getLocalizedTitle.mockReturnValue('Nami Longdesc');

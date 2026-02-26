@@ -12,7 +12,36 @@ describe('getTitleStats', () => {
 
     describe('MangaDex', () => {
         it('should return statistics when fetch is successful', async () => {
-            const mockStats = { views: 200 };
+            const mockStats = {
+                title: {
+                    comments: {
+                        threadId: null,
+                        repliesCount: 0
+                    },
+                    rating: {
+                        average: 0.00,
+                        bayesian: 0.00,
+                        distribution: {
+                            "1": 0,
+                            "2": 0,
+                            "3": 0,
+                            "4": 0,
+                            "5": 0,
+                            "6": 0,
+                            "7": 0,
+                            "8": 0,
+                            "9": 0,
+                            "10": 0
+                        },
+                        count: 0
+                    },
+                    chapters: {
+                        comments: 0,
+                        reactions: 0,
+                        views: 0
+                    }
+                }
+            };
             global.fetch.mockResolvedValue({
                 ok: true,
                 json: async () => ({ statistics: { '123': mockStats } })

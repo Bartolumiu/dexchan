@@ -151,7 +151,20 @@ const formatMangaDexStats = (stats) => {
             rating: {
                 average: stats.rating?.average.toFixed(2) || 0.00,
                 bayesian: stats.rating?.bayesian.toFixed(2) || 0.00,
-                distribution: stats.rating?.distribution || {},
+                distribution:
+                    stats.rating?.distribution ||
+                    {
+                        1: 0,
+                        2: 0,
+                        3: 0,
+                        4: 0,
+                        5: 0,
+                        6: 0,
+                        7: 0,
+                        8: 0,
+                        9: 0,
+                        10: 0
+                    },
                 count: Object.values(stats.rating?.distribution || {}).reduce((total, count) => total + count, 0) || 0
             },
             follows: stats.follows || 0,

@@ -3,7 +3,7 @@ const settingsCommand = require('../../../src/commands/configuration/settings');
 const { localeSettings, viewSettings } = require('../../../src/commands/configuration/settings');
 const { translateAttribute } = require('../../../src/functions/handlers/handleLocales');
 
-jest.mock('fs', () => {
+jest.mock('node:fs', () => {
     return {
         readdirSync: jest.fn().mockReturnValue(['en.json', 'es.json']),
         readFileSync: jest.fn().mockReturnValue('{"name": "English (en)", "value": "en"}')

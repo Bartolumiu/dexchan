@@ -76,8 +76,19 @@ describe('getTitleStats', () => {
                     comments: { threadId: null, repliesCount: 3 },
                     rating: {
                         average: 0,
-                        bayesian: 4.5,
-                        distribution: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        bayesian: "4.50",
+                        distribution: {
+                            "1": 0,
+                            "2": 0,
+                            "3": 0,
+                            "4": 0,
+                            "5": 0,
+                            "6": 0,
+                            "7": 0,
+                            "8": 0,
+                            "9": 0,
+                            "10": 0
+                        },
                         count: 0
                     },
                     follows: 150,

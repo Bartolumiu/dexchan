@@ -20,7 +20,8 @@ jest.mock('discord.js', () => ({
             handleLocales: jest.fn(),
             guilds: {
                 fetch: jest.fn()
-            }
+            },
+            getMongoBotData: jest.fn()
         };
     }),
     Collection: jest.fn().mockImplementation(() => new Map())

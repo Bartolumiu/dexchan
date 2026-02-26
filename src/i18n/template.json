@@ -761,6 +761,73 @@
       }
     }
   },
+  "generic": {
+    "sources": {
+      "mangadex": "MangaDex",
+      "namicomi": "NamiComi",
+      "mangabaka": "MangaBaka"
+    }
+  },
+  "components": {
+    "title_stats": {
+      "response": {
+        "title": "Title Stats",
+        "description": "Here are the stats for the title with ID `{titleId}` from {source}.",
+        "fields": {
+          "rating": {
+            "name": "Rating"
+          },
+          "average": {
+            "name": "Average Rating"
+          },
+          "bayesian": {
+            "name": "Bayesian Rating"
+          },
+          "follows": {
+            "name": "Follows"
+          },
+          "distribution": {
+            "name": "Rating Distribution"
+          },
+          "comments": {
+            "name": "Comments"
+          },
+          "chapter_views": {
+            "name": "Chapter Views"
+          },
+          "chapter_comments": {
+            "name": "Chapter Comments"
+          },
+          "chapter_reactions": {
+            "name": "Chapter Reactions"
+          },
+          "views": {
+            "name": "Views"
+          }
+        },
+        "units": {
+          "votes": "votes",
+          "comments": "comments"
+        },
+        "buttons": {
+          "mangadex": {
+            "forum": {
+              "open": "Open Forum Thread",
+              "no_thread": "No Forum Thread"
+            }
+          },
+          "namicomi": {
+            "open": "Open on NamiComi"
+          }
+        },
+        "footer": "Title Stats - Requested by {user}"
+      },
+      "error": {
+        "title": "Error",
+        "description": "An error occurred while fetching title stats from the API. Please try again later."
+      }
+    }
+  },
   "error_embed": {
     "title": "Error",
     "description": "An error occurred while executing this command, below is the error message. Please report this to the bot developer. Thank you!",
@@ -775,7 +842,7 @@
     "err_int_aut": "Error in autocomplete {autocompleteId}",
     "timeout": {
       "title": "Timeout",
-      "description": "A timeout occured while fetching data from an external API. Please try again later.",
+      "description": "A timeout occurred while fetching data from an external API. Please try again later.",
       "note": "This error is usually caused by the external API being slow or unresponsive."
     }
   },

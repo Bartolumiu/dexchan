@@ -63,7 +63,7 @@ const buildMangaBakaEmbed = (embed, locale, title, stats, translations) => {
 
     return new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-            .setLabel(translations.response.button.open.replace('{source}', translations.options.source.values.mangabaka))
+            .setLabel(translations.response.button.open.replace('{source}', translations.sources.mangabaka))
             .setURL(urlFormats.mangabaka.primary.replace('{id}', title.id).replace('{title}', ''))
             .setStyle(ButtonStyle.Link),
         new ButtonBuilder()
@@ -110,7 +110,7 @@ const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
 
     return new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-            .setLabel(translations.response.button.open.replace('{source}', translations.options.source.values.mangadex))
+            .setLabel(translations.response.button.open.replace('{source}', translations.sources.mangadex))
             .setURL(urlFormats.mangadex.primary.replace('{id}', title.id).replace('{title}', ''))
             .setStyle(ButtonStyle.Link),
         new ButtonBuilder()
@@ -168,7 +168,7 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
 
     return new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-            .setLabel(translations.response.button.open.replace('{source}', translations.options.source.values.namicomi))
+            .setLabel(translations.response.button.open.replace('{source}', translations.sources.namicomi))
             .setURL(urlFormats.namicomi.shortened.replace('{id}', title.id))
             .setStyle(ButtonStyle.Link),
         new ButtonBuilder()

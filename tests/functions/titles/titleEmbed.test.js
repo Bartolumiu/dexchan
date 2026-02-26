@@ -261,7 +261,7 @@ describe('buildTitleEmbed', () => {
             // Should fallback to raw values
             expect(embed.addFields).toHaveBeenCalledWith(
                 expect.arrayContaining([
-                    expect.objectContaining({ name: 'Status', value: 'Weirdstatus' }),
+                    expect.objectContaining({ name: 'Publication Status', value: 'Weirdstatus' }),
                     expect.objectContaining({ name: 'Demographic', value: 'Unknown' }),
                     expect.objectContaining({ name: 'Content Rating', value: 'Mature' })
                 ])
@@ -302,7 +302,7 @@ describe('buildTitleEmbed', () => {
                     expect.objectContaining({ name: 'Rating', value: expect.any(String) }),
                     expect.objectContaining({ name: 'Follows', value: expect.any(String) }),
                     expect.objectContaining({ name: 'Year', value: expect.any(String) }),
-                    expect.objectContaining({ name: 'Status', value: expect.any(String) }),
+                    expect.objectContaining({ name: 'Publication Status', value: expect.any(String) }),
                     expect.objectContaining({ name: 'Demographic', value: expect.any(String) }),
                     expect.objectContaining({ name: 'Content Rating', value: expect.any(String) })
                 ])
@@ -501,7 +501,7 @@ describe('buildTitleEmbed', () => {
             buildTitleEmbed(embed, locale, title, stats, translations, 'namicomi');
             expect(embed.addFields).toHaveBeenCalledWith(
                 expect.arrayContaining([
-                    expect.objectContaining({ name: 'Status', value: 'Strange' }),
+                    expect.objectContaining({ name: 'Publication Status', value: 'Strange' }),
                     expect.objectContaining({ name: 'Demographic', value: 'Odd' }),
                     expect.objectContaining({ name: 'Content Rating', value: 'Weird' })
                 ])
@@ -575,7 +575,6 @@ describe('buildTitleEmbed', () => {
             // Now test 'rtl' and 'ltr' branches
             title.attributes.readingMode = 'rtl';
 
-            console.log(JSON.stringify(title));
             buildTitleEmbed(embed, locale, title, stats, translations, 'namicomi');
             expect(embed.addFields).toHaveBeenCalledWith({ name: 'Reading Mode', value: 'Horizontal (Right to Left)' });
 

@@ -13,7 +13,7 @@ describe('sendErrorEmbed', () => {
             setColor: jest.fn().mockReturnThis(),
         };
         translations = {
-            embed: {
+            response: {
                 error: {
                     title: 'Error!',
                     description: {

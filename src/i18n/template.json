@@ -51,6 +51,7 @@
           "title": "Uh-oh!",
           "description": {
             "command_disabled": "This command is currently disabled.\nPlease try again later.",
+            "no_source": "Please specify a source to search on.",
             "invalid_source": "We don't support searching on `{source}` yet. Please choose a different source.",
             "api": "Couldn't fetch title data from the external API.\nPlease try again later.",
             "empty": "Please provide a query to search for.",

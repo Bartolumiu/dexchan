@@ -19,8 +19,8 @@ describe('getTitleStats', () => {
                         repliesCount: 0
                     },
                     rating: {
-                        average: 0.00,
-                        bayesian: 0.00,
+                        average: '0.00',
+                        bayesian: '0.00',
                         distribution: {
                             "1": 0,
                             "2": 0,
@@ -189,17 +189,7 @@ describe('getTitleStats', () => {
             };
             const statsResponse = {
                 ok: true,
-                json: async () => ({
-                    data: {
-                        attributes: {
-                            extra: {
-                                totalChapterViews: {},
-                                totalChapterComments: {},
-                                totalChapterReactions: {}
-                            }
-                        }
-                    }
-                })
+                json: async () => ({ })
             };
 
             global.fetch.mockResolvedValueOnce(ratingsResponse).mockResolvedValueOnce(statsResponse);

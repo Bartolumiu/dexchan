@@ -1,4 +1,4 @@
-const { ActionRowBuilder, Colors, EmbedBuilder, StringSelectMenuBuilder, ActionRow} = require("discord.js");
+const { ActionRowBuilder, Colors, EmbedBuilder, StringSelectMenuBuilder } = require("discord.js");
 const { urlFormats } = require("../parsers/urlParser");
 const truncateString = require("../tools/truncateString");
 

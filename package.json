@@ -7,7 +7,7 @@
         "start": "node --no-warnings --experimental-vm-modules ./src/index.js",
         "test": "node --no-warnings --experimental-vm-modules ./node_modules/jest/bin/jest.js --coverage",
         "generate-template": "node --no-warnings --experimental-vm-modules ./src/i18n/generate-template.js",
-        "prepare": "npm run generate-template",
+        "prepare": "pnpm generate-template",
         "update": "pnpm up"
     },
     "jest": {
@@ -47,13 +47,13 @@
     "author": "Bartolumiu",
     "license": "GPL-3.0",
     "dependencies": {
-        "@discordjs/rest": "^2.6.0",
-        "axios": "^1.12.2",
-        "chalk": "^5.6.2",
-        "discord-api-types": "^0.38.31",
-        "discord.js": "^14.24.0",
-        "dotenv": "^16.6.1",
-        "mongoose": "^8.19.2"
+        "@discordjs/rest": "~2.6.0",
+        "axios": "~1.13.5",
+        "chalk": "~5.6.2",
+        "discord-api-types": "~0.38.40",
+        "discord.js": "~14.25.1",
+        "dotenv": "~17.3.1",
+        "mongoose": "~9.2.1"
     },
     "devDependencies": {
         "jest": "^29.7.0",

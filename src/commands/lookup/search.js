@@ -76,7 +76,6 @@ module.exports = {
 
         if (botSettings.settings.commands.find(cmd => cmd.name === 'search' && !cmd.enabled)) {
             await sendErrorEmbed(interaction, translations, embed, 'command_disabled');
-            new Promise(resolve => setTimeout(resolve, 100000000));
             return;
 
         }

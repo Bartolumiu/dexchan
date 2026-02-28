@@ -34,7 +34,7 @@ const getTitleStats = async (id, type) => {
  * Constructs a URL based on the provided title ID and type.
  *
  * @param {string} id - The title ID to be used in the URL.
- * @param {('mangadex'|'namicomi.ratings'|'namicomi.stats')} type - The type of URL to build.
+ * @param {('mangabaka'|'mangadex'|'namicomi.ratings'|'namicomi.stats')} type - The type of URL to build.
  * @returns {URL} The constructed URL.
  */
 const buildURL = (id, type) => {
@@ -142,6 +142,7 @@ const formatStats = (stats, ratings, type) => {
 }
 
 const formatMangaDexStats = (stats) => {
+    if (!stats) return null; // If stats is null or undefined, return null to indicate no data available
     return {
         title: {
             comments: {
@@ -149,8 +150,8 @@ const formatMangaDexStats = (stats) => {
                 repliesCount: stats.comments?.repliesCount || 0,
             },
             rating: {
-                average: stats.rating?.average.toFixed(2) || 0.00,
-                bayesian: stats.rating?.bayesian.toFixed(2) || 0.00,
+                average: (stats.rating?.average || 0).toFixed(2),
+                bayesian: (stats.rating?.bayesian || 0).toFixed(2),
                 distribution:
                     stats.rating?.distribution ||
                     {
@@ -183,11 +184,11 @@ const formatNamiComiStats = (stats, ratings) => {
         title: {
             comments: {
                 threadId: null,
-                repliesCount: stats.data.attributes.commentCount || 0,
+                repliesCount: stats.data?.attributes?.commentCount || 0,
             },
             rating: {
                 average: 0.00,
-                bayesian: (ratings.data.attributes.rating || 0).toFixed(2),
+                bayesian: (ratings.data?.attributes?.rating || 0).toFixed(2),
                 distribution: {
                     '1': 0,
                     '2': 0,
@@ -200,15 +201,15 @@ const formatNamiComiStats = (stats, ratings) => {
                     '9': 0,
                     '10': 0
                 },
-                count: ratings.data.attributes.count || 0
+                count: ratings.data?.attributes?.count || 0
             },
-            follows: stats.data.attributes.followCount || 0,
-            views: stats.data.attributes.viewCount || 0
+            follows: stats.data?.attributes?.followCount || 0,
+            views: stats.data?.attributes?.viewCount || 0
         },
         chapters: {
-            views: Object.values(stats.data.attributes.extra.totalChapterViews).reduce((total, count) => total + count, 0) || 0,
-            comments: Object.values(stats.data.attributes.extra.totalChapterComments).reduce((total, count) => total + count, 0) || 0,
-            reactions: Object.values(stats.data.attributes.extra.totalChapterReactions).reduce((total, count) => total + count, 0) || 0
+            views: Object.values(stats.data?.attributes?.extra?.totalChapterViews || {}).reduce((total, count) => total + count, 0) || 0,
+            comments: Object.values(stats.data?.attributes?.extra?.totalChapterComments || {}).reduce((total, count) => total + count, 0) || 0,
+            reactions: Object.values(stats.data?.attributes?.extra?.totalChapterReactions || {}).reduce((total, count) => total + count, 0) || 0
         }
     };
 }

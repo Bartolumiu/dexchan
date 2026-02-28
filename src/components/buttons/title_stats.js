@@ -30,7 +30,7 @@ module.exports = {
             const embed = new EmbedBuilder()
                 .setTitle(translations.error.title)
                 .setDescription(translations.error.description)
-                .setFooter({ text: translations.footer, iconURL: client.user.avatarURL({ dynamic: true }) })
+                .setFooter({ text: translations.response.footer.replace('{user}', interaction.user.username), iconURL: client.user.avatarURL({ dynamic: true }) })
                 .setColor(Colors.Red);
             return interaction.followUp({ embeds: [embed], flags: [MessageFlags.Ephemeral] });
         }

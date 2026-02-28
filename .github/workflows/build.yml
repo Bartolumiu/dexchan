@@ -3,38 +3,61 @@ permissions:
   contents: read
   pull-requests: read
 on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
 jobs:
   sonarcloud:
     name: SonarCloud
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+
+    if: github.actor == 'bartolumiu'
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: '23'
+          node-version: '24'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install --no-audit
+        run: pnpm install --frozen-lockfile
 
       - name: Run tests and generate coverage report
-        run: npm test
+        run: pnpm test
+
+      - name: Get PR information
+        id: pr_info
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { data: pulls } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${context.repo.owner}:${context.ref.replace('refs/heads/', '')}`,
+              state: 'open'
+            });
+            if (pulls.length > 0) {
+              core.setOutput('pr_number', pulls[0].number);
+              core.setOutput('base_branch', pulls[0].base.ref);
+              console.log(`PR #${pulls[0].number} targeting ${pulls[0].base.ref}`);
+            } else {
+              console.log('No open PR found for this branch.');
+            }
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v6
         with:
-          args: -Dsonar.scanner.skipJreProvisioning=true
+          args: >
+            -Dsonar.scanner.skipJreProvisioning=true
+            ${{ steps.pr_info.outputs.pr_number != '' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base={2}', steps.pr_info.outputs.pr_number, github.ref_name, steps.pr_info.outputs.base_branch) || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

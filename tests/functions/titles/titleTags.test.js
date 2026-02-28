@@ -212,6 +212,28 @@ describe('getTitleTags', () => {
             expect(result).toBeNull();
         });
     });
+
+    describe('too many tags in a group', () => {
+        const sampleTitle = {
+            attributes: {
+                tags: [
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '1' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '2' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '3' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '4' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '5' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '6' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '7' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '8' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '9' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '10' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '11' } } }
+                ]
+            }
+        };
+        const result = getTitleTags(sampleTitle, 'mangadex');
+        expect(result.genre.split(', ').length).toBeLessThanOrEqual(10);
+    });
 });
 
 describe('addTitleTags', () => {

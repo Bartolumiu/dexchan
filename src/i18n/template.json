@@ -22,6 +22,18 @@
             "mangaupdates": "MangaUpdates",
             "namicomi": "NamiComi"
           }
+        },
+        "query": {
+          "name": "query",
+          "description": "The title you want to search for"
+        },
+        "id": {
+          "name": "id",
+          "description": "The ID of the title you want to search for"
+        },
+        "url": {
+          "name": "url",
+          "description": "The URL of the title you want to search for"
         }
       },
       "response": {

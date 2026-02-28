@@ -17,8 +17,8 @@ module.exports = {
             options: {
                 source: await translateAttribute('search', 'options.source.description'),
                 query: await translateAttribute('search', 'options.query.description'),
-                id: await translateAttribute('search', 'options.query.id'),
-                url: await translateAttribute('search', 'options.query.url'),
+                id: await translateAttribute('search', 'options.id.description'),
+                url: await translateAttribute('search', 'options.url.description'),
             }
         };
         return new SlashCommandBuilder()

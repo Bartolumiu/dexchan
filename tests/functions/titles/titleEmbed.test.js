@@ -178,6 +178,18 @@ describe('buildTitleEmbed', () => {
                 ])
             );
         });
+
+        it('should handle unknown status rating values correctly in MangaBaka', () => {
+            const title = { id: 'mb-unknownstatus', year: 2026, status: 'something', content_rating: 'safe', tags: [] };
+            getLocalizedTitle.mockReturnValue('Unknown Status Entry');
+            getLocalizedDescription.mockReturnValue('desc');
+            buildTitleEmbed(embed, locale, title, title, translations, 'mangabaka');
+            expect(embed.addFields).toHaveBeenCalledWith(
+                expect.arrayContaining([
+                    expect.objectContaining({ name: 'Publication Status', value: 'Something'})
+                ])
+            );
+        });
     });
 
     describe('MangaDex', () => {

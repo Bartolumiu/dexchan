@@ -128,9 +128,9 @@ const populateMenuOptions = (menu, titles, source) => {
  * @param {Array<Object<string, string>>} fields - Fields to add to the embed.
  * @param {{query: string, source: string}} replacements - Replacements for the embed description.
  */
-const buildEmbed = (embed, translations, fields, replacements = { query: '', source: '' }) => {
+const buildEmbed = (embed, translations, fields, replacements) => {
     embed.setTitle(translations.response.menu.title)
-        .setDescription(translations.response.menu.description.replace('{query}', replacements.query || '').replace('{source}', replacements.source || ''))
+        .setDescription(translations.response.menu.description.replace('{query}', replacements.query).replace('{source}', replacements.source))
         .setColor(Colors.Blurple)
         .addFields(fields);
 };

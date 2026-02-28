@@ -11,23 +11,26 @@ const { Colors, InteractionType } = require("discord.js");
  */
 const sendErrorEmbed = (interaction, translations, embed, errorKey, replacements = {}) => {
     if (!embed) return;
-    const description = translations.response.error.description[errorKey];
+
+    let description = (interaction.type === InteractionType.MessageComponent)
+        ? translations.response.error.description.api
+        : translations.response.error.description[errorKey];
+
     if (!description) return;
-    if (replacements) {
-        for (const [key, value] of Object.entries(replacements)) {
-            description.replaceAll(`{${key}}`, value);
-        }
+
+    for (const [key, value] of Object.entries(replacements)) {
+        description = description.replaceAll(`{${key}}`, value);
     }
 
     embed.setTitle(translations.response.error.title)
         .setDescription(description)
         .setColor(Colors.Red);
 
-    if (interaction.type === InteractionType.MessageComponent) {
-        embed.setDescription(translations.response.error.description.api);
-        return interaction.reply({ embeds: [embed], ephemeral: true });
-    }
-    return interaction.editReply({ embeds: [embed], ephemeral: true });
+    const payload = { embeds: [embed], ephemeral: true };
+
+    return (interaction.type === InteractionType.MessageComponent)
+        ? interaction.reply(payload)
+        : interaction.editReply(payload);
 }
 
 module.exports = sendErrorEmbed;

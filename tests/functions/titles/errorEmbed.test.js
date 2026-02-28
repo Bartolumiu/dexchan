@@ -29,7 +29,17 @@ describe('sendErrorEmbed', () => {
         embed = null;
         await sendErrorEmbed(interaction, translations, embed, 'test');
         expect(embed).toBeNull();
-    })
+    });
+
+    it ('should return early if description is not found', async () => {
+        interaction = {
+            type: 4, // Not InteractionType.MessageComponent
+        }
+        await sendErrorEmbed(interaction, translations, embed, 'nonexistent');
+        expect(embed.setTitle).not.toHaveBeenCalled();
+        expect(embed.setDescription).not.toHaveBeenCalled();
+        expect(embed.setColor).not.toHaveBeenCalled();
+    });
 
     it('should call editReply for normal interaction', async () => {
         interaction = {
@@ -53,5 +63,24 @@ describe('sendErrorEmbed', () => {
         expect(embed.setDescription).toHaveBeenCalledWith('API error');
         expect(embed.setColor).toHaveBeenCalledWith(Colors.Red);
         expect(interaction.reply).toHaveBeenCalledWith({ embeds: [embed], ephemeral: true });
+    });
+
+    it('should apply replacements to the description', async () => {
+        interaction = {
+            type: 4, // Not InteractionType.MessageComponent
+            editReply: jest.fn(),
+        };
+        const customTranslations = {
+            response: {
+                error: {
+                    title: 'Error!',
+                    description: {
+                        test: 'Error with {item}',
+                    },
+                },
+            },
+        };
+        await sendErrorEmbed(interaction, customTranslations, embed, 'test', { item: 'test item' });
+        expect(embed.setDescription).toHaveBeenCalledWith('Error with test item');
     });
 });

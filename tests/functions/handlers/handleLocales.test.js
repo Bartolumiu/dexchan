@@ -176,5 +176,20 @@ describe('handleLocales', () => {
             const result = client.translate('en', 'commands', '.');
             expect(result).toBeNull();
         });
+
+        it('should return raw translations object (client.getTranslations)', async () => {
+            path.join.mockImplementation((...args) => args.join('/'));
+            fs.readdirSync.mockReturnValue(['en.json']);
+            fs.readFileSync.mockImplementation(() => {
+                return JSON.stringify({ commands: { test: { title: 'Hello', description: 'World' } } } );
+            });
+
+            await client.handleLocales();
+            const result = client.getTranslations('en', 'commands', 'test');
+            expect(result).toEqual({ title: 'Hello', description: 'World' });
+
+            const fallbackResult = client.getTranslations('es', 'commands', 'test.title');
+            expect(fallbackResult).toEqual('Hello');
+        })
     });
 });

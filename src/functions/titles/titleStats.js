@@ -187,7 +187,7 @@ const formatNamiComiStats = (stats, ratings) => {
             },
             rating: {
                 average: 0.00,
-                bayesian: ratings.data.attributes.rating.toFixed(2) || 0.00,
+                bayesian: (ratings.data.attributes.rating || 0).toFixed(2),
                 distribution: {
                     '1': 0,
                     '2': 0,

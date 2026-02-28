@@ -37,7 +37,7 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setTitle(translations.response.title)
-            .setDescription(translations.response.description.replace('{titleId}', entryId).replace('{source}', source))
+            .setDescription(translations.response.description.replace('{titleId}', entryId).replace('{source}', translations.sources[source]))
             .addFields(buildEmbedFields(stats, translations, source))
             .setFooter({ text: translations.response.footer.replace('{user}', interaction.user.username), iconURL: client.user.avatarURL({ dynamic: true }) })
             .setColor(Colors.Blurple);

@@ -73,6 +73,29 @@ describe('getTitleStats', () => {
             const result = await getTitleStats('123', 'mangadex');
             expect(result).toBeNull();
         });
+
+        it('should calculate the total count from the distribution', async () => {
+            const mockStatsWithRatings = {
+                rating: {
+                    average: 8.5,
+                    bayesian: 8.4,
+                    distribution: {
+                        "8": 5,
+                        "9": 10,
+                        "10": 5
+                    }
+                },
+                follows: 100
+            };
+
+            global.fetch.mockResolvedValue({
+                ok: true,
+                json: async () => ({ statistics: { '123': mockStatsWithRatings } })
+            });
+
+            const result = await getTitleStats('123', 'mangadex');
+            expect(result.title.rating.count).toBe(20); // 5 + 10 + 5
+        });
     });
 
     describe('NamiComi', () => {
@@ -157,6 +180,47 @@ describe('getTitleStats', () => {
         
             const result = await getTitleStats('456', 'namicomi');
             expect(result).toBeNull();
+        });
+
+        it('should handle missing NamiComi attributes by using default values', async () => {
+            const ratingsResponse = {
+                ok: true,
+                json: async () => ({ data: { attributes: { rating: 0, count: null } } })
+            };
+            const statsResponse = {
+                ok: true,
+                json: async () => ({
+                    data: {
+                        attributes: {
+                            extra: {
+                                totalChapterViews: {},
+                                totalChapterComments: {},
+                                totalChapterReactions: {}
+                            }
+                        }
+                    }
+                })
+            };
+
+            global.fetch.mockResolvedValueOnce(ratingsResponse).mockResolvedValueOnce(statsResponse);
+
+            const result = await getTitleStats('456', 'namicomi');
+
+            expect(result.title.comments.repliesCount).toBe(0);
+            expect(result.title.rating.bayesian).toBe("0.00");
+            expect(result.title.rating.count).toBe(0);
+            expect(result.title.follows).toBe(0);
+            expect(result.title.views).toBe(0);
+            expect(result.chapters.views).toBe(0);
+            expect(result.chapters.comments).toBe(0);
+            expect(result.chapters.reactions).toBe(0);
+        })
+    });
+
+    describe('MangaBaka', () => {
+        it('should return an empty object (placeholder for future API support)', async () => {
+            const result = await getTitleStats('5250', 'mangabaka');
+            expect(result).toEqual({});
         });
     });
 });

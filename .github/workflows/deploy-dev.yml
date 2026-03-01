@@ -14,15 +14,19 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
 
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v6
       with:
-        node-version: '22'
+        node-version: '24'
+        cache: 'pnpm'
 
     - name: Install dependencies
-      run: npm install
+      run: pnpm install --frozen-lockfile
 
     - name: Set up SSH key
       run: |
@@ -42,8 +46,8 @@ jobs:
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
           # Verify npm and pm2 commands are available
-          which npm
-          npm -v
+          which pnpm
+          pnpm -v
           which pm2
           pm2 -v
 
@@ -55,6 +59,6 @@ jobs:
           git reset --hard origin/develop
 
           # Install dependencies and restart the app
-          npm install
+          pnpm install --frozen-lockfile
           pm2 restart dexchan_dev || pm2 start src/index.js --name dexchan_dev
         EOF

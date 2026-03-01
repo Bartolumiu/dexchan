@@ -13,15 +13,7 @@
             "options": {
                 "source": {
                     "name": "source",
-                    "description": "The source to use for the search",
-                    "values": {
-                        "anilist": "AniList",
-                        "kitsu": "Kitsu",
-                        "mangabaka": "MangaBaka",
-                        "mangadex": "MangaDex",
-                        "mangaupdates": "MangaUpdates",
-                        "namicomi": "NamiComi"
-                    }
+                    "description": "The source to use for the search"
                 },
                 "query": {
                     "name": "query",

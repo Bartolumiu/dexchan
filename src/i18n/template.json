@@ -6,6 +6,135 @@
     "code": ""
   },
   "commands": {
+    "search": {
+      "name": "search",
+      "description": "Search for a title.",
+      "subcommands": {},
+      "options": {
+        "source": {
+          "name": "source",
+          "description": "The source to use for the search",
+          "values": {
+            "anilist": "AniList",
+            "kitsu": "Kitsu",
+            "mangabaka": "MangaBaka",
+            "mangadex": "MangaDex",
+            "mangaupdates": "MangaUpdates",
+            "namicomi": "NamiComi"
+          }
+        },
+        "query": {
+          "name": "query",
+          "description": "The title you want to search for"
+        },
+        "id": {
+          "name": "id",
+          "description": "The ID of the title you want to search for"
+        },
+        "url": {
+          "name": "url",
+          "description": "The URL of the title you want to search for"
+        }
+      },
+      "response": {
+        "button": {
+          "open": "Open on {source}",
+          "stats": "View Stats"
+        },
+        "menu": {
+          "title": "Search Results",
+          "description": "Here are the search results for `{query}` on {source}.",
+          "placeholder": "Select a title to view more information...",
+          "view": "View Title on {source}"
+        },
+        "error": {
+          "title": "Uh-oh!",
+          "description": {
+            "command_disabled": "This command is currently disabled.\nPlease try again later.",
+            "no_source": "Please specify a source to search on.",
+            "invalid_source": "We don't support searching on `{source}` yet. Please choose a different source.",
+            "api": "Couldn't fetch title data from the external API.\nPlease try again later.",
+            "empty": "Please provide a query to search for.",
+            "no_results": "The query returned no results. That's all we know.",
+            "invalid_id": "The provided ID is invalid."
+          }
+        },
+        "embed": {
+          "author": {
+            "too_many": "Multiple Authors",
+            "unknown": "Unknown Author"
+          },
+          "description": {
+            "no_description": "No description available for {locale}."
+          },
+          "fields": {
+            "rating": "Rating",
+            "follows": "Follows",
+            "year": "Year",
+            "pub_status": {
+              "name": "Publication Status",
+              "value": {
+                "upcoming": "Upcoming",
+                "ongoing": "Ongoing",
+                "completed": "Completed",
+                "hiatus": "Hiatus",
+                "cancelled": "Cancelled",
+                "unknown": "Unknown"
+              }
+            },
+            "demographic": {
+              "name": "Demographic",
+              "value": {
+                "none": "None",
+                "shounen": "Shounen",
+                "shoujo": "Shoujo",
+                "seinen": "Seinen",
+                "josei": "Josei"
+              }
+            },
+            "content_rating": {
+              "name": "Content Rating",
+              "value": {
+                "safe": "Safe",
+                "suggestive": "Suggestive",
+                "erotica": "Erotica",
+                "pornographic": "Pornographic",
+                "mature": "Mature",
+                "restricted": "Restricted"
+              }
+            },
+            "type": {
+              "name": "Type",
+              "value": {
+                "manga": "Manga",
+                "long_strip": "Long Strip",
+                "comic": "Comic",
+                "novel": "Novel"
+              }
+            },
+            "reading_mode": {
+              "name": "Reading Mode",
+              "value": {
+                "vertical": "Vertical",
+                "horizontal": {
+                  "left_to_right": "Horizontal (Left to Right)",
+                  "right_to_left": "Horizontal (Right to Left)"
+                }
+              }
+            },
+            "format": "Format",
+            "genres": "Genres",
+            "genres_v2": "Genres (v2)",
+            "tags": "Tags",
+            "tags_v2": "Tags (v2)",
+            "themes": "Themes",
+            "content_warning": "Content Warning",
+            "other_tags": "Other Tags"
+          }
+        },
+        "footer": "/{commandName} - Requested by {user}"
+      }
+    },
     "ping": {
       "name": "ping",
       "description": "Check the bot's latency.",
@@ -645,6 +774,73 @@
       }
     }
   },
+  "generic": {
+    "sources": {
+      "mangadex": "MangaDex",
+      "namicomi": "NamiComi",
+      "mangabaka": "MangaBaka"
+    }
+  },
+  "components": {
+    "title_stats": {
+      "response": {
+        "title": "Title Stats",
+        "description": "Here are the stats for the title with ID `{titleId}` from {source}.",
+        "fields": {
+          "rating": {
+            "name": "Rating"
+          },
+          "average": {
+            "name": "Average Rating"
+          },
+          "bayesian": {
+            "name": "Bayesian Rating"
+          },
+          "follows": {
+            "name": "Follows"
+          },
+          "distribution": {
+            "name": "Rating Distribution"
+          },
+          "comments": {
+            "name": "Comments"
+          },
+          "chapter_views": {
+            "name": "Chapter Views"
+          },
+          "chapter_comments": {
+            "name": "Chapter Comments"
+          },
+          "chapter_reactions": {
+            "name": "Chapter Reactions"
+          },
+          "views": {
+            "name": "Views"
+          }
+        },
+        "units": {
+          "votes": "votes",
+          "comments": "comments"
+        },
+        "buttons": {
+          "mangadex": {
+            "forum": {
+              "open": "Open Forum Thread",
+              "no_thread": "No Forum Thread"
+            }
+          },
+          "namicomi": {
+            "open": "Open on NamiComi"
+          }
+        },
+        "footer": "Title Stats - Requested by {user}"
+      },
+      "error": {
+        "title": "Error",
+        "description": "An error occurred while fetching title stats from the API. Please try again later."
+      }
+    }
+  },
   "error_embed": {
     "title": "Error",
     "description": "An error occurred while executing this command, below is the error message. Please report this to the bot developer. Thank you!",
@@ -659,7 +855,7 @@
     "err_int_aut": "Error in autocomplete {autocompleteId}",
     "timeout": {
       "title": "Timeout",
-      "description": "A timeout occured while fetching data from an external API. Please try again later.",
+      "description": "A timeout occurred while fetching data from an external API. Please try again later.",
       "note": "This error is usually caused by the external API being slow or unresponsive."
     }
   },

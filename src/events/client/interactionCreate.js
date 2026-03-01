@@ -1,5 +1,5 @@
 const { Client, Colors, Collection, EmbedBuilder, Interaction } = require('discord.js');
-const fs = require('fs');
+const fs = require('node:fs');
 
 module.exports = {
     name: 'interactionCreate',
@@ -36,8 +36,7 @@ module.exports = {
         } catch (e) {
             let errorTimestamp = new Date().toISOString().replace(/:/g, '-').split('.')[0];
             if (!fs.existsSync('./logs')) fs.mkdirSync('./logs', { recursive: true });
-            fs.writeFileSync(`./logs/${errorTimestamp}.txt`, `Date: ${errorTimestamp}\nUser: ${interaction.user.tag} (${interaction.user.id})\nError origin: ${interaction.customId ?? interaction.commandName ?? 'Unknown'}\nError message: ${e.message}\nError stack: ${e.stack}`);
-
+            fs.writeFileSync(`./logs/${errorTimestamp}.txt`, `Date: ${errorTimestamp}\nUser: ${interaction.user.tag} (${interaction.user.id})\nError origin: ${interaction.customId ?? interaction.commandName ?? 'Unknown'}\nError message: ${e.message}\nError stack: ${e.stack}\nInteraction type: ${interaction.type}\n\nInput:${JSON.stringify(interaction.options?.data ?? {}, null, 2)}`);
             // Check if the interaction has already been replied to
             if (interaction.replied || interaction.deferred) await interaction.followUp({ embeds: embeds, ephemeral: true });
             else await interaction.reply({ embeds: embeds, ephemeral: true });

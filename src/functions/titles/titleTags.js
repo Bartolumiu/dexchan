@@ -34,7 +34,9 @@ const mergeTagArrays = (groups) => {
         if (groups[key].length === 0) {
             groups[key] = 'N/A';
         } else {
-            groups[key] = groups[key].join(', ');
+            if (groups[key].length > 10) {
+                groups[key] = groups[key].slice(0, 10).join(', ');
+            } else groups[key] = groups[key].join(', ');
         }
     }
 }
@@ -156,7 +158,7 @@ const getNamiComiTags = (title, locale) => {
  * @param {object} embed - The embed object to add fields to.
  * @param {object} translations - The translations object for field names.
  * @param {string} type - The type of title. Supported values are 'mangadex' and 'namicomi'.
- * @param {string} locale - The locale to use for tag names.
+ * @param {string|null} locale - The locale to use for tag names.
  * @returns {boolean|null} True if tags were added successfully, null if the type is unsupported.
  */
 const addTitleTags = (title, embed, translations, type, locale) => {
@@ -182,10 +184,10 @@ const addTitleTags = (title, embed, translations, type, locale) => {
 const addMangaBakaTags = (title, embed, translations) => {
     const groups = getTitleTags(title, 'mangabaka');
     const fields = [
-        { name: translations.embed.fields.genres, value: groups.genres, inline: true },
-        { name: translations.embed.fields.tags, value: groups.tags, inline: true },
-        { name: translations.embed.fields.genres_v2, value: groups.genres_v2, inline: true },
-        { name: translations.embed.fields.tags_v2, value: groups.tags_v2, inline: true }
+        { name: translations.response.embed.fields.genres, value: groups.genres, inline: true },
+        { name: translations.response.embed.fields.tags, value: groups.tags, inline: true },
+        { name: translations.response.embed.fields.genres_v2, value: groups.genres_v2, inline: true },
+        { name: translations.response.embed.fields.tags_v2, value: groups.tags_v2, inline: true }
     ];
     embed.addFields(fields);
     return true;
@@ -201,10 +203,10 @@ const addMangaBakaTags = (title, embed, translations) => {
 const addMangaDexTags = (title, embed, translations) => {
     const groups = getTitleTags(title, 'mangadex');
     const fields = [
-        { name: translations.embed.fields.format, value: groups.format, inline: true },
-        { name: translations.embed.fields.genres, value: groups.genre, inline: true },
-        { name: translations.embed.fields.themes, value: groups.theme, inline: true },
-        { name: translations.embed.fields.content_warning, value: groups.content, inline: true }
+        { name: translations.response.embed.fields.format, value: groups.format, inline: true },
+        { name: translations.response.embed.fields.genres, value: groups.genre, inline: true },
+        { name: translations.response.embed.fields.themes, value: groups.theme, inline: true },
+        { name: translations.response.embed.fields.content_warning, value: groups.content, inline: true }
     ];
 
     embed.addFields(fields);
@@ -222,11 +224,11 @@ const addMangaDexTags = (title, embed, translations) => {
 const addNamiComiTags = (title, embed, translations, locale) => {
     const groups = getTitleTags(title, 'namicomi', locale);
     const fields = [
-        { name: translations.embed.fields.format, value: groups.format, inline: true },
-        { name: translations.embed.fields.genres, value: groups.genre, inline: true },
-        { name: translations.embed.fields.themes, value: groups.theme, inline: true },
-        { name: translations.embed.fields.content_warning, value: groups.content_warning, inline: true },
-        { name: translations.embed.fields.other_tags, value: groups.other, inline: true }
+        { name: translations.response.embed.fields.format, value: groups.format, inline: true },
+        { name: translations.response.embed.fields.genres, value: groups.genre, inline: true },
+        { name: translations.response.embed.fields.themes, value: groups.theme, inline: true },
+        { name: translations.response.embed.fields.content_warning, value: groups.content_warning, inline: true },
+        { name: translations.response.embed.fields.other_tags, value: groups.other, inline: true }
     ];
 
     embed.addFields(fields);

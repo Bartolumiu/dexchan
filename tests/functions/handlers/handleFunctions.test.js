@@ -1,8 +1,8 @@
-const fs = require('fs');
+const fs = require('node:fs');
 const loadFunctions = require('../../../src/functions/handlers/handleFunctions');
 const getChalk = require('../../../src/functions/tools/getChalk');
 
-jest.mock('fs');
+jest.mock('node:fs');
 
 jest.mock('chalk', () => ({
   default: {

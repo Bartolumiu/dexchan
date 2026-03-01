@@ -1,6 +1,6 @@
-const { readdirSync } = require('fs');
+const { readdirSync } = require('node:fs');
 const getChalk = require('../tools/getChalk');
-const path = require('path');
+const path = require('node:path');
 
 /**
  * Handles the loading of components (buttons, selectMenus, modals) for the client.

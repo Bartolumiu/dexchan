@@ -57,7 +57,7 @@ describe('URL Parser', () => {
         });
 
         it('should correctly parse a MangaBaka URL', async () => {
-            const url = "https://mangabaka.dev/5258/re-united";
+            const url = "https://mangabaka.org/5258/re-united";
             const type = "mangabaka";
             const result = await parseURL(url, type);
             expect(result).toBe("5258");
@@ -101,7 +101,7 @@ describe('URL Parser', () => {
 
     describe('parseMangaBakaURL', () => {
         it('should return null for an invalid MangaBaka URL', async () => {
-            const url = "https://mangabaka.dev/title-only";
+            const url = "https://mangabaka.org/title-only";
             const result = await parseURL(url, 'mangabaka');
             expect(result).toBeNull();
         })

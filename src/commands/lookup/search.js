@@ -118,7 +118,11 @@ module.exports = {
     async autocomplete(interaction, client) {
         const userSettings = await client.getMongoUserData(interaction.user);
         const locale = getLocale(userSettings, interaction);
-        const translations = await client.getTranslations(locale, 'commands', 'search');
+        const translations = {
+            ...(await client.getTranslations(locale, 'commands', 'search')),
+            sources: await client.getTranslations(locale, 'generic', 'sources')
+        };
+
         const sources = await getSourceList(interaction, client, translations);
 
         if (sources.length) return interaction.respond(
@@ -139,13 +143,14 @@ module.exports = {
  * @returns {Promise<[{name:string,value:string,enabled:boolean}]>} - A promise that resolves to the filtered list of sources.
  */
 const getSourceList = async (interaction, client, translations) => {
-    const sources = (await client.getMongoBotData()).settings.sources.map(src => {
+    if (!(await client.getMongoBotData())?.settings?.sources?.length) return []; // No sources configured, return empty array
+    const sources = (await client.getMongoBotData())?.settings?.sources?.map(src => {
         return {
-            name: translations.options?.source?.values[src.name] ?? src.name,
+            name: translations.sources[src.name] ?? src.name,
             value: src.name,
             enabled: src.enabled
         }
-    })
+    });
 
     if (interaction.options.getString('source')) {
         const input = interaction.options.getString('source').toLowerCase();

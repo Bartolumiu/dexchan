@@ -4,6 +4,7 @@
     "description": "Discord bot for MangaDex.",
     "main": "src/index.js",
     "scripts": {
+        "preinstall": "npx only-allow pnpm",
         "start": "node --no-warnings --experimental-vm-modules ./src/index.js",
         "test": "node --no-warnings --experimental-vm-modules ./node_modules/jest/bin/jest.js --coverage",
         "generate-template": "node --no-warnings --experimental-vm-modules ./src/i18n/generate-template.js",

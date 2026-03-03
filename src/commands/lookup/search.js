@@ -62,7 +62,7 @@ module.exports = {
 
         const botSettings = await client.getMongoBotData();
         const sources = botSettings.settings.sources.filter(src => src.enabled).map(src => ({
-            name: translations.options?.source?.values[src.name] ?? src.name,
+            name: translations.sources[src.name] ?? src.name,
             value: src.name
         }));
 

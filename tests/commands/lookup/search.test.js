@@ -109,6 +109,15 @@ describe('/search command', () => {
 
             expect(interaction.respond).toHaveBeenCalledWith([]);
         });
+
+        it('should return an empty array if there are no sources configured', async () => {
+            const interaction = createMockInteraction({ source: 'nothing' });
+            const client = createMockClient({ settings: { sources: [] } });
+
+            await searchCommand.autocomplete(interaction, client);
+
+            expect(interaction.respond).toHaveBeenCalledWith([]);
+        })
     });
 
     describe('execute', () => {

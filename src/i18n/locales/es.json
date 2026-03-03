@@ -339,6 +339,66 @@
             "response": {
                 "footer": "{commandName} - Solicitado por {user}"
             }
+        },
+        "search": {
+            "response": {
+                "footer": "/{commandName} - Solicitado por {user}",
+                "embed": {
+                    "fields": {
+                        "pub_status": {
+                            "value": {
+                                "cancelled": "Cancelado",
+                                "completed": "Completado",
+                                "hiatus": "En Pausa"
+                            }
+                        },
+                        "type": {
+                            "value": {
+                                "comic": "Cómic",
+                                "long_strip": "Tira Larga",
+                                "manga": "Manga"
+                            }
+                        },
+                        "content_rating": {
+                            "name": "Clasificación de Contenido",
+                            "value": {
+                                "erotica": "Erótica",
+                                "mature": "Adulto"
+                            }
+                        },
+                        "content_warning": "Advertencias de Contenido",
+                        "demographic": {
+                            "name": "Demografía",
+                            "value": {
+                                "josei": "Josei"
+                            }
+                        },
+                        "follows": "Seguidores",
+                        "format": "Formato",
+                        "genres": "Géneros",
+                        "genres_v2": "Géneros (v2)",
+                        "reading_mode": {
+                            "value": {
+                                "horizontal": {
+                                    "left_to_right": "Horizontal (Izquierda a Derecha)",
+                                    "right_to_left": "Horizontal (Derecha a Izquierda)"
+                                }
+                            }
+                        }
+                    },
+                    "author": {
+                        "too_many": "Múltiples Autores"
+                    }
+                },
+                "error": {
+                    "description": {
+                        "api": "No se han podido obtener los datos del título de la API externa.\nPor favor, inténtalo de nuevo más tarde."
+                    }
+                },
+                "menu": {
+                    "description": "Aquí están los resultados de búsqueda para `{query}` en {source}."
+                }
+            }
         }
     },
     "generic": {
@@ -437,6 +497,47 @@
                 }
             ],
             "footer": "{commandName} - Solicitado por {user}"
+        }
+    },
+    "components": {
+        "title_stats": {
+            "error": {
+                "description": "Ha ocurrido un error al obtener las estadísticas del título desde la API. Por favor, inténtalo de nuevo más tarde.",
+                "title": "Error"
+            },
+            "response": {
+                "fields": {
+                    "average": {
+                        "name": "Puntuación Media"
+                    },
+                    "bayesian": {
+                        "name": "Puntuación Bayesiana"
+                    },
+                    "chapter_comments": {
+                        "name": "Comentarios de Capítulos"
+                    },
+                    "chapter_reactions": {
+                        "name": "Reacciones de Capítulos"
+                    },
+                    "chapter_views": {
+                        "name": "Visualizaciones de Capítulos"
+                    },
+                    "comments": {
+                        "name": "Comentarios"
+                    },
+                    "follows": {
+                        "name": "Seguidores"
+                    }
+                },
+                "description": "Aquí están las estadísticas para el título con ID `{titleId}` de {source}."
+            }
+        }
+    },
+    "generic": {
+        "sources": {
+            "mangabaka": "MangaBaka",
+            "mangadex": "MangaDex",
+            "namicomi": "NamiComi"
         }
     }
 }

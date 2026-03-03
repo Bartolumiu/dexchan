@@ -68,12 +68,7 @@ To get a local copy of the bot up and running follow these steps.
 
 ### Prerequisites
 
-* Package Manager (choose one, but recommended to use either npm or pnpm)
-
-  * npm
-  ```sh
-  npm install -g npm@latest
-  ```
+* Package Manager (Only pnpm allowed. Any other package will display an error message and exit the process)
 
   * pnpm (via npm)
   ```sh

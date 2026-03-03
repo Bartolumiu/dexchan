@@ -196,6 +196,122 @@
             "response": {
                 "footer": "{commandName} - {user}k eskatua"
             }
+        },
+        "search": {
+            "response": {
+                "footer": "/{commandName} - {user}k eskatua",
+                "embed": {
+                    "fields": {
+                        "pub_status": {
+                            "value": {
+                                "cancelled": "Bertan Behera",
+                                "completed": "Amaituta",
+                                "hiatus": "Atsedenaldia",
+                                "ongoing": "Argitaratzen",
+                                "unknown": "Ezezaguna",
+                                "upcoming": "Etorkizunean"
+                            },
+                            "name": "Argitalpen Egoera"
+                        },
+                        "type": {
+                            "value": {
+                                "comic": "Komikia",
+                                "long_strip": "Tira Luzea",
+                                "manga": "Manga",
+                                "novel": "Eleberria"
+                            },
+                            "name": "Mota"
+                        },
+                        "content_rating": {
+                            "name": "Edukiaren Sailkapena",
+                            "value": {
+                                "mature": "Helduentzat",
+                                "pornographic": "Pornografikoa",
+                                "restricted": "Mugatuta",
+                                "safe": "Segurua",
+                                "suggestive": "Lizuna",
+                                "erotica": "Erotika"
+                            }
+                        },
+                        "content_warning": "Edukiaren Abisuak",
+                        "demographic": {
+                            "name": "Demografia",
+                            "value": {
+                                "josei": "Josei",
+                                "none": "Bat ere ez",
+                                "seinen": "Seinen",
+                                "shoujo": "Shoujo",
+                                "shounen": "Shounen"
+                            }
+                        },
+                        "follows": "Jarraitzaileak",
+                        "format": "Formatua",
+                        "genres": "Generoak",
+                        "genres_v2": "Generoak (v2)",
+                        "reading_mode": {
+                            "value": {
+                                "horizontal": {
+                                    "left_to_right": "Horizontala (Ezkerretik Eskuinera)",
+                                    "right_to_left": "Horizontala (Eskuinetik Ezkerrera)"
+                                },
+                                "vertical": "Bertikala"
+                            },
+                            "name": "Irakurketa Modua"
+                        },
+                        "other_tags": "Beste Etiketak",
+                        "rating": "Balorazioa",
+                        "tags": "Etiketak",
+                        "tags_v2": "Etiketak (v2)",
+                        "themes": "Gaiak",
+                        "year": "Urtea"
+                    },
+                    "author": {
+                        "too_many": "Egile Anitz",
+                        "unknown": "Egile Ezezaguna"
+                    },
+                    "description": {
+                        "no_description": "Ez dago deskribapenik eskuragarri {locale}(e)rako."
+                    }
+                },
+                "error": {
+                    "description": {
+                        "api": "Errore bat gertatu da tituluaren datuak eskuratzerakoan.\nMesedez, berriro saiatu minutu batzuetan.",
+                        "empty": "Mesedez, bilatzeko kontsulta bat eman.",
+                        "no_source": "Mesedez, bilatzeko iturri bat eman.",
+                        "invalid_id": "Emandako IDa baliogabea da.",
+                        "no_results": "Kontsultak ez du emaitzarik itzuli. Hori da dakigun guztia.",
+                        "command_disabled": "Komando hau desgaituta dago.\nMesedez, saiatu berrigo geroago.",
+                        "invalid_source": "Oraindik ez dugu `{source}`(e)n bilaketak onartzen. Mesedez, beste iturri bat aukeratu."
+                    },
+                    "title": "Ai ene!"
+                },
+                "menu": {
+                    "description": "Hemen dituzu `{query}` bilaketaren emaitzak {source}(e)n.",
+                    "title": "Bilaketa-emaitzak",
+                    "placeholder": "Titulu bat hautatu informazio gehiago ikusteko...",
+                    "view": "Titulua {source}(e)n Ikusi"
+                },
+                "button": {
+                    "open": "{source}(e)n Ireki",
+                    "stats": "Estatistikak Ikusi"
+                }
+            },
+            "description": "Titulu bat bilatu.",
+            "options": {
+                "id": {
+                    "description": "Bilatu nahi duzun tituluaren IDa"
+                },
+                "url": {
+                    "description": "Bilatu nahi duzun tituluaren URLa"
+                },
+                "source": {
+                    "description": "Bilaketarako erabili beharreko iturria",
+                    "no_sources": "Ez dago iturririk eskuragarri. Mesedez, saiatu berriro geroago."
+                },
+                "query": {
+                    "description": "Bilatu nahi duzun titulua"
+                }
+            }
         }
     },
     "error_embed": {
@@ -227,6 +343,73 @@
                 }
             ],
             "footer": "{commandName} - {user}k eskatua"
+        }
+    },
+    "components": {
+        "title_stats": {
+            "response": {
+                "fields": {
+                    "average": {
+                        "name": "Batezbesteko Balorazioa"
+                    },
+                    "bayesian": {
+                        "name": "Bayesiar Balorazioa"
+                    },
+                    "chapter_comments": {
+                        "name": "Kapitulu Iruzkinak"
+                    },
+                    "chapter_reactions": {
+                        "name": "Kapitulu Erreakzioak"
+                    },
+                    "chapter_views": {
+                        "name": "Kapitulu Bistaratzeak"
+                    },
+                    "comments": {
+                        "name": "Iruzkinak"
+                    },
+                    "follows": {
+                        "name": "Jarraitzaileak"
+                    },
+                    "rating": {
+                        "name": "Balorazioa"
+                    },
+                    "distribution": {
+                        "name": "Balorazioen Banaketa"
+                    },
+                    "views": {
+                        "name": "Bistaratzeak"
+                    }
+                },
+                "description": "Hemen dituzu `{titleId}`IDa duen tituluaren estatistikak {source}(e)n.",
+                "buttons": {
+                    "mangadex": {
+                        "forum": {
+                            "no_thread": "Foru-haririk Ez",
+                            "open": "Foroaren Haria Ireki"
+                        }
+                    },
+                    "namicomi": {
+                        "open": "NamiComin Ireki"
+                    }
+                },
+                "title": "Tituluaren Estatistikak",
+                "footer": "Tituluaren Estatistikak - {user}k eskatua",
+                "units": {
+                    "comments": "iruzkin",
+                    "votes": "bozkak"
+                }
+            },
+            "error": {
+                "title": "Errorea",
+                "description": "Errore bat gertatu da APItik tituluaren estatistikak eskuratzerakoan. Mesedez, saiatu berriro geroago."
+            }
+        }
+    },
+    "generic": {
+        "sources": {
+            "mangabaka": "MangaBaka",
+            "mangadex": "MangaDex",
+            "namicomi": "NamiComi"
         }
     }
 }

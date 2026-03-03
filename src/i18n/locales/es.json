@@ -7,132 +7,128 @@
     },
     "commands": {
         "search": {
-            "name": "search",
-            "description": "Busca un título.",
-            "subcommands": {},
-            "options": {
-                "source": {
-                    "name": "source",
-                    "description": "La fuente a utilizar para la búsqueda",
-                    "no_sources": "No hay fuentes disponibles. Por favor, inténtalo de nuevo más tarde."
-                },
-                "query": {
-                    "name": "query",
-                    "description": "El título que quieres buscar"
-                },
-                "id": {
-                    "name": "id",
-                    "description": "ID del título que quieres buscar"
-                },
-                "url": {
-                    "name": "url",
-                    "description": "La URL del título que quieres buscar"
-                }
-            },
             "response": {
-                "button": {
-                    "open": "Abrir en {source}",
-                    "stats": "Ver Estadísticas"
-                },
-                "menu": {
-                    "title": "Resultados de la Búsqueda",
-                    "description": "Aquí están los resultados de la búsqueda para `{query}` en {source}.",
-                    "placeholder": "Selecciona un título para ver más información...",
-                    "view": "Ver Título en {source}"
-                },
-                "error": {
-                    "title": "¡Ups!",
-                    "description": {
-                        "command_disabled": "Este comando está deshabilitado actualmente.\nPor favor, inténtalo de nuevo más tarde.",
-                        "no_source": "Por favor, especifica una fuente donde buscar.",
-                        "invalid_source": "Aún no soportamos búsquedas en `{source}`. Por favor, elige una fuente diferente.",
-                        "api": "No se ha podido obtener los datos del título de la API externa.\nPor favor, inténtalo de nuevo más tarde.",
-                        "empty": "Por favor, proporciona una consulta para buscar.",
-                        "no_results": "La consulta no devolvió resultados. Es todo lo que sabemos.",
-                        "invalid_id": "La ID proporcionada no es válida."
-                    }
-                },
+                "footer": "/{commandName} - Solicitado por {user}",
                 "embed": {
+                    "fields": {
+                        "pub_status": {
+                            "value": {
+                                "cancelled": "Cancelado",
+                                "completed": "Completado",
+                                "hiatus": "En Pausa",
+                                "ongoing": "En curso",
+                                "unknown": "Desconocido",
+                                "upcoming": "Próximamente"
+                            },
+                            "name": "Estado de Publicación"
+                        },
+                        "type": {
+                            "value": {
+                                "comic": "Cómic",
+                                "long_strip": "Tira Larga",
+                                "manga": "Manga",
+                                "novel": "Novela"
+                            },
+                            "name": "Tipo"
+                        },
+                        "content_rating": {
+                            "name": "Clasificación de Contenido",
+                            "value": {
+                                "erotica": "Erótica",
+                                "mature": "Adulto",
+                                "pornographic": "Pornográfico",
+                                "restricted": "Restringido",
+                                "safe": "Seguro",
+                                "suggestive": "Sugerente"
+                            }
+                        },
+                        "content_warning": "Advertencias de Contenido",
+                        "demographic": {
+                            "name": "Demografía",
+                            "value": {
+                                "josei": "Josei",
+                                "none": "Ninguna",
+                                "seinen": "Seinen",
+                                "shoujo": "Shoujo",
+                                "shounen": "Shounen"
+                            }
+                        },
+                        "follows": "Seguidores",
+                        "format": "Formato",
+                        "genres": "Géneros",
+                        "genres_v2": "Géneros (v2)",
+                        "reading_mode": {
+                            "value": {
+                                "horizontal": {
+                                    "left_to_right": "Horizontal (Izquierda a Derecha)",
+                                    "right_to_left": "Horizontal (Derecha a Izquierda)"
+                                },
+                                "vertical": "Vertical"
+                            },
+                            "name": "Modo de Lectura"
+                        },
+                        "other_tags": "Otras Etiquetas",
+                        "rating": "Calificación",
+                        "tags": "Etiquetas",
+                        "tags_v2": "Etiquetas (v2)",
+                        "themes": "Temas",
+                        "year": "Año"
+                    },
                     "author": {
                         "too_many": "Múltiples Autores",
                         "unknown": "Autor Desconocido"
                     },
                     "description": {
                         "no_description": "No hay descripción disponible para {locale}."
-                    },
-                    "fields": {
-                        "rating": "Calificación",
-                        "follows": "Seguidores",
-                        "year": "Año",
-                        "pub_status": {
-                            "name": "Estado de Publicación",
-                            "value": {
-                                "upcoming": "Próximamente",
-                                "ongoing": "En curso",
-                                "completed": "Completado",
-                                "hiatus": "En pausa",
-                                "cancelled": "Cancelado",
-                                "unknown": "Desconocido"
-                            }
-                        },
-                        "demographic": {
-                            "name": "Demografía",
-                            "value": {
-                                "none": "Ninguna",
-                                "shounen": "Shounen",
-                                "shoujo": "Shoujo",
-                                "seinen": "Seinen",
-                                "josei": "Josei"
-                            }
-                        },
-                        "content_rating": {
-                            "name": "Calificación de Contenido",
-                            "value": {
-                                "safe": "Seguro",
-                                "suggestive": "Sugerente",
-                                "erotica": "Erótico",
-                                "pornographic": "Pornográfico",
-                                "mature": "Para Adultos",
-                                "restricted": "Restringido"
-                            }
-                        },
-                        "type": {
-                            "name": "Tipo",
-                            "value": {
-                                "manga": "Manga",
-                                "long_strip": "Tira Larga",
-                                "comic": "Cómic",
-                                "novel": "Novela"
-                            }
-                        },
-                        "reading_mode": {
-                            "name": "Modo de Lectura",
-                            "value": {
-                                "vertical": "Vertical",
-                                "horizontal": {
-                                    "left_to_right": "Horizontal (Izquierda a Derecha)",
-                                    "right_to_left": "Horizontal (Derecha a Izquierda)"
-                                }
-                            }
-                        },
-                        "format": "Formato",
-                        "genres": "Géneros",
-                        "genres_v2": "Géneros (v2)",
-                        "tags": "Etiquetas",
-                        "tags_v2": "Etiquetas (v2)",
-                        "themes": "Temas",
-                        "content_warning": "Advertencia de Contenido",
-                        "other_tags": "Otras Etiquetas"
                     }
                 },
-                "footer": "/{commandName} - Solicitado por {user}"
-            }
+                "error": {
+                    "description": {
+                        "api": "No se han podido obtener los datos del título de la API externa.\nPor favor, inténtalo de nuevo más tarde.",
+                        "empty": "Por favor, proporciona una consulta para buscar.",
+                        "no_source": "Por favor, especifica una fuente donde buscar.",
+                        "invalid_id": "La ID proporcionada no es válida.",
+                        "no_results": "La consulta no devolvió resultados. Es todo lo que sabemos.",
+                        "command_disabled": "Este comando está deshabilitado actualmente.\nPor favor, inténtalo de nuevo más tarde.",
+                        "invalid_source": "Aún no soportamos búsquedas en `{source}`. Por favor, elige una fuente diferente."
+                    },
+                    "title": "¡Ups!"
+                },
+                "menu": {
+                    "description": "Aquí están los resultados de búsqueda para `{query}` en {source}.",
+                    "title": "Resultados de la Búsqueda",
+                    "placeholder": "Selecciona un título para ver más información...",
+                    "view": "Ver Título en {source}"
+                },
+                "button": {
+                    "open": "Abrir en {source}",
+                    "stats": "Ver Estadísticas"
+                }
+            },
+            "options": {
+                "source": {
+                    "no_sources": "No hay fuentes disponibles. Por favor, inténtalo de nuevo más tarde",
+                    "description": "La fuente a utilizar para la búsqueda",
+                    "name": "source"
+                },
+                "id": {
+                    "description": "ID del título que quieres buscar",
+                    "name": "id"
+                },
+                "url": {
+                    "description": "La URL del título que quieres buscar",
+                    "name": "url"
+                },
+                "query": {
+                    "description": "El título que quieres buscar",
+                    "name": "query"
+                }
+            },
+            "description": "Busca un título."
         },
         "ping": {
             "name": "ping",
             "description": "Verifica la latencia del bot.",
-            "subcommands": {},
-            "options": {},
             "response": {
                 "ping": "Haciendo ping...",
                 "title": "¡Pong!",
@@ -163,8 +159,6 @@
         "help": {
             "name": "help",
             "description": "Obtén ayuda con el bot.",
-            "subcommands": {},
-            "options": {},
             "response": {
                 "title": "Ayuda",
                 "fields": {
@@ -195,19 +189,14 @@
         "commands": {
             "name": "commands",
             "description": "Obtén la lista de comandos que puedes usar.",
-            "subcommands": {},
-            "options": {},
             "response": {
                 "title": "Comandos",
-                "fields": {},
                 "footer": "{commandName} - Solicitado por {user}"
             }
         },
         "invite": {
             "name": "invite",
             "description": "Invita al bot a tu servidor.",
-            "subcommands": {},
-            "options": {},
             "response": {
                 "title": "Invitar",
                 "description": "Puedes invitar al bot a tu servidor haciendo clic [aquí]({inviteLink}).",
@@ -217,8 +206,6 @@
         "stats": {
             "name": "stats",
             "description": "Obtén las estadísticas del bot.",
-            "subcommands": {},
-            "options": {},
             "response": {
                 "title": "Estadísticas",
                 "fields": {
@@ -241,8 +228,6 @@
         "support": {
             "name": "support",
             "description": "Obtén la invitación al servidor de soporte del bot.",
-            "subcommands": {},
-            "options": {},
             "response": {
                 "title": "Soporte",
                 "description": "Puedes unirte al servidor de soporte del bot haciendo clic [aquí]({supportLink}).",
@@ -252,8 +237,6 @@
         "uptime": {
             "name": "uptime",
             "description": "Obtén el tiempo de actividad del bot.",
-            "subcommands": {},
-            "options": {},
             "response": {
                 "title": "Tiempo de Actividad",
                 "description": "El bot ha estado en línea por {uptime}.",
@@ -267,8 +250,6 @@
                 "view": {
                     "name": "view",
                     "description": "Revisa tus ajustes",
-                    "subcommands": {},
-                    "options": {},
                     "response": {
                         "title": "Ajustes de Usuario",
                         "description": "Aquí tienes tus ajustes actuales.",
@@ -311,14 +292,12 @@
                                         "unknown": "Ha ocurrido un error desconocido al cambiar el idioma."
                                     }
                                 },
-                                "fields": {},
                                 "footer": "{commandName} - Solicitado por {user}"
                             }
                         },
                         "reset": {
                             "name": "reset",
                             "description": "Restablece tu idioma preferido",
-                            "options": {},
                             "response": {
                                 "title": {
                                     "success": "Idioma Restablecido",
@@ -328,112 +307,37 @@
                                     "success": "Tu idioma ha sido restablecido al idioma predeterminado.",
                                     "error": "Ha ocurrido un error al restablecer el idioma."
                                 },
-                                "fields": {},
                                 "footer": "{commandName} - Solicitado por {user}"
                             }
                         }
                     }
                 }
             },
-            "options": {},
             "response": {
                 "footer": "{commandName} - Solicitado por {user}"
-            }
-        },
-        "search": {
-            "response": {
-                "footer": "/{commandName} - Solicitado por {user}",
-                "embed": {
-                    "fields": {
-                        "pub_status": {
-                            "value": {
-                                "cancelled": "Cancelado",
-                                "completed": "Completado",
-                                "hiatus": "En Pausa"
-                            }
-                        },
-                        "type": {
-                            "value": {
-                                "comic": "Cómic",
-                                "long_strip": "Tira Larga",
-                                "manga": "Manga"
-                            }
-                        },
-                        "content_rating": {
-                            "name": "Clasificación de Contenido",
-                            "value": {
-                                "erotica": "Erótica",
-                                "mature": "Adulto"
-                            }
-                        },
-                        "content_warning": "Advertencias de Contenido",
-                        "demographic": {
-                            "name": "Demografía",
-                            "value": {
-                                "josei": "Josei"
-                            }
-                        },
-                        "follows": "Seguidores",
-                        "format": "Formato",
-                        "genres": "Géneros",
-                        "genres_v2": "Géneros (v2)",
-                        "reading_mode": {
-                            "value": {
-                                "horizontal": {
-                                    "left_to_right": "Horizontal (Izquierda a Derecha)",
-                                    "right_to_left": "Horizontal (Derecha a Izquierda)"
-                                }
-                            }
-                        }
-                    },
-                    "author": {
-                        "too_many": "Múltiples Autores"
-                    }
-                },
-                "error": {
-                    "description": {
-                        "api": "No se han podido obtener los datos del título de la API externa.\nPor favor, inténtalo de nuevo más tarde."
-                    }
-                },
-                "menu": {
-                    "description": "Aquí están los resultados de búsqueda para `{query}` en {source}."
-                }
             }
         }
     },
     "generic": {
         "sources": {
+            "mangabaka": "MangaBaka",
             "mangadex": "MangaDex",
-            "namicomi": "NamiComi",
-            "mangabaka": "MangaBaka"
+            "namicomi": "NamiComi"
         }
     },
     "components": {
         "title_stats": {
+            "error": {
+                "description": "Ha ocurrido un error al obtener las estadísticas del título desde la API. Por favor, inténtalo de nuevo más tarde.",
+                "title": "Error"
+            },
             "response": {
-                "title": "Estadísticas del Título",
-                "description": "Aquí están las estadísticas para el título con ID `{titleId}` de {source}.",
                 "fields": {
-                    "rating": {
-                        "name": "Calificación"
-                    },
                     "average": {
-                        "name": "Valoración Media"
+                        "name": "Puntuación Media"
                     },
                     "bayesian": {
-                        "name": "Valoración Bayesiana"
-                    },
-                    "follows": {
-                        "name": "Seguidores"
-                    },
-                    "distribution": {
-                        "name": "Distribución de Valoraciones"
-                    },
-                    "comments": {
-                        "name": "Comentarios"
-                    },
-                    "chapter_views": {
-                        "name": "Visualizaciones de Capítulos"
+                        "name": "Puntuación Bayesiana"
                     },
                     "chapter_comments": {
                         "name": "Comentarios de Capítulos"
@@ -441,30 +345,43 @@
                     "chapter_reactions": {
                         "name": "Reacciones de Capítulos"
                     },
+                    "chapter_views": {
+                        "name": "Visualizaciones de Capítulos"
+                    },
+                    "comments": {
+                        "name": "Comentarios"
+                    },
+                    "follows": {
+                        "name": "Seguidores"
+                    },
+                    "rating": {
+                        "name": "Calificación"
+                    },
+                    "distribution": {
+                        "name": "Distribución de Valoraciones"
+                    },
                     "views": {
                         "name": "Visualizaciones"
                     }
                 },
-                "units": {
-                    "votes": "valoraciones",
-                    "comments": "comentarios"
-                },
+                "description": "Aquí están las estadísticas para el título con ID `{titleId}` de {source}.",
                 "buttons": {
                     "mangadex": {
                         "forum": {
-                            "open": "Abrir el hilo del foro",
-                            "no_thread": "No hay hilo del foro"
+                            "no_thread": "No hay hilo del foro",
+                            "open": "Abrir el Hilo del Foro"
                         }
                     },
                     "namicomi": {
                         "open": "Abrir en NamiComi"
                     }
                 },
-                "footer": "Estadísticas del Título - Solicitado por {user}"
-            },
-            "error": {
-                "title": "Error",
-                "description": "Ha ocurrido un error al obtener las estadísticas del título desde la API. Por favor, inténtalo de nuevo más tarde."
+                "title": "Estadísticas del Título",
+                "footer": "Estadísticas del Título - Solicitado por {user}",
+                "units": {
+                    "comments": "comentarios",
+                    "votes": "votos"
+                }
             }
         }
     },
@@ -497,47 +414,6 @@
                 }
             ],
             "footer": "{commandName} - Solicitado por {user}"
-        }
-    },
-    "components": {
-        "title_stats": {
-            "error": {
-                "description": "Ha ocurrido un error al obtener las estadísticas del título desde la API. Por favor, inténtalo de nuevo más tarde.",
-                "title": "Error"
-            },
-            "response": {
-                "fields": {
-                    "average": {
-                        "name": "Puntuación Media"
-                    },
-                    "bayesian": {
-                        "name": "Puntuación Bayesiana"
-                    },
-                    "chapter_comments": {
-                        "name": "Comentarios de Capítulos"
-                    },
-                    "chapter_reactions": {
-                        "name": "Reacciones de Capítulos"
-                    },
-                    "chapter_views": {
-                        "name": "Visualizaciones de Capítulos"
-                    },
-                    "comments": {
-                        "name": "Comentarios"
-                    },
-                    "follows": {
-                        "name": "Seguidores"
-                    }
-                },
-                "description": "Aquí están las estadísticas para el título con ID `{titleId}` de {source}."
-            }
-        }
-    },
-    "generic": {
-        "sources": {
-            "mangabaka": "MangaBaka",
-            "mangadex": "MangaDex",
-            "namicomi": "NamiComi"
         }
     }
 }

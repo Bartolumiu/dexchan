@@ -13,7 +13,8 @@
             "options": {
                 "source": {
                     "name": "source",
-                    "description": "The source to use for the search"
+                    "description": "The source to use for the search",
+                    "no_sources": "No sources available. Please try again later."
                 },
                 "query": {
                     "name": "query",

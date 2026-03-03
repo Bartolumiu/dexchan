@@ -1,25 +1,36 @@
-const { StringSelectMenuBuilder } = require("discord.js");
+const { StringSelectMenuBuilder } = require('discord.js');
 
 module.exports = {
     data: {
-        customId: 'mangadex_select',
+        customId: 'search_select',
     },
     async execute(interaction, client) {
         await interaction.deferUpdate();
 
-        const manga = interaction.values[0];
+        const title = interaction.values[0];
+        const source = title.split(':')[0];
+        const id = title.split(':')[1];
 
-        const command = client.commands.get('manga');
+        const command = client.commands.get('search');
         if (command) {
             const mockInteraction = {
                 ...interaction,
                 options: {
                     /**
                      * Mocks the getString method for the interaction options.
-                     * @param {*} name - Option name
+                     * @param {string} name - Option name
                      * @returns {string | null} - The value of the option or null if the option is not found.
                      */
-                    getString: (name) => (name === 'id' ? manga : null),
+                    getString: (name) => {
+                        switch (name) {
+                            case 'id':
+                                return id;
+                            case 'source':
+                                return source;
+                            default:
+                                return null;
+                        }
+                    }
                 },
                 /**
                  * Mocks the reply method for the interaction
@@ -39,7 +50,7 @@ module.exports = {
                 await interaction.editReply({ components: [] });
             }
 
-            mockInteraction.commandName = 'manga';
+            mockInteraction.commandName = 'search';
 
             await command.execute(mockInteraction, client);
         }

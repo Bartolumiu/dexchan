@@ -39,8 +39,7 @@ async function getUserData(user) {
     const options = { new: true, upsert: true, setDefaultsOnInsert: true };
 
     try {
-        const userProfile = await User.findOneAndUpdate({ _id: user.id }, update, options);
-        return userProfile;
+        return await User.findOneAndUpdate({_id: user.id}, update, options);
     } catch (err) {
         // If a duplicate key error still occurs (very unlikely with upsert),
         // fall back to fetching the existing document.

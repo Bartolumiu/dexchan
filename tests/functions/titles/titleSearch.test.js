@@ -13,6 +13,52 @@ describe('search function', () => {
         expect(result).toBeNull();
     });
 
+    describe('MangaBaka', () => {
+        it('should return a map of titles when fetch is successful (MangaBaka)', async () => {
+            const fakeResponse = {
+                ok: true,
+                json: async () => ({
+                    data: [
+                        { id: '5258', title: "RE: united" }
+                    ]
+                })
+            };
+            global.fetch = jest.fn().mockResolvedValue(fakeResponse);
+            const result = await search('RE: united', 'mangabaka');
+            expect(result).toBeInstanceOf(Map);
+            expect(result.get('RE: united')).toEqual('5258');
+            expect(global.fetch).toHaveBeenCalled();
+        });
+
+        it('should return null for non-ok fetch (MangaBaka)', async () => {
+            const fakeResponse = {
+                ok: false,
+                json: async () => ({})
+            };
+            global.fetch = jest.fn().mockResolvedValue(fakeResponse);
+            const result = await search('Test', 'mangabaka');
+            expect(result).toBeNull();
+        });
+
+        it('should return null when fetch throws an error (MangaBaka)', async () => {
+            global.fetch = jest.fn().mockRejectedValue(new Error('Fetch error'));
+            const result = await search('Test', 'mangabaka');
+            expect(result).toBeNull();
+        });
+
+        it('should return null for empty results (MangaBaka)', async () => {
+            const fakeResponse = {
+                ok: true,
+                json: async () => ({
+                    data: []
+                })
+            };
+            global.fetch = jest.fn().mockResolvedValue(fakeResponse);
+            const result = await search('Test', 'mangabaka');
+            expect(result).toBeNull();
+        });
+    })
+
     describe('MangaDex', () => {
         it('should return a map of titles when fetch is successful (MangaDex)', async () => {
             const fakeResponse = {

@@ -1,5 +1,5 @@
 // tests/functions/parsers/urlParser.test.js
-const { parseURL, parseNamiComiURL, parseMangaDexURL, checkID } = require('../../../src/functions/parsers/urlParser');
+const { parseURL, checkID } = require('../../../src/functions/parsers/urlParser');
 
 describe('parseURL edge cases', () => {
     it.each([
@@ -56,6 +56,13 @@ describe('URL Parser', () => {
             expect(result).toBe("f9c33607-9180-4ba6-b85c-e4b5faee7192");
         });
 
+        it('should correctly parse a MangaBaka URL', async () => {
+            const url = "https://mangabaka.org/5258/re-united";
+            const type = "mangabaka";
+            const result = await parseURL(url, type);
+            expect(result).toBe("5258");
+        })
+
         it('should return null if no URL is provided', async () => {
             const url = null;
             const type = "namicomi";
@@ -67,13 +74,13 @@ describe('URL Parser', () => {
     describe('parseNamiComiURL', () => {
         it('should return null for an invalid NamiComi URL', async () => {
             const url = "https://namicomi.com/title-only";
-            const result = await parseNamiComiURL(url);
+            const result = await parseURL(url, 'namicomi');
             expect(result).toBeNull();
         });
 
         it('should extract ID from NamiComi primary URL', async () => {
             const url = "https://namicomi.com/en/title/aEj4pEHC/umidachi";
-            const result = await parseNamiComiURL(url);
+            const result = await parseURL(url, 'namicomi');
             expect(result).toBe("aEj4pEHC");
         });
     });
@@ -81,16 +88,24 @@ describe('URL Parser', () => {
     describe('parseMangaDexURL', () => {
         it('should return null for an invalid MangaDex URL', async () => {
             const url = "https://mangadex.org/title-only";
-            const result = await parseMangaDexURL(url);
+            const result = await parseURL(url, 'mangadex');
             expect(result).toBeNull();
         });
 
         it('should extract ID from MangaDex URL, ignoring query parameters', async () => {
             const url = "https://mangadex.org/title/f9c33607-9180-4ba6-b85c-e4b5faee7192/official-test-manga?tab=related";
-            const result = await parseMangaDexURL(url);
+            const result = await parseURL(url, 'mangadex');
             expect(result).toBe("f9c33607-9180-4ba6-b85c-e4b5faee7192");
         });
     });
+
+    describe('parseMangaBakaURL', () => {
+        it('should return null for an invalid MangaBaka URL', async () => {
+            const url = "https://mangabaka.org/title-only";
+            const result = await parseURL(url, 'mangabaka');
+            expect(result).toBeNull();
+        })
+    })
 
     describe('checkID', () => {
         it('should return null for unsupported ID type', async () => {
@@ -127,6 +142,20 @@ describe('URL Parser', () => {
             const result = await checkID(id, type);
             expect(result).toBe(false);
         });
+
+        it('should return true for a valid MangaBaka ID', async () => {
+            const id = "5258";
+            const type = "mangabaka";
+            const result = await checkID(id, type);
+            expect(result).toBe(true);
+        });
+
+        it('should return false for an invalid MangaBaka ID', async () => {
+            const id = "invalidID";
+            const type = "mangabaka";
+            const result = await checkID(id, type);
+            expect(result).toBe(false);
+        })
 
         it('should return null if no ID is provided', async () => {
             const id = null;

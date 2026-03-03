@@ -6,13 +6,15 @@
  *
  * @param {object} title - The title object containing tag data.
  * @param {string} type - The type of title. Supported values are 'mangadex' and 'namicomi'.
- * @param {string} [locale=null] - The locale identifier for localized tag names (only used for 'namicomi').
+ * @param {string|undefined|null} [locale=null] - The locale identifier for localized tag names (only used for 'namicomi').
  * @returns {object|null} An object containing grouped tag strings. For 'mangadex', keys include theme, genre, content, and format. 
  * For 'namicomi', keys include content_warning, format, genre, theme, and other. If a particular group has no tags, its value will be 'N/A'. 
  * Returns null if the type is unsupported.
  */
 const getTitleTags = (title, type, locale = null) => {
     switch (type) {
+        case 'mangabaka':
+            return getMangaBakaTags(title);
         case 'mangadex':
             return getMangaDexTags(title);
         case 'namicomi':
@@ -20,6 +22,58 @@ const getTitleTags = (title, type, locale = null) => {
         default:
             return null; // Unsupported type
     }
+}
+
+/**
+ * Merges arrays of tags into comma-separated strings or 'N/A' if empty.
+ * @param {object} groups - An object containing arrays of tags to be merged.
+ * @returns {void} Modifies the input object in place.
+ */
+const mergeTagArrays = (groups) => {
+    for (const key in groups) {
+        if (groups[key].length === 0) {
+            groups[key] = 'N/A';
+        } else {
+            if (groups[key].length > 10) {
+                groups[key] = groups[key].slice(0, 10).join(', ');
+            } else groups[key] = groups[key].join(', ');
+        }
+    }
+}
+
+/**
+ * Extracts and formats MangaBaka-specific tags from the title.
+ *
+ * Processes the title.tags, title.tags_v2, title.genres and title.genres_v2 arrays,
+ * and returns an object with comma-separated tag strings. If a group has no tags, its value is set to 'N/A'.
+ *
+ * @param {object} title - The MangaBaka title object containing the necessary information.
+ * @return {object} An object with keys: tags, tags_v2, genres, and genres_v2, each containing comma-separated tag names or 'N/A' if empty.
+ */
+const getMangaBakaTags = (title) => {
+    const groups = {
+        tags: [],
+        genres: [],
+        tags_v2: [],
+        genres_v2: []
+    };
+
+    groups.tags = title.tags || []; // Already an array of strings (or null if no tags)
+    groups.genres = title.genres || []; // Already an array of strings (or null if no genres)
+
+    title.tags_v2?.forEach(tag => {
+        if (!tag?.name) return;
+        groups.tags_v2.push(tag.name);
+    });
+
+    title.genres_v2?.forEach(genre => {
+        if (!genre?.name) return;
+        groups.genres_v2.push(genre.name);
+    });
+
+    mergeTagArrays(groups);
+
+    return groups;
 }
 
 /**
@@ -44,15 +98,7 @@ const getMangaDexTags = (title) => {
         groups[tag.attributes.group].push(tag.attributes.name.en);
     });
 
-    Object.keys(groups).forEach(key => {
-        groups[key] = groups[key].join(', ');
-    });
-
-    for (const key in groups) {
-        if (groups[key].length === 0) {
-            groups[key] = 'N/A';
-        }
-    }
+    mergeTagArrays(groups);
 
     return groups;
 }
@@ -100,15 +146,7 @@ const getNamiComiTags = (title, locale) => {
         }
     });
 
-    Object.keys(groups).forEach(key => {
-        groups[key] = groups[key].join(', ');
-    });
-
-    for (const key in groups) {
-        if (groups[key].length === 0) {
-            groups[key] = 'N/A';
-        }
-    }
+    mergeTagArrays(groups);
 
     return groups;
 }
@@ -120,18 +158,39 @@ const getNamiComiTags = (title, locale) => {
  * @param {object} embed - The embed object to add fields to.
  * @param {object} translations - The translations object for field names.
  * @param {string} type - The type of title. Supported values are 'mangadex' and 'namicomi'.
- * @param {string} locale - The locale to use for tag names.
- * @returns {void}
+ * @param {string|null} locale - The locale to use for tag names.
+ * @returns {boolean|null} True if tags were added successfully, null if the type is unsupported.
  */
 const addTitleTags = (title, embed, translations, type, locale) => {
     switch (type) {
+        case 'mangabaka':
+            return addMangaBakaTags(title, embed, translations);
         case 'mangadex':
             return addMangaDexTags(title, embed, translations);
         case 'namicomi':
             return addNamiComiTags(title, embed, translations, locale);
         default:
-            return; // Unsupported type
+            return null; // Unsupported type
     }
+}
+
+/**
+ * Adds MangaBaka-specific tags to the embed.
+ *
+ * @param {object} title - The MangaBaka title object.
+ * @param {object} embed - The embed object to add fields to.
+ * @param {object} translations - The translations object for field names.
+ */
+const addMangaBakaTags = (title, embed, translations) => {
+    const groups = getTitleTags(title, 'mangabaka');
+    const fields = [
+        { name: translations.response.embed.fields.genres, value: groups.genres, inline: true },
+        { name: translations.response.embed.fields.tags, value: groups.tags, inline: true },
+        { name: translations.response.embed.fields.genres_v2, value: groups.genres_v2, inline: true },
+        { name: translations.response.embed.fields.tags_v2, value: groups.tags_v2, inline: true }
+    ];
+    embed.addFields(fields);
+    return true;
 }
 
 /**
@@ -144,13 +203,14 @@ const addTitleTags = (title, embed, translations, type, locale) => {
 const addMangaDexTags = (title, embed, translations) => {
     const groups = getTitleTags(title, 'mangadex');
     const fields = [
-        { name: translations.embed.fields.format, value: groups.format, inline: true },
-        { name: translations.embed.fields.genres, value: groups.genre, inline: true },
-        { name: translations.embed.fields.themes, value: groups.theme, inline: true },
-        { name: translations.embed.fields.content_warning, value: groups.content, inline: true }
+        { name: translations.response.embed.fields.format, value: groups.format, inline: true },
+        { name: translations.response.embed.fields.genres, value: groups.genre, inline: true },
+        { name: translations.response.embed.fields.themes, value: groups.theme, inline: true },
+        { name: translations.response.embed.fields.content_warning, value: groups.content, inline: true }
     ];
 
     embed.addFields(fields);
+    return true;
 };
 
 /**
@@ -164,14 +224,15 @@ const addMangaDexTags = (title, embed, translations) => {
 const addNamiComiTags = (title, embed, translations, locale) => {
     const groups = getTitleTags(title, 'namicomi', locale);
     const fields = [
-        { name: translations.embed.fields.format, value: groups.format, inline: true },
-        { name: translations.embed.fields.genres, value: groups.genre, inline: true },
-        { name: translations.embed.fields.themes, value: groups.theme, inline: true },
-        { name: translations.embed.fields.content_warning, value: groups.content_warning, inline: true },
-        { name: translations.embed.fields.other_tags, value: groups.other, inline: true }
+        { name: translations.response.embed.fields.format, value: groups.format, inline: true },
+        { name: translations.response.embed.fields.genres, value: groups.genre, inline: true },
+        { name: translations.response.embed.fields.themes, value: groups.theme, inline: true },
+        { name: translations.response.embed.fields.content_warning, value: groups.content_warning, inline: true },
+        { name: translations.response.embed.fields.other_tags, value: groups.other, inline: true }
     ];
 
     embed.addFields(fields);
+    return true;
 }
 
 module.exports = { getTitleTags, addTitleTags }

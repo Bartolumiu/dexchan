@@ -1,13 +1,14 @@
 {
     "name": "dex-chan",
-    "version": "0.0.6",
-    "description": "Discord bot for the MangaDex ES server.",
+    "version": "0.0.7",
+    "description": "Discord bot for MangaDex.",
     "main": "src/index.js",
     "scripts": {
+        "preinstall": "npx only-allow pnpm",
         "start": "node --no-warnings --experimental-vm-modules ./src/index.js",
         "test": "node --no-warnings --experimental-vm-modules ./node_modules/jest/bin/jest.js --coverage",
         "generate-template": "node --no-warnings --experimental-vm-modules ./src/i18n/generate-template.js",
-        "prepare": "npm run generate-template",
+        "prepare": "pnpm generate-template",
         "update": "pnpm up"
     },
     "jest": {
@@ -39,22 +40,26 @@
     "keywords": [
         "discord",
         "bot",
-        "mangadex"
+        "mangadex",
+        "namicomi",
+        "dex-chan",
+        "mangabaka"
     ],
     "author": "Bartolumiu",
     "license": "GPL-3.0",
     "dependencies": {
-        "@discordjs/rest": "^2.5.0",
-        "axios": "^1.9.0",
-        "chalk": "^5.4.1",
-        "discord-api-types": "^0.38.4",
-        "discord.js": "^14.19.3",
-        "dotenv": "^16.5.0",
-        "mongoose": "^8.14.1"
+        "@discordjs/rest": "~2.6.0",
+        "axios": "~1.13.5",
+        "chalk": "~5.6.2",
+        "discord-api-types": "~0.38.40",
+        "discord.js": "~14.25.1",
+        "dotenv": "~17.3.1",
+        "mongoose": "~9.2.1"
     },
     "devDependencies": {
-        "jest": "^29.7.0",
-        "nock": "^14.0.4"
+        "baseline-browser-mapping": "~2.10.0",
+        "jest": "~30.2.0",
+        "nock": "~14.0.11"
     },
-    "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67"
+    "packageManager": "pnpm@10.19.0+sha512.c9fc7236e92adf5c8af42fd5bf1612df99c2ceb62f27047032f4720b33f8eacdde311865e91c411f2774f618d82f320808ecb51718bfa82c060c4ba7c76a32b8"
 }

@@ -18,6 +18,8 @@ const truncateString = require("../tools/truncateString");
  */
 const buildTitleEmbed = (embed, locale, title, stats, translations, type) => {
     switch (type) {
+        case 'mangabaka':
+            return buildMangaBakaEmbed(embed, locale, title, stats, translations);
         case 'mangadex':
             return buildMangaDexEmbed(embed, locale, title, stats, translations);
         case 'namicomi':
@@ -25,6 +27,52 @@ const buildTitleEmbed = (embed, locale, title, stats, translations, type) => {
         default:
             return null;
     }
+}
+
+/**
+ * Builds the MangaBaka embed.
+ * @param {EmbedBuilder} embed Embed to build
+ * @param {string} locale Locale for the embed
+ * @param {Object} title Title data
+ * @param {Object} stats Statistics data
+ * @param {Object} translations Translations data
+ * @returns {ActionRowBuilder} Action row with buttons
+ */
+const buildMangaBakaEmbed = (embed, locale, title, stats, translations) => {
+    const embedTitle = getLocalizedTitle(title, 'mangabaka', locale);
+    let embedDescription = title.description;
+    embedDescription = sanitizeDescription(embedDescription);
+    embedDescription = truncateString(embedDescription, 4096);
+
+    const fields = [
+        { name: translations.response.embed.fields.rating, value: stats.rating ? `${stats.rating}/100.00` : 'N/A', inline: true },
+        { name: translations.response.embed.fields.follows, value: 'N/A', inline: true }, // Placeholder: Missing API endpoint
+        { name: translations.response.embed.fields.year, value: `${title.year}`, inline: true },
+        { name: translations.response.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.response.embed.fields.pub_status.value[title.status] || title.status}`), inline: true },
+        { name: translations.response.embed.fields.demographic.name, value: 'N/A', inline: true },
+        { name: translations.response.embed.fields.content_rating.name, value: capitalizeFirstLetter(`${translations.response.embed.fields.content_rating.value[title.content_rating] || title.content_rating}`), inline: true }
+    ];
+
+    embed.setTitle(embedTitle)
+        .setURL(urlFormats.mangabaka.primary.replace('{id}', title.id).replace('{title}', ''))
+        .setDescription(embedDescription)
+        .addFields(fields)
+        .setColor(Colors.Blurple);
+
+    addTitleTags(title, embed, translations, 'mangabaka', locale);
+
+    return new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setLabel(translations.response.button.open.replace('{source}', translations.sources.mangabaka))
+            .setURL(urlFormats.mangabaka.primary.replace('{id}', title.id).replace('{title}', ''))
+            .setStyle(ButtonStyle.Link),
+        new ButtonBuilder()
+            .setLabel(translations.response.button.stats)
+            .setCustomId(`mangabaka_title_stats_${title.id}`)
+            .setStyle(ButtonStyle.Secondary)
+            .setEmoji('📊')
+            .setDisabled(true) // Placeholder: Missing API endpoint
+    )
 }
 
 /**
@@ -38,17 +86,17 @@ const buildTitleEmbed = (embed, locale, title, stats, translations, type) => {
  */
 const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
     const embedTitle = getLocalizedTitle(title, 'mangadex', locale);
-    let embedDescription = getLocalizedDescription(title, 'mangadex', locale) || translations.embed.error.no_description;
+    let embedDescription = getLocalizedDescription(title, 'mangadex', locale) || translations.response.embed.description.no_description;
     embedDescription = sanitizeDescription(embedDescription);
     embedDescription = truncateString(embedDescription, 4096);
 
     const fields = [
-        { name: translations.embed.fields.rating, value: `${stats.rating.bayesian.toFixed(2)}/10.00`, inline: true },
-        { name: translations.embed.fields.follows, value: `${stats.follows}`, inline: true },
-        { name: translations.embed.fields.year, value: `${title.attributes.year}`, inline: true },
-        { name: translations.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.embed.fields.pub_status.value[title.attributes.status] || title.attributes.status}`), inline: true },
-        { name: translations.embed.fields.demographic.name, value: title.attributes.publicationDemographic ? capitalizeFirstLetter(`${translations.embed.fields.demographic.value[title.attributes.publicationDemographic] || title.attributes.publicationDemographic}`) : 'N/A', inline: true },
-        { name: translations.embed.fields.content_rating.name, value: capitalizeFirstLetter(`${translations.embed.fields.content_rating.value[title.attributes.contentRating] || title.attributes.contentRating}`), inline: true }
+        { name: translations.response.embed.fields.rating, value: `${stats.title.rating.bayesian}/10.00`, inline: true },
+        { name: translations.response.embed.fields.follows, value: `${stats.title.follows}`, inline: true },
+        { name: translations.response.embed.fields.year, value: `${title.attributes.year}`, inline: true },
+        { name: translations.response.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.response.embed.fields.pub_status.value[title.attributes.status] || title.attributes.status}`), inline: true },
+        { name: translations.response.embed.fields.demographic.name, value: title.attributes.publicationDemographic ? capitalizeFirstLetter(`${translations.response.embed.fields.demographic.value[title.attributes.publicationDemographic] || title.attributes.publicationDemographic}`) : 'N/A', inline: true },
+        { name: translations.response.embed.fields.content_rating.name, value: capitalizeFirstLetter(`${translations.response.embed.fields.content_rating.value[title.attributes.contentRating] || title.attributes.contentRating}`), inline: true }
     ];
 
     embed.setTitle(embedTitle)
@@ -57,16 +105,16 @@ const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
         .addFields(fields)
         .setColor(Colors.Blurple);
 
-    addTitleTags(title, embed, translations, 'mangadex');
+    addTitleTags(title, embed, translations, 'mangadex', null);
 
     return new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-            .setLabel(translations.button.open)
+            .setLabel(translations.response.button.open.replace('{source}', translations.sources.mangadex))
             .setURL(urlFormats.mangadex.primary.replace('{id}', title.id).replace('{title}', ''))
             .setStyle(ButtonStyle.Link),
         new ButtonBuilder()
-            .setLabel(translations.button.stats)
-            .setCustomId(`mangadex_stats_${title.id}`)
+            .setLabel(translations.response.button.stats)
+            .setCustomId(`mangadex_title_stats_${title.id}`)
             .setStyle(ButtonStyle.Secondary)
             .setEmoji('📊')
     );
@@ -83,18 +131,18 @@ const buildMangaDexEmbed = (embed, locale, title, stats, translations) => {
  */
 const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
     const embedTitle = getLocalizedTitle(title, 'namicomi', locale);
-    let embedDescription = getLocalizedDescription(title, 'namicomi', locale) || translations.embed.error.no_description;
+    let embedDescription = getLocalizedDescription(title, 'namicomi', locale) || translations.response.embed.description.no_description;
     embedDescription = sanitizeDescription(embedDescription);
     embedDescription = truncateString(embedDescription, 4096);
 
     const fields = [
-        { name: translations.embed.fields.rating, value: `${stats.title.rating.bayesian.toFixed(2)}/5.00`, inline: true },
-        { name: translations.embed.fields.follows, value: `${stats.title.follows}`, inline: true },
-        { name: translations.embed.fields.year, value: `${title.attributes.year}`, inline: true },
-        { name: translations.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.embed.fields.pub_status.value[title.attributes.publicationStatus] || title.attributes.publicationStatus}`), inline: true },
-        { name: translations.embed.fields.demographic.name, value: title.attributes.demographic ? capitalizeFirstLetter(`${translations.embed.fields.demographic.value[title.attributes.demographic] || title.attributes.demographic}`) : 'N/A', inline: true },
-        { name: translations.embed.fields.content_rating.name, value: capitalizeFirstLetter(`${translations.embed.fields.content_rating.value[title.attributes.contentRating] || title.attributes.contentRating}`), inline: true },
-        { name: translations.embed.fields.type.name, value: capitalizeFirstLetter(`${translations.embed.fields.type.value[title.attributes.type] || title.attributes.type}`), inline: true }
+        { name: translations.response.embed.fields.rating, value: `${stats.title.rating.bayesian}/5.00`, inline: true },
+        { name: translations.response.embed.fields.follows, value: `${stats.title.follows}`, inline: true },
+        { name: translations.response.embed.fields.year, value: `${title.attributes.year}`, inline: true },
+        { name: translations.response.embed.fields.pub_status.name, value: capitalizeFirstLetter(`${translations.response.embed.fields.pub_status.value[title.attributes.publicationStatus] || title.attributes.publicationStatus}`), inline: true },
+        { name: translations.response.embed.fields.demographic.name, value: title.attributes.demographic ? capitalizeFirstLetter(`${translations.response.embed.fields.demographic.value[title.attributes.demographic] || title.attributes.demographic}`) : 'N/A', inline: true },
+        { name: translations.response.embed.fields.content_rating.name, value: capitalizeFirstLetter(`${translations.response.embed.fields.content_rating.value[title.attributes.contentRating] || title.attributes.contentRating}`), inline: true },
+        { name: translations.response.embed.fields.type.name, value: capitalizeFirstLetter(`${translations.response.embed.fields.type.value[title.attributes.type] || title.attributes.type}`), inline: true }
     ];
 
     embed.setTitle(embedTitle)
@@ -107,24 +155,24 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
 
     switch (title.attributes.readingMode) {
         case 'vls':
-            embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.vertical });
+            embed.addFields({ name: translations.response.embed.fields.reading_mode.name, value: translations.response.embed.fields.reading_mode.value.vertical });
             break;
         case 'rtl':
-            embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.right_to_left });
+            embed.addFields({ name: translations.response.embed.fields.reading_mode.name, value: translations.response.embed.fields.reading_mode.value.horizontal.right_to_left });
             break;
         case 'ltr':
-            embed.addFields({ name: translations.embed.fields.reading_mode.name, value: translations.embed.fields.reading_mode.horizontal.left_to_right });
+            embed.addFields({ name: translations.response.embed.fields.reading_mode.name, value: translations.response.embed.fields.reading_mode.value.horizontal.left_to_right });
             break;
-    };
+    }
 
     return new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-            .setLabel(translations.button.open)
+            .setLabel(translations.response.button.open.replace('{source}', translations.sources.namicomi))
             .setURL(urlFormats.namicomi.shortened.replace('{id}', title.id))
             .setStyle(ButtonStyle.Link),
         new ButtonBuilder()
-            .setLabel(translations.button.stats)
-            .setCustomId(`namicomi_stats_${title.id}`)
+            .setLabel(translations.response.button.stats)
+            .setCustomId(`namicomi_title_stats_${title.id}`)
             .setStyle(ButtonStyle.Secondary)
             .setEmoji('📊')
     )
@@ -147,22 +195,22 @@ const sanitizeDescription = (description) => {
 
     // First pass: Decode safe HTML entities
     description = description
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-        .replace(/&apos;/g, "'")
-        .replace(/&nbsp;/g, ' ');
+        .replaceAll('&quot;', '"')
+        .replaceAll('&#39;', "'")
+        .replaceAll('/&apos;', "'")
+        .replaceAll('&nbsp;', ' ');
     
     // Second pass: Replace & with &amp;
-    description = description.replace(/&/g, '&amp;');
+    description = description.replaceAll('&', '&amp;');
 
     // Third pass: Replace <br> tags with a placeholder to preserve line breaks
     description = description.replace(/<br\s*\/?>/gi, '|||LINEBREAK|||');
 
     // Fourth pass: Escape all < and > characters to prevent HTML injection
-    description = description.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    description = description.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
     
     // Fifth pass: Restore line breaks and normalize whitespace
-    description = description.replace(/\|\|\|LINEBREAK\|\|\|/g, '\n');
+    description = description.replaceAll('|||LINEBREAK', '\n');
     description = description.replace(/\n+/g, '\n'); // Normalize multiple newlines
     description = description.replace(/[ \t]+/g, ' '); // Normalize spaces and tabs (but preserve newlines)
     description = description.trim(); // Trim leading and trailing whitespace

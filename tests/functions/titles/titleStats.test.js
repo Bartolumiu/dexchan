@@ -12,7 +12,38 @@ describe('getTitleStats', () => {
 
     describe('MangaDex', () => {
         it('should return statistics when fetch is successful', async () => {
-            const mockStats = { views: 200 };
+            const mockStats = {
+                title: {
+                    comments: {
+                        threadId: null,
+                        repliesCount: 0
+                    },
+                    rating: {
+                        average: '0.00',
+                        bayesian: '0.00',
+                        distribution: {
+                            "1": 0,
+                            "2": 0,
+                            "3": 0,
+                            "4": 0,
+                            "5": 0,
+                            "6": 0,
+                            "7": 0,
+                            "8": 0,
+                            "9": 0,
+                            "10": 0
+                        },
+                        count: 0
+                    },
+                    follows: 0,
+                    views: 0
+                },
+                chapters: {
+                    comments: 0,
+                    reactions: 0,
+                    views: 0
+                }
+            };
             global.fetch.mockResolvedValue({
                 ok: true,
                 json: async () => ({ statistics: { '123': mockStats } })
@@ -34,13 +65,36 @@ describe('getTitleStats', () => {
             expect(result).toBeNull();
         });
 
-        it('should return null if the statistics object is empty (impossible case under normal circunstances)', async () => {
+        it('should return null if the statistics object is empty (impossible case under normal circumstances)', async () => {
             global.fetch.mockResolvedValue({
                 ok: true,
                 json: async () => ({ statistics: {} })
             });
             const result = await getTitleStats('123', 'mangadex');
             expect(result).toBeNull();
+        });
+
+        it('should calculate the total count from the distribution', async () => {
+            const mockStatsWithRatings = {
+                rating: {
+                    average: 8.5,
+                    bayesian: 8.4,
+                    distribution: {
+                        "8": 5,
+                        "9": 10,
+                        "10": 5
+                    }
+                },
+                follows: 100
+            };
+
+            global.fetch.mockResolvedValue({
+                ok: true,
+                json: async () => ({ statistics: { '123': mockStatsWithRatings } })
+            });
+
+            const result = await getTitleStats('123', 'mangadex');
+            expect(result.title.rating.count).toBe(20); // 5 + 10 + 5
         });
     });
 
@@ -76,8 +130,19 @@ describe('getTitleStats', () => {
                     comments: { threadId: null, repliesCount: 3 },
                     rating: {
                         average: 0,
-                        bayesian: 4.5,
-                        distribution: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        bayesian: "4.50",
+                        distribution: {
+                            "1": 0,
+                            "2": 0,
+                            "3": 0,
+                            "4": 0,
+                            "5": 0,
+                            "6": 0,
+                            "7": 0,
+                            "8": 0,
+                            "9": 0,
+                            "10": 0
+                        },
                         count: 0
                     },
                     follows: 150,
@@ -115,6 +180,37 @@ describe('getTitleStats', () => {
         
             const result = await getTitleStats('456', 'namicomi');
             expect(result).toBeNull();
+        });
+
+        it('should handle missing NamiComi attributes by using default values', async () => {
+            const ratingsResponse = {
+                ok: true,
+                json: async () => ({ data: { attributes: { rating: 0, count: null } } })
+            };
+            const statsResponse = {
+                ok: true,
+                json: async () => ({ })
+            };
+
+            global.fetch.mockResolvedValueOnce(ratingsResponse).mockResolvedValueOnce(statsResponse);
+
+            const result = await getTitleStats('456', 'namicomi');
+
+            expect(result.title.comments.repliesCount).toBe(0);
+            expect(result.title.rating.bayesian).toBe("0.00");
+            expect(result.title.rating.count).toBe(0);
+            expect(result.title.follows).toBe(0);
+            expect(result.title.views).toBe(0);
+            expect(result.chapters.views).toBe(0);
+            expect(result.chapters.comments).toBe(0);
+            expect(result.chapters.reactions).toBe(0);
+        })
+    });
+
+    describe('MangaBaka', () => {
+        it('should return an empty object (placeholder for future API support)', async () => {
+            const result = await getTitleStats('5250', 'mangabaka');
+            expect(result).toEqual({});
         });
     });
 });

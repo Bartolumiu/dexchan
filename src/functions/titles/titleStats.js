@@ -2,6 +2,7 @@ const getVersion = require('../tools/getVersion');
 
 const USER_AGENT = `Dex-chan/${getVersion()} by Bartolumiu`;
 const URL_FORMATS = {
+    mangabaka: 'https://api.mangabaka.dev/v1/statistics/series/',
     mangadex: 'https://api.mangadex.org/statistics/manga/',
     namicomi: {
         ratings: 'https://api.namicomi.com/title/',
@@ -18,6 +19,8 @@ const URL_FORMATS = {
  */
 const getTitleStats = async (id, type) => {
     switch (type) {
+        case 'mangabaka':
+            return await getMangaBakaStats(id);
         case 'mangadex':
             return await getMangaDexStats(id);
         case 'namicomi':
@@ -31,11 +34,13 @@ const getTitleStats = async (id, type) => {
  * Constructs a URL based on the provided title ID and type.
  *
  * @param {string} id - The title ID to be used in the URL.
- * @param {('mangadex'|'namicomi.ratings'|'namicomi.stats')} type - The type of URL to build.
+ * @param {('mangabaka'|'mangadex'|'namicomi.ratings'|'namicomi.stats')} type - The type of URL to build.
  * @returns {URL} The constructed URL.
  */
 const buildURL = (id, type) => {
     switch (type) {
+        case 'mangabaka':
+            return new URL(`${URL_FORMATS.mangabaka}${id}`);
         case 'mangadex':
             return new URL(`${URL_FORMATS.mangadex}${id}`);
         case 'namicomi.ratings':
@@ -43,6 +48,14 @@ const buildURL = (id, type) => {
         case 'namicomi.stats':
             return new URL(`${URL_FORMATS.namicomi.stats}${id}`);
     }
+}
+
+const getMangaBakaStats = async (id) => {
+    const url = buildURL(id, 'mangabaka');
+    // MangaBaka does not provide statistics via their API as of now
+    // Return empty object to avoid breaking the bot (there's no "stats" button for MangaBaka entries anyway)
+    // Jippi plz add stats endpoint ;_;
+    return {};
 }
 
 /**
@@ -68,10 +81,10 @@ const getMangaDexStats = async (id) => {
         });
         if (!res.ok) return null;
         const data = await res.json();
-        return data.statistics[id] || null;
+        return formatStats(data.statistics[id], null, 'mangadex');
     } catch {
         return null;
-    };
+    }
 };
 
 /**
@@ -112,30 +125,93 @@ const getNamiComiStats = async (id) => {
             ratingsRes.json(),
             statsRes.json()
         ]);
-        return {
-            title: {
-                comments: {
-                    threadId: null,
-                    repliesCount: statsData.data.attributes.commentCount,
-                },
-                rating: {
-                    average: 0,
-                    bayesian: ratingsData.data.attributes.rating,
-                    distribution: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    count: ratingsData.data.attributes.count
-                },
-                follows: statsData.data.attributes.followCount,
-                views: statsData.data.attributes.viewCount
-            },
-            chapters: {
-                views: Object.values(statsData.data.attributes.extra.totalChapterViews).reduce((total, count) => total + count, 0),
-                comments: Object.values(statsData.data.attributes.extra.totalChapterComments).reduce((total, count) => total + count, 0),
-                reactions: Object.values(statsData.data.attributes.extra.totalChapterReactions).reduce((total, count) => total + count, 0)
-            }
-        };
+        return formatStats(statsData, ratingsData, 'namicomi');
     } catch {
         return null;
-    };
+    }
 };
+
+const formatStats = (stats, ratings, type) => {
+    switch (type) {
+        case 'mangadex':
+            return formatMangaDexStats(stats);
+        case 'namicomi':
+            return formatNamiComiStats(stats, ratings);
+        // No need for a default case since the type is already validated in getTitleStats
+    }
+}
+
+const formatMangaDexStats = (stats) => {
+    if (!stats) return null; // If stats is null or undefined, return null to indicate no data available
+    return {
+        title: {
+            comments: {
+                threadId: stats.comments?.threadId || null,
+                repliesCount: stats.comments?.repliesCount || 0,
+            },
+            rating: {
+                average: (stats.rating?.average || 0).toFixed(2),
+                bayesian: (stats.rating?.bayesian || 0).toFixed(2),
+                distribution:
+                    stats.rating?.distribution ||
+                    {
+                        1: 0,
+                        2: 0,
+                        3: 0,
+                        4: 0,
+                        5: 0,
+                        6: 0,
+                        7: 0,
+                        8: 0,
+                        9: 0,
+                        10: 0
+                    },
+                count: Object.values(stats.rating?.distribution || {}).reduce((total, count) => total + count, 0) || 0
+            },
+            follows: stats.follows || 0,
+            views: 0
+        },
+        chapters: {
+            views: 0,
+            comments: 0,
+            reactions: 0
+        }
+    };
+}
+
+const formatNamiComiStats = (stats, ratings) => {
+    return {
+        title: {
+            comments: {
+                threadId: null,
+                repliesCount: stats.data?.attributes?.commentCount || 0,
+            },
+            rating: {
+                average: 0.00,
+                bayesian: (ratings.data?.attributes?.rating || 0).toFixed(2),
+                distribution: {
+                    '1': 0,
+                    '2': 0,
+                    '3': 0,
+                    '4': 0,
+                    '5': 0,
+                    '6': 0,
+                    '7': 0,
+                    '8': 0,
+                    '9': 0,
+                    '10': 0
+                },
+                count: ratings.data?.attributes?.count || 0
+            },
+            follows: stats.data?.attributes?.followCount || 0,
+            views: stats.data?.attributes?.viewCount || 0
+        },
+        chapters: {
+            views: Object.values(stats.data?.attributes?.extra?.totalChapterViews || {}).reduce((total, count) => total + count, 0) || 0,
+            comments: Object.values(stats.data?.attributes?.extra?.totalChapterComments || {}).reduce((total, count) => total + count, 0) || 0,
+            reactions: Object.values(stats.data?.attributes?.extra?.totalChapterReactions || {}).reduce((total, count) => total + count, 0) || 0
+        }
+    };
+}
 
 module.exports = getTitleStats;

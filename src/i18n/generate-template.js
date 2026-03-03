@@ -1,5 +1,5 @@
 const fs = require('fs/promises');
-const path = require('path');
+const path = require('node:path');
 
 const generateTemplate = async ({ cwd }) => {
     const src = path.join(cwd, './src/i18n/locales/en.json');

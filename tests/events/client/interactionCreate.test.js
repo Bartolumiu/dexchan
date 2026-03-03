@@ -1,9 +1,9 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const { execute } = require('../../../src/events/client/interactionCreate');
 const { name } = require('../../../src/events/client/ready');
 
-jest.mock('fs');
+jest.mock('node:fs');
 
 describe('interactionCreate event', () => {
     let interaction, client;

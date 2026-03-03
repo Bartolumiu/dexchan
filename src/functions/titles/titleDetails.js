@@ -2,6 +2,7 @@ const getVersion = require('../tools/getVersion');
 
 const USER_AGENT = `Dex-chan/${getVersion()} by Bartolumiu`;
 const URL_FORMATS = {
+    mangabaka: 'https://api.mangabaka.dev/v1/series/',
     mangadex: 'https://api.mangadex.org/manga/',
     namicomi: 'https://api.namicomi.com/title/'
 }
@@ -12,11 +13,13 @@ const URL_FORMATS = {
  * @async
  * @function getTitleDetails
  * @param {string|number} id - The ID of the title.
- * @param {string} type - The service to use, either 'mangadex' or 'namicomi'.
+ * @param {string} type - The service to use, 'mangabaka', 'mangadex' or 'namicomi'.
  * @returns {Promise<Object|null>} A promise that resolves to the details object if successful, or null if the request fails or an error occurs or the type is unsupported.
  */
 const getTitleDetails = async (id, type) => {
     switch (type) {
+        case 'mangabaka':
+            return await getMangaBakaDetails(id);
         case 'mangadex':
             return await getMangaDexDetails(id);
         case 'namicomi':
@@ -30,12 +33,15 @@ const getTitleDetails = async (id, type) => {
  * Builds a URL object by appending specific search parameters based on the given type.
  * 
  * @param {string|number} id - The ID of the title.
- * @param {string} type - The type of search, expected to be either 'mangadex' or 'namicomi'.
+ * @param {string} type - The type of search, expected to be 'mangabaka', 'mangadex' or 'namicomi'.
  * @returns {URL|null} The constructed URL object with query parameters or null if the type is unsupported.
  */
 const buildURL = (id, type) => {
     const url = new URL(URL_FORMATS[type]);
     switch (type) {
+        case 'mangabaka':
+            url.pathname += id;
+            return url;
         case 'mangadex':
             url.pathname += id;
             url.searchParams.append('includes[]', 'author');
@@ -49,6 +55,37 @@ const buildURL = (id, type) => {
             url.searchParams.append('includes[]', 'cover_art');
             url.searchParams.append('includes[]', 'tag');
             return url;
+    }
+}
+
+/**
+ * Retrieves details for a given ID from the MangaBaka API.
+ *
+ * This function builds a URL using the provided ID and fetches the corresponding
+ * JSON data from the MangaBaka API. If the response is successful, it extracts and
+ * returns the relevant data property; otherwise, it returns null.
+ *
+ * @async
+ * @function getMangaBakaDetails
+ * @param {string} id - The identifier used to fetch the details.
+ * @returns {Promise<Object|null>} A promise that resolves to the details object if successful, or null if the request fails or an error occurs.
+ */
+const getMangaBakaDetails = async (id) => {
+    const url = buildURL(id, 'mangabaka');
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            timeout: 5000,
+            headers: {
+                'User-Agent': USER_AGENT,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.data;
+    } catch {
+        return null;
     }
 }
 

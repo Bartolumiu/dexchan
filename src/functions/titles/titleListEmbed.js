@@ -8,17 +8,53 @@ const truncateString = require("../tools/truncateString");
  * @param {Object} translations - Translations for the embed.
  * @param {Map<string, string>} titles - Map of titles and their IDs.
  * @param {string} type - The type of the embed.
+ * @param {string} query - The search query.
  * @returns {ActionRowBuilder|null} The action row containing the select menu or null if type is unsupported.
  */
-const buildTitleListEmbed = (embed, translations, titles, type) => {
+const buildTitleListEmbed = (embed, translations, titles, type, query) => {
     switch (type) {
+        case 'mangabaka':
+            return buildMangaBakaTitleListEmbed(embed, translations, titles, query);
         case 'mangadex':
-            return buildMangaDexTitleListEmbed(embed, translations, titles);
+            return buildMangaDexTitleListEmbed(embed, translations, titles, query);
         case 'namicomi':
-            return buildNamiComiTitleListEmbed(embed, translations, titles);
+            return buildNamiComiTitleListEmbed(embed, translations, titles, query);
         default:
             return null; // Unsupported type
     }
+}
+
+const buildSelectMenu = (source, translations, titles) => {
+    const menu = new StringSelectMenuBuilder()
+        .setCustomId('search_select')
+        .setPlaceholder(translations.response.menu.placeholder)
+        .setMinValues(1)
+        .setMaxValues(1);
+
+    populateMenuOptions(menu, titles, source);
+    return menu;
+}
+
+/**
+ * Builds the title list for MangaBaka.
+ * @param {EmbedBuilder} embed - The embed object to build.
+ * @param {Object} translations - Translations for the embed.
+ * @param {Map<string, string>} titles - Map of titles and their IDs.
+ * @param {string} query - The search query.
+ * @returns {ActionRowBuilder} The action row containing the select menu.
+ */
+const buildMangaBakaTitleListEmbed = (embed, translations, titles, query) => {
+    const fields = Array.from(titles, ([title, id]) => {
+        return {
+            name: truncateString(title, 256),
+            value: `[${translations.response.menu.view.replace('{source}', translations.sources.mangabaka)}](${urlFormats.mangabaka.primary.replace('{id}', id).replace('{title}', '')})`
+        };
+    }).filter(Boolean);
+
+    const menu = buildSelectMenu('mangabaka', translations, titles);
+
+    buildEmbed(embed, translations, fields, { query: query, source: translations.sources.mangabaka });
+    return new ActionRowBuilder().addComponents(menu);
 }
 
 /**
@@ -26,25 +62,20 @@ const buildTitleListEmbed = (embed, translations, titles, type) => {
  * @param {EmbedBuilder} embed - The embed object to build.
  * @param {Object} translations - Translations for the embed.
  * @param {Map<string, string>} titles - Map of titles and their IDs.
+ * @param {string} query - The search query.
  * @returns {ActionRowBuilder} The action row containing the select menu.
  */
-const buildMangaDexTitleListEmbed = (embed, translations, titles) => {
+const buildMangaDexTitleListEmbed = (embed, translations, titles, query) => {
     const fields = Array.from(titles, ([title, id]) => {
         return {
             name: truncateString(title, 256),
-            value: `[${translations.embed.query.view}](${urlFormats.mangadex.primary.replace('{id}', id).replace('{title}', '')})`
+            value: `[${translations.response.menu.view.replace('{source}', translations.sources.mangadex)}](${urlFormats.mangadex.primary.replace('{id}', id).replace('{title}', '')})`
         };
     }).filter(Boolean);
 
-    const menu = new StringSelectMenuBuilder()
-        .setCustomId('mangadex_select')
-        .setPlaceholder(translations.menu.placeholder)
-        .setMinValues(1)
-        .setMaxValues(1);
+    const menu = buildSelectMenu('mangadex', translations, titles);
 
-    populateMenuOptions(menu, titles);
-
-    buildEmbed(embed, translations, fields);
+    buildEmbed(embed, translations, fields, { query: query, source: translations.sources.mangadex });
     return new ActionRowBuilder().addComponents(menu);
 }
 
@@ -53,25 +84,20 @@ const buildMangaDexTitleListEmbed = (embed, translations, titles) => {
  * @param {EmbedBuilder} embed - The embed object to build.
  * @param {Object} translations - Translations for the embed.
  * @param {Map<string, string>} titles - Map of titles and their IDs.
+ * @param {string} query - The search query.
  * @returns {ActionRowBuilder} The action row containing the select menu.
  */
-const buildNamiComiTitleListEmbed = (embed, translations, titles) => {
+const buildNamiComiTitleListEmbed = (embed, translations, titles, query) => {
     const fields = Array.from(titles, ([title, id]) => {
         return {
             name: truncateString(title, 256),
-            value: `[${translations.embed.query.view}](${urlFormats.namicomi.shortened.replace('{id}', id)})`
+            value: `[${translations.response.menu.view.replace('{source}', translations.sources.namicomi)}](${urlFormats.namicomi.shortened.replace('{id}', id)})`
         };
     }).filter(Boolean);
 
-    const menu = new StringSelectMenuBuilder()
-        .setCustomId('namicomi_select')
-        .setPlaceholder(translations.menu.placeholder)
-        .setMinValues(1)
-        .setMaxValues(1);
+    const menu = buildSelectMenu('namicomi', translations, titles);
 
-    populateMenuOptions(menu, titles);
-
-    buildEmbed(embed, translations, fields);
+    buildEmbed(embed, translations, fields, { query: query, source: translations.sources.namicomi });
     return new ActionRowBuilder().addComponents(menu);
 }
 
@@ -79,14 +105,15 @@ const buildNamiComiTitleListEmbed = (embed, translations, titles) => {
  * Populates the menu options for the title list embed.
  * @param {StringSelectMenuBuilder} menu Menu to populate
  * @param {Map<string, string>} titles Title list to create options from
+ * @param {string} source Source of the titles
  * @returns {StringSelectMenuBuilder} The populated menu
  */
-const populateMenuOptions = (menu, titles) => {
+const populateMenuOptions = (menu, titles, source) => {
     let options = [];
     titles.forEach((id, title) => {
         options.push({
             label: truncateString(title, 100),
-            value: id
+            value: `${source}:${id.toString()}`
         });
     });
 
@@ -99,10 +126,11 @@ const populateMenuOptions = (menu, titles) => {
  * @param {EmbedBuilder} embed - The embed object to build.
  * @param {Object} translations - Translations for the embed.
  * @param {Array<Object<string, string>>} fields - Fields to add to the embed.
+ * @param {{query: string, source: string}} replacements - Replacements for the embed description.
  */
-const buildEmbed = (embed, translations, fields) => {
-    embed.setTitle(translations.embed.query.title)
-        .setDescription(translations.embed.query.description)
+const buildEmbed = (embed, translations, fields, replacements) => {
+    embed.setTitle(translations.response.menu.title)
+        .setDescription(translations.response.menu.description.replace('{query}', replacements.query).replace('{source}', replacements.source))
         .setColor(Colors.Blurple)
         .addFields(fields);
 };

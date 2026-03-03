@@ -1,22 +1,64 @@
 const { getTitleTags, addTitleTags } = require('../../../src/functions/titles/titleTags');
 
 describe('getTitleTags', () => {
+    describe('MangaBaka', () => {
+        const sampleTitle = {
+            tags: ["tag1", "tag2"],
+            genres: ["genre1", "genre2"],
+            tags_v2: [{ "id": 1, "name": "tag_v2_1" }],
+            genres_v2: [{ "id": 1, "name": "genre_v2_1" }]
+        };
+
+        it('should return grouped tags and genres for MangaBaka', () => {
+            const result = getTitleTags(sampleTitle, 'mangabaka');
+            expect(result).toEqual({
+                tags: "tag1, tag2",
+                genres: "genre1, genre2",
+                tags_v2: "tag_v2_1",
+                genres_v2: "genre_v2_1"
+            });
+        });
+
+        it('should return "N/A" for empty tag groups', () => {
+            const emptyTitle = { tags: [], genres: [], tags_v2: [], genres_v2: [] };
+            const result = getTitleTags(emptyTitle, 'mangabaka');
+            expect(result).toEqual({
+                tags: "N/A",
+                genres: "N/A",
+                tags_v2: "N/A",
+                genres_v2: "N/A"
+            });
+        });
+
+        it('should handle missing tag groups gracefully', () => {
+            const missingGroupsTitle = {};
+            const result = getTitleTags(missingGroupsTitle, 'mangabaka');
+            expect(result).toEqual({
+                tags: "N/A",
+                genres: "N/A",
+                tags_v2: "N/A",
+                genres_v2: "N/A"
+            });
+        });
+
+        it('should handle tags and genres from tags_v2 and genres_v2 without names gracefully', () => {
+            const missingNameTitle = { tags_v2: [{ "id": 1 }], genres_v2: [{ "id": 1 }] };
+            const result = getTitleTags(missingNameTitle, 'mangabaka');
+            expect(result).toEqual({
+                tags: "N/A",
+                genres: "N/A",
+                tags_v2: "N/A",
+                genres_v2: "N/A"
+            });
+        });
+    });
+
     describe('MangaDex', () => {
         const sampleTitle = {
             attributes: {
                 tags: [
-                    {
-                        attributes: {
-                            group: 'genre',
-                            name: { en: "Action" }
-                        }
-                    },
-                    {
-                        attributes: {
-                            group: 'theme',
-                            name: { en: "Fantasy" }
-                        }
-                    }
+                    { attributes: { group: 'genre', name: { en: "Action" } } },
+                    { attributes: { group: 'theme', name: { en: "Fantasy" } } }
                 ]
             }
         };
@@ -170,6 +212,28 @@ describe('getTitleTags', () => {
             expect(result).toBeNull();
         });
     });
+
+    describe('too many tags in a group', () => {
+        const sampleTitle = {
+            attributes: {
+                tags: [
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '1' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '2' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '3' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '4' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '5' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '6' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '7' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '8' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '9' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '10' } } },
+                    { type: 'tag', attributes: { group: 'genre', name: { en: '11' } } }
+                ]
+            }
+        };
+        const result = getTitleTags(sampleTitle, 'mangadex');
+        expect(result.genre.split(', ').length).toBeLessThanOrEqual(10);
+    });
 });
 
 describe('addTitleTags', () => {
@@ -179,13 +243,15 @@ describe('addTitleTags', () => {
     beforeEach(() => {
         embed = { addFields: jest.fn() };
         translations = {
-            embed: {
-                fields: {
-                    format: 'Format',
-                    genres: 'Genres',
-                    themes: 'Themes',
-                    content_warning: 'Content Warning',
-                    other_tags: 'Other'
+            response: {
+                embed: {
+                    fields: {
+                        format: 'Format',
+                        genres: 'Genres',
+                        themes: 'Themes',
+                        content_warning: 'Content Warning',
+                        other_tags: 'Other'
+                    }
                 }
             }
         };
@@ -202,7 +268,7 @@ describe('addTitleTags', () => {
         };
 
         it('should add correct fields for mangadex', () => {
-            addTitleTags(sampleTitle, embed, translations, 'mangadex');
+            addTitleTags(sampleTitle, embed, translations, 'mangadex', 'en');
             expect(embed.addFields).toHaveBeenCalledWith([
                 { name: 'Format', value: 'N/A', inline: true },
                 { name: 'Genres', value: 'Action', inline: true },
@@ -213,7 +279,7 @@ describe('addTitleTags', () => {
 
         it('should return early if there are no tags', () => {
             const emptyTitle = { attributes: { tags: [] } };
-            addTitleTags(emptyTitle, embed, translations, 'mangadex');
+            addTitleTags(emptyTitle, embed, translations, 'mangadex', 'en');
             expect(embed.addFields).toHaveBeenCalledWith([
                 { name: 'Format', value: 'N/A', inline: true },
                 { name: 'Genres', value: 'N/A', inline: true },
@@ -247,7 +313,7 @@ describe('addTitleTags', () => {
     });
 
     it('should return nothing for unsupported type', () => {
-        const result = addTitleTags({}, embed, translations, 'unsupported');
-        expect(result).toBeUndefined();
+        const result = addTitleTags({}, embed, translations, 'unsupported', 'en');
+        expect(result).toBeNull();
     });
 })

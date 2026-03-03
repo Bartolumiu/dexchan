@@ -2,19 +2,22 @@ const getVersion = require('../tools/getVersion');
 
 const USER_AGENT = `Dex-chan/${getVersion()} by Bartolumiu`;
 const URL_FORMATS = {
+    mangabaka: 'https://api.mangabaka.dev/v1/series/search',
     mangadex: 'https://api.mangadex.org/manga',
     namicomi: 'https://api.namicomi.com/title/search'
 }
 
 const search = async (query, type, locale = null) => {
     switch (type) {
+        case 'mangabaka':
+            return await searchMangaBaka(query);
         case 'mangadex':
             return await searchMangaDex(query);
         case 'namicomi':
             return await searchNamiComi(query, locale || 'en');
         default:
             return null; // Unsupported type
-    };
+    }
 };
 
 /**
@@ -27,6 +30,15 @@ const search = async (query, type, locale = null) => {
 const buildURL = (query, type) => {
     const url = new URL(URL_FORMATS[type]);
     switch (type) {
+        case 'mangabaka':
+            url.searchParams.append('q', query);
+            url.searchParams.append('type_not', 'novel');
+            url.searchParams.append('limit', '10');
+            url.searchParams.append('content_rating', 'safe');
+            url.searchParams.append('content_rating', 'suggestive');
+            url.searchParams.append('content_rating', 'erotica');
+            url.searchParams.append('content_rating', 'pornographic');
+            return url;
         case 'mangadex':
             url.searchParams.append('title', query);
             url.searchParams.append('limit', 10);
@@ -42,6 +54,39 @@ const buildURL = (query, type) => {
             url.searchParams.append('contentRatings[]', 'mature');
             url.searchParams.append('contentRatings[]', 'restricted');
             return url;
+    }
+}
+
+/**
+ * Searches MangaBaka for titles based on the provided query.
+ *
+ * This asyncchronous function builds a URL using the provided query, makes a GET request
+ * with a timeout of 5000ms, and processes the JSON response. If the request is successful and
+ * data is found, it returns a Map where the keys are title entries and the values are the corresponding
+ * title entry IDs. If no results are found or an error occurs during the fetch, it returns null.
+ *
+ * @param {string} query - The search query used to query MangaBaka.
+ * @returns {Promise<Map<string, string>|null>} A promise that resolves to a Map of titles paired with their respective IDs, or null if the search was unsuccessful or returned no data.
+ */
+const searchMangaBaka = async (query) => {
+    const url = buildURL(query, 'mangabaka');
+    try {
+        const res = await fetch(url, {
+            method: 'GET',
+            timeout: 5000,
+            headers: {
+                'User-Agent': USER_AGENT,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (data.data?.length === 0) return null;
+
+        return new Map(data.data.map((item) => [item.title, item.id]));
+    } catch {
+        return null;
     }
 }
 
@@ -73,12 +118,10 @@ const searchMangaDex = async (query) => {
         const data = await res.json();
         if (data.data?.length === 0) return null;
 
-        /** @type {Map<string, string>} */
-        const results = new Map(data.data.map((item) => [item.attributes.title[Object.keys(item.attributes.title)[0]], item.id]));
-        return results;
+        return new Map(data.data.map((item) => [item.attributes.title[Object.keys(item.attributes.title)[0]], item.id]));
         } catch {
         return null;
-    };
+    }
 };
 
 /**
@@ -112,19 +155,16 @@ const searchNamiComi = async (query, locale) => {
         const data = await res.json();
         if (data.data?.length === 0) return null;
 
-        /** @type {Map<string, string>} */
-        const results = new Map(data.data.map((item) => {
+        return new Map(data.data.map((item) => {
             let localizedTitle = item.attributes.title[locale];
             if (!localizedTitle && locale === 'es') localizedTitle = item.attributes.title['es-419'];
             if (!localizedTitle) localizedTitle = item.attributes.title['en'];
             if (!localizedTitle) localizedTitle = item.attributes.title[Object.keys(item.attributes.title)[0]];
             return [localizedTitle, item.id];
         }));
-
-        return results;
     } catch {
         return null;
-    };
+    }
 };
 
 module.exports = search;

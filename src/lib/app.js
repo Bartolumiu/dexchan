@@ -95,7 +95,10 @@ async function initializeApplication({ token, dbToken }) {
     await connectDB(dbToken);
     
     // Cache all guilds
-    client.guilds.fetch();
+    await client.guilds.fetch();
+
+    // Register/update bot data in MongoDB
+    await client.getMongoBotData();
 
     await logMessage(`✅ Ready as ${client.user.tag}! Logged in and connected to MongoDB.`);
 

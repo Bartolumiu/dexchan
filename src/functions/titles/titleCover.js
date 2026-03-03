@@ -24,6 +24,8 @@ const URL_FORMATS = {
  */
 const getCover = async (title, type, locale = null) => {
     switch (type) {
+        case 'mangabaka':
+            return await getMangaBakaCover(title);
         case 'mangadex':
             return await getMangaDexCover(title);
         case 'namicomi':
@@ -45,14 +47,19 @@ const getCover = async (title, type, locale = null) => {
  */
 const buildURL = (title, type, locale = null) => {
     switch (type) {
+        case 'mangabaka':
+            return title.cover?.default;
         case 'mangadex': {
-            const id = title.id;
-            const coverName = title.relationships.find(rel => rel.type === 'cover_art').attributes.fileName;
+            const id = title.id || null;
+            if (!id) return null;
+            const coverName = title.relationships?.find(rel => rel.type === 'cover_art')?.attributes?.fileName || null;
+            if (!coverName) return null;
             return new URL(`${URL_FORMATS.mangadex}${id}/${coverName}.512.jpg`);
         }
         case 'namicomi': {
             locale = LOCALE_MAP[locale] || locale; // Normalize locale
-            const id = title.id;
+            const id = title.id || null;
+            if (!id) return null;
             const covers = title.relationships.filter(rel => rel.type === 'cover_art');
             let coverName = covers.find(rel => rel.attributes.locale === locale)?.attributes?.fileName;
             if (!coverName && locale === 'es') coverName = covers.find(rel => rel.attributes.locale === 'es-419')?.attributes?.fileName; // Fallback for Spanish
@@ -60,6 +67,33 @@ const buildURL = (title, type, locale = null) => {
             if (!coverName) return null;
             return new URL(`${URL_FORMATS.namicomi}${id}/${coverName}.512.jpg`);
         }
+    }
+}
+
+/**
+ * Retrieves the cover image for the specified MangaBaka title.
+ *
+ * This function constructs the appropriate URL using the provided title and attempts
+ * to fetch the cover image. If the request is successful, it returns a buffer containing
+ * the image data. If the request fails or the response is not OK, it returns null.
+ *
+ * @param {Object} title - The title object for which the cover image is being fetched.
+ * @returns {Promise<Buffer|null>} A promise that resolves to a Buffer with the cover image data, or null if unsuccessful.
+ */
+const getMangaBakaCover = async (title) => {
+    const url = buildURL(title, 'mangabaka');
+    if (!url) return null;
+    try {
+        const res = await fetch(url, {
+            method: 'GET',
+            timeout: 5000,
+            headers: { 'User-Agent': USER_AGENT }
+        });
+        if (!res.ok) return null;
+        const buffer = await res.arrayBuffer();
+        return Buffer.from(buffer);
+    } catch {
+        return null;
     }
 }
 
@@ -75,6 +109,7 @@ const buildURL = (title, type, locale = null) => {
  */
 const getMangaDexCover = async (title) => {
     const url = buildURL(title, 'mangadex');
+    if (!url) return null;
     try {
         const res = await fetch(url, {
             method: 'GET',
@@ -102,6 +137,7 @@ const getMangaDexCover = async (title) => {
  */
 const getNamiComiCover = async (title, locale) => {
     const url = buildURL(title, 'namicomi', locale);
+    if (!url) return null;
     try {
         const res = await fetch(url, {
             method: 'GET',

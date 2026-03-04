@@ -124,7 +124,8 @@
                     "name": "query"
                 }
             },
-            "description": "Busca un título."
+            "description": "Busca un título.",
+            "name": "search"
         },
         "ping": {
             "name": "ping",

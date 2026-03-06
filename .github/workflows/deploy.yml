@@ -13,52 +13,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v6
-
-    - name: Install pnpm
-      uses: pnpm/action-setup@v4
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v6
-      with:
-        node-version: '24'
-        cache: 'pnpm'
-
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-
-    - name: Set up SSH key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-        eval $(ssh-agent -s)
-        ssh-add ~/.ssh/id_rsa
-        ssh-add -l
-
-    - name: Deploy to Server
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-          # Source nvm script and set up environment
-          export NVM_DIR="/home/ubuntu/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-
-          # Verify npm and pm2 commands are available
-          which pnpm
-          pnpm -v
-          which pm2
-          pm2 -v
-
-          # Navigate to the project directory
-          cd /home/ubuntu/dexchan || exit
-
-          # Fetch latest changes and reset local branch to remote state (discarding local changes)
-          git fetch origin
-          git reset --hard origin/main
-
-          # Install dependencies and restart the app
-          pnpm install --frozen-lockfile
-          pm2 restart dexchan || pm2 start src/index.js --name dexchan
-        EOF
+    - name: Trigger Portainer Webhook
+      run: curl -X POST -H "${{ secrets.PORTAINER_WEBHOOK_DEXCHAN }}"

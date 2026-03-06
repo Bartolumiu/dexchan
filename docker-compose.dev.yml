@@ -1,0 +1,7 @@
+services:
+  dexchan_dev:
+    build: .
+    container_name: dexchan_dev
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

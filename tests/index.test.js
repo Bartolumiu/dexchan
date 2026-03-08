@@ -1,6 +1,6 @@
 // Mock environment variables first
-process.env.token = 'mock-discord-token';
-process.env.dbToken = 'mock-db-token';
+process.env.BOT_TOKEN = 'mock-discord-token';
+process.env.DB_URI = 'mock-db-token';
 
 // Mock the app module
 const mockInitializeApplication = jest.fn().mockResolvedValue();
@@ -82,8 +82,8 @@ describe('index.js - Error Handling', () => {
         processExitSpy = jest.spyOn(process, 'exit').mockImplementation();
         
         // Set environment variables
-        process.env.token = 'mock-discord-token';
-        process.env.dbToken = 'mock-db-token';
+        process.env.BOT_TOKEN = 'mock-discord-token';
+        process.env.DB_URI = 'mock-db-token';
     });
 
     afterEach(() => {

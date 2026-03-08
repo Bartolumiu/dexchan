@@ -57,8 +57,8 @@ module.exports = (client) => {
  */
 async function refreshCommands(globalCommandList, guildCommandMap) {
     const chalk = await getChalk();
-    const clientID = `${process.env.clientID}`;
-    const rest = new REST({ version: '10' }).setToken(process.env.token);
+    const clientID = `${process.env.CLIENT_ID}`;
+    const rest = new REST({ version: '10' }).setToken(process.env.BOT_TOKEN);
     try {
         console.log(chalk.blueBright('[Command Handler] Started refreshing global application (/) commands.'));
         await rest.put(Routes.applicationCommands(clientID), { body: globalCommandList });

@@ -184,7 +184,7 @@ const buildNamiComiEmbed = (embed, locale, title, stats, translations) => {
  * - Escapes &, <, and >
  * - Preserves Markdown syntax
  * - Normalizes whitespace and line breaks
- * 
+ *
  * @param {string} description The description to sanitize
  * @returns {string|null} The sanitized description or null if invalid
  */
@@ -199,22 +199,22 @@ const sanitizeDescription = (description) => {
         .replaceAll('&#39;', "'")
         .replaceAll('/&apos;', "'")
         .replaceAll('&nbsp;', ' ');
-    
+
     // Second pass: Replace & with &amp;
     description = description.replaceAll('&', '&amp;');
 
     // Third pass: Replace <br> tags with a placeholder to preserve line breaks
-    description = description.replace(/<br\s*\/?>/gi, '|||LINEBREAK|||');
+    description = description.replaceAll(/<br\s*\/?>/gi, '|||LINEBREAK|||');
 
     // Fourth pass: Escape all < and > characters to prevent HTML injection
     description = description.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-    
+
     // Fifth pass: Restore line breaks and normalize whitespace
     description = description.replaceAll('|||LINEBREAK', '\n');
-    description = description.replace(/\n+/g, '\n'); // Normalize multiple newlines
-    description = description.replace(/[ \t]+/g, ' '); // Normalize spaces and tabs (but preserve newlines)
+    description = description.replaceAll(/\n+/g, '\n'); // Normalize multiple newlines
+    description = description.replaceAll(/[ \t]+/g, ' '); // Normalize spaces and tabs (but preserve newlines)
     description = description.trim(); // Trim leading and trailing whitespace
-    
+
     return description;
 };
 

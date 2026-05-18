@@ -22,7 +22,11 @@ describe('getCover', () => {
     describe('MangaBaka', () => {
         const mangabakaTitle = {
             id: '5258',
-            cover: { "default": "https://example.com/covers/5258-default.jpg" }
+            cover: {
+                raw: {
+                    url: "https://example.com/covers/5258-default.jpg"
+                }
+            }
         };
 
         it('should return null if buildURL returns null for MangaBaka', async () => {

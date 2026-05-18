@@ -48,7 +48,10 @@ const getCover = async (title, type, locale = null) => {
 const buildURL = (title, type, locale = null) => {
     switch (type) {
         case 'mangabaka':
-            return title.cover?.default;
+            const coverUrl = title.cover?.raw?.url || null;
+            if (!coverUrl) return null;
+
+            return new URL(coverUrl);
         case 'mangadex': {
             const id = title.id || null;
             if (!id) return null;

@@ -4,7 +4,7 @@ const User = require('../../schemas/user');
  * Adds a method to the client to retrieve user data from the database.
  * @param {*} client - The Discord client instance.
  */
-module.exports = (client) => {
+const handleUserPreferences = (client) => {
     /**
      * Retrieves user data from the database.
      * @param {*} user - The user object containing user details.
@@ -49,3 +49,5 @@ async function getUserData(user) {
         throw err;
     }
 }
+
+module.exports = handleUserPreferences;

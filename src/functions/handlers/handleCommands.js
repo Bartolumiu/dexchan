@@ -24,7 +24,7 @@ const getChalk = require('../tools/getChalk');
  * require('./handleCommands')(client);
  * client.handleCommands();
  */
-module.exports = (client) => {
+const handleCommands = (client) => {
     client.handleCommands = async () => {
         const chalk = await getChalk();
         console.log(chalk.blueBright('[Command Handler] Loading commands...'));
@@ -128,3 +128,5 @@ async function loadCommand(command, commands, globalCommandList, guildCommandMap
         console.warn(chalk.yellowBright(`[Command Handler] Command /${command.data.name} does not have a guildID set and is not marked as global. Skipping.`));
     }
 }
+
+module.exports = handleCommands;

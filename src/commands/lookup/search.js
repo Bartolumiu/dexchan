@@ -74,7 +74,7 @@ module.exports = {
                 iconURL: client.user.displayAvatarURL({ dynamic: true })
             });
 
-        if (botSettings.settings.commands.find(cmd => cmd.name === 'search' && !cmd.enabled)) {
+        if (botSettings.settings.commands.some(cmd => cmd.name === 'search' && !cmd.enabled)) {
             await sendErrorEmbed(interaction, translations, embed, 'command_disabled');
             return;
 
@@ -82,7 +82,7 @@ module.exports = {
 
         const source = interaction.options.getString('source');
         if (!source) return sendErrorEmbed(interaction, translations, embed, 'no_source');
-        if (!sources.find(src => src.value === source))
+        if (!sources.some(src => src.value === source))
             return sendErrorEmbed(interaction, translations, embed, 'invalid_source', { source: source });
 
         const query = interaction.options.getString('query');
@@ -139,7 +139,7 @@ module.exports = {
  * Retrieves the list of enabled sources, optionally filtering by a search term.
  * @param {*} interaction - The interaction object containing user input.
  * @param {*} client - The Discord client instance.
- * @param {*} translations - The translations object for localization.
+ * @param {*} translations - The translations object for localisation.
  * @returns {Promise<[{name:string,value:string,enabled:boolean}]>} - A promise that resolves to the filtered list of sources.
  */
 const getSourceList = async (interaction, client, translations) => {

@@ -100,7 +100,7 @@ async function handleInteraction(interaction, collection, id, errorType, embeds,
             await updateErrorEmbed(client, interaction, e, errorType, id, embeds[0], embeds[1]);
             throw e;
         }
-        throw new Error();
+        throw new Error('Interaction execution timed out');
     }
 }
 

@@ -6,11 +6,6 @@ jest.mock('../../../src/functions/handlers/handleLocales', () => ({
     translateAttribute: jest.fn().mockResolvedValue({ 'en-GB': 'translated string' }),
 }));
 
-jest.mock('../../../src/commands/utils/ping', () => ({
-    ...jest.requireActual('../../../src/commands/utils/ping'),
-    getPing: jest.fn()
-}));
-
 describe('ping command', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -27,7 +22,6 @@ describe('ping command', () => {
                 description: 'Check the bot\'s latency',
                 descriptionLocalizations: await translateAttribute('ping', 'description')
             };
-            pingCommand.getPing.mockResolvedValue(100);
 
             await pingCommand.data();
             expect(command.name).toBe('ping');
@@ -38,9 +32,9 @@ describe('ping command', () => {
 
     describe('execute', () => {
         it('should send a ping embed', async () => {
-            global.fetch = jest.fn().mockImplementation(() => Promise.resolve({ ok: true, json: () => Promise.resolve({
-                data: { ping: 100 }
-            })}))
+            global.fetch = jest.fn().mockImplementation(() => Promise.resolve({ ok: true }));
+            //global.fetch = jest.fn().mockImplementation(() => Promise.resolve({ ok: true, json: () => Promise.resolve({data: { ping: 100 }})}))
+
             const interaction = {
                 user: { id: '000000000000000000', username: 'test-user' },
                 deferReply: jest.fn().mockResolvedValue({ createdTimestamp: 1000 }),
@@ -54,8 +48,6 @@ describe('ping command', () => {
                 getMongoUserData: jest.fn().mockResolvedValue({ preferredLocale: 'en' }),
                 translate: jest.fn().mockImplementation((locale, key, value) => key)
             };
-            pingCommand.getPing.mockResolvedValue(100);
-
 
             await pingCommand.execute(interaction, client);
             expect(interaction.deferReply).toHaveBeenCalled();
@@ -65,14 +57,8 @@ describe('ping command', () => {
         });
 
         it('should handle fetch failure correctly', async () => {
-            global.fetch = jest.fn().mockImplementation((url) => {
-                if (url === 'https://api.mangadex.org/ping' || url === 'https://api.namicomi.com/ping') {
-                    return Promise.resolve({ ok: false });
-                }
-                return Promise.resolve({ ok: true, json: () => Promise.resolve({
-                    data: { ping: 100 }
-                })});
-            });
+            global.fetch = jest.fn().mockImplementation(() => Promise.resolve({ ok: false }));
+
             const interaction = {
                 user: { id: '000000000000000000', username: 'test-user' },
                 deferReply: jest.fn().mockResolvedValue({ createdTimestamp: 1000 }),
@@ -111,46 +97,8 @@ describe('ping command', () => {
                     }
                 })
             };
-            const embed = {
-                setTitle: jest.fn(),
-                addFields: jest.fn(),
-                setFooter: jest.fn(),
-                setColor: jest.fn(),
-                setTimestamp: jest.fn(),
-                data: {
-                    title: client.translate('en', 'commands', 'ping.response.title'),
-                    fields: [
-                        {
-                            name: client.translate('en', 'commands', 'ping.response.fields.bot_latency.name'),
-                            value: client.translate('en', 'commands', 'ping.response.fields.bot_latency.value'),
-                            inline: true
-                        },
-                        {
-                            name: client.translate('en', 'commands', 'ping.response.fields.api.discord.name'),
-                            value: client.translate('en', 'commands', 'ping.response.fields.api.discord.value'),
-                            inline: true
-                        },
-                        {
-                            name: client.translate('en', 'commands', 'ping.response.fields.api.mangadex.name'),
-                            value: client.translate('en', 'commands', 'ping.response.not_ok'),
-                            inline: true
-                        },
-                        {
-                            name: client.translate('en', 'commands', 'ping.response.fields.api.namicomi.name'),
-                            value: client.translate('en', 'commands', 'ping.response.not_ok'),
-                            inline: true
-                        }
-                    ],
-                    footer: {
-                        icon_url: 'https://example.com/avatar.png',
-                        text: client.translate('en', 'commands', 'ping.response.footer')
-                    },
-                    color: Colors.Blurple
-                }
-            };
-            console.error = jest.fn(); // Suppress console.error
 
-            pingCommand.getPing.mockRejectedValue(new Error('Fetch failed'));
+            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {}); // Suppress console.error
 
             await pingCommand.execute(interaction, client);
 
@@ -160,14 +108,10 @@ describe('ping command', () => {
             expect(interaction.editReply).toHaveBeenCalled();
 
             expect(console.error).toHaveBeenCalledTimes(2);
-            expect(console.error).toHaveBeenNthCalledWith(
-                1,
-                expect.any(Error),
-            );
-            expect(console.error).toHaveBeenNthCalledWith(
-                2,
-                expect.any(Error),
-            );
+            expect(console.error).toHaveBeenNthCalledWith(1, expect.any(Error));
+            expect(console.error).toHaveBeenNthCalledWith(2, expect.any(Error));
+
+            consoleErrorSpy.mockRestore();
         });
     });
 });

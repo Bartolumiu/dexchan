@@ -299,19 +299,24 @@
             "description": "Titulu bat bilatu.",
             "options": {
                 "id": {
-                    "description": "Bilatu nahi duzun tituluaren IDa"
+                    "description": "Bilatu nahi duzun tituluaren IDa",
+                    "name": "id"
                 },
                 "url": {
-                    "description": "Bilatu nahi duzun tituluaren URLa"
+                    "description": "Bilatu nahi duzun tituluaren URLa",
+                    "name": "url"
                 },
                 "source": {
                     "description": "Bilaketarako erabili beharreko iturria",
-                    "no_sources": "Ez dago iturririk eskuragarri. Mesedez, saiatu berriro geroago."
+                    "no_sources": "Ez dago iturririk eskuragarri. Mesedez, saiatu berriro geroago.",
+                    "name": "source"
                 },
                 "query": {
-                    "description": "Bilatu nahi duzun titulua"
+                    "description": "Bilatu nahi duzun titulua",
+                    "name": "query"
                 }
-            }
+            },
+            "name": "search"
         }
     },
     "error_embed": {

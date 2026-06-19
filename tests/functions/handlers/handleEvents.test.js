@@ -1,33 +1,26 @@
 const fs = require('node:fs');
 const { connection } = require('mongoose');
-const initHandlers = require('../../../src/functions/handlers/handleEvents.js');
-const clientEvent = require('../../../src/events/client/clientEvent.js');
-const mongoEvent = require('../../../src/events/mongo/mongoEvent.js');
+const initHandlers = require('../../../src/functions/handlers/handleEvents');
 
-// Set up dummy event modules
-jest.mock('../../../src/events/client/clientEvent.js', () => ({
-    name: 'clientEvent',
+const readyEvent = require('../../../src/events/client/ready');
+const interactionCreateEvent = require('../../../src/events/client/interactionCreate');
+
+// Mock event files
+jest.mock('../../../src/events/client/ready', () => ({
+    name: 'ready',
     once: true,
     execute: jest.fn(),
-}), { virtual: true });
+}));
 
-jest.mock('../../../src/events/mongo/mongoEvent.js', () => ({
-    name: 'mongoEvent',
+jest.mock('../../../src/events/client/interactionCreate', () => ({
+    name: 'interactionCreate',
     once: false,
     execute: jest.fn(),
-}), { virtual: true });
+}));
 
 // Mock fs
 jest.mock('node:fs', () => ({
     readdirSync: jest.fn(),
-}));
-
-// Mock mongoose connection
-jest.mock('mongoose', () => ({
-    connection: {
-        on: jest.fn(),
-        once: jest.fn(),
-    },
 }));
 
 // Clear mocks before each test
@@ -35,14 +28,12 @@ beforeEach(() => {
     jest.clearAllMocks();
 });
 
-// Import our handler initialization function
-
 describe('handleEvents', () => {
     it('should register client events correctly', async () => {
         // Setup fs mocks for client events only
         fs.readdirSync.mockImplementation((path) => {
             if (path === './src/events') return ['client'];
-            if (path === './src/events/client') return ['clientEvent.js'];
+            if (path === './src/events/client') return ['ready.js'];
             return [];
         });
         // Create fake client with jest.fn() for on and once
@@ -58,22 +49,21 @@ describe('handleEvents', () => {
         // Expect client.once to be called for our once event
         expect(client.once).toHaveBeenCalledTimes(1);
         const [eventName, callback] = client.once.mock.calls[0];
-        expect(eventName).toBe('clientEvent');
+        expect(eventName).toBe('ready');
 
         // Simulate invoking the event callback
         const dummyArg = 'testArg';
         await callback(dummyArg);
-        expect(clientEvent.execute).toHaveBeenCalledWith(dummyArg, client);
+        expect(readyEvent.execute).toHaveBeenCalledWith(dummyArg, client);
     });
 
-    it('should register mongo events correctly', async () => {
-        // Setup fs mocks for mongo events only
+    it('should register client events correctly when event.once is false', async () => {
         fs.readdirSync.mockImplementation((path) => {
-            if (path === './src/events') return ['mongo'];
-            if (path === './src/events/mongo') return ['mongoEvent.js'];
+            if (path === './src/events') return ['client'];
+            if (path === './src/events/client') return ['interactionCreate.js'];
             return [];
         });
-        // Create fake client (its methods aren’t used by mongo events)
+
         const client = {
             on: jest.fn(),
             once: jest.fn(),
@@ -82,15 +72,13 @@ describe('handleEvents', () => {
         initHandlers(client);
         await client.handleEvents();
 
-        // For mongo events, since once is false, connection.on should be called
-        expect(connection.on).toHaveBeenCalledTimes(1);
-        const [eventName, callback] = connection.on.mock.calls[0];
-        expect(eventName).toBe('mongoEvent');
+        expect(client.on).toHaveBeenCalledTimes(1);
+        const [eventName, callback] = client.on.mock.calls[0];
+        expect(eventName).toBe('interactionCreate');
 
-        // Simulate invoking the mongo event callback
-        const dummyArg = 'mongoArg';
+        const dummyArg = 'testArg';
         await callback(dummyArg);
-        expect(mongoEvent.execute).toHaveBeenCalledWith(dummyArg, client);
+        expect(interactionCreateEvent.execute).toHaveBeenCalledWith(dummyArg, client);
     });
 
     it('should log errors for invalid event folders', async () => {
@@ -113,101 +101,5 @@ describe('handleEvents', () => {
             '[Event Handler] Error: invalidFolder is not a valid event folder.'
         );
         consoleErrorSpy.mockRestore();
-    });
-
-    it('should register client events correctly when event.once is false', async () => {
-        fs.readdirSync.mockImplementation((path) => {
-            if (path === './src/events') return ['client'];
-            if (path === './src/events/client') return ['clientOnEvent.js'];
-            return [];
-        });
-
-        jest.mock('../../../src/events/client/clientOnEvent.js', () => ({
-            name: 'clientOnEvent',
-            once: false,
-            execute: jest.fn(),
-        }), { virtual: true });
-
-        const client = {
-            on: jest.fn(),
-            once: jest.fn(),
-        };
-
-        initHandlers(client);
-        await client.handleEvents();
-
-        expect(client.on).toHaveBeenCalledTimes(1);
-        const [eventName, callback] = client.on.mock.calls[0];
-        expect(eventName).toBe('clientOnEvent');
-
-        const dummyArg = 'testArg';
-        await callback(dummyArg);
-
-        const clientOnEvent = require('../../../src/events/client/clientOnEvent.js');
-        expect(clientOnEvent.execute).toHaveBeenCalledWith(dummyArg, client);
-    });
-
-    it('should register mongo events correctly when event.once is false', async () => {
-        fs.readdirSync.mockImplementation((path) => {
-            if (path === './src/events') return ['mongo'];
-            if (path === './src/events/mongo') return ['mongoOnEvent.js'];
-            return [];
-        });
-
-        jest.mock('../../../src/events/mongo/mongoOnEvent.js', () => ({
-            name: 'mongoOnEvent',
-            once: false,
-            execute: jest.fn(),
-        }), { virtual: true });
-
-        const client = {
-            on: jest.fn(),
-            once: jest.fn(),
-        };
-
-        initHandlers(client);
-        await client.handleEvents();
-
-        expect(connection.on).toHaveBeenCalledTimes(1);
-        const [eventName, callback] = connection.on.mock.calls[0];
-        expect(eventName).toBe('mongoOnEvent');
-
-        const dummyArg = 'mongoArg';
-        await callback(dummyArg);
-
-        const mongoOnEvent = require('../../../src/events/mongo/mongoOnEvent.js');
-        expect(mongoOnEvent.execute).toHaveBeenCalledWith(dummyArg, client);
-    });
-
-    it('should register mongo events correctly when event.once is true', async () => {
-        fs.readdirSync.mockImplementation((path) => {
-            if (path === './src/events') return ['mongo'];
-            if (path === './src/events/mongo') return ['mongoOnceEvent.js'];
-            return [];
-        });
-
-        jest.mock('../../../src/events/mongo/mongoOnceEvent.js', () => ({
-            name: 'mongoOnceEvent',
-            once: true,
-            execute: jest.fn(),
-        }), { virtual: true });
-
-        const client = {
-            on: jest.fn(),
-            once: jest.fn(),
-        };
-
-        initHandlers(client);
-        await client.handleEvents();
-
-        expect(connection.once).toHaveBeenCalledTimes(1);
-        const [eventName, callback] = connection.once.mock.calls[0];
-        expect(eventName).toBe('mongoOnceEvent');
-
-        const dummyArg = 'mongoOnceArg';
-        await callback(dummyArg);
-
-        const mongoOnceEvent = require('../../../src/events/mongo/mongoOnceEvent.js');
-        expect(mongoOnceEvent.execute).toHaveBeenCalledWith(dummyArg, client);
     });
 });

@@ -9,7 +9,9 @@
         "test": "node --no-warnings --experimental-vm-modules ./node_modules/jest/bin/jest.js --coverage",
         "generate-template": "node --no-warnings --experimental-vm-modules ./src/i18n/generate-template.js",
         "prepare": "pnpm generate-template",
-        "update": "pnpm up"
+        "update": "pnpm up",
+        "check:references": "pnpm dlx knip",
+        "check:dependencies": "pnpm dlx depcheck"
     },
     "jest": {
         "transform": {
@@ -49,17 +51,23 @@
     "license": "GPL-3.0",
     "dependencies": {
         "@discordjs/rest": "~2.6.1",
-        "axios": "~1.16.0",
         "chalk": "~5.6.2",
-        "discord-api-types": "~0.38.47",
+        "discord-api-types": "~0.38.48",
         "discord.js": "~14.26.4",
         "dotenv": "~17.3.1",
         "mongoose": "~9.2.4"
     },
     "devDependencies": {
-        "baseline-browser-mapping": "~2.10.29",
-        "jest": "~30.2.0",
-        "nock": "~14.0.15"
+        "babel-jest": "~30.4.1",
+        "jest": "~30.4.2"
     },
-    "packageManager": "pnpm@10.19.0+sha512.c9fc7236e92adf5c8af42fd5bf1612df99c2ceb62f27047032f4720b33f8eacdde311865e91c411f2774f618d82f320808ecb51718bfa82c060c4ba7c76a32b8"
+    "knip": {
+        "ignoreDependencies": [
+            "jest"
+        ],
+        "ignoreBinaries": [
+            "only-allow"
+        ]
+    },
+    "packageManager": "pnpm@11.6.0"
 }

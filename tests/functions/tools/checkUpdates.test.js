@@ -1,7 +1,6 @@
 const checkUpdates = require('../../../src/functions/tools/checkUpdates');
-const axios = require('axios');
 
-jest.mock('axios');
+global.fetch = jest.fn();
 
 beforeAll(() => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -14,11 +13,19 @@ afterAll(() => {
 describe('checkUpdates', () => {
     beforeEach(() => {
         jest.resetModules(); // Reset module cache before each test
+        global.fetch.mockClear(); // Clear fetch calls between tests
     });
+
+    const mockFetchResponse = (tagName) => {
+        global.fetch.mockResolvedValue({
+            ok: true,
+            json: jest.fn().mockResolvedValue({ tag_name: tagName })
+        });
+    };
 
     describe('latest > current', () => {
         it('should return isOutdated as true when the latest major is newer', async () => {
-            axios.get.mockResolvedValue({ data: { tag_name: '2.0.0' } });
+            mockFetchResponse('2.0.0');
     
             jest.doMock('../../../package.json', () => ({ version: '1.0.0' }), { virtual: true });
     
@@ -29,7 +36,7 @@ describe('checkUpdates', () => {
         });
 
         it('should return isOutdated as true when the latest minor is newer', async () => {
-            axios.get.mockResolvedValue({ data: { tag_name: '1.1.0' } });
+            mockFetchResponse('1.1.0');
     
             jest.doMock('../../../package.json', () => ({ version: '1.0.0' }), { virtual: true });
     
@@ -40,7 +47,7 @@ describe('checkUpdates', () => {
         });
 
         it('should return isOutdated as true when the latest patch is newer', async () => {
-            axios.get.mockResolvedValue({ data: { tag_name: '1.0.1' } });
+            mockFetchResponse('1.0.1');
     
             jest.doMock('../../../package.json', () => ({ version: '1.0.0' }), { virtual: true });
     
@@ -51,7 +58,7 @@ describe('checkUpdates', () => {
         });
 
         it('should return isOutdated as true when there is no pre-release and the current version is pre-release', async () => {
-            axios.get.mockResolvedValue({ data: { tag_name: '1.0.0' } });
+            mockFetchResponse('1.0.0');
     
             jest.doMock('../../../package.json', () => ({ version: '1.0.0-beta' }), { virtual: true });
     
@@ -62,7 +69,7 @@ describe('checkUpdates', () => {
         });
 
         it('should return isOutdated as true when the latest pre-release is "dev" and the current is "beta"', async () => {
-            axios.get.mockResolvedValue({ data: { tag_name: '1.0.0-dev' } });
+            mockFetchResponse('1.0.0-dev');
     
             jest.doMock('../../../package.json', () => ({ version: '1.0.0-beta' }), { virtual: true });
     
@@ -75,7 +82,7 @@ describe('checkUpdates', () => {
 
     describe('latest <= current', () => {
         it('should return isOutdated as false for the same version', async () => {
-            axios.get.mockResolvedValue({ data: { tag_name: '1.0.0' } });
+            mockFetchResponse('1.0.0');
             
             jest.doMock('../../../package.json', () => ({ version: '1.0.0' }), { virtual: true });
 
@@ -86,7 +93,7 @@ describe('checkUpdates', () => {
         });
 
         it('should return isOutdated as false when the latest major is older', async () => {
-            axios.get.mockResolvedValue({ data: { tag_name: '0.1.0' } });
+            mockFetchResponse('0.1.0');
             
             jest.doMock('../../../package.json', () => ({ version: '1.0.0' }), { virtual: true });
 
@@ -97,7 +104,7 @@ describe('checkUpdates', () => {
         });
 
         it('should return isOutdated as false when the latest minor is older', async () => {
-            axios.get.mockResolvedValue({ data: { tag_name: '1.0.0' } });
+            mockFetchResponse('1.0.0');
             
             jest.doMock('../../../package.json', () => ({ version: '1.1.0' }), { virtual: true });
 
@@ -108,7 +115,7 @@ describe('checkUpdates', () => {
         });
 
         it('should return isOutdated as false when the latest patch is older', async () => {
-            axios.get.mockResolvedValue({ data: { tag_name: '1.0.0' } });
+            mockFetchResponse('1.0.0');
             
             jest.doMock('../../../package.json', () => ({ version: '1.0.1' }), { virtual: true });
 
@@ -119,7 +126,7 @@ describe('checkUpdates', () => {
         });
 
         it('should return isOutdated as false when the latest pre-release is "beta" and the current is "dev"', async () => {
-            axios.get.mockResolvedValue({ data: { tag_name: '1.0.0-beta' } });
+            mockFetchResponse('1.0.0-beta');
             
             jest.doMock('../../../package.json', () => ({ version: '1.0.0-dev' }), { virtual: true });
 
@@ -130,7 +137,7 @@ describe('checkUpdates', () => {
         });
 
         it('should return isOutdated as false when the latest pre-release is the same as the current', async () => {
-            axios.get.mockResolvedValue({ data: { tag_name: '1.0.0-beta' } });
+            mockFetchResponse('1.0.0-beta');
             
             jest.doMock('../../../package.json', () => ({ version: '1.0.0-beta' }), { virtual: true });
 
@@ -152,15 +159,18 @@ describe('checkUpdates', () => {
         });
     });
 
-    it('should log an error and return null when the API call fails', async () => {
+    it('should log an error and return null when the API call fails (e.g., 404)', async () => {
         const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-        axios.get.mockRejectedValue(new Error('API request failed'));
+        global.fetch.mockResolvedValue({
+            ok: false,
+            status: 404
+        });
 
         const result = await checkUpdates();
 
         expect(result.isOutdated).toBeNull();
         expect(result.latestVersion).toBeNull();
-        expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('[GitHub] Failed to check for updates: API request failed'));
+        expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('[GitHub] Failed to check for updates: HTTP status 404'));
         consoleErrorSpy.mockRestore();
     });
 });

@@ -97,5 +97,3 @@ const getPing = async (url) => {
 
     return Date.now() - start;
 };
-
-module.exports.getPing = getPing;

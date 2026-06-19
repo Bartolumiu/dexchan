@@ -1,7 +1,7 @@
 import {
-  SlashCommandBuilder,
-  ChatInputCommandInteraction,
   AutocompleteInteraction,
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
 } from "discord.js";
 import { ExtendedClient } from "../lib/ExtendedClient";
 

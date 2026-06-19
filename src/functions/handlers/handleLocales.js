@@ -179,4 +179,3 @@ const getLocale = (userProfile, interaction) => {
 module.exports = handleLocales;
 module.exports.getLocale = getLocale;
 module.exports.translateAttribute = translateAttribute;
-module.exports.getTranslations = getTranslations;

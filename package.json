@@ -1,80 +1,80 @@
 {
-    "name": "dex-chan",
-    "version": "0.0.7",
-    "description": "Discord bot for MangaDex.",
-    "main": "src/index.js",
-    "scripts": {
-        "preinstall": "npx only-allow pnpm",
-        "start": "node --no-warnings --experimental-vm-modules ./src/index.js",
-        "test": "node --no-warnings --experimental-vm-modules ./node_modules/jest/bin/jest.js --coverage",
-        "generate-template": "node --no-warnings --experimental-vm-modules ./src/i18n/generate-template.js",
-        "prepare": "pnpm generate-template",
-        "update": "pnpm up",
-        "format": "prettier --write .",
-        "format:check": "prettier --check .",
-        "check:references": "pnpm dlx knip",
-        "check:dependencies": "pnpm dlx depcheck"
+  "name": "dex-chan",
+  "version": "0.0.7",
+  "description": "Discord bot for MangaDex.",
+  "main": "src/index.js",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "start": "node --no-warnings --experimental-vm-modules ./src/index.js",
+    "test": "node --no-warnings --experimental-vm-modules ./node_modules/jest/bin/jest.js --coverage",
+    "generate-template": "node --no-warnings --experimental-vm-modules ./src/i18n/generate-template.js",
+    "prepare": "pnpm generate-template",
+    "update": "pnpm up",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:references": "pnpm dlx knip",
+    "check:dependencies": "pnpm dlx depcheck"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest"
     },
-    "jest": {
-        "transform": {
-            "^.+\\.js$": "babel-jest"
-        },
-        "testMatch": [
-            "<rootDir>/tests/**/*.test.js"
-        ],
-        "collectCoverage": true,
-        "collectCoverageFrom": [
-            "<rootDir>/src/**/*.js"
-        ],
-        "coverageDirectory": "<rootDir>/coverage",
-        "coverageReporters": [
-            "lcov",
-            "text",
-            "json-summary"
-        ],
-        "coverageThreshold": {
-            "global": {
-                "branches": 0,
-                "functions": 0,
-                "lines": 0,
-                "statements": 0
-            }
-        }
-    },
-    "keywords": [
-        "discord",
-        "bot",
-        "mangadex",
-        "namicomi",
-        "dex-chan",
-        "mangabaka"
+    "testMatch": [
+      "<rootDir>/tests/**/*.test.js"
     ],
-    "author": "Bartolumiu",
-    "license": "GPL-3.0",
-    "dependencies": {
-        "@discordjs/rest": "~2.6.1",
-        "@prisma/adapter-pg": "~7.8.0",
-        "@prisma/client": "~7.8.0",
-        "chalk": "~5.6.2",
-        "discord-api-types": "~0.38.48",
-        "discord.js": "~14.26.4",
-        "dotenv": "~17.3.1",
-        "pg": "~8.21.0"
-    },
-    "devDependencies": {
-        "@types/pg": "~8.20.0",
-        "babel-jest": "~30.4.1",
-        "jest": "~30.4.2",
-        "prettier": "3.8.4",
-        "prisma": "~7.8.0"
-    },
-    "knip": {
-        "ignoreDependencies": [
-            "jest"
-        ],
-        "ignoreBinaries": [
-            "only-allow"
-        ]
-    },
-    "packageManager": "pnpm@11.6.0"
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.js"
+    ],
+    "coverageDirectory": "<rootDir>/coverage",
+    "coverageReporters": [
+      "lcov",
+      "text",
+      "json-summary"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 0,
+        "functions": 0,
+        "lines": 0,
+        "statements": 0
+      }
+    }
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "mangadex",
+    "namicomi",
+    "dex-chan",
+    "mangabaka"
+  ],
+  "author": "Bartolumiu",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@discordjs/rest": "~2.6.1",
+    "@prisma/adapter-pg": "~7.8.0",
+    "@prisma/client": "~7.8.0",
+    "chalk": "~5.6.2",
+    "discord-api-types": "~0.38.48",
+    "discord.js": "~14.26.4",
+    "dotenv": "~17.3.1",
+    "pg": "~8.21.0"
+  },
+  "devDependencies": {
+    "@types/pg": "~8.20.0",
+    "babel-jest": "~30.4.1",
+    "jest": "~30.4.2",
+    "prettier": "3.8.4",
+    "prisma": "~7.8.0"
+  },
+  "knip": {
+    "ignoreDependencies": [
+      "jest"
+    ],
+    "ignoreBinaries": [
+      "only-allow"
+    ]
+  },
+  "packageManager": "pnpm@11.6.0"
 }

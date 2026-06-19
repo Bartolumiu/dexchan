@@ -196,6 +196,23 @@
             "response": {
                 "footer": ""
             }
+        },
+        "search": {
+            "options": {
+                "id": {
+                    "name": "id"
+                },
+                "url": {
+                    "name": "url"
+                },
+                "source": {
+                    "name": "source"
+                },
+                "query": {
+                    "name": "query"
+                }
+            },
+            "name": "search"
         }
     },
     "error_embed": {

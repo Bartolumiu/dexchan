@@ -10,6 +10,8 @@
         "generate-template": "node --no-warnings --experimental-vm-modules ./src/i18n/generate-template.js",
         "prepare": "pnpm generate-template",
         "update": "pnpm up",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
         "check:references": "pnpm dlx knip",
         "check:dependencies": "pnpm dlx depcheck"
     },
@@ -51,15 +53,20 @@
     "license": "GPL-3.0",
     "dependencies": {
         "@discordjs/rest": "~2.6.1",
+        "@prisma/adapter-pg": "~7.8.0",
+        "@prisma/client": "~7.8.0",
         "chalk": "~5.6.2",
         "discord-api-types": "~0.38.48",
         "discord.js": "~14.26.4",
         "dotenv": "~17.3.1",
-        "mongoose": "~9.2.4"
+        "pg": "~8.21.0"
     },
     "devDependencies": {
+        "@types/pg": "~8.20.0",
         "babel-jest": "~30.4.1",
-        "jest": "~30.4.2"
+        "jest": "~30.4.2",
+        "prettier": "3.8.4",
+        "prisma": "~7.8.0"
     },
     "knip": {
         "ignoreDependencies": [

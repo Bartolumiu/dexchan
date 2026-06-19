@@ -1,0 +1,52 @@
+# =========================
+# Node & Runtime
+# =========================
+# Ignore the dynamic logs directory created by interactionCreate.ts
+/logs
+*.log
+pnpm-debug.log*
+
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# =========================
+# Dependencies
+# =========================
+/node_modules
+pnpm-lock.yaml
+
+# =========================
+# Build Artifacts & Output
+# =========================
+# Do not format the compiled JavaScript output!
+/dist
+/build
+
+# =========================
+# Auto-Generated Code
+# =========================
+# Ignore the Prisma Client types copied/generated from the Nuxt project
+/prisma/generated
+
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.*
+
+# =========================
+# Coverage & Testing
+# =========================
+/coverage
+/.nyc_output
+
+# =========================
+# OS & Editor
+# =========================
+.DS_Store
+.idea/
+.vscode/
+*.swp

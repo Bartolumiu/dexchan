@@ -1,10 +1,15 @@
-const axios = require('axios');
 const getChalk = require('./getChalk');
 
 module.exports = async function checkUpdates() {
     try {
-        const response = await axios.get('https://api.github.com/repos/bartolumiu/dexchan_rework/releases/latest');
-        const latestVersion = response.data.tag_name;
+        const response = await fetch('https://api.github.com/repos/bartolumiu/dexchan/releases/latest')
+
+        if (!response.ok) {
+            throw new Error(`HTTP status ${response.status}`);
+        }
+
+        const data = await response.json();
+        const latestVersion = data.tag_name;
         const currentVersion = require('../../../package.json').version;
 
         const latest = {

@@ -37,7 +37,7 @@ const handleMongoEvents = async (client, eventFiles) => {
  * Handles the loading and execution of events.
  * @param {*} client - The Discord client instance.
  */
-module.exports = (client) => {
+const handleEvents = (client) => {
     client.handleEvents = async () => {
         const eventFolders = readdirSync('./src/events');
         for (const folder of eventFolders) {
@@ -56,3 +56,5 @@ module.exports = (client) => {
         }
     };
 };
+
+module.exports = handleEvents;

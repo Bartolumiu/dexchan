@@ -203,6 +203,65 @@ describe('getTitleTags', () => {
                 other: "N/A"
             });
         });
+
+        it('should ignore non-tag relationships (like creator, organization, cover_art)', () => {
+            const mixedRelationshipsTitle = {
+                relationships: [
+                    {
+                        id: '00000000-0000-0000-0000-000000000000',
+                        type: 'creator',
+                        attributes: {
+                            username: 'username',
+                        }
+                    },
+                    {
+                        id: 'cover-id',
+                        type: 'cover_art',
+                        attributes: {
+                            fileName: 'cover.jpg',
+                        }
+                    },
+                    {
+                        id: 'tag-id',
+                        type: 'tag',
+                        attributes: {
+                            group: 'genre',
+                            name: { en: 'Just a Tag' }
+                        }
+                    }
+                ]
+            };
+            const result = getTitleTags(mixedRelationshipsTitle, 'namicomi', 'en');
+            expect(result).toEqual({
+                content_warning: "N/A",
+                format: "N/A",
+                genre: "Just a Tag",
+                theme: "N/A",
+                other: "N/A"
+            });
+        });
+
+        it('should handle missing or empty relationships gracefully', () => {
+            const missingRelationshipsTitle = {};
+            const result = getTitleTags(missingRelationshipsTitle, 'namicomi', 'en');
+            expect(result).toEqual({
+                content_warning: "N/A",
+                format: "N/A",
+                genre: "N/A",
+                theme: "N/A",
+                other: "N/A"
+            });
+
+            const emptyRelationshipsTitle = { relationships: [] };
+            const result2 = getTitleTags(emptyRelationshipsTitle, 'namicomi', 'en');
+            expect(result2).toEqual({
+                content_warning: "N/A",
+                format: "N/A",
+                genre: "N/A",
+                theme: "N/A",
+                other: "N/A"
+            });
+        })
     });
 
     describe('unsupported type', () => {

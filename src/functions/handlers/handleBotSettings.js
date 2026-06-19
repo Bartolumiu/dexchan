@@ -1,6 +1,6 @@
 const Bot = require('../../schemas/bot');
 
-module.exports = (client) => {
+const handleBotSettings = (client) => {
     client.getMongoBotData = async () => {
         return getBotData(client);
     };
@@ -35,3 +35,5 @@ const getBotData = async (client) => {
         throw err;
     }
 }
+
+module.exports = handleBotSettings;

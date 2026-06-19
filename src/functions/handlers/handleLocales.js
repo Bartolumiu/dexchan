@@ -19,7 +19,7 @@ const commandDescriptions = {};
  * Handles the loading and translation of locale files.
  * @param {*} client - The Discord client instance.
  */
-module.exports = (client) => {
+const handleLocales = (client) => {
     /**
      * Handles the loading of locale files.
      * @returns {Promise<Object>} - A promise that resolves to the locales object containing all loaded translations.
@@ -176,6 +176,7 @@ const getLocale = (userProfile, interaction) => {
     return userProfile.preferredLocale || interaction.locale;
 }
 
+module.exports = handleLocales;
 module.exports.getLocale = getLocale;
 module.exports.translateAttribute = translateAttribute;
 module.exports.getTranslations = getTranslations;

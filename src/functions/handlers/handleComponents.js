@@ -13,7 +13,7 @@ const path = require('node:path');
  * @function handleComponents
  * @async
  */
-module.exports = (client) => {
+const handleComponents = (client) => {
     client.handleComponents = async () => {
         const chalk = await getChalk();
         console.log(chalk.blueBright('[Component Handler] Loading components...'));
@@ -42,13 +42,14 @@ module.exports = (client) => {
 
 /**
  * Loads components from the specified folder and adds them to the provided collection.
- * 
+ *
  * @param {Map} collection - The collection to which the components will be added.
  * @param {string} folder - The folder from which to load the components.
  * @param {string[]} componentFiles - Array of component file names to be loaded.
- * 
+ * @param chalk - The chalk instance for logging.
+ *
  * @returns {Promise<void>}
- * 
+ *
  * @function loadComponents
  * @async
  */
@@ -66,3 +67,5 @@ async function loadComponents(collection, folder, componentFiles, chalk) {
         }
     }
 }
+
+module.exports = handleComponents;

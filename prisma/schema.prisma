@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String  @id
+  preferredLocale String?
+  nsfwEnabled     Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GuildSettings {
+  guildId  String @id
+  nsfwMode String @default("strict")
+
+  sources GuildSource[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UpstreamSource {
+  id          String  @id @default(uuid())
+  identifier  String  @unique // Internal slug
+  displayName String // UI name
+  isDefault   Boolean @default(true) // Should be enabled by default for new servers?
+
+  guildOverrides GuildSource[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GuildSource {
+  id      String  @id @default(uuid())
+  enabled Boolean @default(true)
+
+  guildId String
+  guild   GuildSettings @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
+
+  sourceId String
+  source   UpstreamSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, sourceId])
+}

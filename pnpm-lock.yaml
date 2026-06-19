@@ -28,7 +28,7 @@ importers:
         version: 9.2.4
     devDependencies:
       babel-jest:
-        specifier: ^30.4.1
+        specifier: ~30.4.1
         version: 30.4.1(@babel/core@7.29.0)
       jest:
         specifier: ~30.4.2

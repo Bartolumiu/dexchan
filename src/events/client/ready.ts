@@ -1,13 +1,13 @@
-import { Events, Client } from "discord.js";
+import { Client, Events } from "discord.js";
 import { BotEvent } from "../../types/Event";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import checkUpdates from "../../functions/tools/checkUpdates";
+import getChalk from "../../functions/tools/getChalk";
 
 const event: BotEvent<Events.ClientReady> = {
   name: Events.ClientReady,
   once: true,
   execute: async (client: ExtendedClient, readyClient: Client<true>) => {
-    const getChalk = require("../../functions/tools/getChalk");
     const chalk = await getChalk();
 
     const pickPresence = require("../../functions/tools/pickPresence");

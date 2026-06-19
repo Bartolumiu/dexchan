@@ -1,25 +1,28 @@
 import {
-  Events,
+  AnySelectMenuInteraction,
+  AutocompleteInteraction,
+  ButtonInteraction,
+  ChatInputCommandInteraction,
+  Collection,
   Colors,
   EmbedBuilder,
+  Events,
   Interaction,
-  Collection,
-  ChatInputCommandInteraction,
   MessageContextMenuCommandInteraction,
-  UserContextMenuCommandInteraction,
-  ButtonInteraction,
-  AnySelectMenuInteraction,
   ModalSubmitInteraction,
-  AutocompleteInteraction,
+  UserContextMenuCommandInteraction,
 } from "discord.js";
 import * as fs from "node:fs";
 import { BotEvent } from "../../types/Event";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import { getInteractionContext } from "../../utils/database";
+import getChalk from "../../functions/tools/getChalk";
 
 const event: BotEvent<Events.InteractionCreate> = {
   name: Events.InteractionCreate,
   execute: async (client: ExtendedClient, interaction: Interaction) => {
+    const chalk = await getChalk();
+
     const context = await getInteractionContext(interaction);
     const locale = context.locale;
 
@@ -83,7 +86,9 @@ const event: BotEvent<Events.InteractionCreate> = {
           true
         );
       } else {
-        console.warn(`Unknown interaction type: ${interaction.type}`);
+        console.warn(
+          chalk.yellowBright(`Unknown interaction type: ${interaction.type}`)
+        );
       }
     } catch (e) {
       const error = e as Error;

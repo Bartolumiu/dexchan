@@ -2,6 +2,7 @@ import { GatewayIntentBits } from "discord.js";
 import { prisma } from "../utils/prisma";
 import { ExtendedClient } from "./ExtendedClient";
 import pkg from "../../package.json";
+import getChalk from "../functions/tools/getChalk";
 
 /**
  * Creates and configures a new Discord client instance.
@@ -31,7 +32,6 @@ export async function connectDB(): Promise<void> {
  */
 export async function logMessage(message: string): Promise<void> {
   try {
-    const getChalk = require("../functions/tools/getChalk");
     const chalk = await getChalk();
     console.log(chalk.blueBright(message));
   } catch {

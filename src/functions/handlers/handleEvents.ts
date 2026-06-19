@@ -2,11 +2,11 @@ import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import { BotEvent } from "../../types/Event";
+import getChalk from "../tools/getChalk";
 
 export default async function handleEvents(
   client: ExtendedClient
 ): Promise<void> {
-  const getChalk = require("../tools/getChalk");
   const chalk = await getChalk();
 
   console.log(chalk.blueBright("[Event Loader] Loading events..."));

@@ -58,12 +58,10 @@ export async function initializeApplication({
   const handleEvents = require("../functions/handlers/handleEvents");
   const handleCommands = require("../functions/handlers/handleCommands");
   const handleComponents = require("../functions/handlers/handleComponents");
-  const handleLocales = require("../functions/handlers/handleLocales");
 
   await handleEvents(client);
   await handleCommands(client);
   await handleComponents(client);
-  await handleLocales(client);
 
   await logMessage("Connecting to Database...");
   await connectDB();

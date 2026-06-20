@@ -55,3 +55,14 @@ model GuildSource {
 
   @@unique([guildId, sourceId])
 }
+
+model BotPresence {
+  id      String  @id @default(uuid())
+  text    String
+  status  String  @default("online")
+  type    Int     @default(4)
+  enabled Boolean @default(true)
+
+  activeFrom DateTime?
+  activeTo DateTime?
+}

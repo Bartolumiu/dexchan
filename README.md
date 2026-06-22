@@ -43,24 +43,21 @@
   </a>
 </p>
 
-
 ## Table Of Contents
 
-* [Built With](#built-with)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
-* [License](#license)
-* [Authors](#authors)
+- [Built With](#built-with)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+- [Authors](#authors)
 
 ## Built With
 
-
-
-* [Node.JS](https://nodejs.org)
-* [Discord.JS](https://discord.js.org)
+- [Node.JS](https://nodejs.org)
+- [Discord.JS](https://discord.js.org)
 
 ## Getting Started
 
@@ -68,27 +65,32 @@ To get a local copy of the bot up and running follow these steps.
 
 ### Prerequisites
 
-* Package Manager (Only pnpm allowed. Any other package will display an error message and exit the process)
+- Package Manager (Only pnpm allowed. Any other package will display an error message and exit the process)
 
-  * pnpm (via npm)
+  - pnpm (via npm)
+
   ```sh
   npm install -g pnpm
   ```
 
-  * pnpm (via corepack)
+  - pnpm (via corepack)
+
   ```sh
   corepack enable pnpm
   ```
 
-* MongoDB (for storing data)
-  * [MongoDB Atlas](https://www.mongodb.com/atlas/database) (recommended)
-  * [Self-hosted MongoDB](https://www.mongodb.com/docs/manual/installation/)
+- MongoDB (for storing data)
+  - [MongoDB Atlas](https://www.mongodb.com/atlas/database) (recommended)
+  - [Self-hosted MongoDB](https://www.mongodb.com/docs/manual/installation/)
 
-* pm2 (optional)
+- pm2 (optional)
+
 ```sh
 npm install pm2 -g
 ```
+
 or
+
 ```sh
 pnpm add -g pm2
 ```
@@ -119,21 +121,26 @@ clientID=0123456789011121314
 
 To start the bot, there are 4 different methods
 
-* Node:
+- Node:
+
 ```sh
 node src/index.js
 ```
 
-* npm command
+- npm command
+
 ```sh
 npm run start
 ```
-* pnpm command
+
+- pnpm command
+
 ```sh
 pnpm start
 ```
 
-* pm2 (recommended)
+- pm2 (recommended)
+
 ```sh
 pm2 start src/index.js
 ```
@@ -145,12 +152,15 @@ See the [open issues](https://github.com/Bartolumiu/dexchan/issues) for a list o
 ## Contributing
 
 ### Code Contributions
+
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-* If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/Bartolumiu/dexchan/issues/new) to discuss it, or directly create a pull request after you edit the *README.md* file with necessary changes.
-* Please make sure you check your spelling and grammar.
-* Create individual PR for each suggestion.
+
+- If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/Bartolumiu/dexchan/issues/new) to discuss it, or directly create a pull request after you edit the _README.md_ file with necessary changes.
+- Please make sure you check your spelling and grammar.
+- Create individual PR for each suggestion.
 
 ### Translation Contributions
+
 If you want to help translate the bot, you can do so by visiting [Weblate](https://weblate.tr25.es/engage/dexchan/). You can translate the bot into any language you want, and it will be automatically updated in the bot once the translated strings are approved.
 
 ### Creating A Pull Request
@@ -167,4 +177,4 @@ Distributed under the Apache License 2.0. See [LICENSE](https://github.com/Barto
 
 ## Authors
 
-* [Bartolumiu](https://github.com/Bartolumiu/)
+- [Bartolumiu](https://github.com/Bartolumiu/)

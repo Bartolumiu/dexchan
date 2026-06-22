@@ -21,4 +21,16 @@ export default {
     title: "Error",
     description: "An error occurred while processing your request.",
   },
+  utils: {
+    title_tags: {
+      format: "Format",
+      themes: "Themes",
+      genres: "Genres",
+      tags: "Tags",
+      genres_v2: "Genres (v2)",
+      tags_v2: "Tags (v2)",
+      content_warning: "Content Warnings",
+      other_tags: "Other Tags",
+    },
+  },
 } satisfies BotStrings;

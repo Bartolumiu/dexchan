@@ -1,4 +1,5 @@
 import { SearchI18n } from "../commands/lookup/search.i18n";
+import { TitleTagsI18n } from "../functions/titles/titleTags.i18n";
 
 export interface BotStrings {
   commands: {
@@ -9,6 +10,9 @@ export interface BotStrings {
   error_embed: {
     title: string;
     description: string;
+  };
+  utils: {
+    title_tags: TitleTagsI18n;
   };
 }
 

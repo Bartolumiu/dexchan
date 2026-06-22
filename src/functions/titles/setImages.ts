@@ -5,15 +5,13 @@ import getTitleCreators from "./titleCreators";
 import getCover from "./titleCover";
 import getBanner from "./titleBanner";
 import { ProviderType } from "../../constants/providers";
-
-// TODO: Replace with actual i18n
-type Translations = any;
+import { BotStrings } from "../../i18n/schema";
 
 export default async function setImages(
   title: any,
   embed: EmbedBuilder,
   type: ProviderType,
-  translations: Translations,
+  translations: BotStrings,
   locale: string | null = null
 ): Promise<AttachmentBuilder[]> {
   switch (type) {
@@ -31,11 +29,12 @@ export default async function setImages(
 const setMangaBakaImages = async (
   title: any,
   embed: EmbedBuilder,
-  translations: Translations
+  translations: BotStrings
 ): Promise<AttachmentBuilder[]> => {
   let authors = getTitleCreators(title, "mangabaka");
-  if (!authors) authors = translations.embed.error.unknown_author;
-  if (authors.length > 256) authors = translations.embed.error.too_many_authors;
+  if (!authors) authors = translations.utils.title_embed.author.unknown;
+  if (authors.length > 256)
+    authors = translations.utils.title_embed.author.too_many;
 
   const mbIcon = new AttachmentBuilder(
     path.join(__dirname, "../../assets/logos/mangabaka.png"),
@@ -58,11 +57,12 @@ const setMangaBakaImages = async (
 const setMangaDexImages = async (
   title: any,
   embed: EmbedBuilder,
-  translations: Translations
+  translations: BotStrings
 ): Promise<AttachmentBuilder[]> => {
   let authors = getTitleCreators(title, "mangadex");
-  if (!authors) authors = translations.embed.error.unknown_author;
-  if (authors.length > 256) authors = translations.embed.error.too_many_authors;
+  if (!authors) authors = translations.utils.title_embed.author.unknown;
+  if (authors.length > 256)
+    authors = translations.utils.title_embed.author.too_many;
 
   const mdIcon = new AttachmentBuilder(
     path.join(__dirname, "../../assets/logos/mangadex.png"),
@@ -85,12 +85,13 @@ const setMangaDexImages = async (
 const setNamiComiImages = async (
   title: any,
   embed: EmbedBuilder,
-  translations: Translations,
+  translations: BotStrings,
   locale: string | null
 ): Promise<AttachmentBuilder[]> => {
   let author = getTitleCreators(title, "namicomi");
-  if (!author) author = translations.embed.error.unknown_author;
-  if (author.length > 256) author = translations.embed.error.too_many_authors;
+  if (!author) author = translations.utils.title_embed.author.unknown;
+  if (author.length > 256)
+    author = translations.utils.title_embed.author.too_many;
 
   const ncIcon = new AttachmentBuilder(
     path.join(__dirname, "../../assets/logos/namicomi.png"),

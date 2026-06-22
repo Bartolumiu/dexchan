@@ -1,10 +1,9 @@
 import { Colors, EmbedBuilder, RepliableInteraction } from "discord.js";
 
-type Translations = any; // TODO: Replace with actual translations from reworked i18n
-
 export const sendErrorEmbed = async (
   interaction: RepliableInteraction,
-  translations: Translations,
+  commandErrors: Record<string, string>,
+  globalErrorTitle: string,
   embed: EmbedBuilder | null | undefined,
   errorKey: string,
   replacements: Record<string, string | number> = {}
@@ -12,8 +11,8 @@ export const sendErrorEmbed = async (
   if (!embed) return;
 
   let description: string = interaction.isMessageComponent()
-    ? translations.response.error.description.api
-    : translations.response.error.description[errorKey];
+    ? commandErrors.api
+    : commandErrors[errorKey];
 
   if (!description) return;
 
@@ -22,7 +21,7 @@ export const sendErrorEmbed = async (
   }
 
   embed
-    .setTitle(translations.response.error.title)
+    .setTitle(globalErrorTitle)
     .setDescription(description)
     .setColor(Colors.Red);
 

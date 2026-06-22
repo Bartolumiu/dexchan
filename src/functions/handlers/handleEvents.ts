@@ -18,9 +18,9 @@ export default async function handleEvents(
     if (folder === "mongo") continue; // Skip legacy mongo folder (deprecated)
 
     const folderPath = join(eventsPath, folder);
-    const eventFiles = readdirSync(folderPath).filter(
-      (file) => file.endsWith(".ts") || file.endsWith(".js")
-    ); // TODO: Remove JS support
+    const eventFiles = readdirSync(folderPath).filter((file) =>
+      file.endsWith(".ts")
+    );
 
     for (const file of eventFiles) {
       const filePath = join(folderPath, file);

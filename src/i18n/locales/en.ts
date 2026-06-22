@@ -32,6 +32,21 @@ export default {
   error_embed: {
     title: "Uh-oh!",
     description: "An error occurred while processing your request.",
+    stack: "Error Stack",
+    message: "Error Message",
+    no_stack: "No stack trace available.",
+    timeout: {
+      title: "Request timed out",
+      description:
+        "A timeout occurred while fetching data from an external API. Please try again later.",
+      note: "This error is usually caused by the external API being slow or unresponsive.",
+    },
+    err_int_ch_input: "Error in command {commandName}",
+    err_int_btn: "Error in button {buttonId}",
+    err_int_slct: "Error in select menu {selectId}",
+    err_int_ctx: "Error in context command {contextId}",
+    err_int_mod: "Error in modal {modalId}",
+    err_int_auto: "Error in autocomplete {autocompleteId}",
   },
   utils: {
     title_embed: {

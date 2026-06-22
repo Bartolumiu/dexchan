@@ -18,6 +18,36 @@ import { ExtendedClient } from "../../lib/ExtendedClient";
 import { getInteractionContext } from "../../utils/database";
 import getChalk from "../../functions/tools/getChalk";
 
+import { translate } from "../../functions/handlers/handleLocales";
+import { TranslationKey } from "../../utils/i18n";
+
+type InteractionErrorType =
+  | "err_int_ch_input"
+  | "err_int_btn"
+  | "err_int_slct"
+  | "err_int_ctx"
+  | "err_int_mod"
+  | "err_int_auto";
+
+type ExecutableInteraction =
+  | ChatInputCommandInteraction
+  | MessageContextMenuCommandInteraction
+  | UserContextMenuCommandInteraction
+  | ButtonInteraction
+  | AnySelectMenuInteraction
+  | ModalSubmitInteraction;
+
+interface ExecutableItem {
+  execute?: (
+    interaction: ExecutableInteraction,
+    client: ExtendedClient
+  ) => Promise<void>;
+  autocomplete?: (
+    interaction: AutocompleteInteraction,
+    client: ExtendedClient
+  ) => Promise<void>;
+}
+
 const event: BotEvent<Events.InteractionCreate> = {
   name: Events.InteractionCreate,
   execute: async (client: ExtendedClient, interaction: Interaction) => {
@@ -26,7 +56,8 @@ const event: BotEvent<Events.InteractionCreate> = {
     const context = await getInteractionContext(interaction);
     const locale = context.locale;
 
-    const { errorEmbed, errorStack } = await createErrorEmbed(client, locale);
+    // Synchronously create the fallback embeds
+    const { errorEmbed, errorStack } = createErrorEmbed(locale);
     const embeds = [errorEmbed, errorStack];
 
     try {
@@ -37,7 +68,8 @@ const event: BotEvent<Events.InteractionCreate> = {
           interaction.commandName,
           "err_int_ch_input",
           embeds,
-          client
+          client,
+          locale
         );
       } else if (interaction.isButton()) {
         await handleInteraction(
@@ -46,7 +78,8 @@ const event: BotEvent<Events.InteractionCreate> = {
           interaction.customId,
           "err_int_btn",
           embeds,
-          client
+          client,
+          locale
         );
       } else if (interaction.isAnySelectMenu()) {
         await handleInteraction(
@@ -55,7 +88,8 @@ const event: BotEvent<Events.InteractionCreate> = {
           interaction.customId,
           "err_int_slct",
           embeds,
-          client
+          client,
+          locale
         );
       } else if (interaction.isContextMenuCommand()) {
         await handleInteraction(
@@ -64,7 +98,8 @@ const event: BotEvent<Events.InteractionCreate> = {
           interaction.commandName,
           "err_int_ctx",
           embeds,
-          client
+          client,
+          locale
         );
       } else if (interaction.isModalSubmit()) {
         await handleInteraction(
@@ -73,7 +108,8 @@ const event: BotEvent<Events.InteractionCreate> = {
           interaction.customId,
           "err_int_mod",
           embeds,
-          client
+          client,
+          locale
         );
       } else if (interaction.isAutocomplete()) {
         await handleInteraction(
@@ -83,6 +119,7 @@ const event: BotEvent<Events.InteractionCreate> = {
           "err_int_auto",
           embeds,
           client,
+          locale,
           true
         );
       } else {
@@ -132,55 +169,27 @@ const event: BotEvent<Events.InteractionCreate> = {
 
 export default event;
 
-async function createErrorEmbed(client: ExtendedClient, locale: string) {
-  // TODO: Remove 'any' cast once handleLocales is migrated
-  const translate = (client as any).translate || (async () => "Error");
-
-  const errorTitle = await translate(locale, "error_embed", "title");
-  const errorDescription = await translate(
-    locale,
-    "error_embed",
-    "description"
-  );
-  const errorStack = await translate(locale, "error_embed", "stack");
-
+// Using your synchronous dot-notation translator
+function createErrorEmbed(locale: string) {
   return {
     errorEmbed: new EmbedBuilder()
-      .setTitle(errorTitle || "Error")
-      .setDescription(errorDescription || "An error occurred.")
+      .setTitle(translate(locale, "error_embed.title"))
+      .setDescription(translate(locale, "error_embed.description"))
       .setColor(Colors.Red),
     errorStack: new EmbedBuilder()
-      .setTitle(errorStack || "Stack Trace")
+      .setTitle(translate(locale, "error_embed.stack"))
       .setColor(Colors.Red),
   };
-}
-
-type ExecutableInteraction =
-  | ChatInputCommandInteraction
-  | MessageContextMenuCommandInteraction
-  | UserContextMenuCommandInteraction
-  | ButtonInteraction
-  | AnySelectMenuInteraction
-  | ModalSubmitInteraction;
-
-interface ExecutableItem {
-  execute?: (
-    interaction: ExecutableInteraction,
-    client: ExtendedClient
-  ) => Promise<void>;
-  autocomplete?: (
-    interaction: AutocompleteInteraction,
-    client: ExtendedClient
-  ) => Promise<void>;
 }
 
 async function handleInteraction(
   interaction: Interaction,
   collection: Collection<string | RegExp, ExecutableItem>,
   id: string,
-  errorType: string,
+  errorType: InteractionErrorType,
   embeds: EmbedBuilder[],
   client: ExtendedClient,
+  locale: string,
   isAutocomplete = false
 ) {
   let item = collection.get(id);
@@ -211,43 +220,32 @@ async function handleInteraction(
       error.message.toLowerCase().includes("timeout") ||
       stack.includes("timeout")
     ) {
-      await errorTimeout(
-        client,
-        interaction,
-        error,
-        errorType,
-        id,
-        embeds[0],
-        embeds[1]
-      );
+      errorTimeout(client, error, errorType, id, embeds[0], embeds[1], locale);
     } else {
-      await updateErrorEmbed(
+      updateErrorEmbed(
         client,
-        interaction,
         error,
         errorType,
         id,
         embeds[0],
-        embeds[1]
+        embeds[1],
+        locale
       );
-      throw error;
+      throw error; // Propagate the error so the main block logs it
     }
     throw new Error("Interaction execution timed out");
   }
 }
 
-async function updateErrorEmbed(
+function updateErrorEmbed(
   client: ExtendedClient,
-  interaction: Interaction,
   error: Error,
-  errorType: string,
+  errorType: InteractionErrorType,
   id: string,
   errorEmbed: EmbedBuilder,
-  errorStack: EmbedBuilder
+  errorStack: EmbedBuilder,
+  locale: string
 ) {
-  const locale = (await getInteractionContext(interaction)).locale;
-  const translate = (client as any).translate || (async () => "Error"); // TODO: Remove 'any' cast
-
   const replacements = {
     commandName: `/${id}`,
     buttonId: id,
@@ -255,18 +253,16 @@ async function updateErrorEmbed(
     contextId: id,
     modalId: id,
   };
-  const errorMessageStr = await translate(locale, "error_embed", "message");
-  const footer = await translate(
-    locale,
-    "error_embed",
-    `${errorType}`,
-    replacements
-  );
+
+  // Safely cast the dynamic string to a TranslationKey
+  const dynamicKey = `error_embed.${errorType}` as TranslationKey;
+  const footer = translate(locale, dynamicKey, replacements);
 
   errorEmbed.addFields({
-    name: errorMessageStr || "Error Message",
+    name: translate(locale, "error_embed.message"),
     value: error.message,
   });
+
   errorEmbed.setFooter({
     text: `${errorType.toUpperCase()} - ${footer}`,
     iconURL: client.user?.displayAvatarURL(),
@@ -279,18 +275,15 @@ async function updateErrorEmbed(
   });
 }
 
-async function errorTimeout(
+function errorTimeout(
   client: ExtendedClient,
-  interaction: Interaction,
   error: Error,
-  errorType: string,
+  errorType: InteractionErrorType,
   id: string,
   errorEmbed: EmbedBuilder,
-  errorStack: EmbedBuilder
+  errorStack: EmbedBuilder,
+  locale: string
 ) {
-  const locale = (await getInteractionContext(interaction)).locale;
-  const translate = (client as any).translate || (async () => "Error"); // TODO: Remove 'any' cast
-
   const replacements = {
     commandName: `/${id}`,
     buttonId: id,
@@ -298,26 +291,21 @@ async function errorTimeout(
     contextId: id,
     modalId: id,
   };
-  const footer = await translate(
-    locale,
-    "error_embed",
-    `${errorType}`,
-    replacements
-  );
 
-  errorEmbed.setTitle(await translate(locale, "error_embed", "timeout.title"));
+  const dynamicKey = `error_embed.${errorType}` as TranslationKey;
+  const footer = translate(locale, dynamicKey, replacements);
+
+  errorEmbed.setTitle(translate(locale, "error_embed.timeout.title"));
   errorEmbed.setDescription(
-    await translate(locale, "error_embed", "timeout.description")
+    translate(locale, "error_embed.timeout.description")
   );
   errorEmbed.setFooter({
     text: `ERR_TIMEOUT - ${footer}`,
     iconURL: client.user?.displayAvatarURL(),
   });
 
-  errorStack.setTitle(await translate(locale, "error_embed", "no_stack"));
-  errorStack.setDescription(
-    await translate(locale, "error_embed", "timeout.note")
-  );
+  errorStack.setTitle(translate(locale, "error_embed.no_stack"));
+  errorStack.setDescription(translate(locale, "error_embed.timeout.note"));
   errorStack.setFooter({
     text: `ERR_TIMEOUT - ${footer}`,
     iconURL: client.user?.displayAvatarURL(),

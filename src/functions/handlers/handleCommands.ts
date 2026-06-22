@@ -28,9 +28,9 @@ export default async function handleCommands(
 
   for (const folder of commandFolders) {
     const folderPath = join(commandsPath, folder);
-    const commandFiles = readdirSync(folderPath).filter(
-      (file) => file.endsWith(".ts") || file.endsWith(".js")
-    ); // TODO: yeet JavaScript
+    const commandFiles = readdirSync(folderPath).filter((file) =>
+      file.endsWith(".ts")
+    );
 
     for (const file of commandFiles) {
       try {

@@ -49,8 +49,8 @@ export default async function handleComponents(
     }
 
     const folderPath = join(componentsPath, folder);
-    const componentFiles = readdirSync(folderPath).filter(
-      (file) => file.endsWith(".ts") || file.endsWith(".js") // TODO: Yeet JavaScript
+    const componentFiles = readdirSync(folderPath).filter((file) =>
+      file.endsWith(".ts")
     );
 
     for (const file of componentFiles) {

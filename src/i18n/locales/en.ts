@@ -32,5 +32,17 @@ export default {
       content_warning: "Content Warnings",
       other_tags: "Other Tags",
     },
+    title_list_embed: {
+      description: "Here are the search results for `{query}` on {source}.",
+      placeholder: "Select a title to view more information...",
+      title: "Search Results",
+      unknown: "Unknown Title",
+      view: "View Title on {source}",
+    },
+  },
+  sources: {
+    mangabaka: "MangaBaka",
+    mangadex: "MangaDex",
+    namicomi: "NamiComi",
   },
 } satisfies BotStrings;

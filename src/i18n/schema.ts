@@ -1,5 +1,6 @@
 import { SearchI18n } from "../commands/lookup/search.i18n";
 import { TitleTagsI18n } from "../functions/titles/titleTags.i18n";
+import { TitleListEmbedI18n } from "../functions/titles/titleListEmbed.i18n";
 
 export interface BotStrings {
   commands: {
@@ -13,6 +14,12 @@ export interface BotStrings {
   };
   utils: {
     title_tags: TitleTagsI18n;
+    title_list_embed: TitleListEmbedI18n;
+  };
+  sources: {
+    mangabaka: string;
+    mangadex: string;
+    namicomi: string;
   };
 }
 

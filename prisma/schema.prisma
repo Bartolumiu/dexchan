@@ -64,5 +64,5 @@ model BotPresence {
   enabled Boolean @default(true)
 
   activeFrom DateTime?
-  activeTo DateTime?
+  activeTo   DateTime?
 }

@@ -32,7 +32,7 @@ const regexComponents = {
     slugAndParams: "(?:\\/[^?]+)?(?:\\?.*)?",
   },
   mangadex: {
-    subdomain: "(?:www\\.)?(?:canary|sandbox\\.)?",
+    subdomain: "(?:www\\.)?(?:canary\\.|sandbox\\.)?",
     domain: "mangadex\\.(?:org|dev)",
     id: "([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})",
     slugAndParams: "(?:\\/[^?]+)?(?:\\?.*)?",
@@ -104,14 +104,12 @@ export const parseUrl = (
 };
 
 const parseMangaBakaURL = (url: string): string | null => {
-  const formattedUrl = url.split("?")[0].split("/").slice(0, 5).join("/");
-  const match = urlRegexes.mangabaka.primary.exec(formattedUrl);
+  const match = urlRegexes.mangabaka.primary.exec(url.split("?")[0]);
   return match ? match[1] : null;
 };
 
 const parseMangaDexURL = (url: string): string | null => {
-  const formattedUrl = url.split("?")[0].split("/").slice(0, 5).join("/");
-  const match = urlRegexes.mangadex.primary.exec(formattedUrl);
+  const match = urlRegexes.mangadex.primary.exec(url.split("?")[0]);
   return match ? match[1] : null;
 };
 

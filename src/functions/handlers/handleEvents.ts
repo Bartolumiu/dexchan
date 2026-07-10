@@ -18,8 +18,8 @@ export default async function handleEvents(
     if (folder === "mongo") continue; // Skip legacy mongo folder (deprecated)
 
     const folderPath = join(eventsPath, folder);
-    const eventFiles = readdirSync(folderPath).filter((file) =>
-      file.endsWith(".ts")
+    const eventFiles = readdirSync(folderPath).filter(
+      (file) => file.endsWith(".ts") && !file.endsWith(".i18n.ts")
     );
 
     for (const file of eventFiles) {

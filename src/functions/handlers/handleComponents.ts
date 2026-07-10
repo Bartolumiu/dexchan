@@ -2,13 +2,8 @@ import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import getChalk from "../tools/getChalk";
-
-interface ComponentBase {
-  data: {
-    customId: string | RegExp;
-  };
-  execute: Function;
-}
+import { Collection } from "discord.js";
+import { Component } from "../../types/Component";
 
 export default async function handleComponents(
   client: ExtendedClient
@@ -30,7 +25,7 @@ export default async function handleComponents(
     return;
   }
 
-  const componentMap: Record<string, typeof client.buttons> = {
+  const componentMap: Record<string, Collection<string, any>> = {
     buttons: client.buttons,
     selectMenus: client.selectMenus,
     modals: client.modals,
@@ -49,8 +44,8 @@ export default async function handleComponents(
     }
 
     const folderPath = join(componentsPath, folder);
-    const componentFiles = readdirSync(folderPath).filter((file) =>
-      file.endsWith(".ts")
+    const componentFiles = readdirSync(folderPath).filter(
+      (file) => file.endsWith(".ts") && !file.endsWith(".i18n.ts")
     );
 
     for (const file of componentFiles) {
@@ -59,8 +54,7 @@ export default async function handleComponents(
       try {
         const componentModule = await import(filePath);
 
-        const component: ComponentBase =
-          componentModule.default || componentModule;
+        const component: Component = componentModule.default || componentModule;
 
         if (!component.data || !component.data.customId) {
           console.warn(

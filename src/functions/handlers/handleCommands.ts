@@ -28,8 +28,8 @@ export default async function handleCommands(
 
   for (const folder of commandFolders) {
     const folderPath = join(commandsPath, folder);
-    const commandFiles = readdirSync(folderPath).filter((file) =>
-      file.endsWith(".ts")
+    const commandFiles = readdirSync(folderPath).filter(
+      (file) => file.endsWith(".ts") && !file.endsWith(".i18n.ts")
     );
 
     for (const file of commandFiles) {
@@ -37,8 +37,10 @@ export default async function handleCommands(
         const filePath = join(folderPath, file);
         const commandModule = await import(filePath);
 
-        const command: SlashCommand & { guildID?: string | string[] } =
-          commandModule.default || commandModule;
+        const command: SlashCommand & {
+          guildID?: string | string[];
+          data: any;
+        } = commandModule.default || commandModule;
 
         if (!command.data) {
           console.warn(

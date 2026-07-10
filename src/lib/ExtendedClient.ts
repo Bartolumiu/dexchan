@@ -1,12 +1,23 @@
-import { Client, ClientOptions, Collection } from "discord.js";
+import {
+  Client,
+  ClientOptions,
+  Collection,
+  RESTPostAPIChatInputApplicationCommandsJSONBody,
+} from "discord.js";
+import { SlashCommand } from "../types/Command";
+import {
+  ButtonComponent,
+  ModalComponent,
+  SelectMenuComponent,
+} from "../types/Component";
 
 export class ExtendedClient extends Client {
-  public commands = new Collection<string, any>();
-  public buttons = new Collection<string, any>();
-  public selectMenus = new Collection<string, any>();
-  public modals = new Collection<string, any>();
-  public guildCommands = new Collection<string, any>();
-  public globalCommands: any[] = [];
+  public commands = new Collection<string, SlashCommand>();
+  public buttons = new Collection<string, ButtonComponent>();
+  public selectMenus = new Collection<string, SelectMenuComponent>();
+  public modals = new Collection<string, ModalComponent>();
+  public guildCommands = new Collection<string, SlashCommand>();
+  public globalCommands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
   public version: string;
 
   constructor(options: ClientOptions, version: string) {

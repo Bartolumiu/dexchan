@@ -1,6 +1,5 @@
 import {
   AnySelectMenuInteraction,
-  AutocompleteInteraction,
   ButtonInteraction,
   ChatInputCommandInteraction,
   Collection,
@@ -20,6 +19,7 @@ import getChalk from "../../functions/tools/getChalk";
 
 import { translate } from "../../functions/handlers/handleLocales";
 import { TranslationKey } from "../../utils/i18n";
+import { ExecutableItem } from "../../types/Component";
 
 type InteractionErrorType =
   | "err_int_ch_input"
@@ -36,17 +36,6 @@ type ExecutableInteraction =
   | ButtonInteraction
   | AnySelectMenuInteraction
   | ModalSubmitInteraction;
-
-interface ExecutableItem {
-  execute?: (
-    interaction: ExecutableInteraction,
-    client: ExtendedClient
-  ) => Promise<void>;
-  autocomplete?: (
-    interaction: AutocompleteInteraction,
-    client: ExtendedClient
-  ) => Promise<void>;
-}
 
 const event: BotEvent<Events.InteractionCreate> = {
   name: Events.InteractionCreate,

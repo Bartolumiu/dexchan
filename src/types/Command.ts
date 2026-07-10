@@ -2,15 +2,19 @@ import {
   AutocompleteInteraction,
   ChatInputCommandInteraction,
   SlashCommandBuilder,
+  SlashCommandOptionsOnlyBuilder,
+  SlashCommandSubcommandsOnlyBuilder,
 } from "discord.js";
 import { ExtendedClient } from "../lib/ExtendedClient";
 
 export interface SlashCommand {
   global?: boolean;
+  guildID?: string | string[];
   data:
     | SlashCommandBuilder
-    | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
-    | any; // TODO: Remove after yeeting async data() from current commands
+    | SlashCommandOptionsOnlyBuilder
+    | SlashCommandSubcommandsOnlyBuilder
+    | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
   execute: (
     interaction: ChatInputCommandInteraction,
     client: ExtendedClient

@@ -12,6 +12,11 @@ let presenceCache: CachedPresence[] = [];
 let lastFetchTime = 0;
 const CACHE_TTL = 5 * 60 * 1000; // 5m
 
+export const clearPresenceCache = () => {
+  presenceCache = [];
+  lastFetchTime = 0;
+};
+
 export default async function pickPresence(
   client: ExtendedClient
 ): Promise<void> {
@@ -20,20 +25,21 @@ export default async function pickPresence(
 
   if (currentTime - lastFetchTime > CACHE_TTL || presenceCache.length === 0) {
     try {
-      const dbPresences = await prisma.botPresence.findMany({
-        where: {
-          enabled: true,
-          OR: [
-            { activeFrom: null, activeTo: null }, // Permanent
-            {
-              activeFrom: { lte: currentDate },
-              activeTo: { gte: currentDate },
-            }, // Strictly between dates
-            { activeFrom: { lte: currentDate }, activeTo: null }, // Started, no end date
-            { activeFrom: null, activeTo: { gte: currentDate } }, // Expiring soon, no start date
-          ],
-        },
-      });
+      const dbPresences =
+        (await prisma.botPresence.findMany({
+          where: {
+            enabled: true,
+            OR: [
+              { activeFrom: null, activeTo: null }, // Permanent
+              {
+                activeFrom: { lte: currentDate },
+                activeTo: { gte: currentDate },
+              }, // Strictly between dates
+              { activeFrom: { lte: currentDate }, activeTo: null }, // Started, no end date
+              { activeFrom: null, activeTo: { gte: currentDate } }, // Expiring soon, no start date
+            ],
+          },
+        })) || [];
 
       if (dbPresences.length > 0) {
         presenceCache = dbPresences.map((p) => ({

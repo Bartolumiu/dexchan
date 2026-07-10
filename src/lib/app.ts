@@ -55,9 +55,12 @@ export async function initializeApplication({
 
   await logMessage(`Starting Dex-chan v${client.version}...`);
 
-  const handleEvents = require("../functions/handlers/handleEvents");
-  const handleCommands = require("../functions/handlers/handleCommands");
-  const handleComponents = require("../functions/handlers/handleComponents");
+  const { default: handleEvents } =
+    await import("../functions/handlers/handleEvents");
+  const { default: handleCommands } =
+    await import("../functions/handlers/handleCommands");
+  const { default: handleComponents } =
+    await import("../functions/handlers/handleComponents");
 
   await handleEvents(client);
   await handleCommands(client);
@@ -72,7 +75,7 @@ export async function initializeApplication({
   await client.guilds.fetch();
 
   await logMessage(
-    "✅ Ready as ${client.user.tag}! Logged in and connected to PostgreSQL."
+    `✅ Ready as ${client.user?.tag}! Logged in and connected to PostgreSQL.`
   );
 
   return client;

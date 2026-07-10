@@ -2,13 +2,11 @@
   "name": "dex-chan",
   "version": "0.0.7",
   "description": "Discord bot for MangaDex.",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "start": "node --no-warnings --experimental-vm-modules ./src/index.js",
-    "test": "node --no-warnings --experimental-vm-modules ./node_modules/jest/bin/jest.js --coverage",
-    "generate-template": "node --no-warnings --experimental-vm-modules ./src/i18n/generate-template.js",
-    "prepare": "pnpm generate-template",
+    "start": "tsx src/index.ts",
+    "test": "jest --coverage",
     "update": "pnpm up",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -16,15 +14,18 @@
     "check:dependencies": "pnpm dlx depcheck"
   },
   "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
     "transform": {
-      "^.+\\.js$": "babel-jest"
+      "^.+\\.tsx?$": "ts-jest",
+      "^.+\\.jsx?$": "babel-jest"
     },
     "testMatch": [
-      "<rootDir>/tests/**/*.test.js"
+      "<rootDir>/tests/**/*.test.(ts|js)"
     ],
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "<rootDir>/src/**/*.js"
+      "<rootDir>/src/**/*.ts"
     ],
     "coverageDirectory": "<rootDir>/coverage",
     "coverageReporters": [
@@ -56,17 +57,22 @@
     "@prisma/adapter-pg": "~7.8.0",
     "@prisma/client": "~7.8.0",
     "chalk": "~5.6.2",
-    "discord-api-types": "~0.38.48",
+    "discord-api-types": "~0.38.49",
     "discord.js": "~14.26.4",
-    "dotenv": "~17.3.1",
-    "pg": "~8.21.0"
+    "dotenv": "~17.4.2",
+    "pg": "~8.22.0",
+    "tsx": "~4.23.0"
   },
   "devDependencies": {
+    "@jest/globals": "~30.4.1",
+    "@types/jest": "~30.0.0",
     "@types/pg": "~8.20.0",
     "babel-jest": "~30.4.1",
     "jest": "~30.4.2",
-    "prettier": "3.8.4",
-    "prisma": "~7.8.0"
+    "prettier": "~3.9.4",
+    "prisma": "~7.8.0",
+    "ts-jest": "~29.4.11",
+    "typescript": "~6.0.3"
   },
   "knip": {
     "ignoreDependencies": [

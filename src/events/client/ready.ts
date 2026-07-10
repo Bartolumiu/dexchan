@@ -10,8 +10,9 @@ const event: BotEvent<Events.ClientReady> = {
   execute: async (client: ExtendedClient, readyClient: Client<true>) => {
     const chalk = await getChalk();
 
-    const pickPresence = require("../../functions/tools/pickPresence");
-    setInterval(pickPresence, 10 * 1000);
+    const { default: pickPresence } =
+      await import("../../functions/tools/pickPresence");
+    setInterval(() => pickPresence(client), 10 * 1000);
 
     console.log(chalk.blueBright("[GitHub] Checking for updates..."));
     const res = await checkUpdates();

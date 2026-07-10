@@ -1,6 +1,12 @@
 import { BotStrings } from "../schema";
 
 export default {
+  locale: {
+    enabled: true,
+    name: "English",
+    english_name: "English",
+    code: "en",
+  },
   commands: {
     lookup: {
       search: {
@@ -28,6 +34,146 @@ export default {
         footer: "/{commandName} - Requested by {user}",
       },
     },
+    configuration: {
+      settings: {
+        description: "View or change the bot's settings.",
+        subcommands: {
+          view: {
+            description: "View your settings",
+            response: {
+              title: "User Settings",
+              description: "Here are your current settings.",
+              fields: {
+                locale: {
+                  name: "Language",
+                },
+              },
+            },
+          },
+        },
+        subcommand_groups: {
+          locale: {
+            description: "Language Settings",
+            subcommands: {
+              set: {
+                description: "Set your preferred language",
+                options: {
+                  locale: {
+                    description: "The language you want to use",
+                  },
+                },
+                response: {
+                  title: {
+                    success: "Language Set",
+                    error: {
+                      invalid_locale: "Invalid Language",
+                      no_changes: "No Changes",
+                      unknown: "Unknown Error",
+                    },
+                  },
+                  description: {
+                    success:
+                      "Your preferred language has been set to `{locale}`.",
+                    error: {
+                      invalid_locale: "The language `{locale}` is not valid.",
+                      no_changes:
+                        "No changes made. The language remains set to `{locale}`.",
+                      unknown:
+                        "An unknown error occurred while changing the language.",
+                    },
+                  },
+                },
+              },
+              reset: {
+                description: "Reset your preferred language",
+                response: {
+                  title: {
+                    success: "Language Reset",
+                    error: "Error while resetting the language",
+                  },
+                  description: {
+                    success: "Your preferred language has been reset.",
+                    error:
+                      "An error occurred while resetting your preferred language.",
+                  },
+                },
+              },
+            },
+          },
+        },
+        response: {
+          footer: "{commandName} - Requested by {user}",
+        },
+      },
+    },
+    utils: {
+      ping: {
+        description: "Check the bot's latency.",
+        response: {
+          ping: "Pinging...",
+          title: "Pong!",
+          fields: {
+            bot_latency: {
+              name: "Bot Latency",
+              value: "{ping}ms",
+            },
+            api: {
+              discord: {
+                name: "Discord API",
+                value: "{apiPing}ms",
+              },
+              mangadex: {
+                name: "MangaDex API",
+                value: "{mdPing}ms",
+              },
+              namicomi: {
+                name: "NamiComi API",
+                value: "{ncPing}ms",
+              },
+            },
+          },
+          footer: "{commandName} - Requested by {user}",
+          not_ok: "Fetch failed",
+        },
+      },
+      help: {
+        description: "Get help with the bot.",
+        response: {
+          title: "Help",
+          fields: {
+            commands: {
+              name: "Commands",
+              value: "To view a list of commands, use `/commands`.",
+            },
+            support: {
+              name: "Support",
+              value: "To get support, use `/support`.",
+            },
+            invite: {
+              name: "Invite",
+              value: "To invite the bot to your server, use `/invite`.",
+            },
+            stats: {
+              name: "Stats",
+              value: "To view the bot's stats, use `/stats`.",
+            },
+            uptime: {
+              name: "Uptime",
+              value: "To view the bot's uptime, use `/uptime`.",
+            },
+          },
+          footer: "{commandName} - Requested by {user}",
+        },
+      },
+      commands: {
+        description: "Get the list of the commands you can use.",
+        response: {
+          title: "Commands",
+          description: "Here are the commands you can use.",
+          footer: "{commandName} - Requested by {user}",
+        },
+      },
+    },
   },
   error_embed: {
     title: "Uh-oh!",
@@ -47,6 +193,48 @@ export default {
     err_int_ctx: "Error in context command {contextId}",
     err_int_mod: "Error in modal {modalId}",
     err_int_auto: "Error in autocomplete {autocompleteId}",
+  },
+  components: {
+    title_stats: {
+      response: {
+        title: "Title Stats",
+        description:
+          "Here are the stats for the title with ID `{titleId}` from {source}.",
+        fields: {
+          rating: { name: "Rating" },
+          average: { name: "Average Rating" },
+          bayesian: { name: "Bayesian Rating" },
+          follows: { name: "Follows" },
+          distribution: { name: "Rating Distribution" },
+          comments: { name: "Comments" },
+          chapter_views: { name: "Chapter Views" },
+          chapter_comments: { name: "Chapter Comments" },
+          chapter_reactions: { name: "Chapter Reactions" },
+          views: { name: "Views" },
+        },
+        units: {
+          votes: "votes",
+          comments: "comments",
+        },
+        buttons: {
+          mangadex: {
+            forum: {
+              open: "Open Forum Thread",
+              no_thread: "No Forum Thread",
+            },
+          },
+          namicomi: {
+            open: "Open on NamiComi",
+          },
+        },
+        footer: "Title Stats - Requested by {user}",
+      },
+      error: {
+        title: "Error",
+        description:
+          "An error occurred while fetching title stats from the API. Please try again later.",
+      },
+    },
   },
   utils: {
     title_embed: {

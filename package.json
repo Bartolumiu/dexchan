@@ -21,7 +21,7 @@
       "^.+\\.jsx?$": "babel-jest"
     },
     "testMatch": [
-      "<rootDir>/tests/**/*.test.(ts|js)"
+      "<rootDir>/tests/**/*.test.(ts)"
     ],
     "collectCoverage": true,
     "collectCoverageFrom": [

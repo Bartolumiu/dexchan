@@ -36,9 +36,9 @@ const getMangaBakaTags = (title: any) => {
   const groups = {
     tags: title.tags || [],
     genres: title.genres || [],
-    tags_v2: (title.tags_v2 || []).map((tag: any) => tag.name).filter(Boolean),
+    tags_v2: (title.tags_v2 || []).map((tag: any) => tag?.name).filter(Boolean),
     genres_v2: (title.genres_v2 || [])
-      .map((genre: any) => genre.name)
+      .map((genre: any) => genre?.name)
       .filter(Boolean),
   };
   return mergeTagArrays(groups);

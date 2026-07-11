@@ -64,7 +64,7 @@ const getMangaBakaTitle = (
 
   if (matchingTitles.length === 0 && locale === "es") {
     matchingTitles = data.titles.filter(
-      (t) => t.language === "es-la" || t.language === "es-es"
+      (t) => t.language === "es-es" || t.language === "es-la"
     );
   }
 
@@ -72,16 +72,20 @@ const getMangaBakaTitle = (
     const primaryMatch = matchingTitles.find((t) => t.is_primary);
     if (primaryMatch) return primaryMatch.title;
 
-    const officialMatch = matchingTitles.find((t) => t.traits.includes("official"));
+    const officialMatch = matchingTitles.find((t) =>
+      t.traits?.includes("official")
+    );
     if (officialMatch) return officialMatch.title;
 
-    const nativeMatch = matchingTitles.find((t) => t.traits.includes("native"));
+    const nativeMatch = matchingTitles.find((t) =>
+      t.traits?.includes("native")
+    );
     if (nativeMatch) return nativeMatch.title;
 
-    const altMatch = matchingTitles.find((t) => t.traits.length > 0);
+    const altMatch = matchingTitles.find((t) => t.traits?.length > 0);
     if (altMatch) return altMatch.title;
 
-    const noTraitMatch = matchingTitles.find((t) => t.traits.length === 0);
+    const noTraitMatch = matchingTitles.find((t) => t.traits?.length === 0);
     if (noTraitMatch) return noTraitMatch.title;
 
     return matchingTitles[0].title;

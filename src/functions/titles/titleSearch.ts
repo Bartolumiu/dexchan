@@ -59,7 +59,5 @@ const buildUrl = (query: string, type: ProviderType): URL | null => {
       });
       return url;
     }
-    default:
-      return null;
   }
 };

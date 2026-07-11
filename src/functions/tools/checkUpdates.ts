@@ -1,5 +1,5 @@
 import getVersion from "./getVersion";
-import getChalk from "./getChalk";
+import { logMessage } from "../../lib/app";
 
 export interface UpdateStatus {
   isOutdated: boolean | null;
@@ -64,27 +64,38 @@ export default async function checkUpdates(): Promise<UpdateStatus> {
     };
 
     const versionComparison = compareVersions(latest, current);
+    let isOutdated = false;
 
     if (versionComparison > 0) {
-      return { isOutdated: true, latestVersion };
-    }
-
-    if (versionComparison === 0) {
+      isOutdated = true;
+    } else if (versionComparison === 0) {
       if (!latest.prerelease && current.prerelease) {
-        return { isOutdated: true, latestVersion };
-      }
-      if (latest.prerelease === "dev" && current.prerelease === "beta") {
-        return { isOutdated: true, latestVersion };
+        isOutdated = true;
+      } else if (latest.prerelease === "dev" && current.prerelease === "beta") {
+        isOutdated = true;
       }
     }
 
-    return { isOutdated: false, latestVersion };
+    if (isOutdated) {
+      await logMessage(
+        `[GitHub] The bot is outdated! Current version: ${currentVersion}, Latest version: ${latestVersion}`,
+        "warn"
+      );
+      await logMessage(
+        `[GitHub] Download the latest version at https://github.com/Bartolumiu/dexchan/releases/latest`,
+        "warn"
+      );
+    } else {
+      await logMessage("[GitHub] The bot is up to date!", "success");
+    }
+
+    return { isOutdated, latestVersion };
   } catch (error: unknown) {
-    const chalk = await getChalk();
     const errorMessage = error instanceof Error ? error.message : String(error);
 
-    console.error(
-      chalk.redBright(`[GitHub] Failed to check for updates: ${errorMessage}`)
+    await logMessage(
+      `[GitHub] Failed to check for updates: ${errorMessage}`,
+      "error"
     );
 
     return { isOutdated: null, latestVersion: null };

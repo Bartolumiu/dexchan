@@ -5,6 +5,12 @@ import pkg from "../../package.json";
 import getChalk from "../functions/tools/getChalk";
 
 /**
+ * Log levels for logging messages.
+ */
+export type LogLevel =
+  "info" | "warn" | "error" | "critical" | "debug" | "success";
+
+/**
  * Creates and configures a new Discord client instance.
  */
 export function createClient(): ExtendedClient {
@@ -21,7 +27,7 @@ export async function connectDB(): Promise<void> {
   try {
     await prisma.$connect();
   } catch (error) {
-    console.error("[Database] Failed to connect:", error);
+    await logMessage(`[Database] Failed to connect: ${error}`, "critical");
     process.exit(1);
   }
 }
@@ -29,13 +35,46 @@ export async function connectDB(): Promise<void> {
 /**
  * Logs a message with chalk styling if available, otherwise logs the message as is.
  * @param message Message to log.
+ * @param level Log level.
  */
-export async function logMessage(message: string): Promise<void> {
+export async function logMessage(
+  message: string,
+  level: LogLevel = "info"
+): Promise<void> {
   try {
     const chalk = await getChalk();
-    console.log(chalk.blueBright(message));
+    switch (level) {
+      case "info":
+        console.log(chalk.blueBright(message));
+        break;
+      case "warn":
+        console.warn(chalk.yellowBright(message));
+        break;
+      case "error":
+        console.error(chalk.redBright(message));
+        break;
+      case "critical":
+        console.error(chalk.bgRedBright.blackBright(message));
+        break;
+      case "debug":
+        console.log(chalk.gray(message));
+        break;
+      case "success":
+        console.log(chalk.greenBright(message));
+        break;
+    }
   } catch {
-    console.log(message);
+    switch (level) {
+      case "warn":
+        console.warn(message);
+        break;
+      case "error":
+      case "critical":
+        console.error(message);
+        break;
+      default:
+        console.log(message);
+    }
   }
 }
 
@@ -53,7 +92,7 @@ export async function initializeApplication({
 }: AppConfig): Promise<ExtendedClient> {
   const client = createClient();
 
-  await logMessage(`Starting Dex-chan v${client.version}...`);
+  await logMessage(`Starting Dex-chan v${client.version}...`, "info");
 
   const { default: handleEvents } =
     await import("../functions/handlers/handleEvents");
@@ -66,16 +105,17 @@ export async function initializeApplication({
   await handleCommands(client);
   await handleComponents(client);
 
-  await logMessage("Connecting to Database...");
+  await logMessage("Connecting to Database...", "info");
   await connectDB();
 
-  await logMessage("Logging in...");
+  await logMessage("Logging in...", "info");
   await client.login(token);
 
   await client.guilds.fetch();
 
   await logMessage(
-    `✅ Ready as ${client.user?.tag}! Logged in and connected to PostgreSQL.`
+    `✅ Ready as ${client.user?.tag}! Logged in and connected to PostgreSQL.`,
+    "success"
   );
 
   return client;

@@ -1,4 +1,5 @@
 import { Colors, EmbedBuilder, RepliableInteraction } from "discord.js";
+import { logMessage } from "../../lib/app";
 
 export const sendErrorEmbed = async (
   interaction: RepliableInteraction,
@@ -33,10 +34,11 @@ export const sendErrorEmbed = async (
     } else {
       await interaction.editReply(payload);
     }
-  } catch (error) {
-    console.error(
-      "[ErrorEmbed] Failed to send or edit reply. Interaction may have expired:",
-      error
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    await logMessage(
+      `[ErrorEmbed] Failed to send or edit reply. Interaction may have expired: ${errorMessage}`,
+      "error"
     );
   }
 };

@@ -15,8 +15,7 @@ import * as fs from "node:fs";
 import { BotEvent } from "../../types/Event";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import { getInteractionContext } from "../../utils/database";
-import getChalk from "../../functions/tools/getChalk";
-
+import { logMessage } from "../../lib/app";
 import { translate } from "../../functions/handlers/handleLocales";
 import { TranslationKey } from "../../utils/i18n";
 import { ExecutableItem } from "../../types/Component";
@@ -40,12 +39,9 @@ type ExecutableInteraction =
 const event: BotEvent<Events.InteractionCreate> = {
   name: Events.InteractionCreate,
   execute: async (client: ExtendedClient, interaction: Interaction) => {
-    const chalk = await getChalk();
-
     const context = await getInteractionContext(interaction);
     const locale = context.locale;
 
-    // Synchronously create the fallback embeds
     const { errorEmbed, errorStack } = createErrorEmbed(locale);
     const embeds = [errorEmbed, errorStack];
 
@@ -112,8 +108,9 @@ const event: BotEvent<Events.InteractionCreate> = {
           true
         );
       } else {
-        console.warn(
-          chalk.yellowBright(`Unknown interaction type: ${interaction.type}`)
+        await logMessage(
+          `Unknown interaction type: ${interaction.type}`,
+          "warn"
         );
       }
     } catch (e) {
@@ -158,7 +155,6 @@ const event: BotEvent<Events.InteractionCreate> = {
 
 export default event;
 
-// Using your synchronous dot-notation translator
 function createErrorEmbed(locale: string) {
   return {
     errorEmbed: new EmbedBuilder()
@@ -220,7 +216,7 @@ async function handleInteraction(
         embeds[1],
         locale
       );
-      throw error; // Propagate the error so the main block logs it
+      throw error;
     }
     throw new Error("Interaction execution timed out");
   }
@@ -243,7 +239,6 @@ function updateErrorEmbed(
     modalId: id,
   };
 
-  // Safely cast the dynamic string to a TranslationKey
   const dynamicKey = `error_embed.${errorType}` as TranslationKey;
   const footer = translate(locale, dynamicKey, replacements);
 

@@ -1,15 +1,14 @@
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ExtendedClient } from "../../lib/ExtendedClient";
-import getChalk from "../tools/getChalk";
 import { Collection } from "discord.js";
 import { Component } from "../../types/Component";
+import { logMessage } from "../../lib/app";
 
 export default async function handleComponents(
   client: ExtendedClient
 ): Promise<void> {
-  const chalk = await getChalk();
-  console.log(chalk.blueBright("[Component Handler] Loading components..."));
+  await logMessage("[Component Handler] Loading components...", "info");
 
   const componentsPath = join(__dirname, "../../components");
 
@@ -17,10 +16,9 @@ export default async function handleComponents(
   try {
     componentFolders = readdirSync(componentsPath);
   } catch (e) {
-    console.warn(
-      chalk.yellowBright(
-        "[Component Handler] No components folder found. Skipping..."
-      )
+    await logMessage(
+      "[Component Handler] No components folder found. Skipping...",
+      "warn"
     );
     return;
   }
@@ -35,10 +33,9 @@ export default async function handleComponents(
     const collection = componentMap[folder];
 
     if (!collection) {
-      console.error(
-        chalk.redBright(
-          `[Component Handler] Error: ${folder} is not a valid component folder.`
-        )
+      await logMessage(
+        `[Component Handler] Error: ${folder} is not a valid component folder.`,
+        "error"
       );
       continue;
     }
@@ -57,27 +54,24 @@ export default async function handleComponents(
         const component: Component = componentModule.default || componentModule;
 
         if (!component.data || !component.data.customId) {
-          console.warn(
-            chalk.yellowBright(
-              `[Component Handler] Component file ${file} in ${folder} is missing data.customId. Skipping.`
-            )
+          await logMessage(
+            `[Component Handler] Component file ${file} in ${folder} is missing data.customId. Skipping.`,
+            "warn"
           );
           continue;
         }
 
         collection.set(component.data.customId.toString(), component);
 
-        console.log(
-          chalk.greenBright(
-            `[Component Handler] Component ${component.data.customId} loaded from ${file} in ${folder}.`
-          )
+        await logMessage(
+          `[Component Handler] Component ${component.data.customId} loaded from ${file} in ${folder}.`,
+          "success"
         );
       } catch (e: unknown) {
         const error = e as Error;
-        console.error(
-          chalk.redBright(
-            `[Component Handler] Error loading ${file} in ${folder}: ${error.message}`
-          )
+        await logMessage(
+          `[Component Handler] Error loading ${file} in ${folder}: ${error.message}`,
+          "error"
         );
       }
     }

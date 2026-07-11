@@ -2,21 +2,17 @@ import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import { BotEvent } from "../../types/Event";
-import getChalk from "../tools/getChalk";
+import { logMessage } from "../../lib/app";
 
 export default async function handleEvents(
   client: ExtendedClient
 ): Promise<void> {
-  const chalk = await getChalk();
-
-  console.log(chalk.blueBright("[Event Loader] Loading events..."));
+  await logMessage("[Event Loader] Loading events...", "info");
 
   const eventsPath = join(__dirname, "../../events");
   const eventFolders = readdirSync(eventsPath);
 
   for (const folder of eventFolders) {
-    if (folder === "mongo") continue; // Skip legacy mongo folder (deprecated)
-
     const folderPath = join(eventsPath, folder);
     const eventFiles = readdirSync(folderPath).filter(
       (file) => file.endsWith(".ts") && !file.endsWith(".i18n.ts")
@@ -33,14 +29,14 @@ export default async function handleEvents(
         } else {
           client.on(event.name, (...args) => event.execute(client, ...args));
         }
-        console.log(
-          chalk.greenBright(`[Event Loader] Loaded ${event.name} event.`)
+        await logMessage(
+          `[Event Loader] Loaded ${event.name} event.`,
+          "success"
         );
       } else {
-        console.error(
-          chalk.redBright(
-            `[Event Loader] Error: ${file} is missing a required 'name' or 'execute' property.`
-          )
+        await logMessage(
+          `[Event Loader] Error: ${file} is missing a required 'name' or 'execute' property.`,
+          "error"
         );
       }
     }

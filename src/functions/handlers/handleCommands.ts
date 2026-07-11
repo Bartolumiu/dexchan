@@ -7,14 +7,12 @@ import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import { SlashCommand } from "../../types/Command";
-import getChalk from "../tools/getChalk";
+import { logMessage } from "../../lib/app";
 
 export default async function handleCommands(
   client: ExtendedClient
 ): Promise<void> {
-  const chalk = await getChalk();
-
-  console.log(chalk.blueBright("[Command Handler] Loading commands..."));
+  await logMessage("[Command Handler] Loading commands...", "info");
 
   const commandsPath = join(__dirname, "../../commands");
   const commandFolders = readdirSync(commandsPath);
@@ -43,10 +41,9 @@ export default async function handleCommands(
         } = commandModule.default || commandModule;
 
         if (!command.data) {
-          console.warn(
-            chalk.yellowBright(
-              `[Command Handler] Command file ${file} in ${folder} does not have a data property. Skipping...`
-            )
+          await logMessage(
+            `[Command Handler] Command file ${file} in ${folder} does not have a data property. Skipping...`,
+            "warn"
           );
           continue;
         }
@@ -61,10 +58,9 @@ export default async function handleCommands(
 
         if (command.global) {
           globalCommandList.push(commandJson);
-          console.log(
-            chalk.greenBright(
-              `[Command Handler] Global command /${command.data.name} loaded.`
-            )
+          await logMessage(
+            `[Command Handler] Global command /${command.data.name} loaded.`,
+            "success"
           );
         } else if (command.guildID) {
           const targetGuilds = Array.isArray(command.guildID)
@@ -76,30 +72,27 @@ export default async function handleCommands(
               guildCommandMap.set(guildId, []);
             }
             guildCommandMap.get(guildId)!.push(commandJson);
-            console.log(
-              chalk.greenBright(
-                `[Command Handler] Guild command /${command.data.name} loaded for guild ${guildId}.`
-              )
+            await logMessage(
+              `[Command Handler] Guild command /${command.data.name} loaded for guild ${guildId}.`,
+              "success"
             );
           }
         } else {
-          console.warn(
-            chalk.yellowBright(
-              `[Command Handler] Command /${command.data.name} does not have a guildID set and is not marked as global. Skipping...`
-            )
+          await logMessage(
+            `[Command Handler] Command /${command.data.name} does not have a guildID set and is not marked as global. Skipping...`,
+            "warn"
           );
         }
       } catch (e: any) {
-        console.error(
-          chalk.redBright(
-            `[Command Handler] Error loading ${file} in ${folder}: ${e.message}`
-          )
+        await logMessage(
+          `[Command Handler] Error loading ${file} in ${folder}: ${e.message}`,
+          "error"
         );
       }
     }
   }
 
-  await refreshCommands(globalCommandList, guildCommandMap, chalk);
+  await refreshCommands(globalCommandList, guildCommandMap);
 }
 
 async function refreshCommands(
@@ -107,17 +100,15 @@ async function refreshCommands(
   guildCommandMap: Map<
     string,
     RESTPostAPIChatInputApplicationCommandsJSONBody[]
-  >,
-  chalk: any
+  >
 ): Promise<void> {
   const clientID = process.env.CLIENT_ID;
   const botToken = process.env.BOT_TOKEN;
 
   if (!clientID || !botToken) {
-    console.error(
-      chalk.redBright(
-        "[Command Handler] Missing CLIENT_ID or BOT_TOKEN in environment. Cannot register commands."
-      )
+    await logMessage(
+      "[Command Handler] Missing CLIENT_ID or BOT_TOKEN in environment. Cannot register commands.",
+      "error"
     );
     return;
   }
@@ -125,37 +116,32 @@ async function refreshCommands(
   const rest = new REST({ version: "10" }).setToken(botToken);
 
   try {
-    console.log(
-      chalk.blueBright(
-        "[Command Handler] Started refreshing global application (/) commands."
-      )
+    await logMessage(
+      "[Command Handler] Started refreshing global application (/) commands.",
+      "info"
     );
     await rest.put(Routes.applicationCommands(clientID), {
       body: globalCommandList,
     });
 
     for (const [guildID, commands] of guildCommandMap) {
-      console.log(
-        chalk.gray(
-          `[Command Handler] Started refreshing guild (/) commands for guild ${guildID}`
-        )
+      await logMessage(
+        `[Command Handler] Started refreshing guild (/) commands for guild ${guildID}`,
+        "debug"
       );
       await rest.put(Routes.applicationGuildCommands(clientID, guildID), {
         body: commands,
       });
     }
 
-    console.log(
-      chalk.greenBright(
-        "[Command Handler] Successfully reloaded application (/) commands."
-      )
+    await logMessage(
+      "[Command Handler] Successfully reloaded application (/) commands.",
+      "success"
     );
   } catch (e: any) {
-    console.error(
-      chalk.redBright(
-        "[Command Handler] Failed to reload application (/) commands."
-      ),
-      e
+    await logMessage(
+      `[Command Handler] Failed to reload application (/) commands: ${e.message}`,
+      "error"
     );
   }
 }

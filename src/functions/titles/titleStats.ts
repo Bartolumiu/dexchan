@@ -52,11 +52,9 @@ export default async function getTitleStats(
 
 const buildUrl = (
   id: string | number,
-  endpointType: "mangabaka" | "mangadex" | "namicomi.ratings" | "namicomi.stats"
+  endpointType: "mangadex" | "namicomi.ratings" | "namicomi.stats"
 ): URL => {
   switch (endpointType) {
-    case "mangabaka":
-      return new URL(`${URL_FORMATS.mangabaka}${id}`);
     case "mangadex":
       return new URL(`${URL_FORMATS.mangadex}${id}`);
     case "namicomi.ratings":

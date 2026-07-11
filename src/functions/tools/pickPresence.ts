@@ -63,8 +63,6 @@ export default async function pickPresence(
     }
   }
 
-  if (presenceCache.length === 0) return;
-
   const randomIndex = Math.floor(Math.random() * presenceCache.length);
   const selected = presenceCache[randomIndex];
 

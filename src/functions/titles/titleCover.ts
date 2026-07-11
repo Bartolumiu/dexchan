@@ -37,7 +37,7 @@ export default async function getCover(
 const buildURL = (
   title: any,
   type: ProviderType,
-  locale: string | null = null
+  locale: string | null
 ): URL | null => {
   if (!title) return null;
 

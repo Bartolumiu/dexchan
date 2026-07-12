@@ -32,7 +32,7 @@ const setMangaBakaImages = async (
   translations: BotStrings
 ): Promise<AttachmentBuilder[]> => {
   let authors = getTitleCreators(title, "mangabaka");
-  if (!authors) authors = translations.utils.title_embed.author.unknown;
+  if (!authors) authors = translations.common.words.unknown;
   if (authors.length > 256)
     authors = translations.utils.title_embed.author.too_many;
 
@@ -49,7 +49,7 @@ const setMangaBakaImages = async (
     name: "cover.png",
     description: "Cover image",
   });
-  embed.setThumbnail("attachment://cover.jpg");
+  embed.setThumbnail("attachment://cover.png");
 
   return [mbIcon, coverImage];
 };
@@ -60,7 +60,7 @@ const setMangaDexImages = async (
   translations: BotStrings
 ): Promise<AttachmentBuilder[]> => {
   let authors = getTitleCreators(title, "mangadex");
-  if (!authors) authors = translations.utils.title_embed.author.unknown;
+  if (!authors) authors = translations.common.words.unknown;
   if (authors.length > 256)
     authors = translations.utils.title_embed.author.too_many;
 
@@ -77,7 +77,7 @@ const setMangaDexImages = async (
     name: "cover.png",
     description: "Cover image",
   });
-  embed.setThumbnail("attachment://cover.jpg");
+  embed.setThumbnail("attachment://cover.png");
 
   return [mdIcon, coverImage];
 };
@@ -89,7 +89,7 @@ const setNamiComiImages = async (
   locale: string | null
 ): Promise<AttachmentBuilder[]> => {
   let author = getTitleCreators(title, "namicomi");
-  if (!author) author = translations.utils.title_embed.author.unknown;
+  if (!author) author = translations.common.words.unknown;
   if (author.length > 256)
     author = translations.utils.title_embed.author.too_many;
 
@@ -106,7 +106,7 @@ const setNamiComiImages = async (
     name: "cover.png",
     description: "Cover image",
   });
-  embed.setThumbnail("attachment://cover.jpg");
+  embed.setThumbnail("attachment://cover.png");
 
   const bannerBuffer = await getBanner(title, "namicomi");
   if (!bannerBuffer) return [ncIcon, coverImage];

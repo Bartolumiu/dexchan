@@ -25,7 +25,7 @@ const command: SlashCommand = {
     .setName("ping")
     .setDescription("Check the bot's latency")
     .setDescriptionLocalizations(
-      translateAttribute((t) => t.commands.utils.ping.description)
+      translateAttribute((t) => t.commands.ping.description)
     ),
   async execute(
     interaction: ChatInputCommandInteraction,
@@ -42,35 +42,29 @@ const command: SlashCommand = {
     const ping = message.createdTimestamp - interaction.createdTimestamp;
 
     const fields = {
-      title: translations.commands.utils.ping.response.title,
+      title: translations.commands.ping.response.title,
       ws: {
-        name: translations.commands.utils.ping.response.fields.bot_latency.name,
-        value: format(
-          translations.commands.utils.ping.response.fields.bot_latency.value,
-          { ping }
-        ),
+        name: translations.commands.ping.response.fields.bot_latency,
+        value: `${ping}ms`,
         inline: true,
       },
       discord: {
-        name: translations.commands.utils.ping.response.fields.api.discord.name,
-        value: format(
-          translations.commands.utils.ping.response.fields.api.discord.value,
-          { apiPing: client.ws.ping }
-        ),
+        name: translations.commands.ping.response.fields.api.discord,
+        value: `${client.ws.ping}ms`,
         inline: true,
       },
       md: {
-        name: translations.commands.utils.ping.response.fields.api.mangadex.name,
+        name: translations.commands.ping.response.fields.api.mangadex,
         value: "",
         inline: true,
       },
       nami: {
-        name: translations.commands.utils.ping.response.fields.api.namicomi.name,
+        name: translations.commands.ping.response.fields.api.namicomi,
         value: "",
         inline: true,
       },
-      footer: format(translations.commands.utils.ping.response.footer, {
-        commandName: `/${interaction.commandName}`,
+      footer: format(translations.common.footers.command, {
+        commandName: `${interaction.commandName}`,
         user: interaction.user.username,
       }),
     };
@@ -86,24 +80,18 @@ const command: SlashCommand = {
 
     try {
       const mdPing = await getPing(API_URLS.MANGADEX);
-      fields.md.value = format(
-        translations.commands.utils.ping.response.fields.api.mangadex.value,
-        { mdPing }
-      );
+      fields.md.value = `${mdPing}ms`;
     } catch (e) {
       console.error(e);
-      fields.md.value = translations.commands.utils.ping.response.not_ok;
+      fields.md.value = translations.common.words.not_ok;
     }
 
     try {
       const namiPing = await getPing(API_URLS.NAMICOMI);
-      fields.nami.value = format(
-        translations.commands.utils.ping.response.fields.api.namicomi.value,
-        { ncPing: namiPing }
-      );
+      fields.nami.value = `${namiPing}ms`;
     } catch (e) {
       console.error(e);
-      fields.nami.value = translations.commands.utils.ping.response.not_ok;
+      fields.nami.value = translations.common.words.not_ok;
     }
 
     embed.addFields(fields.md, fields.nami);

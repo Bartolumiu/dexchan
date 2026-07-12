@@ -1,5 +1,14 @@
-import { AutocompleteInteraction, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, } from "discord.js";
-import { format, getTranslations, translateAttribute, } from "../../functions/handlers/handleLocales";
+import {
+  AutocompleteInteraction,
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  SlashCommandBuilder,
+} from "discord.js";
+import {
+  format,
+  getTranslations,
+  translateAttribute,
+} from "../../functions/handlers/handleLocales";
 import { sendErrorEmbed } from "../../functions/titles/errorEmbed";
 import search from "../../functions/titles/titleSearch";
 import buildTitleListEmbed from "../../functions/titles/titleListEmbed";
@@ -19,7 +28,7 @@ const command: SlashCommand = {
     .setName("search")
     .setDescription("Search for a title")
     .setDescriptionLocalizations(
-      translateAttribute((t) => t.commands.lookup.search.description)
+      translateAttribute((t) => t.commands.search.description)
     )
     .addStringOption((option) =>
       option
@@ -27,7 +36,7 @@ const command: SlashCommand = {
         .setDescription("The source to use for the search")
         .setDescriptionLocalizations(
           translateAttribute(
-            (t) => t.commands.lookup.search.options.source.description
+            (t) => t.commands.search.options.source.description
           )
         )
         .setAutocomplete(true)
@@ -37,7 +46,7 @@ const command: SlashCommand = {
         .setName("query")
         .setDescription("The title you want to search for")
         .setDescriptionLocalizations(
-          translateAttribute((t) => t.commands.lookup.search.options.query)
+          translateAttribute((t) => t.commands.search.options.query)
         )
         .setRequired(false)
     )
@@ -46,7 +55,7 @@ const command: SlashCommand = {
         .setName("id")
         .setDescription("The ID of the title you want to search for")
         .setDescriptionLocalizations(
-          translateAttribute((t) => t.commands.lookup.search.options.id)
+          translateAttribute((t) => t.commands.search.options.id)
         )
         .setRequired(false)
     )
@@ -55,7 +64,7 @@ const command: SlashCommand = {
         .setName("url")
         .setDescription("The URL of the title you want to search for")
         .setDescriptionLocalizations(
-          translateAttribute((t) => t.commands.lookup.search.options.url)
+          translateAttribute((t) => t.commands.search.options.url)
         )
         .setRequired(false)
     ),
@@ -69,7 +78,7 @@ const command: SlashCommand = {
     const context = await getInteractionContext(interaction);
     const locale = context.locale;
     const translations = getTranslations(locale);
-    const searchStrings = translations.commands.lookup.search;
+    const searchStrings = translations.commands.search;
 
     const sources = context.sources.map((src) => ({
       name: translations.sources[src as ProviderType] ?? src,
@@ -77,8 +86,8 @@ const command: SlashCommand = {
     }));
 
     const embed = new EmbedBuilder().setFooter({
-      text: format(searchStrings.footer, {
-        commandName: `/${interaction.commandName}`,
+      text: format(translations.common.footers.command, {
+        commandName: `${interaction.commandName}`,
         user: interaction.user.username,
       }),
       iconURL: client.user?.displayAvatarURL(),
@@ -91,7 +100,7 @@ const command: SlashCommand = {
         searchStrings.errors,
         searchStrings.errors.command_disabled
           ? translations.error_embed.title
-          : "Error",
+          : translations.common.words.error,
         embed,
         "no_source"
       );

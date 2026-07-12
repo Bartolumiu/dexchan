@@ -4,177 +4,143 @@ export default {
   locale: {
     enabled: true,
     name: "Euskara",
-    english_name: "Basque",
     code: "eu",
   },
+  common: {
+    footers: {
+      command: "/{commandName} - {user}k eskatua",
+      stats: "Tituluaren Estatistikak - {user}k eskatua",
+    },
+    errors: {
+      unknown: "Errore ezezagun bat gertatu da.",
+      try_again: "Mesedez, saiatu berriro geroago.",
+      api_failure:
+        "Errore bat gertatu da kanpoko APItik datuak eskuratzerakoan.",
+    },
+    words: {
+      unknown: "Ezezaguna",
+      none: "Bat ere ez",
+      success: "Arrakasta",
+      error: "Errorea",
+      not_ok: "Datu eskuratzeak huts egin du",
+    },
+  },
   commands: {
-    lookup: {
-      search: {
-        description: "Titulu bat bilatu.",
-        options: {
-          source: {
-            description: "Bilaketarako erabili beharreko iturria",
-            no_sources:
-              "Ez dago iturririk eskuragarri. Mesedez, saiatu berriro geroago.",
-          },
-          query: "Bilatu nahi duzun titulua",
-          id: "Bilatu nahi duzun tituluaren IDa",
-          url: "Bilatu nahi duzun tituluaren URLa",
+    search: {
+      description: "Titulu bat bilatu.",
+      options: {
+        source: {
+          description: "Bilaketarako erabili beharreko iturria",
+          no_sources:
+            "Ez dago iturririk eskuragarri. Mesedez, saiatu berriro geroago.",
         },
-        errors: {
-          command_disabled:
-            "Komando hau desgaituta dago.\nMesedez, saiatu berrigo geroago.",
-          no_source: "Mesedez, bilatzeko iturri bat eman.",
-          invalid_source:
-            "Oraindik ez dugu `{source}`(e)n bilaketak onartzen. Mesedez, beste iturri bat aukeratu.",
-          api: "Errore bat gertatu da tituluaren datuak eskuratzerakoan.\nMesedez, berriro saiatu minutu batzuetan.",
-          empty: "Mesedez, bilatzeko kontsulta bat eman.",
-          no_results:
-            "Kontsultak ez du emaitzarik itzuli. Hori da dakigun guztia.",
-          invalid_id: "Emandako IDa baliogabea da.",
-        },
-        footer: "/{commandName} - {user}k eskatua",
+        query: "Bilatu nahi duzun titulua",
+        id: "Bilatu nahi duzun tituluaren IDa",
+        url: "Bilatu nahi duzun tituluaren URLa",
+      },
+      errors: {
+        command_disabled:
+          "Komando hau desgaituta dago.\nMesedez, saiatu berrigo geroago.",
+        no_source: "Mesedez, bilatzeko iturri bat eman.",
+        invalid_source:
+          "Oraindik ez dugu `{source}`(e)n bilaketak onartzen. Mesedez, beste iturri bat aukeratu.",
+        empty: "Mesedez, bilatzeko kontsulta bat eman.",
+        no_results:
+          "Kontsultak ez du emaitzarik itzuli. Hori da dakigun guztia.",
+        invalid_id: "Emandako IDa baliogabea da.",
       },
     },
-    configuration: {
-      settings: {
-        description: "Botaren ezarpenak ikusi edo aldatu.",
-        subcommands: {
-          view: {
-            description: "Zure ezarpenak ikusi",
-            response: {
-              title: "Erabiltzailearen Ezarpenak",
-              description: "Hemen dituzu zure uneko ezarpenak.",
-              fields: {
-                locale: {
-                  name: "Hizkuntza",
-                },
-              },
-            },
+    settings: {
+      description: "Botaren ezarpenak ikusi edo aldatu.",
+      view: {
+        description: "Zure ezarpenak ikusi",
+        embed: {
+          title: "Erabiltzailearen Ezarpenak",
+          description: "Hemen dituzu zure uneko ezarpenak.",
+          fields: {
+            locale: "Hizkuntza",
           },
         },
-        subcommand_groups: {
-          locale: {
-            description: "Hizkuntza Ezarpenak",
-            subcommands: {
-              set: {
-                description: "Zure hizkuntza lehenetsia ezarri",
-                options: {
-                  locale: {
-                    description: "Erabili nahi duzun hizkuntza",
-                  },
-                },
-                response: {
-                  title: {
-                    success: "Hizkuntza Ezarrita",
-                    error: {
-                      invalid_locale: "Hizkuntza Baliogabea",
-                      no_changes: "Aldaketarik Ez",
-                      unknown: "Errore Ezezaguna",
-                    },
-                  },
-                  description: {
-                    success:
-                      "Zure lehenetsitako hizkuntza berria `{locale}` da.",
-                    error: {
-                      invalid_locale: "`{locale}` hizkuntza baliogabea da.",
-                      no_changes:
-                        "Ez dira aldaketarik egin. Hizkuntza `{locale}` balioarekin mantendu da.",
-                      unknown:
-                        "Errore ezezagun bat gertatu da hizkuntza aldatzerakoan.",
-                    },
-                  },
-                },
-              },
-              reset: {
-                description: "Zure lehenetsitako hizkuntza berrezarri",
-                response: {
-                  title: {
-                    success: "Hizkuntza Berrezarrita",
-                    error: "Errorea hizkuntza berrezartzean",
-                  },
-                  description: {
-                    success: "Zure lehenetsitako hizkuntza berrezarri da.",
-                    error:
-                      "Errore bat gertatu da zure lehenetsitako hizkuntza berrezartzean.",
-                  },
-                },
-              },
-            },
+      },
+      locale: {
+        description: "Hizkuntza Ezarpenak",
+        set: {
+          description: "Zure hizkuntza lehenetsia ezarri",
+          options: {
+            locale: "Erabili nahi duzun hizkuntza",
+          },
+          success: {
+            title: "Hizkuntza Ezarrita",
+            description: "Zure lehenetsitako hizkuntza berria `{locale}` da.",
+          },
+          error: {
+            invalid_locale: "`{locale}` hizkuntza baliogabea da.",
+            no_changes:
+              "Ez dira aldaketarik egin. Hizkuntza `{locale}` balioarekin mantendu da.",
           },
         },
-        response: {
-          footer: "{commandName} - {user}k eskatua",
+        reset: {
+          description: "Zure lehenetsitako hizkuntza berrezarri",
+          success: {
+            title: "Hizkuntza Berrezarrita",
+            description: "Zure lehenetsitako hizkuntza berrezarri da.",
+          },
+          error: {
+            description:
+              "Errore bat gertatu da zure lehenetsitako hizkuntza berrezartzean.",
+          },
         },
       },
     },
-    utils: {
-      ping: {
-        description: "Botaren latentzia ikusi.",
-        response: {
-          ping: "Ping egiten...",
-          title: "Pong!",
-          fields: {
-            bot_latency: {
-              name: "Botaren Latentzia",
-              value: "{ping}ms",
-            },
-            api: {
-              discord: {
-                name: "Discord APIa",
-                value: "{apiPing}ms",
-              },
-              mangadex: {
-                name: "MangaDex APIa",
-                value: "{mdPing}ms",
-              },
-              namicomi: {
-                name: "NamiComi APIa",
-                value: "{ncPing}ms",
-              },
-            },
+    ping: {
+      description: "Botaren latentzia ikusi.",
+      response: {
+        ping: "Ping egiten...",
+        title: "Pong!",
+        fields: {
+          bot_latency: "Botaren Latentzia",
+          api: {
+            discord: "Discord APIa",
+            mangadex: "MangaDex APIa",
+            namicomi: "NamiComi APIa",
           },
-          footer: "{commandName} - {user}k eskatua",
-          not_ok: "Datu eskuratzeak huts egin du",
         },
       },
-      help: {
-        description: "Botarekin laguntza lortu.",
-        response: {
-          title: "Laguntza",
-          fields: {
-            commands: {
-              name: "Komandoak",
-              value: "Komando zerrenda bat ikusteko, `/commands` erabili.",
-            },
-            support: {
-              name: "Laguntza",
-              value: "Laguntza eskuratzeko, `/support` erabili.",
-            },
-            invite: {
-              name: "Gonbidatu",
-              value: "Bota zure zerbitzarira gonbidatzeko, `/invite` erabili.",
-            },
-            stats: {
-              name: "Estatistikak",
-              value: "Botaren estatistikak ikusteko, `/stats` erabili.",
-            },
-            uptime: {
-              name: "Funtzionamendu Denbora",
-              value:
-                "Botaren funtzionamendu-denbora ikusteko, `/uptime` erabili.",
-            },
+    },
+    help: {
+      description: "Botarekin laguntza lortu.",
+      response: {
+        title: "Laguntza",
+        fields: {
+          commands: {
+            name: "Komandoak",
+            value: "Komando zerrenda bat ikusteko, `/commands` erabili.",
           },
-          footer: "{commandName} - {user}k eskatua",
+          support: {
+            name: "Laguntza",
+            value: "Laguntza eskuratzeko, `/support` erabili.",
+          },
+          invite: {
+            name: "Gonbidatu",
+            value: "Bota zure zerbitzarira gonbidatzeko, `/invite` erabili.",
+          },
+          stats: {
+            name: "Estatistikak",
+            value: "Botaren estatistikak ikusteko, `/stats` erabili.",
+          },
+          uptime: {
+            name: "Funtzionamendu Denbora",
+            value:
+              "Botaren funtzionamendu-denbora ikusteko, `/uptime` erabili.",
+          },
         },
       },
-      commands: {
-        description: "Erabil ditzakezun komandoen zerrenda eskuratu.",
-        response: {
-          title: "Komandoak",
-          description: "Hemen dituzu erabil ditzakezun komandoak.",
-          footer: "{commandName} - {user}k eskatua",
-        },
+    },
+    commands: {
+      description: "Erabil ditzakezun komandoen zerrenda eskuratu.",
+      response: {
+        title: "Komandoak",
+        description: "Hemen dituzu erabil ditzakezun komandoak.",
       },
     },
   },
@@ -205,21 +171,18 @@ export default {
         description:
           "Hemen dituzu `{titleId}`IDa duen tituluaren estatistikak {source}(e)n.",
         fields: {
-          rating: { name: "Balorazioa" },
-          average: { name: "Batezbesteko Balorazioa" },
-          bayesian: { name: "Bayesiar Balorazioa" },
-          follows: { name: "Jarraitzaileak" },
-          distribution: { name: "Balorazioen Banaketa" },
-          comments: { name: "Iruzkinak" },
-          chapter_views: { name: "Kapitulu Bistaratzeak" },
-          chapter_comments: { name: "Kapitulu Iruzkinak" },
-          chapter_reactions: { name: "Kapitulu Erreakzioak" },
-          views: { name: "Bistaratzeak" },
+          rating: "Balorazioa",
+          average: "Batezbesteko Balorazioa",
+          bayesian: "Bayesiar Balorazioa",
+          follows: "Jarraitzaileak",
+          distribution: "Balorazioen Banaketa",
+          comments: "Iruzkinak",
+          chapter_views: "Kapitulu Bistaratzeak",
+          chapter_comments: "Kapitulu Iruzkinak",
+          chapter_reactions: "Kapitulu Erreakzioak",
+          views: "Bistaratzeak",
         },
-        units: {
-          votes: "bozkak",
-          comments: "iruzkin",
-        },
+        units: { votes: "bozkak", comments: "iruzkin" },
         buttons: {
           mangadex: {
             forum: {
@@ -227,28 +190,14 @@ export default {
               no_thread: "Foru-haririk Ez",
             },
           },
-          namicomi: {
-            open: "NamiComin Ireki",
-          },
+          namicomi: { open: "NamiComin Ireki" },
         },
-        footer: "Tituluaren Estatistikak - {user}k eskatua",
-      },
-      error: {
-        title: "Errorea",
-        description:
-          "Errore bat gertatu da APItik tituluaren estatistikak eskuratzerakoan. Mesedez, saiatu berriro geroago.",
       },
     },
   },
   utils: {
     title_embed: {
-      title: {
-        unknown: "Titulu Ezezaguna",
-      },
-      author: {
-        too_many: "Egile Anitz",
-        unknown: "Egile Ezezaguna",
-      },
+      author: { too_many: "Egile Anitz" },
       description: {
         no_description: "Ez dago deskribapenik eskuragarri {locale}(e)rako.",
       },
@@ -308,16 +257,12 @@ export default {
           },
         },
       },
-      button: {
-        open: "{source}(e)n Ireki",
-        stats: "Estatistikak Ikusi",
-      },
+      button: { open: "{source}(e)n Ireki", stats: "Estatistikak Ikusi" },
     },
     title_list_embed: {
       description: "Hemen dituzu `{query}` bilaketaren emaitzak {source}(e)n.",
       placeholder: "Titulu bat hautatu informazio gehiago ikusteko...",
       title: "Bilaketa-emaitzak",
-      unknown: "Titulu Ezezaguna",
       view: "Titulua {source}(e)n Ikusi",
     },
     title_tags: {

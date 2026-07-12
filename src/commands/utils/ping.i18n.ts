@@ -4,26 +4,12 @@ export interface PingI18n {
     ping: string;
     title: string;
     fields: {
-      bot_latency: {
-        name: string;
-        value: string;
-      };
+      bot_latency: string;
       api: {
-        discord: {
-          name: string;
-          value: string;
-        };
-        mangadex: {
-          name: string;
-          value: string;
-        };
-        namicomi: {
-          name: string;
-          value: string;
-        };
+        discord: string;
+        mangadex: string;
+        namicomi: string;
       };
     };
-    footer: string;
-    not_ok: string;
   };
 }

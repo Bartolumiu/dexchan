@@ -21,7 +21,7 @@ const command: SlashCommand = {
     .setName("commands")
     .setDescription("Get the list of the commands you can use")
     .setDescriptionLocalizations(
-      translateAttribute((t) => t.commands.utils.commands.description)
+      translateAttribute((t) => t.commands.commands.description)
     ),
   async execute(
     interaction: ChatInputCommandInteraction,
@@ -30,7 +30,7 @@ const command: SlashCommand = {
     const context = await getInteractionContext(interaction);
     const locale = context.locale;
     const translations = getTranslations(locale);
-    const t = translations.commands.utils.commands.response;
+    const t = translations.commands.commands.response;
 
     const globalCommands = await client.application!.commands.fetch();
     const guildCommands = await interaction.guild!.commands.fetch();
@@ -71,8 +71,8 @@ const command: SlashCommand = {
       .addFields(fields)
       .setColor(Colors.Blurple)
       .setFooter({
-        text: format(t.footer, {
-          commandName: `/${interaction.commandName}`,
+        text: format(translations.common.footers.command, {
+          commandName: `${interaction.commandName}`,
           user: interaction.user.username,
         }),
         iconURL: client.user?.displayAvatarURL(),

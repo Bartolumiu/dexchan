@@ -4,175 +4,141 @@ export default {
   locale: {
     enabled: true,
     name: "Español",
-    english_name: "Spanish",
     code: "es",
   },
+  common: {
+    footers: {
+      command: "/{commandName} - Solicitado por {user}",
+      stats: "Estadísticas del Título - Solicitado por {user}",
+    },
+    errors: {
+      unknown: "Ha ocurrido un error desconocido.",
+      try_again: "Por favor, inténtalo de nuevo más tarde.",
+      api_failure: "No se han podido obtener los datos de la API externa.",
+    },
+    words: {
+      unknown: "Desconocido",
+      none: "Ninguno",
+      success: "Éxito",
+      error: "Error",
+      not_ok: "Error al obtener los datos",
+    },
+  },
   commands: {
-    lookup: {
-      search: {
-        description: "Busca un título",
-        options: {
-          source: {
-            description: "La fuente a utilizar para la búsqueda",
-            no_sources:
-              "No hay fuentes disponibles. Por favor, inténtalo de nuevo más tarde.",
-          },
-          query: "El título a buscar",
-          id: "ID del título a buscar",
-          url: "La URL del título a buscar",
+    search: {
+      description: "Busca un título",
+      options: {
+        source: {
+          description: "La fuente a utilizar para la búsqueda",
+          no_sources:
+            "No hay fuentes disponibles. Por favor, inténtalo de nuevo más tarde.",
         },
-        errors: {
-          command_disabled:
-            "Este comando está deshabilitado actualmente.\nPor favor, inténtalo de nuevo más tarde.",
-          no_source: "Por favor, especifica una fuente donde buscar.",
-          invalid_source:
-            "Aún no soportamos búsquedas en `{source}`. Por favor, elige una fuente diferente.",
-          api: "No se han podido obtener los datos del título de la API externa.\nPor favor, inténtalo de nuevo más tarde.",
-          empty: "Por favor, proporciona una consulta para buscar.",
-          no_results:
-            "La consulta no devolvió resultados. Es todo lo que sabemos.",
-          invalid_id: "La ID proporcionada no es válida.",
-        },
-        footer: "/{commandName} - Solicitado por {user}",
+        query: "El título a buscar",
+        id: "ID del título a buscar",
+        url: "La URL del título a buscar",
+      },
+      errors: {
+        command_disabled:
+          "Este comando está deshabilitado actualmente.\nPor favor, inténtalo de nuevo más tarde.",
+        no_source: "Por favor, especifica una fuente donde buscar.",
+        invalid_source:
+          "Aún no soportamos búsquedas en `{source}`. Por favor, elige una fuente diferente.",
+        empty: "Por favor, proporciona una consulta para buscar.",
+        no_results:
+          "La consulta no devolvió resultados. Es todo lo que sabemos.",
+        invalid_id: "La ID proporcionada no es válida.",
       },
     },
-    configuration: {
-      settings: {
-        description: "Revisa o cambia los ajustes del bot.",
-        subcommands: {
-          view: {
-            description: "Revisa tus ajustes",
-            response: {
-              title: "Ajustes de Usuario",
-              description: "Aquí tienes tus ajustes actuales.",
-              fields: {
-                locale: {
-                  name: "Idioma",
-                },
-              },
-            },
+    settings: {
+      description: "Revisa o cambia los ajustes del bot.",
+      view: {
+        description: "Revisa tus ajustes",
+        embed: {
+          title: "Ajustes de Usuario",
+          description: "Aquí tienes tus ajustes actuales.",
+          fields: {
+            locale: "Idioma",
           },
         },
-        subcommand_groups: {
-          locale: {
-            description: "Ajustes de Idioma",
-            subcommands: {
-              set: {
-                description: "Cambia tu idioma preferido",
-                options: {
-                  locale: {
-                    description: "El idioma que quieres usar",
-                  },
-                },
-                response: {
-                  title: {
-                    success: "¡Idioma cambiado!",
-                    error: {
-                      invalid_locale: "Idioma No Válido",
-                      no_changes: "Sin Cambios",
-                      unknown: "Error Desconocido",
-                    },
-                  },
-                  description: {
-                    success: "El idioma ha sido cambiado a `{locale}`.",
-                    error: {
-                      invalid_locale: "El idioma `{locale}` no es válido.",
-                      no_changes:
-                        "No se realizaron cambios. El idioma establecido sigue siendo `{locale}`.",
-                      unknown:
-                        "Ha ocurrido un error desconocido al cambiar el idioma.",
-                    },
-                  },
-                },
-              },
-              reset: {
-                description: "Restablece tu idioma preferido",
-                response: {
-                  title: {
-                    success: "Idioma Restablecido",
-                    error: "Error al restablecer el idioma",
-                  },
-                  description: {
-                    success:
-                      "Tu idioma ha sido restablecido al idioma predeterminado.",
-                    error: "Ha ocurrido un error al restablecer el idioma.",
-                  },
-                },
-              },
-            },
+      },
+      locale: {
+        description: "Ajustes de Idioma",
+        set: {
+          description: "Cambia tu idioma preferido",
+          options: {
+            locale: "El idioma que quieres usar",
+          },
+          success: {
+            title: "¡Idioma Cambiado!",
+            description: "Tu idioma ha sido cambiado a `{locale}`.",
+          },
+          error: {
+            invalid_locale: "El idioma `{locale}` no es válido.",
+            no_changes:
+              "No se realizaron cambios. El idioma establecido sigue siendo `{locale}`.",
           },
         },
-        response: {
-          footer: "{commandName} - Solicitado por {user}",
+        reset: {
+          description: "Restablece tu idioma preferido",
+          success: {
+            title: "Idioma Restablecido",
+            description:
+              "Tu idioma ha sido restablecido al idioma predeterminado.",
+          },
+          error: {
+            description: "Ha ocurrido un error al restablecer el idioma.",
+          },
         },
       },
     },
-    utils: {
-      ping: {
-        description: "Verifica la latencia del bot.",
-        response: {
-          ping: "Haciendo ping...",
-          title: "¡Pong!",
-          fields: {
-            bot_latency: {
-              name: "Latencia del Bot",
-              value: "{ping}ms",
-            },
-            api: {
-              discord: {
-                name: "API Discord",
-                value: "{apiPing}ms",
-              },
-              mangadex: {
-                name: "API MangaDex",
-                value: "{mdPing}ms",
-              },
-              namicomi: {
-                name: "API NamiComi",
-                value: "{ncPing}ms",
-              },
-            },
+    ping: {
+      description: "Verifica la latencia del bot.",
+      response: {
+        ping: "Haciendo ping...",
+        title: "¡Pong!",
+        fields: {
+          bot_latency: "Latencia del Bot",
+          api: {
+            discord: "API Discord",
+            mangadex: "API MangaDex",
+            namicomi: "API NamiComi",
           },
-          footer: "{commandName} - Solicitado por {user}",
-          not_ok: "Error al obtener los datos",
         },
       },
-      help: {
-        description: "Obtén ayuda con el bot.",
-        response: {
-          title: "Ayuda",
-          fields: {
-            commands: {
-              name: "Comandos",
-              value: "Para ver una lista de comandos, usa `/commands`.",
-            },
-            support: {
-              name: "Soporte",
-              value: "Para obtener soporte, usa `/support`.",
-            },
-            invite: {
-              name: "Invitar",
-              value: "Para invitar al bot a tu servidor, usa `/invite`.",
-            },
-            stats: {
-              name: "Estadísticas",
-              value: "Para ver las estadísticas del bot, usa `/stats`.",
-            },
-            uptime: {
-              name: "Tiempo de actividad",
-              value: "Para ver el tiempo de actividad del bot, usa `/uptime`.",
-            },
+    },
+    help: {
+      description: "Obtén ayuda con el bot.",
+      response: {
+        title: "Ayuda",
+        fields: {
+          commands: {
+            name: "Comandos",
+            value: "Para ver una lista de comandos, usa `/commands`.",
           },
-          footer: "{commandName} - Solicitado por {user}",
+          support: {
+            name: "Soporte",
+            value: "Para obtener soporte, usa `/support`.",
+          },
+          invite: {
+            name: "Invitar",
+            value: "Para invitar al bot a tu servidor, usa `/invite`.",
+          },
+          stats: {
+            name: "Estadísticas",
+            value: "Para ver las estadísticas del bot, usa `/stats`.",
+          },
+          uptime: {
+            name: "Tiempo de actividad",
+            value: "Para ver el tiempo de actividad del bot, usa `/uptime`.",
+          },
         },
       },
-      commands: {
-        description: "Obtén la lista de comandos que puedes usar.",
-        response: {
-          title: "Comandos",
-          description: "Aquí tienes los comandos que puedes usar.",
-          footer: "{commandName} - Solicitado por {user}",
-        },
+    },
+    commands: {
+      description: "Obtén la lista de comandos que puedes usar.",
+      response: {
+        title: "Comandos",
+        description: "Aquí tienes los comandos que puedes usar.",
       },
     },
   },
@@ -203,16 +169,16 @@ export default {
         description:
           "Aquí están las estadísticas para el título con ID `{titleId}` de {source}.",
         fields: {
-          rating: { name: "Calificación" },
-          average: { name: "Puntuación Media" },
-          bayesian: { name: "Puntuación Bayesiana" },
-          follows: { name: "Seguidores" },
-          distribution: { name: "Distribución de Valoraciones" },
-          comments: { name: "Comentarios" },
-          chapter_views: { name: "Visualizaciones de Capítulos" },
-          chapter_comments: { name: "Comentarios de Capítulos" },
-          chapter_reactions: { name: "Reacciones de Capítulos" },
-          views: { name: "Visualizaciones" },
+          rating: "Calificación",
+          average: "Puntuación Media",
+          bayesian: "Puntuación Bayesiana",
+          follows: "Seguidores",
+          distribution: "Distribución de Valoraciones",
+          comments: "Comentarios",
+          chapter_views: "Visualizaciones de Capítulos",
+          chapter_comments: "Comentarios de Capítulos",
+          chapter_reactions: "Reacciones de Capítulos",
+          views: "Visualizaciones",
         },
         units: {
           votes: "votos",
@@ -229,23 +195,13 @@ export default {
             open: "Abrir en NamiComi",
           },
         },
-        footer: "Estadísticas del Título - Solicitado por {user}",
-      },
-      error: {
-        title: "Error",
-        description:
-          "Ha ocurrido un error al obtener las estadísticas del título desde la API. Por favor, inténtalo de nuevo más tarde.",
       },
     },
   },
   utils: {
     title_embed: {
-      title: {
-        unknown: "Título Desconocido",
-      },
       author: {
         too_many: "Múltiples Autores",
-        unknown: "Autor Desconocido",
       },
       description: {
         no_description: "No hay descripción disponible para {locale}.",
@@ -316,7 +272,6 @@ export default {
         "Aquí están los resultados de búsqueda para `{query}` en {source}.",
       placeholder: "Selecciona un título para ver más información...",
       title: "Resultados de la Búsqueda",
-      unknown: "Título Desconocido",
       view: "Ver Título en {source}",
     },
     title_tags: {

@@ -23,16 +23,14 @@ const command: SlashCommand = {
     .setName("settings")
     .setDescription("Change your settings")
     .setDescriptionLocalizations(
-      translateAttribute((t) => t.commands.configuration.settings.description)
+      translateAttribute((t) => t.commands.settings.description)
     )
     .addSubcommand((command) =>
       command
         .setName("view")
         .setDescription("View your settings")
         .setDescriptionLocalizations(
-          translateAttribute(
-            (t) => t.commands.configuration.settings.subcommands.view.description
-          )
+          translateAttribute((t) => t.commands.settings.view.description)
         )
     )
     .addSubcommandGroup((group) =>
@@ -40,10 +38,7 @@ const command: SlashCommand = {
         .setName("locale")
         .setDescription("Your preferred locale")
         .setDescriptionLocalizations(
-          translateAttribute(
-            (t) =>
-              t.commands.configuration.settings.subcommand_groups.locale.description
-          )
+          translateAttribute((t) => t.commands.settings.locale.description)
         )
         .addSubcommand((command) =>
           command
@@ -51,8 +46,7 @@ const command: SlashCommand = {
             .setDescription("Set your preferred locale")
             .setDescriptionLocalizations(
               translateAttribute(
-                (t) =>
-                  t.commands.configuration.settings.subcommand_groups.locale.subcommands.set.description
+                (t) => t.commands.settings.locale.set.description
               )
             )
             .addStringOption((option) =>
@@ -63,8 +57,7 @@ const command: SlashCommand = {
                 )
                 .setDescriptionLocalizations(
                   translateAttribute(
-                    (t) =>
-                      t.commands.configuration.settings.subcommand_groups.locale.subcommands.set.options.locale.description
+                    (t) => t.commands.settings.locale.set.options.locale
                   )
                 )
                 .setAutocomplete(true)
@@ -77,8 +70,7 @@ const command: SlashCommand = {
             .setDescription("Reset your preferred locale")
             .setDescriptionLocalizations(
               translateAttribute(
-                (t) =>
-                  t.commands.configuration.settings.subcommand_groups.locale.subcommands.reset.description
+                (t) => t.commands.settings.locale.reset.description
               )
             )
         )
@@ -101,8 +93,8 @@ const command: SlashCommand = {
     else return;
 
     embed.setFooter({
-      text: format(translations.commands.configuration.settings.response.footer, {
-        commandName: `/${interaction.commandName}`,
+      text: format(translations.common.footers.command, {
+        commandName: `${interaction.commandName}`,
         user: interaction.user.username,
       }),
       iconURL: interaction.user.displayAvatarURL(),
@@ -153,7 +145,7 @@ async function localeSettings(
   embed: EmbedBuilder
 ) {
   const translations = getTranslations(locale);
-  const t = translations.commands.configuration.settings.subcommand_groups.locale.subcommands;
+  const t = translations.commands.settings.locale;
 
   switch (interaction.options.getSubcommand()) {
     case "set":
@@ -164,9 +156,9 @@ async function localeSettings(
         const isValid = validLocales.some((l) => l.code === newLocale);
 
         if (!isValid) {
-          embed.setTitle(t.set.response.title.error.invalid_locale);
+          embed.setTitle(t.set.error.invalid_locale);
           embed.setDescription(
-            format(t.set.response.description.error.invalid_locale, {
+            format(t.set.error.invalid_locale, {
               locale: newLocale,
             })
           );
@@ -179,9 +171,9 @@ async function localeSettings(
         });
 
         if (dbUser?.preferredLocale === newLocale) {
-          embed.setTitle(t.set.response.title.error.no_changes);
+          embed.setTitle(t.set.error.no_changes);
           embed.setDescription(
-            format(t.set.response.description.error.no_changes, {
+            format(t.set.error.no_changes, {
               locale: newLocale,
             })
           );
@@ -196,14 +188,14 @@ async function localeSettings(
         });
 
         const langName = translate(newLocale, "locale.name" as any);
-        embed.setTitle(t.set.response.title.success);
+        embed.setTitle(t.set.success.title);
         embed.setDescription(
-          format(t.set.response.description.success, { locale: langName })
+          format(t.set.success.description, { locale: langName })
         );
         embed.setColor(Colors.Green);
       } catch {
-        embed.setTitle(t.set.response.title.error.unknown);
-        embed.setDescription(t.set.response.description.error.unknown);
+        embed.setTitle(translations.common.words.error);
+        embed.setDescription(translations.common.errors.unknown);
         embed.setColor(Colors.Red);
       }
       break;
@@ -213,12 +205,12 @@ async function localeSettings(
           where: { id: interaction.user.id },
           data: { preferredLocale: null },
         });
-        embed.setTitle(t.reset.response.title.success);
-        embed.setDescription(t.reset.response.description.success);
+        embed.setTitle(t.reset.success.title);
+        embed.setDescription(t.reset.success.description);
         embed.setColor(Colors.Green);
       } catch {
-        embed.setTitle(t.reset.response.title.error);
-        embed.setDescription(t.reset.response.description.error);
+        embed.setTitle(translations.common.words.error);
+        embed.setDescription(t.reset.error.description);
         embed.setColor(Colors.Red);
       }
       break;
@@ -231,12 +223,12 @@ async function viewSettings(
   embed: EmbedBuilder
 ) {
   const translations = getTranslations(locale);
-  const t = translations.commands.configuration.settings.subcommands.view.response;
+  const t = translations.commands.settings.view;
 
-  embed.setTitle(t.title);
-  embed.setDescription(t.description);
+  embed.setTitle(t.embed.title);
+  embed.setDescription(t.embed.description);
   embed.addFields({
-    name: t.fields.locale.name,
+    name: t.embed.fields.locale,
     value: translate(locale, "locale.name" as any),
     inline: true,
   });

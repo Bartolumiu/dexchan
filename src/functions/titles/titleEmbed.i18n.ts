@@ -1,10 +1,6 @@
 export interface TitleEmbedI18n {
-  title: {
-    unknown: string;
-  };
   author: {
     too_many: string;
-    unknown: string;
   };
   description: {
     no_description: string;

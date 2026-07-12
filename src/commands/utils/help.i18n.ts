@@ -24,6 +24,5 @@ export interface HelpI18n {
         value: string;
       };
     };
-    footer: string;
   };
 }

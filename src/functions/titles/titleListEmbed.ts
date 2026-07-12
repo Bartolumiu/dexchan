@@ -29,9 +29,7 @@ export default function buildTitleListEmbed(
     );
 
     return {
-      name:
-        truncateString(title, 256) ||
-        translations.utils.title_list_embed.unknown,
+      name: truncateString(title, 256) || translations.common.words.unknown,
       value: `[${hyperlinkedText}](${url})`,
     };
   });
@@ -44,9 +42,7 @@ export default function buildTitleListEmbed(
 
   titles.forEach((id, title) => {
     menu.addOptions({
-      label:
-        truncateString(title, 100) ||
-        translations.utils.title_list_embed.unknown,
+      label: truncateString(title, 100) || translations.common.words.unknown,
       value: `${type}:${id}`,
     });
   });

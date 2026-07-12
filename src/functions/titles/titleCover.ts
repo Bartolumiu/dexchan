@@ -61,7 +61,9 @@ const buildURL = (
       if (!id) return null;
 
       const covers =
-        title.relationships?.find((rel: any) => rel.type === "cover_art") || [];
+        title.relationships?.filter((rel: any) => rel.type === "cover_art") ||
+        [];
+
       let coverName = covers.find(
         (rel: any) => rel.attributes?.locale === normalizedLocale
       )?.attributes?.fileName;

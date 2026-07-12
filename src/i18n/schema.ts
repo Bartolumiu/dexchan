@@ -12,21 +12,32 @@ export interface BotStrings {
   locale: {
     enabled: boolean;
     name: string;
-    english_name: string;
     code: string;
   };
+  common: {
+    footers: {
+      command: string;
+      stats: string;
+    };
+    errors: {
+      unknown: string;
+      try_again: string;
+      api_failure: string;
+    };
+    words: {
+      unknown: string;
+      none: string;
+      success: string;
+      error: string;
+      not_ok: string;
+    };
+  };
   commands: {
-    lookup: {
-      search: SearchI18n;
-    };
-    configuration: {
-      settings: SettingsI18n;
-    };
-    utils: {
-      ping: PingI18n;
-      help: HelpI18n;
-      commands: CommandsI18n;
-    };
+    search: SearchI18n;
+    settings: SettingsI18n;
+    ping: PingI18n;
+    help: HelpI18n;
+    commands: CommandsI18n;
   };
   error_embed: {
     title: string;

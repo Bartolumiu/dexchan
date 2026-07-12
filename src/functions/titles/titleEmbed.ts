@@ -38,7 +38,7 @@ const buildMangaBakaEmbed = (
 ): ActionRowBuilder<ButtonBuilder> => {
   const embedTitle =
     getLocalizedTitle(title, "mangabaka", locale) ||
-    translations.utils.title_embed.title.unknown;
+    translations.common.words.unknown;
   const embedDescription = truncateString(
     sanitizeDescription(title.description) ||
       translations.utils.title_embed.description.no_description,
@@ -125,7 +125,7 @@ const buildMangaDexEmbed = (
 ): ActionRowBuilder<ButtonBuilder> => {
   const embedTitle =
     getLocalizedTitle(title, "mangadex", locale) ||
-    translations.utils.title_embed.title.unknown;
+    translations.common.words.unknown;
   const embedDescription = truncateString(
     sanitizeDescription(getLocalizedDescription(title, "mangadex", locale)) ||
       translations.utils.title_embed.description.no_description,
@@ -217,7 +217,7 @@ const buildNamiComiEmbed = (
 ): ActionRowBuilder<ButtonBuilder> => {
   const embedTitle =
     getLocalizedTitle(title, "namicomi", locale) ||
-    translations.utils.title_embed.title.unknown;
+    translations.common.words.unknown;
   const embedDescription = truncateString(
     sanitizeDescription(getLocalizedDescription(title, "namicomi", locale)) ||
       translations.utils.title_embed.description.no_description,

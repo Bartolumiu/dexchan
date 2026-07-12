@@ -19,7 +19,7 @@ const command: SlashCommand = {
     .setName("help")
     .setDescription("Get help with using the bot")
     .setDescriptionLocalizations(
-      translateAttribute((t) => t.commands.utils.help.description)
+      translateAttribute((t) => t.commands.help.description)
     ),
   async execute(
     interaction: ChatInputCommandInteraction,
@@ -28,7 +28,7 @@ const command: SlashCommand = {
     const context = await getInteractionContext(interaction);
     const locale = context.locale;
     const translations = getTranslations(locale);
-    const t = translations.commands.utils.help.response;
+    const t = translations.commands.help.response;
 
     const embed = new EmbedBuilder()
       .setTitle(t.title)
@@ -56,8 +56,8 @@ const command: SlashCommand = {
       )
       .setColor(Colors.Blurple)
       .setFooter({
-        text: format(t.footer, {
-          commandName: `/${interaction.commandName}`,
+        text: format(translations.common.footers.command, {
+          commandName: `${interaction.commandName}`,
           user: interaction.user.username,
         }),
         iconURL: client.user?.displayAvatarURL(),

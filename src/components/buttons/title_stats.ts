@@ -35,10 +35,10 @@ export default {
 
     if (!stats) {
       const embed = new EmbedBuilder()
-        .setTitle(strings.error.title)
-        .setDescription(strings.error.description)
+        .setTitle(translations.common.words.error)
+        .setDescription(translations.common.errors.api_failure)
         .setFooter({
-          text: strings.response.footer.replace(
+          text: translations.common.footers.stats.replace(
             "{user}",
             interaction.user.username
           ),
@@ -60,7 +60,7 @@ export default {
       )
       .addFields(buildEmbedFields(stats, strings, source))
       .setFooter({
-        text: strings.response.footer.replace(
+        text: translations.common.footers.stats.replace(
           "{user}",
           interaction.user.username
         ),
@@ -98,22 +98,22 @@ const buildMangaDexEmbedFields = (
 ) => {
   return [
     {
-      name: strings.response.fields.average.name,
+      name: strings.response.fields.average,
       value: `${stats.title.rating.average}/10.00 (${stats.title.rating.count} ${strings.response.units.votes})`,
       inline: true,
     },
     {
-      name: strings.response.fields.bayesian.name,
+      name: strings.response.fields.bayesian,
       value: `${stats.title.rating.bayesian}/10.00`,
       inline: true,
     },
     {
-      name: strings.response.fields.follows.name,
+      name: strings.response.fields.follows,
       value: `${stats.title.follows}`,
       inline: true,
     },
     {
-      name: strings.response.fields.distribution.name,
+      name: strings.response.fields.distribution,
       value:
         Object.entries(stats.title.rating.distribution)
           .reverse()
@@ -125,7 +125,7 @@ const buildMangaDexEmbedFields = (
           .join("\n") || "N/A",
     },
     {
-      name: strings.response.fields.comments.name,
+      name: strings.response.fields.comments,
       value: `${stats.title.comments.repliesCount}`,
       inline: true,
     },
@@ -138,37 +138,37 @@ const buildNamiComiEmbedFields = (
 ) => {
   return [
     {
-      name: strings.response.fields.rating.name,
+      name: strings.response.fields.rating,
       value: `${stats.title.rating.bayesian}/5.00 (${stats.title.rating.count} ${strings.response.units.votes})`,
       inline: true,
     },
     {
-      name: strings.response.fields.views.name,
+      name: strings.response.fields.views,
       value: `${stats.title.views}`,
       inline: true,
     },
     {
-      name: strings.response.fields.follows.name,
+      name: strings.response.fields.follows,
       value: `${stats.title.follows}`,
       inline: true,
     },
     {
-      name: strings.response.fields.comments.name,
+      name: strings.response.fields.comments,
       value: `${stats.title.comments.repliesCount}`,
       inline: true,
     },
     {
-      name: strings.response.fields.chapter_views.name,
+      name: strings.response.fields.chapter_views,
       value: `${stats.chapters.views}`,
       inline: true,
     },
     {
-      name: strings.response.fields.chapter_comments.name,
+      name: strings.response.fields.chapter_comments,
       value: `${stats.chapters.comments}`,
       inline: true,
     },
     {
-      name: strings.response.fields.chapter_reactions.name,
+      name: strings.response.fields.chapter_reactions,
       value: `${stats.chapters.reactions}`,
       inline: true,
     },

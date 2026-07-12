@@ -3,6 +3,5 @@ export interface CommandsI18n {
   response: {
     title: string;
     description: string;
-    footer: string;
   };
 }

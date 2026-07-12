@@ -3,36 +3,16 @@ export interface TitleStatsI18n {
     title: string;
     description: string;
     fields: {
-      rating: {
-        name: string;
-      };
-      average: {
-        name: string;
-      };
-      bayesian: {
-        name: string;
-      };
-      follows: {
-        name: string;
-      };
-      distribution: {
-        name: string;
-      };
-      comments: {
-        name: string;
-      };
-      chapter_views: {
-        name: string;
-      };
-      chapter_comments: {
-        name: string;
-      };
-      chapter_reactions: {
-        name: string;
-      };
-      views: {
-        name: string;
-      };
+      rating: string;
+      average: string;
+      bayesian: string;
+      follows: string;
+      distribution: string;
+      comments: string;
+      chapter_views: string;
+      chapter_comments: string;
+      chapter_reactions: string;
+      views: string;
     };
     units: {
       votes: string;
@@ -49,10 +29,5 @@ export interface TitleStatsI18n {
         open: string;
       };
     };
-    footer: string;
-  };
-  error: {
-    title: string;
-    description: string;
   };
 }

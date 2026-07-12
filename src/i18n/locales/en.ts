@@ -4,174 +4,139 @@ export default {
   locale: {
     enabled: true,
     name: "English",
-    english_name: "English",
     code: "en",
   },
+  common: {
+    footers: {
+      command: "/{commandName} - Requested by {user}",
+      stats: "Title Stats - Requested by {user}",
+    },
+    errors: {
+      unknown: "An unknown error occurred.",
+      try_again: "Please try again later.",
+      api_failure: "Couldn't fetch data from the external API.",
+    },
+    words: {
+      unknown: "Unknown",
+      none: "None",
+      success: "Success",
+      error: "Error",
+      not_ok: "Fetch failed",
+    },
+  },
   commands: {
-    lookup: {
-      search: {
-        description: "Search for a title",
-        options: {
-          source: {
-            description: "The source to use for the search",
-            no_sources: "No sources available. Please try again later.",
-          },
-          query: "The title to search for",
-          id: "The ID of the title",
-          url: "The URL of the title",
+    search: {
+      description: "Search for a title",
+      options: {
+        source: {
+          description: "The source to use for the search",
+          no_sources: "No sources available. Please try again later.",
         },
-        errors: {
-          command_disabled:
-            "This command is currently disabled.\nPlease try again later.",
-          no_source: "Please specify a source to search on.",
-          invalid_source:
-            "We don't support searching on `{source}` yet. Please choose a different source.",
-          api: "Couldn't fetch title data from the external API.\nPlease try again later.",
-          empty: "Please provide a query to search for.",
-          no_results: "The query returned no results. That's all we know.",
-          invalid_id: "The provided ID is invalid.",
-        },
-        footer: "/{commandName} - Requested by {user}",
+        query: "The title to search for",
+        id: "The ID of the title",
+        url: "The URL of the title",
+      },
+      errors: {
+        command_disabled:
+          "This command is currently disabled.\nPlease try again later.",
+        no_source: "Please specify a source to search on.",
+        invalid_source:
+          "We don't support searching on `{source}` yet. Please choose a different source.",
+        empty: "Please provide a query to search for.",
+        no_results: "The query returned no results. That's all we know.",
+        invalid_id: "The provided ID is invalid.",
       },
     },
-    configuration: {
-      settings: {
-        description: "View or change the bot's settings.",
-        subcommands: {
-          view: {
-            description: "View your settings",
-            response: {
-              title: "User Settings",
-              description: "Here are your current settings.",
-              fields: {
-                locale: {
-                  name: "Language",
-                },
-              },
-            },
+    settings: {
+      description: "View or change the bot's settings.",
+      view: {
+        description: "View your settings",
+        embed: {
+          title: "User Settings",
+          description: "Here are your current settings.",
+          fields: {
+            locale: "Language",
           },
         },
-        subcommand_groups: {
-          locale: {
-            description: "Language Settings",
-            subcommands: {
-              set: {
-                description: "Set your preferred language",
-                options: {
-                  locale: {
-                    description: "The language you want to use",
-                  },
-                },
-                response: {
-                  title: {
-                    success: "Language Set",
-                    error: {
-                      invalid_locale: "Invalid Language",
-                      no_changes: "No Changes",
-                      unknown: "Unknown Error",
-                    },
-                  },
-                  description: {
-                    success:
-                      "Your preferred language has been set to `{locale}`.",
-                    error: {
-                      invalid_locale: "The language `{locale}` is not valid.",
-                      no_changes:
-                        "No changes made. The language remains set to `{locale}`.",
-                      unknown:
-                        "An unknown error occurred while changing the language.",
-                    },
-                  },
-                },
-              },
-              reset: {
-                description: "Reset your preferred language",
-                response: {
-                  title: {
-                    success: "Language Reset",
-                    error: "Error while resetting the language",
-                  },
-                  description: {
-                    success: "Your preferred language has been reset.",
-                    error:
-                      "An error occurred while resetting your preferred language.",
-                  },
-                },
-              },
-            },
+      },
+      locale: {
+        description: "Language settings",
+        set: {
+          description: "Set your preferred language",
+          options: {
+            locale: "The language you want to use",
+          },
+          success: {
+            title: "Language Set",
+            description: "Your preferred language has been set to `{locale}`.",
+          },
+          error: {
+            invalid_locale: "The language `{locale}` is not valid.",
+            no_changes:
+              "No changes made. The language remains set to `{locale}`.",
           },
         },
-        response: {
-          footer: "{commandName} - Requested by {user}",
+        reset: {
+          description: "Reset your preferred language",
+          success: {
+            title: "Language Reset",
+            description: "Your preferred language has been reset.",
+          },
+          error: {
+            description:
+              "An error occurred while resetting your preferred language.",
+          },
         },
       },
     },
-    utils: {
-      ping: {
-        description: "Check the bot's latency.",
-        response: {
-          ping: "Pinging...",
-          title: "Pong!",
-          fields: {
-            bot_latency: {
-              name: "Bot Latency",
-              value: "{ping}ms",
-            },
-            api: {
-              discord: {
-                name: "Discord API",
-                value: "{apiPing}ms",
-              },
-              mangadex: {
-                name: "MangaDex API",
-                value: "{mdPing}ms",
-              },
-              namicomi: {
-                name: "NamiComi API",
-                value: "{ncPing}ms",
-              },
-            },
+    ping: {
+      description: "Check the bot's latency.",
+      response: {
+        ping: "Pinging...",
+        title: "Pong!",
+        fields: {
+          bot_latency: "Bot Latency",
+          api: {
+            discord: "Discord API",
+            mangadex: "MangaDex API",
+            namicomi: "NamiComi API",
           },
-          footer: "{commandName} - Requested by {user}",
-          not_ok: "Fetch failed",
         },
       },
-      help: {
-        description: "Get help with the bot.",
-        response: {
-          title: "Help",
-          fields: {
-            commands: {
-              name: "Commands",
-              value: "To view a list of commands, use `/commands`.",
-            },
-            support: {
-              name: "Support",
-              value: "To get support, use `/support`.",
-            },
-            invite: {
-              name: "Invite",
-              value: "To invite the bot to your server, use `/invite`.",
-            },
-            stats: {
-              name: "Stats",
-              value: "To view the bot's stats, use `/stats`.",
-            },
-            uptime: {
-              name: "Uptime",
-              value: "To view the bot's uptime, use `/uptime`.",
-            },
+    },
+    help: {
+      description: "Get help with the bot.",
+      response: {
+        title: "Help",
+        fields: {
+          commands: {
+            name: "Commands",
+            value: "To view a list of commands, use `/commands`.",
           },
-          footer: "{commandName} - Requested by {user}",
+          support: {
+            name: "Support",
+            value: "To get support, use `/support`.",
+          },
+          invite: {
+            name: "Invite",
+            value: "To invite the bot to your server, use `/invite`.",
+          },
+          stats: {
+            name: "Stats",
+            value: "To view the bot's stats, use `/stats`.",
+          },
+          uptime: {
+            name: "Uptime",
+            value: "To view the bot's uptime, use `/uptime`.",
+          },
         },
       },
-      commands: {
-        description: "Get the list of the commands you can use.",
-        response: {
-          title: "Commands",
-          description: "Here are the commands you can use.",
-          footer: "{commandName} - Requested by {user}",
-        },
+    },
+    commands: {
+      description: "Get the list of the commands you can use.",
+      response: {
+        title: "Commands",
+        description: "Here are the commands you can use.",
       },
     },
   },
@@ -201,16 +166,16 @@ export default {
         description:
           "Here are the stats for the title with ID `{titleId}` from {source}.",
         fields: {
-          rating: { name: "Rating" },
-          average: { name: "Average Rating" },
-          bayesian: { name: "Bayesian Rating" },
-          follows: { name: "Follows" },
-          distribution: { name: "Rating Distribution" },
-          comments: { name: "Comments" },
-          chapter_views: { name: "Chapter Views" },
-          chapter_comments: { name: "Chapter Comments" },
-          chapter_reactions: { name: "Chapter Reactions" },
-          views: { name: "Views" },
+          rating: "Rating",
+          average: "Average Rating",
+          bayesian: "Bayesian Rating",
+          follows: "Follows",
+          distribution: "Rating Distribution",
+          comments: "Comments",
+          chapter_views: "Chapter Views",
+          chapter_comments: "Chapter Comments",
+          chapter_reactions: "Chapter Reactions",
+          views: "Views",
         },
         units: {
           votes: "votes",
@@ -227,23 +192,13 @@ export default {
             open: "Open on NamiComi",
           },
         },
-        footer: "Title Stats - Requested by {user}",
-      },
-      error: {
-        title: "Error",
-        description:
-          "An error occurred while fetching title stats from the API. Please try again later.",
       },
     },
   },
   utils: {
     title_embed: {
-      title: {
-        unknown: "Unknown Title",
-      },
       author: {
         too_many: "Multiple Authors",
-        unknown: "Unknown Author",
       },
       description: {
         no_description: "No description available.",
@@ -313,7 +268,6 @@ export default {
       description: "Here are the search results for `{query}` on {source}.",
       placeholder: "Select a title to view more information...",
       title: "Search Results",
-      unknown: "Unknown Title",
       view: "View Title on {source}",
     },
     title_tags: {

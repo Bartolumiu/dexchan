@@ -80,17 +80,23 @@ const command: SlashCommand = {
     client: ExtendedClient
   ) {
     const context = await getInteractionContext(interaction);
-    const locale = context.locale;
-    const translations = getTranslations(locale);
+    let locale = context.locale;
+    let translations = getTranslations(locale);
     const embed = new EmbedBuilder();
     const subcommandGroup = interaction.options.getSubcommandGroup();
     const subcommand = interaction.options.getSubcommand();
 
-    if (subcommandGroup === "locale")
-      await localeSettings(interaction, locale, embed);
-    else if (subcommand === "view")
+    if (subcommandGroup === "locale") {
+      const updatedLocale = await localeSettings(interaction, locale, embed);
+      if (updatedLocale) {
+        locale = updatedLocale;
+        translations = getTranslations(locale);
+      }
+    } else if (subcommand === "view") {
       await viewSettings(interaction, locale, embed);
-    else return;
+    } else {
+      return;
+    }
 
     embed.setFooter({
       text: format(translations.common.footers.command, {
@@ -143,7 +149,7 @@ async function localeSettings(
   interaction: ChatInputCommandInteraction,
   locale: string,
   embed: EmbedBuilder
-) {
+): Promise<string | undefined> {
   const translations = getTranslations(locale);
   const t = translations.commands.settings.locale;
 
@@ -163,7 +169,7 @@ async function localeSettings(
             })
           );
           embed.setColor(Colors.Red);
-          return;
+          return undefined;
         }
 
         const dbUser = await prisma.user.findUnique({
@@ -178,7 +184,7 @@ async function localeSettings(
             })
           );
           embed.setColor(Colors.Red);
-          return;
+          return undefined;
         }
 
         await prisma.user.upsert({
@@ -187,12 +193,17 @@ async function localeSettings(
           create: { id: interaction.user.id, preferredLocale: newLocale },
         });
 
+        const newTranslations = getTranslations(newLocale);
+        const newT = newTranslations.commands.settings.locale;
         const langName = translate(newLocale, "locale.name" as any);
-        embed.setTitle(t.set.success.title);
+
+        embed.setTitle(newT.set.success.title);
         embed.setDescription(
-          format(t.set.success.description, { locale: langName })
+          format(newT.set.success.description, { locale: langName })
         );
         embed.setColor(Colors.Green);
+
+        return newLocale;
       } catch {
         embed.setTitle(translations.common.words.error);
         embed.setDescription(translations.common.errors.unknown);
@@ -205,9 +216,16 @@ async function localeSettings(
           where: { id: interaction.user.id },
           data: { preferredLocale: null },
         });
-        embed.setTitle(t.reset.success.title);
-        embed.setDescription(t.reset.success.description);
+
+        const fallbackLocale = interaction.locale;
+        const fallbackTranslations = getTranslations(fallbackLocale);
+        const fallbackT = fallbackTranslations.commands.settings.locale;
+
+        embed.setTitle(fallbackT.reset.success.title);
+        embed.setDescription(fallbackT.reset.success.description);
         embed.setColor(Colors.Green);
+
+        return fallbackLocale;
       } catch {
         embed.setTitle(translations.common.words.error);
         embed.setDescription(t.reset.error.description);
@@ -215,6 +233,7 @@ async function localeSettings(
       }
       break;
   }
+  return undefined;
 }
 
 async function viewSettings(

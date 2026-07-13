@@ -43,7 +43,7 @@ const buildURL = (
 
   switch (type) {
     case "mangabaka": {
-      const coverUrl = title.cover?.raw?.url;
+      const coverUrl = title.cover?.raw;
       return coverUrl ? new URL(coverUrl) : null;
     }
     case "mangadex": {

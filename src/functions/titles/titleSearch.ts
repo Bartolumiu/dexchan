@@ -3,7 +3,7 @@ import fetchJSON from "../tools/fetchJSON";
 import getLocalizedTitle from "./localizedTitle";
 
 const URL_FORMATS = {
-  mangabaka: "https://api.mangabaka.org/v1/series/search",
+  mangabaka: "https://api.mangabaka.org/v2/series/search",
   mangadex: "https://api.mangadex.org/manga",
   namicomi: "https://api.namicomi.com/title",
 } as const;

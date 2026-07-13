@@ -47,31 +47,33 @@ describe("titleTags", () => {
         expect(result).toEqual({
           tags: "N/A",
           genres: "N/A",
-          tags_v2: "N/A",
-          genres_v2: "N/A",
         });
       });
 
       it("should correctly map valid tags and filter out falsy/missing names", () => {
         const title = {
-          tags: ["Tag1", "Tag2"],
-          genres: ["Action"],
-          tags_v2: [{ name: "TagV2" }, { name: null }, { no_name: "Ignored" }],
-          genres_v2: [{ name: "GenreV2" }, null, undefined],
+          tags: [
+            { name: "Tag1", is_genre: false },
+            { name: "Tag2", is_genre: false },
+            { name: "Action", is_genre: true },
+            { name: null, is_genre: false },
+            { hello: "world", is_genre: true },
+          ],
         };
 
         const result = getTitleTags(title, "mangabaka");
         expect(result).toEqual({
           tags: "Tag1, Tag2",
           genres: "Action",
-          tags_v2: "TagV2",
-          genres_v2: "GenreV2",
         });
       });
 
       it("should truncate arrays to a maximum of 10 items", () => {
         const title = {
-          tags: Array.from({ length: 15 }, (_, i) => `Tag${i}`),
+          tags: Array.from({ length: 15 }, (_, i) => ({
+            name: `Tag${i}`,
+            is_genre: false,
+          })),
         };
 
         const result = getTitleTags(title, "mangabaka");
@@ -276,9 +278,7 @@ describe("titleTags", () => {
       expect(result).toBe(true);
       expect(mockEmbed.addFields).toHaveBeenCalledWith(
         { name: "Genres", value: "N/A", inline: true },
-        { name: "Tags", value: "N/A", inline: true },
-        { name: "Genres V2", value: "N/A", inline: true },
-        { name: "Tags V2", value: "N/A", inline: true }
+        { name: "Tags", value: "N/A", inline: true }
       );
     });
 

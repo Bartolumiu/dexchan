@@ -35,7 +35,7 @@ describe("getCover", () => {
 
     it("should return buffer if cover url exists", async () => {
       const title = {
-        cover: { raw: { url: "https://example.com/cover.jpg" } },
+        cover: { raw: "https://example.com/cover.jpg" },
       };
       const result = await getCover(title, "mangabaka");
 

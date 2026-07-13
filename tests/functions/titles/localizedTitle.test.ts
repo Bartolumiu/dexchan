@@ -26,27 +26,12 @@ describe("getLocalizedTitle", () => {
   });
 
   describe("MangaBaka Logic", () => {
-    it("should fallback to data.title if titles array is missing", () => {
-      const title = { title: "Base Title", romanized_title: "Rom Title" };
-      expect(getLocalizedTitle(title, "mangabaka", "en")).toBe("Base Title");
+    it("should return null if titles array is missing or empty", () => {
+      expect(getLocalizedTitle({}, "mangabaka", "en")).toBeNull();
+      expect(getLocalizedTitle({ titles: [] }, "mangabaka", "en")).toBeNull();
     });
 
-    it("should fallback to romanized_title if title is missing", () => {
-      const title = { romanized_title: "Rom Title", native_title: "Nat Title" };
-      expect(getLocalizedTitle(title, "mangabaka", "en")).toBe("Rom Title");
-    });
-
-    it("should fallback to native_title if title and romanized are missing", () => {
-      const title = { native_title: "Nat Title" };
-      expect(getLocalizedTitle(title, "mangabaka", "en")).toBe("Nat Title");
-    });
-
-    it("should return null if no titles array and no fallback fields exist", () => {
-      const title = {};
-      expect(getLocalizedTitle(title, "mangabaka", "en")).toBeNull();
-    });
-
-    it("should match 'es-la' or 'es-es' if locale is 'es' and no 'es' exists", () => {
+    it("should match 'es-la' or 'es-es' if locale is 'es' and no exact 'es' exists", () => {
       const title = {
         titles: [
           {
@@ -160,10 +145,45 @@ describe("getLocalizedTitle", () => {
       );
     });
 
+    it("should fallback to the primary title if no locale matches", () => {
+      const title = {
+        titles: [
+          {
+            language: "fr",
+            title: "French Title",
+            traits: [],
+            is_primary: false,
+          },
+          {
+            language: "jp",
+            title: "Japanese Primary",
+            traits: [],
+            is_primary: true,
+          },
+        ],
+      };
+      expect(getLocalizedTitle(title, "mangabaka", "en")).toBe(
+        "Japanese Primary"
+      );
+    });
+
+    it("should fallback to the first available title if no locale matches and no primary exists", () => {
+      const title = {
+        titles: [
+          {
+            language: "fr",
+            title: "French Title",
+            traits: [],
+            is_primary: false,
+          },
+        ],
+      };
+      expect(getLocalizedTitle(title, "mangabaka", "en")).toBe("French Title");
+    });
+
     it("should hit the absolute final fallback if traits is somehow undefined", () => {
       const title = {
         titles: [
-          // Force traits to be undefined to bypass the length checks
           {
             language: "en",
             title: "Final Fallback",
@@ -175,37 +195,6 @@ describe("getLocalizedTitle", () => {
       expect(getLocalizedTitle(title, "mangabaka", "en")).toBe(
         "Final Fallback"
       );
-    });
-
-    it("should fallback to legacy fields if titles array is empty or no locale matches", () => {
-      const title = {
-        title: "Legacy Fallback",
-        titles: [
-          {
-            language: "fr",
-            title: "French Title",
-            traits: [],
-            is_primary: false,
-          },
-        ],
-      };
-      expect(getLocalizedTitle(title, "mangabaka", "en")).toBe(
-        "Legacy Fallback"
-      );
-    });
-
-    it("should return null from final fallback if titles array has no matches and legacy fields are missing", () => {
-      const title = {
-        titles: [
-          {
-            language: "fr",
-            title: "French Title",
-            traits: [],
-            is_primary: false,
-          },
-        ],
-      };
-      expect(getLocalizedTitle(title, "mangabaka", "en")).toBeNull();
     });
   });
 

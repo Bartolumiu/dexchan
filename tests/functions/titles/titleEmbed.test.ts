@@ -151,7 +151,7 @@ describe("buildTitleEmbed", () => {
       const title = {
         id: "mb-1",
         description: "Valid description",
-        year: 2023,
+        published: { start_date: "2023-01-03" },
         status: "ongoing",
         content_rating: "safe",
       };
@@ -201,7 +201,7 @@ describe("buildTitleEmbed", () => {
       const title = {
         id: "mb-2",
         description: null,
-        year: null,
+        published: null,
         status: "unknown_status",
         content_rating: null,
       };

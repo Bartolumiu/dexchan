@@ -64,7 +64,11 @@ const buildMangaBakaEmbed = (
         inline: true,
       },
       { name: f.follows, value: "N/A", inline: true },
-      { name: f.year, value: `${title.year || "N/A"}`, inline: true },
+      {
+        name: f.year,
+        value: `${title.published?.start_date?.split("-")[0] || "N/A"}`,
+        inline: true,
+      },
       {
         name: f.pub_status.name,
         value: capitalizeFirstLetter(

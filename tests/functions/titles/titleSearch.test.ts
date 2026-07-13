@@ -86,7 +86,7 @@ describe("search", () => {
 
       const calledUrl = (fetchJSON as jest.Mock).mock.calls[0][0] as URL;
       expect(calledUrl.origin + calledUrl.pathname).toBe(
-        "https://api.mangabaka.org/v1/series/search"
+        "https://api.mangabaka.org/v2/series/search"
       );
 
       const params = calledUrl.searchParams;

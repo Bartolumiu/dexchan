@@ -2,7 +2,7 @@ import { ProviderType } from "../../constants/providers";
 import fetchJSON from "../tools/fetchJSON";
 
 const URL_FORMATS = {
-  mangabaka: "https://api.mangabaka.org/v1/series/",
+  mangabaka: "https://api.mangabaka.org/v2/series/",
   mangadex: "https://api.mangadex.org/manga/",
   namicomi: "https://api.namicomi.com/title/",
 } as const;

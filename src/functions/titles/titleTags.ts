@@ -33,14 +33,23 @@ const mergeTagArrays = <T extends Record<string, string[]>>(
 };
 
 const getMangaBakaTags = (title: any) => {
+  const rawTags = title.tags || [];
+
+  const genres = rawTags
+    .filter((tag: any) => tag?.is_genre === true)
+    .map((tag: any) => tag?.name)
+    .filter(Boolean);
+
+  const tags = rawTags
+    .filter((tag: any) => tag?.is_genre === false)
+    .map((tag: any) => tag?.name)
+    .filter(Boolean);
+
   const groups = {
-    tags: title.tags || [],
-    genres: title.genres || [],
-    tags_v2: (title.tags_v2 || []).map((tag: any) => tag?.name).filter(Boolean),
-    genres_v2: (title.genres_v2 || [])
-      .map((genre: any) => genre?.name)
-      .filter(Boolean),
+    genres,
+    tags,
   };
+
   return mergeTagArrays(groups);
 };
 
@@ -128,9 +137,7 @@ const addMangaBakaTags = (
   >;
   embed.addFields(
     { name: translations.genres, value: groups.genres, inline: true },
-    { name: translations.tags, value: groups.tags, inline: true },
-    { name: translations.genres_v2, value: groups.genres_v2, inline: true },
-    { name: translations.tags_v2, value: groups.tags_v2, inline: true }
+    { name: translations.tags, value: groups.tags, inline: true }
   );
   return true;
 };

@@ -23,9 +23,6 @@ interface MangaBakaTitleItem {
 }
 
 interface MangaBakaData {
-  title?: string;
-  native_title?: string;
-  romanized_title?: string;
   titles?: MangaBakaTitleItem[];
 }
 
@@ -56,8 +53,8 @@ const getMangaBakaTitle = (
   data: MangaBakaData,
   locale: string
 ): string | null => {
-  if (!data.titles || !Array.isArray(data.titles)) {
-    return data.title || data.romanized_title || data.native_title || null;
+  if (!data.titles || !Array.isArray(data.titles) || data.titles.length === 0) {
+    return null;
   }
 
   let matchingTitles = data.titles.filter((t) => t.language === locale);
@@ -91,7 +88,8 @@ const getMangaBakaTitle = (
     return matchingTitles[0].title;
   }
 
-  return data.title || data.romanized_title || data.native_title || null;
+  const primaryFallback = data.titles.find((t) => t.is_primary);
+  return primaryFallback ? primaryFallback.title : data.titles[0].title;
 };
 
 const getMangaDexTitle = (

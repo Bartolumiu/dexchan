@@ -58,7 +58,7 @@ describe("getTitleDetails", () => {
       await getTitleDetails("mb-123", "mangabaka");
 
       const calledUrl = (fetchJSON as jest.Mock).mock.calls[0][0] as URL;
-      expect(calledUrl.href).toBe("https://api.mangabaka.org/v1/series/mb-123");
+      expect(calledUrl.href).toBe("https://api.mangabaka.org/v2/series/mb-123");
     });
   });
 

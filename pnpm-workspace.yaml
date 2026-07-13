@@ -4,3 +4,4 @@ allowBuilds:
   "@prisma/engines": true
   prisma: true
   unrs-resolver: false
+  esbuild: true

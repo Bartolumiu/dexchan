@@ -15,7 +15,7 @@ export default async function handleComponents(
   let componentFolders: string[];
   try {
     componentFolders = readdirSync(componentsPath);
-  } catch (e) {
+  } catch {
     await logMessage(
       "[Component Handler] No components folder found. Skipping...",
       "warn"
@@ -53,7 +53,7 @@ export default async function handleComponents(
 
         const component: Component = componentModule.default || componentModule;
 
-        if (!component.data || !component.data.customId) {
+        if (!component.data?.customId) {
           await logMessage(
             `[Component Handler] Component file ${file} in ${folder} is missing data.customId. Skipping.`,
             "warn"

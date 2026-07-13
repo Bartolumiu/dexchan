@@ -26,7 +26,7 @@ export default {
     const strings = translations.components.title_stats;
 
     const customId = interaction.customId;
-    const match = customId.match(/^(.+)_title_stats_(.+)$/);
+    const match = /^(.+)_title_stats_(.+)$/.exec(customId);
     if (!match) return null;
     const source = match[1] as ProviderType;
     const entryId = match[2];

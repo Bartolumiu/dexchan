@@ -50,114 +50,125 @@ const event: BotEvent<Events.InteractionCreate> = {
     const embeds = [errorEmbed, errorStack];
 
     try {
-      if (interaction.isChatInputCommand()) {
-        await handleInteraction(
-          interaction,
-          client.commands,
-          interaction.commandName,
-          "err_int_ch_input",
-          embeds,
-          client,
-          errorStrings
-        );
-      } else if (interaction.isButton()) {
-        await handleInteraction(
-          interaction,
-          client.buttons,
-          interaction.customId,
-          "err_int_btn",
-          embeds,
-          client,
-          errorStrings
-        );
-      } else if (interaction.isAnySelectMenu()) {
-        await handleInteraction(
-          interaction,
-          client.selectMenus,
-          interaction.customId,
-          "err_int_slct",
-          embeds,
-          client,
-          errorStrings
-        );
-      } else if (interaction.isContextMenuCommand()) {
-        await handleInteraction(
-          interaction,
-          client.commands,
-          interaction.commandName,
-          "err_int_ctx",
-          embeds,
-          client,
-          errorStrings
-        );
-      } else if (interaction.isModalSubmit()) {
-        await handleInteraction(
-          interaction,
-          client.modals,
-          interaction.customId,
-          "err_int_mod",
-          embeds,
-          client,
-          errorStrings
-        );
-      } else if (interaction.isAutocomplete()) {
-        await handleInteraction(
-          interaction,
-          client.commands,
-          interaction.commandName,
-          "err_int_auto",
-          embeds,
-          client,
-          errorStrings,
-          true
-        );
-      } else {
-        await logMessage(
-          `Unknown interaction type: ${interaction.type}`,
-          "warn"
-        );
-      }
+      await routeInteraction(interaction, client, embeds, errorStrings);
     } catch (e) {
-      const error = e as Error;
-      const errorTimestamp = new Date()
-        .toISOString()
-        .replaceAll(":", "-")
-        .split(".")[0];
-
-      if (!fs.existsSync("./logs")) fs.mkdirSync("./logs", { recursive: true });
-
-      let origin = "Unknown";
-      if (interaction.isCommand() || interaction.isAutocomplete()) {
-        origin = interaction.commandName;
-      } else if (
-        interaction.isMessageComponent() ||
-        interaction.isModalSubmit()
-      ) {
-        origin = interaction.customId;
-      }
-
-      let options = {};
-      if (interaction.isChatInputCommand() || interaction.isAutocomplete()) {
-        options = interaction.options.data;
-      }
-
-      fs.writeFileSync(
-        `./logs/${errorTimestamp}.txt`,
-        `Data: ${errorTimestamp}\nUser: ${interaction.user.tag} (${interaction.user.id})\nError origin: ${origin}\nError message: ${error.message}\nError stack: ${error.stack}\nInteraction type: ${interaction.type}\n\nInput:${JSON.stringify(options, null, 2)}`
-      );
-
-      if (interaction.isRepliable()) {
-        if (interaction.replied || interaction.deferred) {
-          await interaction.followUp({ embeds, ephemeral: true });
-        } else if (interaction.reply) {
-          await interaction.reply({ embeds, ephemeral: true });
-        }
-      }
+      await logAndReplyError(e, interaction, embeds);
     }
   },
 };
 
 export default event;
+
+async function routeInteraction(
+  interaction: Interaction,
+  client: ExtendedClient,
+  embeds: EmbedBuilder[],
+  errorStrings: BotStrings["error_embed"]
+) {
+  if (interaction.isChatInputCommand()) {
+    await handleInteraction(
+      interaction,
+      client.commands,
+      interaction.commandName,
+      "err_int_ch_input",
+      embeds,
+      client,
+      errorStrings
+    );
+  } else if (interaction.isButton()) {
+    await handleInteraction(
+      interaction,
+      client.buttons,
+      interaction.customId,
+      "err_int_btn",
+      embeds,
+      client,
+      errorStrings
+    );
+  } else if (interaction.isAnySelectMenu()) {
+    await handleInteraction(
+      interaction,
+      client.selectMenus,
+      interaction.customId,
+      "err_int_slct",
+      embeds,
+      client,
+      errorStrings
+    );
+  } else if (interaction.isContextMenuCommand()) {
+    await handleInteraction(
+      interaction,
+      client.commands,
+      interaction.commandName,
+      "err_int_ctx",
+      embeds,
+      client,
+      errorStrings
+    );
+  } else if (interaction.isModalSubmit()) {
+    await handleInteraction(
+      interaction,
+      client.modals,
+      interaction.customId,
+      "err_int_mod",
+      embeds,
+      client,
+      errorStrings
+    );
+  } else if (interaction.isAutocomplete()) {
+    await handleInteraction(
+      interaction,
+      client.commands,
+      interaction.commandName,
+      "err_int_auto",
+      embeds,
+      client,
+      errorStrings,
+      true
+    );
+  } else {
+    await logMessage(`Unknown interaction type: ${interaction.type}`, "warn");
+  }
+}
+
+async function logAndReplyError(
+  e: unknown,
+  interaction: Interaction,
+  embeds: EmbedBuilder[]
+) {
+  const error = e as Error;
+  const errorTimestamp = new Date()
+    .toISOString()
+    .replaceAll(":", "-")
+    .split(".")[0];
+
+  if (!fs.existsSync("./logs")) fs.mkdirSync("./logs", { recursive: true });
+
+  let origin = "Unknown";
+  if (interaction.isCommand() || interaction.isAutocomplete()) {
+    origin = interaction.commandName;
+  } else if (interaction.isMessageComponent() || interaction.isModalSubmit()) {
+    origin = interaction.customId;
+  }
+
+  let options = {};
+  if (interaction.isChatInputCommand() || interaction.isAutocomplete()) {
+    options = interaction.options.data;
+  }
+
+  fs.writeFileSync(
+    `./logs/${errorTimestamp}.txt`,
+    `Data: ${errorTimestamp}\nUser: ${interaction.user.tag} (${interaction.user.id})\nError origin: ${origin}\nError message: ${error.message}\nError stack: ${error.stack}\nInteraction type: ${interaction.type}\n\nInput:${JSON.stringify(options, null, 2)}`
+  );
+
+  if (interaction.isRepliable()) {
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({ embeds, ephemeral: true });
+    } else if (interaction.reply) {
+      await interaction.reply({ embeds, ephemeral: true });
+    }
+  }
+}
 
 function createErrorEmbed(errorStrings: BotStrings["error_embed"]) {
   return {

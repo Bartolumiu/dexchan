@@ -20,7 +20,7 @@ export default async function getTitleDetails<T = unknown>(
   if (!url) return null;
 
   const response = await fetchJSON<{ data?: T }>(url);
-  return response?.data || null;
+  return response?.data ?? null;
 }
 
 /**

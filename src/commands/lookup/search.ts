@@ -1,14 +1,5 @@
-import {
-  AutocompleteInteraction,
-  ChatInputCommandInteraction,
-  EmbedBuilder,
-  SlashCommandBuilder,
-} from "discord.js";
-import {
-  format,
-  getTranslations,
-  translateAttribute,
-} from "../../functions/handlers/handleLocales";
+import { AutocompleteInteraction, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, } from "discord.js";
+import { format, getTranslations, translateAttribute, } from "../../functions/handlers/handleLocales";
 import { sendErrorEmbed } from "../../functions/titles/errorEmbed";
 import search from "../../functions/titles/titleSearch";
 import buildTitleListEmbed from "../../functions/titles/titleListEmbed";
@@ -21,6 +12,8 @@ import { ExtendedClient } from "../../lib/ExtendedClient";
 import { getInteractionContext } from "../../utils/database";
 import { SlashCommand } from "../../types/Command";
 import { ProviderType } from "../../constants/providers";
+
+type TranslationsType = ReturnType<typeof getTranslations>;
 
 const command: SlashCommand = {
   global: true,
@@ -128,71 +121,24 @@ const command: SlashCommand = {
       );
 
     if (query) {
-      const searchResults = await search(query, source as ProviderType);
-      if (!searchResults)
-        return sendErrorEmbed(
-          interaction,
-          searchStrings.errors,
-          translations.error_embed.title,
-          embed,
-          "no_results"
-        );
-      const row = buildTitleListEmbed(
-        embed,
-        translations,
-        searchResults,
+      return handleQuerySearch(
+        interaction,
+        query,
         source as ProviderType,
-        query
+        embed,
+        translations
       );
-
-      await interaction.editReply({
-        embeds: [embed],
-        components: row ? [row] : [],
-      });
-      return;
     }
 
-    const titleID = id || parseUrl(url!, source as ProviderType);
-    if (!checkID(titleID, source as ProviderType))
-      return sendErrorEmbed(
-        interaction,
-        searchStrings.errors,
-        translations.error_embed.title,
-        embed,
-        "invalid_id"
-      );
-    const [entry, stats] = await Promise.all([
-      getTitleDetails(titleID!, source as ProviderType),
-      getTitleStats(titleID!, source as ProviderType),
-    ]);
-    if (!entry || !stats)
-      return sendErrorEmbed(
-        interaction,
-        searchStrings.errors,
-        translations.error_embed.title,
-        embed,
-        "invalid_id"
-      );
-
-    const buttons = buildTitleEmbed(
+    return handleIdOrUrlSearch(
+      interaction,
+      id,
+      url,
+      source as ProviderType,
       embed,
-      locale,
-      entry,
-      stats,
       translations,
-      source as ProviderType
+      locale
     );
-    const payload = {
-      embeds: [embed],
-      files: await setImages(
-        entry,
-        embed,
-        source as ProviderType,
-        translations
-      ),
-      components: buttons ? [buttons] : [],
-    };
-    await interaction.editReply(payload);
   },
   async autocomplete(
     interaction: AutocompleteInteraction,
@@ -243,4 +189,92 @@ function getFilteredSources(
     );
   }
   return sources.filter((source) => source.enabled);
+}
+
+async function handleQuerySearch(
+  interaction: ChatInputCommandInteraction,
+  query: string,
+  source: ProviderType,
+  embed: EmbedBuilder,
+  translations: TranslationsType
+) {
+  const searchResults = await search(query, source);
+
+  if (!searchResults) {
+    return sendErrorEmbed(
+      interaction,
+      translations.commands.search.errors,
+      translations.error_embed.title,
+      embed,
+      "no_results"
+    );
+  }
+
+  const row = buildTitleListEmbed(
+    embed,
+    translations,
+    searchResults,
+    source,
+    query
+  );
+
+  await interaction.editReply({
+    embeds: [embed],
+    components: row ? [row] : [],
+  });
+}
+
+async function handleIdOrUrlSearch(
+  interaction: ChatInputCommandInteraction,
+  id: string | null,
+  url: string | null,
+  source: ProviderType,
+  embed: EmbedBuilder,
+  translations: TranslationsType,
+  locale: string
+) {
+  const searchStrings = translations.commands.search;
+  const titleID = id || parseUrl(url, source);
+
+  if (!checkID(titleID, source)) {
+    return sendErrorEmbed(
+      interaction,
+      searchStrings.errors,
+      translations.error_embed.title,
+      embed,
+      "invalid_id"
+    );
+  }
+
+  const [entry, stats] = await Promise.all([
+    getTitleDetails(titleID!, source),
+    getTitleStats(titleID!, source),
+  ]);
+
+  if (!entry || !stats) {
+    return sendErrorEmbed(
+      interaction,
+      searchStrings.errors,
+      translations.error_embed.title,
+      embed,
+      "invalid_id"
+    );
+  }
+
+  const buttons = buildTitleEmbed(
+    embed,
+    locale,
+    entry,
+    stats,
+    translations,
+    source
+  );
+
+  const payload = {
+    embeds: [embed],
+    files: await setImages(entry, embed, source, translations),
+    components: buttons ? [buttons] : [],
+  };
+
+  await interaction.editReply(payload);
 }

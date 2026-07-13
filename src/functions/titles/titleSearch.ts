@@ -16,7 +16,7 @@ export default async function search(
   if (!query) return null;
 
   const url = buildUrl(query, type);
-  const response = await fetchJSON(url);
+  const response = await fetchJSON<Record<string, any>>(url);
 
   const dataArray = response?.data;
   if (!dataArray || !Array.isArray(dataArray) || dataArray.length === 0)

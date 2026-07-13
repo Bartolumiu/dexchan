@@ -75,7 +75,7 @@ const getMangaDexStats = async (
   id: string | number
 ): Promise<TitleStats | null> => {
   const url = buildUrl(id, "mangadex");
-  const data = await fetchJSON(url);
+  const data = await fetchJSON<Record<string, any>>(url);
 
   if (!data?.statistics?.[id]) return null;
   return formatMangaDexStats(data.statistics[id]);

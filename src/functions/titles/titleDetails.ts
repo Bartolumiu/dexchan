@@ -19,8 +19,8 @@ export default async function getTitleDetails<T = unknown>(
   const url = buildUrl(id, type);
   if (!url) return null;
 
-  const response = await fetchJSON(url);
-  return (response?.data as T) || null;
+  const response = await fetchJSON<{ data?: T }>(url);
+  return response?.data || null;
 }
 
 /**

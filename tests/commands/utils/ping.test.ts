@@ -19,9 +19,11 @@ jest.mock("../../../src/functions/handlers/handleLocales", () => {
         response: {
           title: "Pong!",
           fields: {
+            connection_latency: "Connection Latency",
             bot_latency: "Bot Latency",
             api: {
               discord: "Discord API",
+              mangabaka: "MangaBaka API",
               mangadex: "MangaDex API",
               namicomi: "NamiComi API",
             },
@@ -78,11 +80,9 @@ describe("ping command", () => {
 
       const interaction = {
         user: { id: "000000000000000000", username: "test-user" },
-        deferReply: jest
-          .fn<any>()
-          .mockResolvedValue({ createdTimestamp: 1000 }),
+        deferReply: jest.fn<any>().mockResolvedValue(undefined),
         editReply: jest.fn(),
-        createdTimestamp: 500,
+        createdTimestamp: Date.now() - 50, // Ensures a positive latency number
         commandName: "ping",
       } as unknown as ChatInputCommandInteraction;
 
@@ -112,11 +112,9 @@ describe("ping command", () => {
 
       const interaction = {
         user: { id: "000000000000000000", username: "test-user" },
-        deferReply: jest
-          .fn<any>()
-          .mockResolvedValue({ createdTimestamp: 1000 }),
+        deferReply: jest.fn<any>().mockResolvedValue(undefined),
         editReply: jest.fn(),
-        createdTimestamp: 500,
+        createdTimestamp: Date.now() - 50,
         commandName: "ping",
       } as unknown as ChatInputCommandInteraction;
 
@@ -138,7 +136,7 @@ describe("ping command", () => {
       expect(interaction.deferReply).toHaveBeenCalled();
       expect(interaction.editReply).toHaveBeenCalled();
 
-      expect(console.error).toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalledTimes(3);
 
       consoleErrorSpy.mockRestore();
     });

@@ -97,9 +97,11 @@ export default {
         ping: "Haciendo ping...",
         title: "¡Pong!",
         fields: {
+          connection_latency: "Latencia de Conexión",
           bot_latency: "Latencia del Bot",
           api: {
             discord: "API Discord",
+            mangabaka: "API MangaBaka",
             mangadex: "API MangaDex",
             namicomi: "API NamiComi",
           },

@@ -1,20 +1,12 @@
-import {
-  ChatInputCommandInteraction,
-  Colors,
-  EmbedBuilder,
-  SlashCommandBuilder,
-} from "discord.js";
-import {
-  format,
-  getTranslations,
-  translateAttribute,
-} from "../../functions/handlers/handleLocales";
+import { ChatInputCommandInteraction, Colors, EmbedBuilder, SlashCommandBuilder, } from "discord.js";
+import { format, getTranslations, translateAttribute, } from "../../functions/handlers/handleLocales";
 import { getInteractionContext } from "../../utils/database";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import { SlashCommand } from "../../types/Command";
 import pkg from "../../../package.json";
 
 const API_URLS = {
+  MANGABAKA: "https://api.mangabaka.org/_status",
   MANGADEX: "https://api.mangadex.org/ping",
   NAMICOMI: "https://api.namicomi.com/ping",
 } as const;
@@ -31,26 +23,36 @@ const command: SlashCommand = {
     interaction: ChatInputCommandInteraction,
     client: ExtendedClient
   ) {
+    const userToBotPing = Date.now() - interaction.createdTimestamp;
+
+    const startDefer = Date.now();
+    await interaction.deferReply();
+    const responsePing = Date.now() - startDefer;
+
     const context = await getInteractionContext(interaction);
     const locale = context.locale;
     const translations = getTranslations(locale);
 
-    const message = await interaction.deferReply({
-      fetchReply: true,
-    });
-
-    const ping = message.createdTimestamp - interaction.createdTimestamp;
-
     const fields = {
       title: translations.commands.ping.response.title,
+      cts: {
+        name: translations.commands.ping.response.fields.connection_latency,
+        value: `${userToBotPing}ms`,
+        inline: true,
+      },
       ws: {
         name: translations.commands.ping.response.fields.bot_latency,
-        value: `${ping}ms`,
+        value: `${responsePing}ms`,
         inline: true,
       },
       discord: {
         name: translations.commands.ping.response.fields.api.discord,
         value: `${client.ws.ping}ms`,
+        inline: true,
+      },
+      mb: {
+        name: translations.commands.ping.response.fields.api.mangabaka,
+        value: "",
         inline: true,
       },
       md: {
@@ -71,12 +73,20 @@ const command: SlashCommand = {
 
     const embed = new EmbedBuilder()
       .setTitle(fields.title)
-      .addFields(fields.ws, fields.discord)
+      .addFields(fields.cts, fields.ws, fields.discord)
       .setFooter({
         text: fields.footer,
         iconURL: client.user?.displayAvatarURL(),
       })
       .setColor(Colors.Blurple);
+
+    try {
+      const mbPing = await getPing(API_URLS.MANGABAKA);
+      fields.mb.value = `${mbPing}ms`;
+    } catch (e) {
+      console.error(e);
+      fields.mb.value = translations.common.words.not_ok;
+    }
 
     try {
       const mdPing = await getPing(API_URLS.MANGADEX);
@@ -94,7 +104,7 @@ const command: SlashCommand = {
       fields.nami.value = translations.common.words.not_ok;
     }
 
-    embed.addFields(fields.md, fields.nami);
+    embed.addFields(fields.mb, fields.md, fields.nami);
     await interaction.editReply({ embeds: [embed] });
   },
 };

@@ -4,9 +4,11 @@ export interface PingI18n {
     ping: string;
     title: string;
     fields: {
+      connection_latency: string;
       bot_latency: string;
       api: {
         discord: string;
+        mangabaka: string;
         mangadex: string;
         namicomi: string;
       };

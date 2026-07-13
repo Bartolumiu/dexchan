@@ -64,17 +64,12 @@ export default async function checkUpdates(): Promise<UpdateStatus> {
     };
 
     const versionComparison = compareVersions(latest, current);
-    let isOutdated = false;
 
-    if (versionComparison > 0) {
-      isOutdated = true;
-    } else if (versionComparison === 0) {
-      if (!latest.prerelease && current.prerelease) {
-        isOutdated = true;
-      } else if (latest.prerelease === "dev" && current.prerelease === "beta") {
-        isOutdated = true;
-      }
-    }
+    const isOutdated =
+      versionComparison > 0 ||
+      (versionComparison === 0 &&
+        ((!latest.prerelease && current.prerelease !== "") ||
+          (latest.prerelease === "dev" && current.prerelease === "beta")));
 
     if (isOutdated) {
       await logMessage(

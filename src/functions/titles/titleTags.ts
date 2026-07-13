@@ -71,6 +71,7 @@ const getMangaDexTags = (title: any) => {
   return mergeTagArrays(groups);
 };
 
+const NAMI_VALID_TYPES = new Set(["tag", "primary_tag", "secondary_tag"]);
 const getNamiComiTags = (title: any, locale: string) => {
   const groups: Record<string, string[]> = {
     content_warning: [],
@@ -79,11 +80,10 @@ const getNamiComiTags = (title: any, locale: string) => {
     theme: [],
     other: [],
   };
-  const validTypes = ["tag", "primary_tag", "secondary_tag"];
 
   const relationships = title.relationships || [];
   const tags = relationships.filter((rel: any) =>
-    validTypes.includes(rel.type)
+    NAMI_VALID_TYPES.has(rel.type)
   );
 
   tags.forEach((tag: any) => {

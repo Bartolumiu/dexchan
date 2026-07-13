@@ -16,67 +16,23 @@ export const urlFormats = {
   },
 } as const;
 
-const regexComponents = {
-  protocol: {
-    http: "https?:\\/\\/",
-    https: "https?:\\/\\/",
-    ftp: "ftp:\\/\\/",
-    ftps: "ftps:\\/\\/",
-    ws: "ws:\\/\\/",
-    wss: "wss:\\/\\/",
-  },
-  mangabaka: {
-    subdomain: "(?:dev\\.)?",
-    domain: "mangabaka\\.org",
-    id: "(\\d+)",
-    slugAndParams: "(?:\\/[^?]+)?(?:\\?.*)?",
-  },
-  mangadex: {
-    subdomain: "(?:www\\.)?(?:canary\\.|sandbox\\.)?",
-    domain: "mangadex\\.(?:org|dev)",
-    id: "([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})",
-    slugAndParams: "(?:\\/[^?]+)?(?:\\?.*)?",
-  },
-  namicomi: {
-    primary: "namicomi\\.com",
-    secondary: "nami\\.moe",
-    locale: "[a-z]{2}(?:-[a-zA-Z]{2})?",
-    id: "([a-zA-Z0-9]{8})",
-    slug: "\\/[^\\/]+$",
-  },
-};
-
-const regexStrings = {
-  mangabaka: {
-    id: regexComponents.mangabaka.id,
-    primary: `^${regexComponents.protocol.https}${regexComponents.mangabaka.subdomain}${regexComponents.mangabaka.domain}\\/${regexComponents.mangabaka.id}${regexComponents.mangabaka.slugAndParams}$`,
-  },
-  mangadex: {
-    id: regexComponents.mangadex.id,
-    primary: `^${regexComponents.protocol.https}${regexComponents.mangadex.subdomain}${regexComponents.mangadex.domain}\\/title\\/${regexComponents.mangadex.id}${regexComponents.mangadex.slugAndParams}$`,
-  },
-  namicomi: {
-    id: `^${regexComponents.namicomi.id}$`,
-    primary: `^${regexComponents.protocol.https}${regexComponents.namicomi.primary}\\/${regexComponents.namicomi.locale}\\/title\\/${regexComponents.namicomi.id}${regexComponents.namicomi.slug}$`,
-    semi_shortened: `^${regexComponents.protocol.https}${regexComponents.namicomi.primary}\\/t\\/${regexComponents.namicomi.id}$`,
-    shortened: `^${regexComponents.protocol.https}${regexComponents.namicomi.secondary}\\/t\\/${regexComponents.namicomi.id}$`,
-  },
-};
-
 const urlRegexes = {
   mangabaka: {
-    id: new RegExp(regexComponents.mangabaka.id),
-    primary: new RegExp(regexStrings.mangabaka.primary),
+    id: /^(\d+)$/,
+    primary:
+      /^https?:\/\/(?:mangabaka\.org|dev\.mangabaka\.dev)\/(\d+)(?:\/[^?]+)?(?:\?.*)?$/,
   },
   mangadex: {
-    id: new RegExp(regexStrings.mangadex.id),
-    primary: new RegExp(regexStrings.mangadex.primary),
+    id: /^([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})$/,
+    primary:
+      /^https?:\/\/(?:mangadex\.org|(?:canary|sandbox)\.mangadex\.dev)\/title\/([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})(?:\/[^?]+)?(?:\?.*)?$/,
   },
   namicomi: {
-    id: new RegExp(regexStrings.namicomi.id),
-    primary: new RegExp(regexStrings.namicomi.primary),
-    semi_shortened: new RegExp(regexStrings.namicomi.semi_shortened),
-    shortened: new RegExp(regexStrings.namicomi.shortened),
+    id: /^([a-zA-Z0-9]{8})$/,
+    primary:
+      /^https?:\/\/namicomi\.com\/[a-z]{2}(?:-[a-zA-Z]{2})?\/title\/([a-zA-Z0-9]{8})\/[^/]+$/,
+    semi_shortened: /^https?:\/\/namicomi\.com\/t\/([a-zA-Z0-9]{8})$/,
+    shortened: /^https?:\/\/nami\.moe\/t\/([a-zA-Z0-9]{8})$/,
   },
 };
 

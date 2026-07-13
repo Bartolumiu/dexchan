@@ -17,7 +17,7 @@ describe("urlParser", () => {
       expect(parseUrl("https://mangabaka.org/12345/slug", "mangabaka")).toBe(
         "12345"
       );
-      expect(parseUrl("https://dev.mangabaka.org/12345", "mangabaka")).toBe(
+      expect(parseUrl("https://dev.mangabaka.dev/12345", "mangabaka")).toBe(
         "12345"
       );
       expect(parseUrl("https://mangabaka.org/notanid", "mangabaka")).toBeNull();

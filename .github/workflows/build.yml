@@ -61,7 +61,6 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v6
         with:
           args: >
-            -Dsonar.scanner.skipJreProvisioning=true
             ${{ steps.pr_info.outputs.pr_number != '' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base={2}', steps.pr_info.outputs.pr_number, github.ref_name, steps.pr_info.outputs.base_branch) || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any

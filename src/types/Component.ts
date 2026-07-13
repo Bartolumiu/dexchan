@@ -29,19 +29,19 @@ export interface ButtonComponent extends Component<ButtonInteraction> {
   execute: (
     interaction: ButtonInteraction,
     client: ExtendedClient
-  ) => Promise<void | any>;
+  ) => Promise<unknown>;
 }
 
 export interface SelectMenuComponent extends Component<AnySelectMenuInteraction> {
   execute: (
     interaction: AnySelectMenuInteraction,
     client: ExtendedClient
-  ) => Promise<void | any>;
+  ) => Promise<unknown>;
 }
 
 export interface ModalComponent extends Component<ModalSubmitInteraction> {
   execute: (
     interaction: ModalSubmitInteraction,
     client: ExtendedClient
-  ) => Promise<void | any>;
+  ) => Promise<unknown>;
 }

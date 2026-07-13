@@ -71,11 +71,8 @@ export const translate = (
 
   let translation: any = dictionary;
   for (const k of keys) {
-    if (!translation || translation[k] === undefined) {
-      translation = undefined;
-      break;
-    }
-    translation = translation[k];
+    translation = translation?.[k];
+    if (translation === undefined) break;
   }
 
   if (typeof translation !== "string") {

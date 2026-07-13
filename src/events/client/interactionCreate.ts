@@ -171,9 +171,9 @@ function createErrorEmbed(errorStrings: BotStrings["error_embed"]) {
   };
 }
 
-async function handleInteraction(
+async function handleInteraction<T extends ExecutableItem<any>>(
   interaction: Interaction,
-  collection: Collection<string | RegExp, ExecutableItem>,
+  collection: Collection<any, T>,
   id: string,
   errorType: InteractionErrorType,
   embeds: EmbedBuilder[],
@@ -181,7 +181,7 @@ async function handleInteraction(
   errorStrings: BotStrings["error_embed"],
   isAutocomplete = false
 ) {
-  let item = collection.get(id);
+  let item: T | undefined = collection.get(id);
 
   if (!item) {
     for (const [key, value] of collection.entries()) {

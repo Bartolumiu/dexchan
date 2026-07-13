@@ -12,15 +12,15 @@ const URL_FORMATS = {
  * @param id The ID of the title.
  * @param type The type of provider (e.g. 'mangadex').
  */
-export default async function getTitleDetails(
+export default async function getTitleDetails<T = unknown>(
   id: string | number,
   type: ProviderType
-): Promise<any | null> {
+): Promise<T | null> {
   const url = buildUrl(id, type);
   if (!url) return null;
 
   const response = await fetchJSON(url);
-  return response?.data || null;
+  return (response?.data as T) || null;
 }
 
 /**

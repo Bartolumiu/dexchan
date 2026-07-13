@@ -73,7 +73,10 @@ describe("commands command", () => {
     });
     (getTranslations as jest.Mock).mockReturnValue({
       common: { footers: { command: "Requested by {user}" } },
-      commands: { commands: { response: mockT } },
+      commands: {
+        commands: { response: mockT },
+        normal: { description: "Translated Normal Description" },
+      },
     });
   });
 
@@ -248,7 +251,7 @@ describe("commands command", () => {
       };
     });
 
-    it("should fetch commands, filter them, and build the embed", async () => {
+    it("should fetch commands, filter them, and build the embed with localized descriptions", async () => {
       await commandsCommand.execute(
         mockInteraction as ChatInputCommandInteraction,
         mockClient as ExtendedClient
@@ -260,26 +263,18 @@ describe("commands command", () => {
         mockInteraction.guild.commands.permissions.fetch
       ).toHaveBeenCalledWith({});
 
-      // Expect specific commands to be kept and some to be filtered out
       const replyArg = mockInteraction.reply.mock.calls[0][0];
       const embed = replyArg.embeds[0];
-
-      // Checking the constructed embed fields
       const fields = embed.addFields.mock.calls[0][0];
 
-      // Kept: cmd_normal (no permissions needed)
-      // Kept: cmd_perm_pass (has ADMIN)
-      // Filtered: cmd_perm_fail (lacks BAN_MEMBERS)
-      // Kept: cmd_override_role (has override role)
-      // Kept: cmd_override_user (has override user)
-      // Filtered: cmd_override_fail (lacks both overrides)
-      // Kept: cmd_no_desc (no description fallback)
+      // "normal" should get translated description from our mock
+      // The rest should fall back gracefully to their default descriptions or names
       expect(fields).toEqual([
-        { name: "/normal", value: "Normal" },
-        { name: "/pass", value: "Pass" },
-        { name: "/role_cmd", value: "Role CMD" },
-        { name: "/user_cmd", value: "User CMD" },
-        { name: "/nodesc", value: "nodesc" }, // Description fallback
+        { name: "/normal", value: "Translated Normal Description" }, // Localized
+        { name: "/pass", value: "Pass" }, // Fallback to description
+        { name: "/role_cmd", value: "Role CMD" }, // Fallback to description
+        { name: "/user_cmd", value: "User CMD" }, // Fallback to description
+        { name: "/nodesc", value: "nodesc" }, // Fallback to name
       ]);
 
       expect(embed.setTitle).toHaveBeenCalledWith("Commands List");
@@ -307,7 +302,7 @@ describe("commands command", () => {
 
       expect(embed.setFooter).toHaveBeenCalledWith({
         text: "FORMATTED_Requested by {user}_commands_TestUser",
-        iconURL: undefined, // Safely returns undefined instead of crashing
+        iconURL: undefined,
       });
     });
   });

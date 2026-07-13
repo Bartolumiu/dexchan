@@ -1,8 +1,14 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { AutocompleteInteraction, ChatInputCommandInteraction, } from "discord.js";
+import {
+  AutocompleteInteraction,
+  ChatInputCommandInteraction,
+} from "discord.js";
 import settingsCommand from "../../../src/commands/configuration/settings";
 import { getInteractionContext } from "../../../src/utils/database";
-import { getAvailableLocales, getTranslations, } from "../../../src/functions/handlers/handleLocales";
+import {
+  getAvailableLocales,
+  getTranslations,
+} from "../../../src/functions/handlers/handleLocales";
 import { prisma } from "../../../src/utils/prisma";
 import { ExtendedClient } from "../../../src/lib/ExtendedClient";
 
@@ -52,7 +58,6 @@ jest.mock("../../../src/functions/handlers/handleLocales", () => ({
 }));
 
 jest.mock("discord.js", () => {
-  // Define mockBuilder INSIDE the factory to avoid Jest hoisting ReferenceErrors
   const mockBuilder: any = {
     setName: jest.fn().mockReturnThis(),
     setDescription: jest.fn().mockReturnThis(),
@@ -150,6 +155,7 @@ describe("settings command", () => {
     // Default interaction setup
     mockInteraction = {
       commandName: "settings",
+      locale: "es-ES",
       user: {
         id: "user_123",
         username: "TestUser",
@@ -304,6 +310,7 @@ describe("settings command", () => {
       const embed = replyCall.embeds[0];
       expect(embed.setTitle).toHaveBeenCalledWith("Reset Success Title");
       expect(embed.setColor).toHaveBeenCalledWith("Green");
+      expect(getTranslations).toHaveBeenCalledWith("es-ES");
     });
 
     it("should send error if database throws during reset", async () => {

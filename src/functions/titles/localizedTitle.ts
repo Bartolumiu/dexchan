@@ -18,7 +18,7 @@ interface MangaBakaTitleItem {
   language: string;
   traits: string[];
   title: string;
-  note: string | null;
+  note?: string | null;
   is_primary: boolean;
 }
 
@@ -29,7 +29,7 @@ interface MangaBakaData {
   titles?: MangaBakaTitleItem[];
 }
 
-type TitlePayload = GenericAttributesTitle & MangaBakaData & any;
+type TitlePayload = GenericAttributesTitle & MangaBakaData;
 
 export default function getLocalizedTitle(
   title: TitlePayload,

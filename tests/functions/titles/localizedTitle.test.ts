@@ -216,7 +216,7 @@ describe("getLocalizedTitle", () => {
     });
 
     it("should match locale from altTitles if not in titleObj", () => {
-      const title = {
+      const title: any = {
         attributes: {
           title: { jp: "Japanese Title" },
           altTitles: [{ en: "English Alt" }, { fr: "French Alt" }],

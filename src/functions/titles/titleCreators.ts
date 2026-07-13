@@ -16,7 +16,7 @@ interface MangaBakaTitle {
   artists?: string[];
 }
 
-type TitlePayload = GenericAttributesTitle & MangaBakaTitle & any;
+type TitlePayload = GenericAttributesTitle & MangaBakaTitle;
 
 /**
  * Extracts the creators from the title object based on the provider type.

@@ -60,10 +60,15 @@ const command: SlashCommand = {
       return hasRole || hasUser;
     });
 
-    const fields = availableCommands.map((cmd) => ({
-      name: `/${cmd.name}`,
-      value: cmd.description || cmd.name,
-    }));
+    const fields = availableCommands.map((cmd) => {
+      const cmdKey = cmd.name as keyof typeof translations.commands;
+      const localizedDesc = translations.commands[cmdKey]?.description;
+
+      return {
+        name: `/${cmd.name}`,
+        value: localizedDesc || cmd.description || cmd.name,
+      };
+    });
 
     const embed = new EmbedBuilder()
       .setTitle(t.title)

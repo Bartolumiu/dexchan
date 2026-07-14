@@ -42,43 +42,55 @@ const buildURL = (
   if (!title) return null;
 
   switch (type) {
-    case "mangabaka": {
-      const coverUrl = title.cover?.raw;
-      return coverUrl ? new URL(coverUrl) : null;
-    }
-    case "mangadex": {
-      const id = title.id;
-      if (!id) return null;
-      const coverName = title.relationships?.find(
-        (rel: any) => rel.type === "cover_art"
-      )?.attributes?.fileName;
-      if (!coverName) return null;
-      return new URL(`${URL_FORMATS.mangadex}${id}/${coverName}.512.jpg`);
-    }
-    case "namicomi": {
-      const normalizedLocale = locale ? LOCALE_MAP[locale] || locale : null;
-      const id = title.id;
-      if (!id) return null;
-
-      const covers =
-        title.relationships?.filter((rel: any) => rel.type === "cover_art") ||
-        [];
-
-      let coverName = covers.find(
-        (rel: any) => rel.attributes?.locale === normalizedLocale
-      )?.attributes?.fileName;
-
-      if (!coverName && normalizedLocale === "es") {
-        coverName = covers.find(
-          (rel: any) => rel.attributes?.locale === "es-419"
-        )?.attributes?.fileName;
-      }
-      if (!coverName && covers.length > 0) {
-        coverName = covers[0]?.attributes?.fileName;
-      }
-
-      if (!coverName) return null;
-      return new URL(`${URL_FORMATS.namicomi}${id}/${coverName}.512.jpg`);
-    }
+    case "mangabaka":
+      return getMangaBakaCoverUrl(title);
+    case "mangadex":
+      return getMangaDexCoverUrl(title);
+    case "namicomi":
+      return getNamiComiCoverUrl(title, locale);
+    default:
+      return null;
   }
 };
+
+function getMangaBakaCoverUrl(title: any): URL | null {
+  const coverUrl = title.cover?.raw;
+  return coverUrl ? new URL(coverUrl) : null;
+}
+
+function getMangaDexCoverUrl(title: any): URL | null {
+  const id = title.id;
+  if (!id) return null;
+  const coverName = title.relationships?.find(
+    (rel: any) => rel.type === "cover_art"
+  )?.attributes?.fileName;
+  if (!coverName) return null;
+  return new URL(`${URL_FORMATS.mangadex}${id}/${coverName}.512.jpg`);
+}
+
+function getNamiComiCoverUrl(title: any, locale: string | null): URL | null {
+  const id = title.id;
+  if (!id) return null;
+
+  const normalizedLocale = locale ? LOCALE_MAP[locale] || locale : null;
+
+  const covers =
+    title.relationships?.filter((rel: any) => rel.type === "cover_art") || [];
+
+  let coverName = covers.find(
+    (rel: any) => rel.attributes?.locale === normalizedLocale
+  )?.attributes?.fileName;
+
+  if (!coverName && normalizedLocale === "es") {
+    coverName = covers.find((rel: any) => rel.attributes?.locale === "es-419")
+      ?.attributes?.fileName;
+  }
+
+  if (!coverName && covers.length > 0) {
+    coverName = covers[0]?.attributes?.fileName;
+  }
+
+  if (!coverName) return null;
+
+  return new URL(`${URL_FORMATS.namicomi}${id}/${coverName}.512.jpg`);
+}

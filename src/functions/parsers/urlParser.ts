@@ -25,7 +25,7 @@ const urlRegexes = {
   mangadex: {
     id: /^([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})$/,
     primary:
-      /^https?:\/\/(?:mangadex\.org|(?:canary|sandbox)\.mangadex\.dev)\/title\/([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})(?:\/[^?]+)?(?:\?.*)?$/,
+      /^https?:\/\/(?:mangadex\.org|(?:canary|sandbox)\.mangadex\.dev)\/title\/([a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12})(?:\/.*)?$/,
   },
   namicomi: {
     id: /^([a-zA-Z0-9]{8})$/,

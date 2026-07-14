@@ -5,13 +5,17 @@
   "main": "src/index.ts",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "start": "tsx src/index.ts",
+    "start": "pnpm db:push && pnpm db:seed && tsx src/index.ts",
+    "dev": "tsx src/index.ts",
     "test": "jest --coverage",
     "update": "pnpm up",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:references": "pnpm dlx knip",
-    "check:dependencies": "pnpm dlx depcheck"
+    "check:dependencies": "pnpm dlx depcheck",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed"
   },
   "jest": {
     "preset": "ts-jest",

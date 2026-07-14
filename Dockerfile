@@ -14,6 +14,7 @@ RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 COPY --chown=node:node src ./src
 COPY --chown=node:node prisma ./prisma
 COPY --chown=node:node tsconfig.json ./
+COPY --chown=node:node prisma.config.ts ./
 
 RUN pnpm dlx prisma generate
 

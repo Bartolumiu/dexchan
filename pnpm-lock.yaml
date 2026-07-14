@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@discordjs/rest':
-        specifier: ~2.6.1
-        version: 2.6.1
       '@prisma/adapter-pg':
         specifier: ~7.8.0
         version: 7.8.0
@@ -39,12 +36,9 @@ importers:
       '@jest/globals':
         specifier: ~30.4.1
         version: 30.4.1
-      '@types/jest':
-        specifier: ~30.0.0
-        version: 30.0.0
-      '@types/pg':
-        specifier: ~8.20.0
-        version: 8.20.0
+      '@types/node':
+        specifier: ~26.1.0
+        version: 26.1.0
       babel-jest:
         specifier: ~30.4.1
         version: 30.4.1(@babel/core@7.29.7)
@@ -759,9 +753,6 @@ packages:
 
   '@types/istanbul-reports@3.0.4':
     resolution: {integrity: sha512-pk2B1NWalF9toCRu6gjBzR69syFjP4Od8WRAX+0mmf9lAjCRicLOWc+ZrxZHx/0XRjotgkF9t6iaMJ+aXcOdZQ==}
-
-  '@types/jest@30.0.0':
-    resolution: {integrity: sha512-XTYugzhuwqWjws0CVz8QpM36+T+Dz5mTEBKhNs/esGLnCIlGdRy+Dq78NRjd7ls7r8BC8ZRMOrKlkO1hU0JOwA==}
 
   '@types/node@26.1.0':
     resolution: {integrity: sha512-O0A1G3xPGy4w7AgQdAQYUlQ+BKk2Oovw8eRpofyp5KdBZULnbe+WqaOVNrm705SHphCiG4XHsACrSmPu1f+Kgw==}
@@ -2894,11 +2885,6 @@ snapshots:
   '@types/istanbul-reports@3.0.4':
     dependencies:
       '@types/istanbul-lib-report': 3.0.3
-
-  '@types/jest@30.0.0':
-    dependencies:
-      expect: 30.4.1
-      pretty-format: 30.4.1
 
   '@types/node@26.1.0':
     dependencies:

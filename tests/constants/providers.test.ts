@@ -7,6 +7,6 @@ describe("Providers Constants", () => {
   });
 
   it("should contain exactly 3 providers", () => {
-    expect(SEARCH_PROVIDERS.length).toBe(3);
+    expect(SEARCH_PROVIDERS).toHaveLength(3);
   });
 });

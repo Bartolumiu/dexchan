@@ -92,7 +92,7 @@ describe("setImages", () => {
         mockTranslations
       );
 
-      expect(attachments.length).toBe(2);
+      expect(attachments).toHaveLength(2);
       expect(attachments[0].options.name).toBe("mangabaka.png");
       expect(attachments[1].options.name).toBe("cover.png");
 
@@ -141,7 +141,7 @@ describe("setImages", () => {
         mockTranslations
       );
 
-      expect(attachments.length).toBe(1);
+      expect(attachments).toHaveLength(1);
       expect(mockEmbed.setThumbnail).not.toHaveBeenCalled();
     });
   });
@@ -158,7 +158,7 @@ describe("setImages", () => {
         mockTranslations
       );
 
-      expect(attachments.length).toBe(2);
+      expect(attachments).toHaveLength(2);
       expect(attachments[0].options.name).toBe("mangadex.png");
       expect(attachments[1].options.name).toBe("cover.png");
 
@@ -207,7 +207,7 @@ describe("setImages", () => {
         mockTranslations
       );
 
-      expect(attachments.length).toBe(1);
+      expect(attachments).toHaveLength(1);
       expect(mockEmbed.setThumbnail).not.toHaveBeenCalled();
     });
   });
@@ -231,7 +231,7 @@ describe("setImages", () => {
         "namicomi",
         "es"
       );
-      expect(attachments.length).toBe(3);
+      expect(attachments).toHaveLength(3);
       expect(attachments[0].options.name).toBe("namicomi.png");
       expect(attachments[1].options.name).toBe("cover.png");
       expect(attachments[2].options.name).toBe("banner.png");
@@ -284,7 +284,7 @@ describe("setImages", () => {
         mockTranslations
       );
 
-      expect(attachments.length).toBe(1);
+      expect(attachments).toHaveLength(1);
       expect(mockEmbed.setThumbnail).not.toHaveBeenCalled();
       expect(getBanner).not.toHaveBeenCalled(); // Fast return before fetching banner
     });
@@ -301,7 +301,7 @@ describe("setImages", () => {
         mockTranslations
       );
 
-      expect(attachments.length).toBe(2);
+      expect(attachments).toHaveLength(2);
       expect(mockEmbed.setThumbnail).toHaveBeenCalled();
       expect(mockEmbed.setImage).not.toHaveBeenCalled(); // No banner set
     });

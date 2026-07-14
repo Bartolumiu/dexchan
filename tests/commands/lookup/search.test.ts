@@ -1,8 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import {
-  AutocompleteInteraction,
-  ChatInputCommandInteraction,
-} from "discord.js";
+import { AutocompleteInteraction, ChatInputCommandInteraction, } from "discord.js";
 import searchCommand from "../../../src/commands/lookup/search";
 import { getInteractionContext } from "../../../src/utils/database";
 import { getTranslations } from "../../../src/functions/handlers/handleLocales";
@@ -448,7 +445,7 @@ describe("search command", () => {
       );
 
       const responseArg = mockInteraction.respond.mock.calls[0][0];
-      expect(responseArg.length).toBe(25);
+      expect(responseArg).toHaveLength(25);
     });
 
     it("should filter correctly based on input string (case-insensitive name match)", async () => {

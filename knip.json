@@ -1,0 +1,4 @@
+{
+  "entry": ["src/events/**/*.ts", "src/commands/**/*.ts", "tests/**/*.test.ts"],
+  "ignoreDependencies": ["@prisma/client", "pg"]
+}

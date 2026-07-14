@@ -1,5 +1,5 @@
 {
-    "sonarCloudOrganization": "bartolumiu",
-    "projectKey": "dexchan",
-    "region": "EU"
+  "sonarCloudOrganization": "bartolumiu",
+  "projectKey": "dexchan",
+  "region": "EU"
 }

@@ -13,5 +13,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Trigger Portainer Webhook
-      run: curl -X POST "${{ secrets.PORTAINER_WEBHOOK_DEXCHAN }}"
+      - name: Trigger Portainer Webhook
+        run: curl -X POST "${{ secrets.PORTAINER_WEBHOOK_DEXCHAN }}"

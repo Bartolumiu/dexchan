@@ -354,13 +354,13 @@ describe("InteractionCreate Event", () => {
   });
 
   describe("Timeout Detection", () => {
-    it("should detect ECONNABORDED and trigger timeout embed", async () => {
+    it("should detect ECONNABORTED and trigger timeout embed", async () => {
       const interaction = createMockInteraction({
         isChatInputCommand: jest.fn().mockReturnValue(true),
       });
 
       const error = new Error("Connection lost");
-      (error as any).code = "ECONNABORDED"; // Force timeout code
+      (error as any).code = "ECONNABORTED"; // Force timeout code
 
       client.commands.set("test-cmd", {
         execute: jest.fn<any>().mockRejectedValue(error),

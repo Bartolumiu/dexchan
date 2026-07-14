@@ -39,6 +39,17 @@ type ExecutableInteraction =
   | AnySelectMenuInteraction
   | ModalSubmitInteraction;
 
+interface HandleInteractionOptions<T> {
+  interaction: Interaction;
+  collection: Collection<any, T>;
+  id: string;
+  errorType: InteractionErrorType;
+  embeds: EmbedBuilder[];
+  client: ExtendedClient;
+  errorStrings: BotStrings["error_embed"];
+  isAutocomplete?: boolean;
+}
+
 const event: BotEvent<Events.InteractionCreate> = {
   name: Events.InteractionCreate,
   execute: async (client: ExtendedClient, interaction: Interaction) => {
@@ -66,66 +77,66 @@ async function routeInteraction(
   errorStrings: BotStrings["error_embed"]
 ) {
   if (interaction.isChatInputCommand()) {
-    await handleInteraction(
+    await handleInteraction({
       interaction,
-      client.commands,
-      interaction.commandName,
-      "err_int_ch_input",
-      embeds,
-      client,
-      errorStrings
-    );
-  } else if (interaction.isButton()) {
-    await handleInteraction(
-      interaction,
-      client.buttons,
-      interaction.customId,
-      "err_int_btn",
-      embeds,
-      client,
-      errorStrings
-    );
-  } else if (interaction.isAnySelectMenu()) {
-    await handleInteraction(
-      interaction,
-      client.selectMenus,
-      interaction.customId,
-      "err_int_slct",
-      embeds,
-      client,
-      errorStrings
-    );
-  } else if (interaction.isContextMenuCommand()) {
-    await handleInteraction(
-      interaction,
-      client.commands,
-      interaction.commandName,
-      "err_int_ctx",
-      embeds,
-      client,
-      errorStrings
-    );
-  } else if (interaction.isModalSubmit()) {
-    await handleInteraction(
-      interaction,
-      client.modals,
-      interaction.customId,
-      "err_int_mod",
-      embeds,
-      client,
-      errorStrings
-    );
-  } else if (interaction.isAutocomplete()) {
-    await handleInteraction(
-      interaction,
-      client.commands,
-      interaction.commandName,
-      "err_int_auto",
+      collection: client.commands,
+      id: interaction.commandName,
+      errorType: "err_int_ch_input",
       embeds,
       client,
       errorStrings,
-      true
-    );
+    });
+  } else if (interaction.isButton()) {
+    await handleInteraction({
+      interaction,
+      collection: client.buttons,
+      id: interaction.customId,
+      errorType: "err_int_btn",
+      embeds,
+      client,
+      errorStrings,
+    });
+  } else if (interaction.isAnySelectMenu()) {
+    await handleInteraction({
+      interaction,
+      collection: client.selectMenus,
+      id: interaction.customId,
+      errorType: "err_int_slct",
+      embeds,
+      client,
+      errorStrings,
+    });
+  } else if (interaction.isContextMenuCommand()) {
+    await handleInteraction({
+      interaction,
+      collection: client.commands,
+      id: interaction.commandName,
+      errorType: "err_int_ctx",
+      embeds,
+      client,
+      errorStrings,
+    });
+  } else if (interaction.isModalSubmit()) {
+    await handleInteraction({
+      interaction,
+      collection: client.modals,
+      id: interaction.customId,
+      errorType: "err_int_mod",
+      embeds,
+      client,
+      errorStrings,
+    });
+  } else if (interaction.isAutocomplete()) {
+    await handleInteraction({
+      interaction,
+      collection: client.commands,
+      id: interaction.commandName,
+      errorType: "err_int_auto",
+      embeds,
+      client,
+      errorStrings,
+      isAutocomplete: true,
+    });
   } else {
     await logMessage(`Unknown interaction type: ${interaction.type}`, "warn");
   }
@@ -183,25 +194,12 @@ function createErrorEmbed(errorStrings: BotStrings["error_embed"]) {
 }
 
 async function handleInteraction<T extends ExecutableItem<any>>(
-  interaction: Interaction,
-  collection: Collection<any, T>,
-  id: string,
-  errorType: InteractionErrorType,
-  embeds: EmbedBuilder[],
-  client: ExtendedClient,
-  errorStrings: BotStrings["error_embed"],
-  isAutocomplete = false
+  options: HandleInteractionOptions<T>
 ) {
-  let item: T | undefined = collection.get(id);
+  const { interaction, collection, id, errorType, client, isAutocomplete } =
+    options;
 
-  if (!item) {
-    for (const [key, value] of collection.entries()) {
-      if (key instanceof RegExp && key.test(id)) {
-        item = value;
-        break;
-      }
-    }
-  }
+  const item = findExecutableItem(collection, id);
 
   if (!item) throw new Error(`${errorType.split("_").pop()} not found`);
 
@@ -212,37 +210,61 @@ async function handleInteraction<T extends ExecutableItem<any>>(
       await item.execute(interaction as ExecutableInteraction, client);
     }
   } catch (e) {
-    const error = e as Error;
-    const stack = error.stack?.toLowerCase() || "";
-
-    if (
-      ("code" in error && (error as any).code === "ECONNABORDED") ||
-      error.message.toLowerCase().includes("timeout") ||
-      stack.includes("timeout")
-    ) {
-      errorTimeout(
-        client,
-        error,
-        errorType,
-        id,
-        embeds[0],
-        embeds[1],
-        errorStrings
-      );
-    } else {
-      updateErrorEmbed(
-        client,
-        error,
-        errorType,
-        id,
-        embeds[0],
-        embeds[1],
-        errorStrings
-      );
-      throw error;
-    }
-    throw new Error("Interaction execution timed out");
+    processInteractionError(e, options);
   }
+}
+
+function findExecutableItem<T>(
+  collection: Collection<any, T>,
+  id: string
+): T | undefined {
+  const item = collection.get(id);
+  if (item) return item;
+
+  for (const [key, value] of collection.entries()) {
+    if (key instanceof RegExp && key.test(id)) {
+      return value;
+    }
+  }
+  return undefined;
+}
+
+function processInteractionError<T>(
+  e: unknown,
+  options: HandleInteractionOptions<T>
+) {
+  const error = e as Error;
+  const stack = error.stack?.toLowerCase() || "";
+
+  const isTimeout =
+    ("code" in error && (error as any).code === "ECONNABORTED") ||
+    error.message.toLowerCase().includes("timeout") ||
+    stack.includes("timeout");
+
+  if (isTimeout) {
+    errorTimeout(
+      options.client,
+      error,
+      options.errorType,
+      options.id,
+      options.embeds[0],
+      options.embeds[1],
+      options.errorStrings
+    );
+  } else {
+    updateErrorEmbed(
+      options.client,
+      error,
+      options.errorType,
+      options.id,
+      options.embeds[0],
+      options.embeds[1],
+      options.errorStrings
+    );
+    throw error;
+  }
+
+  throw new Error("Interaction execution timed out");
 }
 
 function updateErrorEmbed(

@@ -1,4 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, jest, } from "@jest/globals";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 
 // Statically mock dotenv
 jest.mock("dotenv/config", () => ({}));

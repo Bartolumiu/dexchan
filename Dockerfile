@@ -10,4 +10,6 @@ RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
 COPY . .
 
+RUN pnpm dlx prisma generate
+
 CMD ["pnpm", "start"]

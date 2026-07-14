@@ -2,18 +2,18 @@ import "dotenv/config";
 import { initializeApplication, logMessage } from "./lib/app";
 
 async function bootstrap() {
-  const { BOT_TOKEN } = process.env;
+  const { DEXCHAN_TOKEN } = process.env;
 
-  if (!BOT_TOKEN) {
+  if (!DEXCHAN_TOKEN) {
     await logMessage(
-      "BOT_TOKEN is not defined in the environment variables.",
+      "DEXCHAN_TOKEN is not defined in the environment variables.",
       "critical"
     );
     return process.exit(1);
   }
 
   try {
-    await initializeApplication({ token: BOT_TOKEN });
+    await initializeApplication({ token: DEXCHAN_TOKEN });
   } catch (error: any) {
     await logMessage(
       `Application failed to start: ${error.message || error}`,

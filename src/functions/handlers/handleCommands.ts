@@ -139,11 +139,11 @@ async function refreshCommands(
   >
 ): Promise<void> {
   const clientID = process.env.CLIENT_ID;
-  const botToken = process.env.BOT_TOKEN;
+  const botToken = process.env.DEXCHAN_TOKEN;
 
   if (!clientID || !botToken) {
     await logMessage(
-      "[Command Handler] Missing CLIENT_ID or BOT_TOKEN in environment. Cannot register commands.",
+      "[Command Handler] Missing CLIENT_ID or DEXCHAN_TOKEN in environment. Cannot register commands.",
       "error"
     );
     return;

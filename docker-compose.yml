@@ -6,6 +6,6 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      - BOT_TOKEN=${DEXCHAN_TOKEN}
+      - DEXCHAN_TOKEN=${DEXCHAN_TOKEN}
       - DATABASE_URL=${DATABASE_URL}
       - CLIENT_ID=${CLIENT_ID}

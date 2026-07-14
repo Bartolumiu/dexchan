@@ -27,7 +27,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      - BOT_TOKEN=${DEXCHAN_TOKEN}
+      - DEXCHAN_TOKEN=${DEXCHAN_TOKEN}
       - CLIENT_ID=${CLIENT_ID}
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
 

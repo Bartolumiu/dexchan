@@ -1,11 +1,4 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  jest,
-} from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest, } from "@jest/globals";
 
 // Statically mock dotenv
 jest.mock("dotenv/config", () => ({}));
@@ -46,7 +39,7 @@ describe("index.ts - Main Entry Point", () => {
   });
 
   it("should successfully initialize the application", async () => {
-    process.env.BOT_TOKEN = "valid-token";
+    process.env.DEXCHAN_TOKEN = "valid-token";
 
     // Require the module to trigger the bootstrap() IIFE
     require("../src/index");
@@ -61,15 +54,15 @@ describe("index.ts - Main Entry Point", () => {
     expect(mockLogMessage).not.toHaveBeenCalled(); // No critical errors logged
   });
 
-  it("should log a critical error and exit if BOT_TOKEN is missing", async () => {
-    delete process.env.BOT_TOKEN;
+  it("should log a critical error and exit if DEXCHAN_TOKEN is missing", async () => {
+    delete process.env.DEXCHAN_TOKEN;
 
     require("../src/index");
 
     await new Promise((resolve) => setTimeout(resolve, 50));
 
     expect(mockLogMessage).toHaveBeenCalledWith(
-      "BOT_TOKEN is not defined in the environment variables.",
+      "DEXCHAN_TOKEN is not defined in the environment variables.",
       "critical"
     );
     expect(processExitSpy).toHaveBeenCalledWith(1);
@@ -77,7 +70,7 @@ describe("index.ts - Main Entry Point", () => {
   });
 
   it("should catch initialization errors, log them critically, and exit", async () => {
-    process.env.BOT_TOKEN = "valid-token";
+    process.env.DEXCHAN_TOKEN = "valid-token";
     mockInitializeApplication.mockRejectedValue(new Error("Init failed"));
 
     require("../src/index");
@@ -95,7 +88,7 @@ describe("index.ts - Main Entry Point", () => {
   });
 
   it("should gracefully handle non-Error objects thrown during initialization", async () => {
-    process.env.BOT_TOKEN = "valid-token";
+    process.env.DEXCHAN_TOKEN = "valid-token";
     mockInitializeApplication.mockRejectedValue("String-based error");
 
     require("../src/index");

@@ -41,7 +41,7 @@ describe("handleCommands", () => {
     jest.clearAllMocks();
     mockReaddirSync.mockReturnValue([]);
     process.env.CLIENT_ID = "test-client-id";
-    process.env.BOT_TOKEN = "test-bot-token";
+    process.env.DEXCHAN_TOKEN = "test-bot-token";
   });
 
   it("should load global commands correctly", async () => {
@@ -267,13 +267,13 @@ describe("handleCommands", () => {
     );
   });
 
-  it("should handle missing CLIENT_ID or BOT_TOKEN", async () => {
+  it("should handle missing CLIENT_ID or DEXCHAN_TOKEN", async () => {
     delete process.env.CLIENT_ID;
 
     await handleCommands(client);
 
     expect(logMessage).toHaveBeenCalledWith(
-      expect.stringContaining("Missing CLIENT_ID or BOT_TOKEN"),
+      expect.stringContaining("Missing CLIENT_ID or DEXCHAN_TOKEN"),
       "error"
     );
     expect(REST).not.toHaveBeenCalled();

@@ -1,5 +1,14 @@
-import { ChatInputCommandInteraction, Colors, EmbedBuilder, SlashCommandBuilder, } from "discord.js";
-import { format, getTranslations, translateAttribute, } from "../../functions/handlers/handleLocales";
+import {
+  ChatInputCommandInteraction,
+  Colors,
+  EmbedBuilder,
+  SlashCommandBuilder,
+} from "discord.js";
+import {
+  format,
+  getTranslations,
+  translateAttribute,
+} from "../../functions/handlers/handleLocales";
 import { getInteractionContext } from "../../utils/database";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import { SlashCommand } from "../../types/Command";

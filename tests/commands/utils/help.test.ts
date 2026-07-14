@@ -1,8 +1,18 @@
-import { afterEach, beforeEach, describe, expect, it, jest, } from "@jest/globals";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 import { ChatInputCommandInteraction } from "discord.js";
 import helpCommand from "../../../src/commands/utils/help";
 import { getInteractionContext } from "../../../src/utils/database";
-import { format, getTranslations, } from "../../../src/functions/handlers/handleLocales";
+import {
+  format,
+  getTranslations,
+} from "../../../src/functions/handlers/handleLocales";
 import { ExtendedClient } from "../../../src/lib/ExtendedClient";
 
 // --- Mocking Dependencies ---

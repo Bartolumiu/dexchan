@@ -1,4 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, jest, } from "@jest/globals";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 import search from "../../../src/functions/titles/titleSearch";
 import fetchJSON from "../../../src/functions/tools/fetchJSON";
 import getLocalizedTitle from "../../../src/functions/titles/localizedTitle";

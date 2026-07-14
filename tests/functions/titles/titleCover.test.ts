@@ -1,4 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, jest, } from "@jest/globals";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 import getCover from "../../../src/functions/titles/titleCover";
 import fetchImageAsBuffer from "../../../src/functions/tools/fetchImageAsBuffer";
 import { ProviderType } from "../../../src/constants/providers";

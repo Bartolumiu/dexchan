@@ -1,4 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, jest, } from "@jest/globals";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 
 jest.mock("@prisma/adapter-pg", () => ({
   PrismaPg: jest.fn().mockImplementation(() => ({})),

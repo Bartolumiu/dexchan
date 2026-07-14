@@ -1,5 +1,14 @@
-import { AutocompleteInteraction, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, } from "discord.js";
-import { format, getTranslations, translateAttribute, } from "../../functions/handlers/handleLocales";
+import {
+  AutocompleteInteraction,
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  SlashCommandBuilder,
+} from "discord.js";
+import {
+  format,
+  getTranslations,
+  translateAttribute,
+} from "../../functions/handlers/handleLocales";
 import { sendErrorEmbed } from "../../functions/titles/errorEmbed";
 import search from "../../functions/titles/titleSearch";
 import buildTitleListEmbed from "../../functions/titles/titleListEmbed";

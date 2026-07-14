@@ -1,4 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, jest, } from "@jest/globals";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 import { ActivityType } from "discord.js";
 import { ExtendedClient } from "../../../src/lib/ExtendedClient";
 import { prisma } from "../../../src/utils/prisma";

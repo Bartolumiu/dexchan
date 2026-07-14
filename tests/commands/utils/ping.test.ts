@@ -1,4 +1,11 @@
-import { afterAll, beforeEach, describe, expect, it, jest, } from "@jest/globals";
+import {
+  afterAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 import { ChatInputCommandInteraction } from "discord.js";
 import pingCommand from "../../../src/commands/utils/ping";
 import { ExtendedClient } from "../../../src/lib/ExtendedClient";

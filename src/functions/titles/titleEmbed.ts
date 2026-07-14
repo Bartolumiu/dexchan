@@ -1,4 +1,10 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, } from "discord.js";
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  Colors,
+  EmbedBuilder,
+} from "discord.js";
 import { BotStrings } from "../../i18n/schema";
 import { ProviderType } from "../../constants/providers";
 import { TitleStats } from "./titleStats";

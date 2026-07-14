@@ -1,12 +1,12 @@
 <br/>
-<p align="center">
+<div style="text-align: center;">
   <a href="https://github.com/Bartolumiu/dexchan">
     <img src="https://cdn.discordapp.com/avatars/794309204592033821/b1c4eda0575cd423a3f115c75c66f722.webp?size=4096" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Dex-chan</h3>
+  <h3 style="text-align: center;">Dex-chan</h3>
 
-  <p align="center">
+  <p style="text-align: center;">
     Base code for the "Dex-chan" Discord bot
     <br/>
     <br/>
@@ -21,34 +21,34 @@
     ·
     <a href="https://weblate.tr25.es/engage/dexchan/">Translate Dex-chan</a>
   </p>
-</p>
+</div>
 
-<p align="center">
-  <img src="https://img.shields.io/github/contributors/Bartolumiu/dexchan?color=dark-green"/>
-  <img src="https://img.shields.io/github/issues/Bartolumiu/dexchan"/>
-  <img src="https://img.shields.io/github/license/Bartolumiu/dexchan"/>
+<div style="text-align: center;">
+  <img src="https://img.shields.io/github/contributors/Bartolumiu/dexchan?color=dark-green" alt="Contributors"/>
+  <img src="https://img.shields.io/github/issues/Bartolumiu/dexchan" alt="Open Issues"/>
+  <img src="https://img.shields.io/github/license/Bartolumiu/dexchan" alt="Project License"/>
   <a href="https://www.codefactor.io/repository/github/Bartolumiu/dexchan/overview/main">
-    <img src="https://www.codefactor.io/repository/github/Bartolumiu/dexchan/badge/main"/>
+    <img src="https://www.codefactor.io/repository/github/Bartolumiu/dexchan/badge/main" alt="CodeFactor"/>
   </a>
-  <img src="https://img.shields.io/github/stars/Bartolumiu/dexchan?style=social"/>
-  <img src="https://img.shields.io/github/forks/Bartolumiu/dexchan?style=social"/>
-</p>
+  <img src="https://img.shields.io/github/stars/Bartolumiu/dexchan?style=social" alt="Stars"/>
+  <img src="https://img.shields.io/github/forks/Bartolumiu/dexchan?style=social" alt="Forks"/>
+</div>
 
-<p align="center">
+<div style="text-align: center;">
   <a href="https://weblate.tr25.es/engage/dexchan/">
     <img src="https://weblate.tr25.es/widget/dexchan/discord-bot/287x66-black.png" alt="Translation status" />
   </a>
   <a href="https://weblate.tr25.es/engage/dexchan/">
     <img src="https://weblate.tr25.es/widget/dexchan/discord-bot/multi-auto.svg" alt="Translation status" />
   </a>
-</p>
+</div>
 
 ## Table Of Contents
 
 - [Built With](#built-with)
 - [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
+  - [Docker Installation (Recommended)](#docker-installation-recommended)
+  - [Manual Installation](#manual-installation)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
@@ -57,92 +57,92 @@
 ## Built With
 
 - [Node.JS](https://nodejs.org)
+- [TypeScript](https://typescriptlang.org)
 - [Discord.JS](https://discord.js.org)
+- [Prisma](https://prisma.io)
+- [PostgreSQL](https://postgresql.org)
+- [Docker](https://docker.com)
 
 ## Getting Started
 
-To get a local copy of the bot up and running follow these steps.
+To get a local copy of the bot up and running, follow these steps.
 
-### Prerequisites
+### Docker Installation (Recommended)
 
-- Package Manager (Only pnpm allowed. Any other package will display an error message and exit the process)
+The easiest way to get the bot running along with its database is by using the standalone Docker Compose configuration.
 
-  - pnpm (via npm)
+1. Clone the repo:
 
-  ```sh
-  npm install -g pnpm
-  ```
+```shell
+git clone https://github.com/Bartolumiu/dexchan.git
+cd dexchan
+```
 
-  - pnpm (via corepack)
+2. Rename `.env.template` to `.env` and configure your Discord bot credentials (the database connection is handled automatically by Docker):
 
-  ```sh
+```
+DEXCHAN_TOKEN=YOUR_DISCORD_BOT_TOKEN
+CLIENT_ID=YOUR_DISCORD_CLIENT_ID
+POSTGRES_USER=POSTGRES_DB_USER
+POSTGRES_PASSWORD=POSTGRES_DB_PASSWORD
+POSTGRES_DB=POSTGRES_DB
+```
+
+3. Start the stack:
+
+```shell
+docker compose -f docker-compose.standalone.yml up -d
+```
+
+_This spins up the bot, a PostgreSQL instance, pushes the Prisma schema, and seeds the initial database value automatically._
+
+### Manual Installation
+
+#### Prerequisites
+
+- **Package Manager**: Only `pnpm` is allowed. Any other package manager will display an error message and exit the process.
+
+  ```shell
   corepack enable pnpm
   ```
 
-- MongoDB (for storing data)
-  - [MongoDB Atlas](https://www.mongodb.com/atlas/database) (recommended)
-  - [Self-hosted MongoDB](https://www.mongodb.com/docs/manual/installation/)
+- **Database**: A running PostgreSQL database instance.
 
-- pm2 (optional)
-
-```sh
-npm install pm2 -g
-```
-
-or
-
-```sh
-pnpm add -g pm2
-```
-
-### Installation
+#### Installation
 
 1. Clone the repo
 
-```sh
+```shell
 git clone https://github.com/Bartolumiu/dexchan.git
+cd dexchan
 ```
 
-2. Install NPM packages
+2. Install dependencies
 
 ```sh
-npm install
+pnpm install --frozen-lockfile
 ```
 
-3. Rename `.env.template` to `.env` and enter the following:
+3. Rename `.env.template` to `.env` and fill in your connection details:
 
 ```env
-token=ULTRA_SECRET_BOT_TOKEN
-dbToken=mongodbtoken
-clientID=0123456789011121314
+DEXCHAN_TOKEN=YOUR_DISCORD_BOT_TOKEN
+CLIENT_ID=YOUR_DISCORD_CLIENT_ID
+DATABASE_URL=YOUR_DATABASE_URL
 ```
 
 4. Start the bot
 
-To start the bot, there are 4 different methods
-
-- Node:
-
-```sh
-node src/index.js
-```
-
-- npm command
-
-```sh
-npm run start
-```
-
-- pnpm command
-
-```sh
+```shell
 pnpm start
 ```
 
-- pm2 (recommended)
+_This automatically syncs your database schema, runs the seed script, and boots the bot via `tsx`._
 
-```sh
-pm2 start src/index.js
+If you want to run the bot in development mode (without automatically syncing the database schema):
+
+```shell
+pnpm dev
 ```
 
 ## Roadmap
@@ -153,27 +153,17 @@ See the [open issues](https://github.com/Bartolumiu/dexchan/issues) for a list o
 
 ### Code Contributions
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-- If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/Bartolumiu/dexchan/issues/new) to discuss it, or directly create a pull request after you edit the _README.md_ file with necessary changes.
-- Please make sure you check your spelling and grammar.
-- Create individual PR for each suggestion.
+Please read the [Contributing Guidelines](CONTRIBUTING.md) for details on our code style, architecture rules, and the process for submitting pull requests.
 
-### Translation Contributions
+We also expect all contributors to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a welcoming and includive environment for everyone.
 
-If you want to help translate the bot, you can do so by visiting [Weblate](https://weblate.tr25.es/engage/dexchan/). You can translate the bot into any language you want, and it will be automatically updated in the bot once the translated strings are approved.
-
-### Creating A Pull Request
-
-1. Fork the Project
-2. Create your Feature Branch based on `develop` (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+If you want to help translate the bot, you can do so by visiting [Weblate](https://weblate.tr25.es/engage/dexchan/).
 
 ## License
 
-Distributed under the Apache License 2.0. See [LICENSE](https://github.com/Bartolumiu/dexchan/blob/main/LICENSE) for more information.
+Distributed under the GPL-3.0 Licence. See [LICENSE](LICENSE) for more information.
 
 ## Authors
 

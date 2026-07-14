@@ -1,14 +1,19 @@
 FROM node:24-alpine
 
-WORKDIR /app
-
 RUN corepack enable
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+WORKDIR /app
+RUN chown node:node /app
+
+USER node
+
+COPY --chown=node:node package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
-COPY . .
+COPY --chown=node:node src ./src
+COPY --chown=node:node prisma ./prisma
+COPY --chown=node:node tsconfig.json ./
 
 RUN pnpm dlx prisma generate
 

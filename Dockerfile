@@ -1,6 +1,7 @@
 FROM node:24-alpine
 
-RUN corepack enable
+RUN apk add --no-cache openssl && \
+    corepack enable
 
 WORKDIR /app
 RUN chown node:node /app
@@ -16,6 +17,6 @@ COPY --chown=node:node prisma ./prisma
 COPY --chown=node:node tsconfig.json ./
 COPY --chown=node:node prisma.config.ts ./
 
-RUN pnpm dlx prisma generate
+RUN pnpm dlx prisma@7.8.0 generate
 
 CMD ["pnpm", "start"]

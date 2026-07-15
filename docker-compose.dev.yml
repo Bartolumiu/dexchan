@@ -7,5 +7,13 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       - DEXCHAN_TOKEN=${DEXCHAN_DEV_TOKEN}
-      - DATABASE_URL=${DB_URI}
+      - DATABASE_URL=${DATABASE_URL}
       - CLIENT_ID=${CLIENT_ID}
+    networks:
+      - default
+      - db_network
+
+networks:
+  db_network:
+    external: true
+    name: ${DB_NETWORK_NAME}

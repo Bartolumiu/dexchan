@@ -17,6 +17,6 @@ COPY --chown=node:node prisma ./prisma
 COPY --chown=node:node tsconfig.json ./
 COPY --chown=node:node prisma.config.ts ./
 
-RUN pnpm dlx prisma@7.8.0 generate
+RUN DATABASE_URL="postgresql://fake:user@localhost:5432/ci" pnpm dlx prisma@7.8.0 generate
 
 CMD ["pnpm", "start"]

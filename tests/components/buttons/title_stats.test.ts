@@ -66,10 +66,13 @@ describe("title_stats button", () => {
     } as unknown as ExtendedClient;
 
     mockInteraction = {
-      deferUpdate: jest.fn<any>().mockResolvedValue(undefined),
+      update: jest.fn<any>().mockResolvedValue(undefined),
       followUp: jest.fn<any>().mockResolvedValue(undefined),
       user: { username: "TestUser" },
       customId: "mangadex_title_stats_12345",
+      message: {
+        components: [],
+      },
     };
   });
 

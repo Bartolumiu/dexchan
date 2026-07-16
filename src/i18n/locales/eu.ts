@@ -184,7 +184,10 @@ export default {
           chapter_reactions: "Kapitulu Erreakzioak",
           views: "Bistaratzeak",
         },
-        units: { votes: "bozkak", comments: "iruzkin" },
+        units: {
+          votes: "bozkak",
+          comments: "iruzkin",
+        },
         buttons: {
           mangadex: {
             forum: {
@@ -192,14 +195,18 @@ export default {
               no_thread: "Foru-haririk Ez",
             },
           },
-          namicomi: { open: "NamiComin Ireki" },
+          namicomi: {
+            open: "NamiComin Ireki",
+          },
         },
       },
     },
   },
   utils: {
     title_embed: {
-      author: { too_many: "Egile Anitz" },
+      author: {
+        too_many: "Egile Anitz",
+      },
       description: {
         no_description: "Ez dago deskribapenik eskuragarri {locale}(e)rako.",
       },
@@ -259,7 +266,10 @@ export default {
           },
         },
       },
-      button: { open: "{source}(e)n Ireki", stats: "Estatistikak Ikusi" },
+      button: {
+        open: "{source}(e)n Ireki",
+        stats: "Estatistikak Ikusi",
+      },
     },
     title_list_embed: {
       description: "Hemen dituzu `{query}` bilaketaren emaitzak {source}(e)n.",

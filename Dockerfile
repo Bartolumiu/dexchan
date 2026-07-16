@@ -6,6 +6,7 @@ RUN apk add --no-cache openssl && \
 
 WORKDIR /app
 RUN chown node:node /app
+RUN mkdir -p logs && chown node:node logs
 USER node
 
 COPY --chown=node:node package.json pnpm-lock.yaml pnpm-workspace.yaml ./

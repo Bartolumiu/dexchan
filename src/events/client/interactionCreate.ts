@@ -8,6 +8,7 @@ import {
   Events,
   Interaction,
   MessageContextMenuCommandInteraction,
+  MessageFlags,
   ModalSubmitInteraction,
   UserContextMenuCommandInteraction,
 } from "discord.js";
@@ -153,8 +154,6 @@ async function logAndReplyError(
     .replaceAll(":", "-")
     .split(".")[0];
 
-  if (!fs.existsSync("./logs")) fs.mkdirSync("./logs", { recursive: true });
-
   let origin = "Unknown";
   if (interaction.isCommand() || interaction.isAutocomplete()) {
     origin = interaction.commandName;
@@ -167,17 +166,34 @@ async function logAndReplyError(
     options = interaction.options.data;
   }
 
-  fs.writeFileSync(
-    `./logs/${errorTimestamp}.txt`,
-    `Data: ${errorTimestamp}\nUser: ${interaction.user.tag} (${interaction.user.id})\nError origin: ${origin}\nError message: ${error.message}\nError stack: ${error.stack}\nInteraction type: ${interaction.type}\n\nInput:${JSON.stringify(options, null, 2)}`
-  );
+  try {
+    if (!fs.existsSync("./logs")) fs.mkdirSync("./logs", { recursive: true });
 
-  if (interaction.isRepliable()) {
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp({ embeds, ephemeral: true });
-    } else if (interaction.reply) {
-      await interaction.reply({ embeds, ephemeral: true });
+    fs.writeFileSync(
+      `./logs/${errorTimestamp}.txt`,
+      `Data: ${errorTimestamp}\nUser: ${interaction.user.tag} (${interaction.user.id})\nError origin: ${origin}\nError message: ${error.message}\nError stack: ${error.stack}\nInteraction type: ${interaction.type}\n\nInput:${JSON.stringify(options, null, 2)}`
+    );
+  } catch (fsError) {
+    await logMessage(
+      `[Logger] Failed to write error log to disk: ${fsError}`,
+      "error"
+    );
+    await logMessage(`[Logger] Original Error: ${error.stack}`, "error");
+  }
+
+  try {
+    if (interaction.isRepliable()) {
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({ embeds, flags: MessageFlags.Ephemeral });
+      } else if (interaction.reply) {
+        await interaction.reply({ embeds, flags: MessageFlags.Ephemeral });
+      }
     }
+  } catch (replyError) {
+    await logMessage(
+      `[Logger] Failed to send error embed to Discord: ${replyError}`,
+      "error"
+    );
   }
 }
 

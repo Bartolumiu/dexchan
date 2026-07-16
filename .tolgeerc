@@ -1,0 +1,19 @@
+{
+  "projectId": 2,
+  "apiUrl": "https://tolgee.tr25.es",
+  "format": "JSON_ICU",
+  "push": {
+    "files": [
+      {
+        "path": "./.i18n-temp/en.json",
+        "language": "en"
+      }
+    ],
+    "forceMode": "OVERRIDE"
+  },
+  "pull": {
+    "path": "./.i18n-temp",
+    "languages": ["es", "eu", "ja"]
+  }
+}
+

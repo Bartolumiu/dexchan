@@ -15,7 +15,9 @@
     "check:dependencies": "pnpm dlx depcheck",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "i18n:push": "tsx --tsconfig tsconfig.json scripts/sync-export.ts && tolgee push",
+    "i18n:pull": "tolgee pull && tsx --tsconfig tsconfig.json scripts/sync-import.ts && prettier --write \"src/i18n/locales/*.ts\""
   },
   "jest": {
     "preset": "ts-jest",
@@ -68,6 +70,7 @@
   },
   "devDependencies": {
     "@jest/globals": "~30.4.1",
+    "@tolgee/cli": "~2.20.0",
     "@types/node": "~26.1.0",
     "babel-jest": "~30.4.1",
     "jest": "~30.4.2",

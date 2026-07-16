@@ -12,33 +12,40 @@ export async function getInteractionContext(
   interaction: Interaction
 ): Promise<InteractionContext> {
   try {
-    const dbUser = await prisma.user.findUnique({
-      where: { id: interaction.user.id },
-    });
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Database check timed out")), 1000)
+    );
+
+    const dbQueries = async () => {
+      const user = await prisma.user.findUnique({
+        where: { id: interaction.user.id },
+      });
+
+      let guildSettings = null;
+      if (interaction.guildId) {
+        guildSettings = await prisma.guildSettings.findUnique({
+          where: { guildId: interaction.guildId },
+          include: { sources: { include: { source: true } } },
+        });
+      }
+
+      return { user, guildSettings };
+    };
+
+    const { user: dbUser, guildSettings } = await Promise.race([
+      dbQueries(),
+      timeout,
+    ]);
 
     const resolvedLocale =
       dbUser?.preferredLocale || interaction.locale || "en";
 
-    let allowedSources: string[] = [];
+    let allowedSources: string[];
 
-    if (interaction.guildId) {
-      const guildSettings = await prisma.guildSettings.findUnique({
-        where: { guildId: interaction.guildId },
-        include: {
-          sources: { include: { source: true } },
-        },
-      });
-
-      if (guildSettings && guildSettings.sources.length > 0) {
-        allowedSources = guildSettings.sources
-          .filter((s) => s.enabled)
-          .map((s) => s.source.identifier);
-      } else {
-        const globalDefaults = await prisma.upstreamSource.findMany({
-          where: { isDefault: true },
-        });
-        allowedSources = globalDefaults.map((s) => s.identifier);
-      }
+    if (guildSettings && guildSettings.sources.length > 0) {
+      allowedSources = guildSettings.sources
+        .filter((s) => s.enabled)
+        .map((s) => s.source.identifier);
     } else {
       const globalDefaults = await prisma.upstreamSource.findMany({
         where: { isDefault: true },

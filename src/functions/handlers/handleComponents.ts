@@ -23,7 +23,7 @@ export default async function handleComponents(
     return;
   }
 
-  const componentMap: Record<string, Collection<string, any>> = {
+  const componentMap: Record<string, Collection<string | RegExp, any>> = {
     buttons: client.buttons,
     selectMenus: client.selectMenus,
     modals: client.modals,
@@ -61,7 +61,7 @@ export default async function handleComponents(
           continue;
         }
 
-        collection.set(component.data.customId.toString(), component);
+        collection.set(component.data.customId, component);
 
         await logMessage(
           `[Component Handler] Component ${component.data.customId} loaded from ${file} in ${folder}.`,

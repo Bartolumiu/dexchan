@@ -11,11 +11,14 @@ export interface InteractionContext {
 export async function getInteractionContext(
   interaction: Interaction
 ): Promise<InteractionContext> {
-  let timeoutId: NodeJS.Timeout;
+  let timeoutId: NodeJS.Timeout | undefined;
 
   try {
     const timeout = new Promise<never>((_, reject) => {
-      timeoutId = setTimeout(() => reject(new Error("Database check timed out")), 1000)
+      timeoutId = setTimeout(
+        () => reject(new Error("Database check timed out")),
+        1000
+      );
     });
 
     const dbQueries = async () => {
@@ -38,8 +41,6 @@ export async function getInteractionContext(
       dbQueries(),
       timeout,
     ]);
-
-    clearTimeout(timeoutId!);
 
     const resolvedLocale =
       dbUser?.preferredLocale || interaction.locale || "en";
@@ -72,5 +73,7 @@ export async function getInteractionContext(
       nsfwEnabled: false,
       sources: ["mangadex", "namicomi", "mangabaka"],
     };
+  } finally {
+    clearTimeout(timeoutId);
   }
 }

@@ -42,7 +42,7 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0
 | `chore`    | Maintenance, dependencies, or configuration           | `chore(core). rewrite core`               |
 | `refactor` | Code changes that neither fix a bug nor add a feature | `refactor(db): optimise prisma queries`   |
 | `docs`     | Documentation updates (README, comments)              | `docs(readme): add docker instructions`   |
-| `style`    | Formatting, missing semi-colons, etc.                 | `style(format): run prettier              |
+| `style`    | Formatting, missing semi-colons, etc.                 | `style(format): run prettier`             |
 
 ### 2. Branch Naming
 

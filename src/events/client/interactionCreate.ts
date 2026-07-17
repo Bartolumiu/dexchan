@@ -13,6 +13,7 @@ import {
   UserContextMenuCommandInteraction,
 } from "discord.js";
 import * as fs from "node:fs";
+import { randomUUID } from "node:crypto";
 import { BotEvent } from "../../types/Event";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import { getInteractionContext } from "../../utils/database";
@@ -169,8 +170,10 @@ async function logAndReplyError(
   try {
     if (!fs.existsSync("./logs")) fs.mkdirSync("./logs", { recursive: true });
 
+    const logFileName = `${errorTimestamp}-${randomUUID().slice(0, 8)}`;
+
     fs.writeFileSync(
-      `./logs/${errorTimestamp}.txt`,
+      `./logs/${logFileName}.txt`,
       `Data: ${errorTimestamp}\nUser: ${interaction.user.tag} (${interaction.user.id})\nError origin: ${origin}\nError message: ${error.message}\nError stack: ${error.stack}\nInteraction type: ${interaction.type}\n\nInput:${JSON.stringify(options, null, 2)}`
     );
   } catch (fsError) {

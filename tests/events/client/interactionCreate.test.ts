@@ -299,6 +299,25 @@ describe("InteractionCreate Event", () => {
       expect(fs.mkdirSync).toHaveBeenCalledWith("./logs", { recursive: true });
     });
 
+    it("should not collide filenames for two errors logged within the same second", async () => {
+      const interactionA = createMockInteraction({
+        isChatInputCommand: jest.fn().mockReturnValue(true),
+        isCommand: jest.fn().mockReturnValue(true),
+      });
+      const interactionB = createMockInteraction({
+        isChatInputCommand: jest.fn().mockReturnValue(true),
+        isCommand: jest.fn().mockReturnValue(true),
+      });
+
+      await interactionCreateEvent.execute(client, interactionA as any);
+      await interactionCreateEvent.execute(client, interactionB as any);
+
+      const calls = (fs.writeFileSync as jest.Mock).mock.calls;
+      const [pathA] = calls[0] as [string, string];
+      const [pathB] = calls[1] as [string, string];
+      expect(pathA).not.toBe(pathB);
+    });
+
     it("should handle error formatting for message components", async () => {
       const interaction = createMockInteraction({
         isButton: jest.fn().mockReturnValue(true),

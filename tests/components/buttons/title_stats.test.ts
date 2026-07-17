@@ -123,7 +123,7 @@ describe("title_stats button", () => {
     expect(updatedComponents[0].components[1].data.disabled).toBeUndefined();
   });
 
-  it("should skip non-button components in action rows", async () => {
+  it("should preserve non-button components in a row while only disabling the matching button", async () => {
     const stats = {
       title: {
         rating: { average: 7, bayesian: 6.8, count: 10, distribution: {} },
@@ -144,50 +144,6 @@ describe("title_stats button", () => {
             customId: "select_menu",
             options: [],
           },
-          {
-            type: 2, // Button
-            style: 1,
-            custom_id: "mangadex_title_stats_999",
-            customId: "mangadex_title_stats_999",
-            label: "Stats",
-          },
-        ],
-      },
-    ];
-
-    await titleStatsButton.execute(mockInteraction, client);
-
-    const updatedComponents =
-      mockInteraction.update.mock.calls[0][0].components;
-    expect(updatedComponents[0].components).toHaveLength(1);
-  });
-
-  it("should drop rows that end up with zero components after filtering", async () => {
-    const stats = {
-      title: {
-        rating: { average: 7, bayesian: 6.8, count: 10, distribution: {} },
-        follows: 20,
-        comments: { repliesCount: 3 },
-      },
-    };
-    (getTitleStats as jest.Mock<any>).mockResolvedValue(stats);
-
-    mockInteraction.customId = "mangadex_title_stats_999";
-    mockInteraction.message.components = [
-      {
-        type: 1,
-        components: [
-          {
-            type: 3, // SelectMenu, not Button
-            custom_id: "select_menu",
-            customId: "select_menu",
-            options: [],
-          },
-        ],
-      },
-      {
-        type: 1,
-        components: [
           {
             type: 2, // Button
             style: 1,
@@ -204,9 +160,103 @@ describe("title_stats button", () => {
     const updatedComponents =
       mockInteraction.update.mock.calls[0][0].components;
     expect(updatedComponents).toHaveLength(1);
+    expect(updatedComponents[0].components).toHaveLength(2);
     expect(updatedComponents[0].components[0].data.custom_id).toBe(
+      "select_menu"
+    );
+    expect(updatedComponents[0].components[0].data.disabled).toBeUndefined();
+    expect(updatedComponents[0].components[1].data.custom_id).toBe(
       "mangadex_title_stats_999"
     );
+    expect(updatedComponents[0].components[1].data.disabled).toBe(true);
+  });
+
+  it("should preserve an action row that has no matching button untouched", async () => {
+    const stats = {
+      title: {
+        rating: { average: 7, bayesian: 6.8, count: 10, distribution: {} },
+        follows: 20,
+        comments: { repliesCount: 3 },
+      },
+    };
+    (getTitleStats as jest.Mock<any>).mockResolvedValue(stats);
+
+    mockInteraction.customId = "mangadex_title_stats_999";
+    mockInteraction.message.components = [
+      {
+        type: 1,
+        components: [
+          {
+            type: 3, // SelectMenu, not Button
+            custom_id: "select_menu",
+            customId: "select_menu",
+            options: [],
+          },
+        ],
+      },
+      {
+        type: 1,
+        components: [
+          {
+            type: 2, // Button
+            style: 1,
+            custom_id: "mangadex_title_stats_999",
+            customId: "mangadex_title_stats_999",
+            label: "Stats",
+          },
+        ],
+      },
+    ];
+
+    await titleStatsButton.execute(mockInteraction, client);
+
+    const updatedComponents =
+      mockInteraction.update.mock.calls[0][0].components;
+    expect(updatedComponents).toHaveLength(2);
+    expect(updatedComponents[0].components).toHaveLength(1);
+    expect(updatedComponents[0].components[0].data.custom_id).toBe(
+      "select_menu"
+    );
+    expect(updatedComponents[1].components[0].data.custom_id).toBe(
+      "mangadex_title_stats_999"
+    );
+    expect(updatedComponents[1].components[0].data.disabled).toBe(true);
+  });
+
+  it("should pass through non-ActionRow top-level components unchanged", async () => {
+    const stats = {
+      title: {
+        rating: { average: 7, bayesian: 6.8, count: 10, distribution: {} },
+        follows: 20,
+        comments: { repliesCount: 3 },
+      },
+    };
+    (getTitleStats as jest.Mock<any>).mockResolvedValue(stats);
+
+    mockInteraction.customId = "mangadex_title_stats_999";
+    const textDisplay = { type: 10, content: "Hello" };
+    mockInteraction.message.components = [
+      textDisplay,
+      {
+        type: 1,
+        components: [
+          {
+            type: 2, // Button
+            style: 1,
+            custom_id: "mangadex_title_stats_999",
+            customId: "mangadex_title_stats_999",
+            label: "Stats",
+          },
+        ],
+      },
+    ];
+
+    await titleStatsButton.execute(mockInteraction, client);
+
+    const updatedComponents =
+      mockInteraction.update.mock.calls[0][0].components;
+    expect(updatedComponents[0]).toBe(textDisplay);
+    expect(updatedComponents[1].components[0].data.disabled).toBe(true);
   });
 
   it("should have correct regex customId data", () => {

@@ -5,6 +5,11 @@ import { Collection } from "discord.js";
 import { Component } from "../../types/Component";
 import { logMessage } from "../../lib/app";
 
+function isSameCustomId(a: string | RegExp, b: string | RegExp): boolean {
+  if (typeof a === "string" || typeof b === "string") return a === b;
+  return a.source === b.source && a.flags === b.flags;
+}
+
 export default async function handleComponents(
   client: ExtendedClient
 ): Promise<void> {
@@ -59,6 +64,16 @@ export default async function handleComponents(
             "warn"
           );
           continue;
+        }
+
+        const duplicateKey = [...collection.keys()].find((existingKey) =>
+          isSameCustomId(existingKey, component.data.customId)
+        );
+        if (duplicateKey !== undefined) {
+          await logMessage(
+            `[Component Handler] Component ${file} in ${folder} registers customId ${component.data.customId}, which duplicates an already-loaded component. It will shadow the previous one.`,
+            "warn"
+          );
         }
 
         collection.set(component.data.customId, component);

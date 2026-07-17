@@ -112,8 +112,8 @@ describe("title_stats button", () => {
     await titleStatsButton.execute(mockInteraction, client);
 
     expect(mockInteraction.update).toHaveBeenCalled();
-    const updatedComponents = mockInteraction.update.mock.calls[0][0]
-      .components;
+    const updatedComponents =
+      mockInteraction.update.mock.calls[0][0].components;
     expect(updatedComponents).toHaveLength(1);
     expect(updatedComponents[0].components).toHaveLength(2);
     expect(updatedComponents[0].components[0].data.custom_id).toBe(
@@ -157,9 +157,56 @@ describe("title_stats button", () => {
 
     await titleStatsButton.execute(mockInteraction, client);
 
-    const updatedComponents = mockInteraction.update.mock.calls[0][0]
-      .components;
+    const updatedComponents =
+      mockInteraction.update.mock.calls[0][0].components;
     expect(updatedComponents[0].components).toHaveLength(1);
+  });
+
+  it("should drop rows that end up with zero components after filtering", async () => {
+    const stats = {
+      title: {
+        rating: { average: 7, bayesian: 6.8, count: 10, distribution: {} },
+        follows: 20,
+        comments: { repliesCount: 3 },
+      },
+    };
+    (getTitleStats as jest.Mock<any>).mockResolvedValue(stats);
+
+    mockInteraction.customId = "mangadex_title_stats_999";
+    mockInteraction.message.components = [
+      {
+        type: 1,
+        components: [
+          {
+            type: 3, // SelectMenu, not Button
+            custom_id: "select_menu",
+            customId: "select_menu",
+            options: [],
+          },
+        ],
+      },
+      {
+        type: 1,
+        components: [
+          {
+            type: 2, // Button
+            style: 1,
+            custom_id: "mangadex_title_stats_999",
+            customId: "mangadex_title_stats_999",
+            label: "Stats",
+          },
+        ],
+      },
+    ];
+
+    await titleStatsButton.execute(mockInteraction, client);
+
+    const updatedComponents =
+      mockInteraction.update.mock.calls[0][0].components;
+    expect(updatedComponents).toHaveLength(1);
+    expect(updatedComponents[0].components[0].data.custom_id).toBe(
+      "mangadex_title_stats_999"
+    );
   });
 
   it("should have correct regex customId data", () => {

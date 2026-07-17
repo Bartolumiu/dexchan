@@ -22,8 +22,8 @@ export default {
     customId: /_title_stats_/,
   },
   async execute(interaction: ButtonInteraction, client: ExtendedClient) {
-    const updatedComponents = interaction.message.components.map(
-      (untypedRow) => {
+    const updatedComponents = interaction.message.components
+      .map((untypedRow) => {
         const row =
           untypedRow as unknown as ActionRow<MessageActionRowComponent>;
 
@@ -42,8 +42,8 @@ export default {
         });
 
         return newRow;
-      }
-    );
+      })
+      .filter((row) => row.components.length > 0);
     await interaction.update({ components: updatedComponents });
     const context = await getInteractionContext(interaction);
     const locale = context.locale;

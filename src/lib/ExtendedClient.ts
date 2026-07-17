@@ -1,6 +1,15 @@
-import { Client, ClientOptions, Collection, RESTPostAPIChatInputApplicationCommandsJSONBody, } from "discord.js";
+import {
+  Client,
+  ClientOptions,
+  Collection,
+  RESTPostAPIChatInputApplicationCommandsJSONBody,
+} from "discord.js";
 import { SlashCommand } from "../types/Command";
-import { ButtonComponent, ModalComponent, SelectMenuComponent, } from "../types/Component";
+import {
+  ButtonComponent,
+  ModalComponent,
+  SelectMenuComponent,
+} from "../types/Component";
 
 export class ExtendedClient extends Client {
   public commands = new Collection<string | RegExp, SlashCommand>();

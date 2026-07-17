@@ -337,6 +337,46 @@ describe("InteractionCreate Event", () => {
       expect(interaction.followUp).not.toHaveBeenCalled();
     });
 
+    it("should log fs write failure and continue to reply attempt", async () => {
+      (fs.writeFileSync as jest.Mock).mockImplementation(() => {
+        throw new Error("ENOSPC: no space left on device");
+      });
+
+      const interaction = createMockInteraction({
+        isChatInputCommand: jest.fn().mockReturnValue(true),
+        isCommand: jest.fn().mockReturnValue(true),
+      });
+
+      await interactionCreateEvent.execute(client, interaction as any);
+
+      expect(logMessage).toHaveBeenCalledWith(
+        expect.stringContaining("[Logger] Failed to write error log to disk"),
+        "error"
+      );
+      expect(logMessage).toHaveBeenCalledWith(
+        expect.stringContaining("[Logger] Original Error:"),
+        "error"
+      );
+      expect(interaction.reply).toHaveBeenCalled();
+    });
+
+    it("should log failure when sending error embed to Discord", async () => {
+      const interaction = createMockInteraction({
+        isChatInputCommand: jest.fn().mockReturnValue(true),
+        isCommand: jest.fn().mockReturnValue(true),
+      });
+      interaction.reply.mockRejectedValue(new Error("Discord API error"));
+
+      await interactionCreateEvent.execute(client, interaction as any);
+
+      expect(logMessage).toHaveBeenCalledWith(
+        expect.stringContaining(
+          "[Logger] Failed to send error embed to Discord"
+        ),
+        "error"
+      );
+    });
+
     it("should do nothing in catch block if interaction.reply is explicitly missing", async () => {
       const interaction = createMockInteraction({
         isChatInputCommand: jest.fn().mockReturnValue(true),

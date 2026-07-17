@@ -76,6 +76,92 @@ describe("title_stats button", () => {
     };
   });
 
+  it("should disable the clicked button and rebuild rows from message components", async () => {
+    const stats = {
+      title: {
+        rating: { average: 7, bayesian: 6.8, count: 10, distribution: {} },
+        follows: 20,
+        comments: { repliesCount: 3 },
+      },
+    };
+    (getTitleStats as jest.Mock<any>).mockResolvedValue(stats);
+
+    mockInteraction.customId = "mangadex_title_stats_999";
+    mockInteraction.message.components = [
+      {
+        type: 1, // ActionRow
+        components: [
+          {
+            type: 2, // Button
+            style: 1,
+            custom_id: "mangadex_title_stats_999",
+            customId: "mangadex_title_stats_999",
+            label: "Stats",
+          },
+          {
+            type: 2, // Button
+            style: 2,
+            custom_id: "other_button",
+            customId: "other_button",
+            label: "Other",
+          },
+        ],
+      },
+    ];
+
+    await titleStatsButton.execute(mockInteraction, client);
+
+    expect(mockInteraction.update).toHaveBeenCalled();
+    const updatedComponents = mockInteraction.update.mock.calls[0][0]
+      .components;
+    expect(updatedComponents).toHaveLength(1);
+    expect(updatedComponents[0].components).toHaveLength(2);
+    expect(updatedComponents[0].components[0].data.custom_id).toBe(
+      "mangadex_title_stats_999"
+    );
+    expect(updatedComponents[0].components[0].data.disabled).toBe(true);
+    expect(updatedComponents[0].components[1].data.disabled).toBeUndefined();
+  });
+
+  it("should skip non-button components in action rows", async () => {
+    const stats = {
+      title: {
+        rating: { average: 7, bayesian: 6.8, count: 10, distribution: {} },
+        follows: 20,
+        comments: { repliesCount: 3 },
+      },
+    };
+    (getTitleStats as jest.Mock<any>).mockResolvedValue(stats);
+
+    mockInteraction.customId = "mangadex_title_stats_999";
+    mockInteraction.message.components = [
+      {
+        type: 1,
+        components: [
+          {
+            type: 3, // SelectMenu, not Button
+            custom_id: "select_menu",
+            customId: "select_menu",
+            options: [],
+          },
+          {
+            type: 2, // Button
+            style: 1,
+            custom_id: "mangadex_title_stats_999",
+            customId: "mangadex_title_stats_999",
+            label: "Stats",
+          },
+        ],
+      },
+    ];
+
+    await titleStatsButton.execute(mockInteraction, client);
+
+    const updatedComponents = mockInteraction.update.mock.calls[0][0]
+      .components;
+    expect(updatedComponents[0].components).toHaveLength(1);
+  });
+
   it("should have correct regex customId data", () => {
     expect(titleStatsButton.data.customId).toEqual(/_title_stats_/);
   });
@@ -103,7 +189,7 @@ describe("title_stats button", () => {
 
   it("should fallback to undefined footer iconURL in error embed if avatarURL is null", async () => {
     (getTitleStats as jest.Mock<any>).mockResolvedValue(null);
-    client.user!.avatarURL = () => null; // Force null to trigger `?? undefined`
+    client.user!.avatarURL = () => null;
 
     await titleStatsButton.execute(mockInteraction, client);
 
@@ -120,7 +206,7 @@ describe("title_stats button", () => {
           count: 100,
           distribution: {
             "10": 50,
-            "9": 0, // Should be filtered out
+            "9": 0,
             "8": 50,
           },
         },
@@ -264,7 +350,7 @@ describe("title_stats button", () => {
     it("should fallback to undefined footer iconURL in success embed if avatarURL is null", async () => {
       (getTitleStats as jest.Mock<any>).mockResolvedValue({ dummy: "data" });
       mockInteraction.customId = "unknownsource_title_stats_999";
-      client.user!.avatarURL = () => null; // Force null to trigger `?? undefined`
+      client.user!.avatarURL = () => null;
 
       await titleStatsButton.execute(mockInteraction, client);
 

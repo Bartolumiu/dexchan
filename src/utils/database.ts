@@ -11,10 +11,12 @@ export interface InteractionContext {
 export async function getInteractionContext(
   interaction: Interaction
 ): Promise<InteractionContext> {
+  let timeoutId: NodeJS.Timeout;
+
   try {
-    const timeout = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("Database check timed out")), 1000)
-    );
+    const timeout = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error("Database check timed out")), 1000)
+    });
 
     const dbQueries = async () => {
       const user = await prisma.user.findUnique({
@@ -36,6 +38,8 @@ export async function getInteractionContext(
       dbQueries(),
       timeout,
     ]);
+
+    clearTimeout(timeoutId!);
 
     const resolvedLocale =
       dbUser?.preferredLocale || interaction.locale || "en";

@@ -99,6 +99,28 @@ describe("database utils - getInteractionContext", () => {
     expect(context.sources).toEqual(["global-default-1"]);
   });
 
+  it("should fall back to global defaults if every configured guild source is disabled", async () => {
+    const interaction = {
+      user: { id: "123" },
+      guildId: "guild_1",
+    } as unknown as Interaction;
+
+    mockUserFindUnique.mockResolvedValue(null);
+    mockGuildSettingsFindUnique.mockResolvedValue({
+      sources: [
+        { enabled: false, source: { identifier: "custom-source-1" } },
+        { enabled: false, source: { identifier: "custom-source-2" } },
+      ],
+    });
+    mockUpstreamSourceFindMany.mockResolvedValue([
+      { identifier: "global-default-1" },
+    ]);
+
+    const context = await getInteractionContext(interaction);
+
+    expect(context.sources).toEqual(["global-default-1"]);
+  });
+
   it("should return fallback context and log error when DB query throws", async () => {
     const interaction = {
       user: { id: "123" },
@@ -178,5 +200,65 @@ describe("database utils - getInteractionContext", () => {
     expect(context.nsfwEnabled).toBe(false);
 
     jest.useRealTimers();
+  });
+
+  it("should time out if the global-defaults fallback query itself hangs past 1000ms", async () => {
+    jest.useFakeTimers();
+
+    const interaction = {
+      user: { id: "123" },
+      locale: "eu",
+    } as unknown as Interaction;
+
+    mockUserFindUnique.mockResolvedValue(null);
+    mockUpstreamSourceFindMany.mockImplementation(
+      () => new Promise((resolve) => setTimeout(resolve, 2000))
+    );
+
+    const contextPromise = getInteractionContext(interaction);
+
+    jest.runAllTimers();
+
+    const context = await contextPromise;
+
+    expect(logMessage).toHaveBeenCalledWith(
+      expect.stringContaining("Database check timed out"),
+      "error"
+    );
+    expect(context.locale).toBe("eu");
+    expect(context.sources).toEqual(["mangadex", "namicomi", "mangabaka"]);
+
+    jest.useRealTimers();
+  });
+
+  it("should run the user and guildSettings queries in parallel, not sequentially", async () => {
+    const interaction = {
+      user: { id: "123" },
+      guildId: "guild_1",
+      locale: "fr",
+    } as unknown as Interaction;
+
+    const callOrder: string[] = [];
+    mockUserFindUnique.mockImplementation(async () => {
+      callOrder.push("user:start");
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      callOrder.push("user:end");
+      return null;
+    });
+    mockGuildSettingsFindUnique.mockImplementation(async () => {
+      callOrder.push("guildSettings:start");
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      callOrder.push("guildSettings:end");
+      return { sources: [] };
+    });
+    mockUpstreamSourceFindMany.mockResolvedValue([
+      { identifier: "global-default-1" },
+    ]);
+
+    await getInteractionContext(interaction);
+
+    expect(callOrder.indexOf("guildSettings:start")).toBeLessThan(
+      callOrder.indexOf("user:end")
+    );
   });
 });

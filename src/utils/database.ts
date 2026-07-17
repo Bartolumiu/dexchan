@@ -22,41 +22,40 @@ export async function getInteractionContext(
     });
 
     const dbQueries = async () => {
-      const user = await prisma.user.findUnique({
-        where: { id: interaction.user.id },
-      });
+      const [user, guildSettings] = await Promise.all([
+        prisma.user.findUnique({ where: { id: interaction.user.id } }),
+        interaction.guildId
+          ? prisma.guildSettings.findUnique({
+              where: { guildId: interaction.guildId },
+              include: { sources: { include: { source: true } } },
+            })
+          : Promise.resolve(null),
+      ]);
 
-      let guildSettings = null;
-      if (interaction.guildId) {
-        guildSettings = await prisma.guildSettings.findUnique({
-          where: { guildId: interaction.guildId },
-          include: { sources: { include: { source: true } } },
+      const enabledGuildSources = guildSettings?.sources.filter(
+        (s) => s.enabled
+      );
+
+      let sources: string[];
+      if (enabledGuildSources && enabledGuildSources.length > 0) {
+        sources = enabledGuildSources.map((s) => s.source.identifier);
+      } else {
+        const globalDefaults = await prisma.upstreamSource.findMany({
+          where: { isDefault: true },
         });
+        sources = globalDefaults.map((s) => s.identifier);
       }
 
-      return { user, guildSettings };
+      return { user, sources };
     };
 
-    const { user: dbUser, guildSettings } = await Promise.race([
+    const { user: dbUser, sources: allowedSources } = await Promise.race([
       dbQueries(),
       timeout,
     ]);
 
     const resolvedLocale =
       dbUser?.preferredLocale || interaction.locale || "en";
-
-    let allowedSources: string[];
-
-    if (guildSettings && guildSettings.sources.length > 0) {
-      allowedSources = guildSettings.sources
-        .filter((s) => s.enabled)
-        .map((s) => s.source.identifier);
-    } else {
-      const globalDefaults = await prisma.upstreamSource.findMany({
-        where: { isDefault: true },
-      });
-      allowedSources = globalDefaults.map((s) => s.identifier);
-    }
 
     return {
       locale: resolvedLocale,

@@ -86,6 +86,40 @@ describe("handleComponents", () => {
     expect(client.buttons.get("test-button")).toBe(mockComponent as any);
   });
 
+  it("should store a RegExp customId as an actual RegExp key, not a stringified one", async () => {
+    const mockComponent = {
+      data: { customId: /_title_stats_/ },
+      execute: jest.fn(),
+    };
+
+    mockReaddirSync.mockImplementation((dirPath: any) => {
+      if (typeof dirPath === "string") {
+        if (dirPath.endsWith("components")) return ["buttons"];
+        if (dirPath.endsWith("buttons")) return ["titleStats.ts"];
+      }
+      return [];
+    });
+
+    jest.mock(
+      path.join(__dirname, "../../../src/components/buttons/titleStats.ts"),
+      () => ({ __esModule: true, default: mockComponent }),
+      { virtual: true }
+    );
+
+    await handleComponents(client);
+
+    const [storedKey] = [...client.buttons.keys()];
+    expect(storedKey).toBeInstanceOf(RegExp);
+    expect(client.buttons.get(storedKey as unknown as string)).toBe(
+      mockComponent as any
+    );
+    // A regex-keyed component must never be reachable by its stringified form:
+    // that would mean the loader coerced the RegExp into a string somewhere.
+    expect(client.buttons.has("/_title_stats_/" as unknown as RegExp)).toBe(
+      false
+    );
+  });
+
   it("should load selectMenus correctly when missing a default export", async () => {
     const mockComponent = {
       data: { customId: "test-menu" },
@@ -195,6 +229,124 @@ describe("handleComponents", () => {
       expect.stringContaining("Error loading error.ts"),
       "error"
     );
+  });
+
+  it("should skip a component that duplicates an already-loaded string customId, keeping the first one", async () => {
+    const firstExecute = jest.fn();
+    const secondExecute = jest.fn();
+
+    mockReaddirSync.mockImplementation((dirPath: any) => {
+      if (typeof dirPath === "string") {
+        if (dirPath.endsWith("components")) return ["buttons"];
+        if (dirPath.endsWith("buttons")) return ["firstA.ts", "firstB.ts"];
+      }
+      return [];
+    });
+
+    jest.mock(
+      path.join(__dirname, "../../../src/components/buttons/firstA.ts"),
+      () => ({
+        __esModule: true,
+        default: { data: { customId: "dup" }, execute: firstExecute },
+      }),
+      { virtual: true }
+    );
+    jest.mock(
+      path.join(__dirname, "../../../src/components/buttons/firstB.ts"),
+      () => ({
+        __esModule: true,
+        default: { data: { customId: "dup" }, execute: secondExecute },
+      }),
+      { virtual: true }
+    );
+
+    await handleComponents(client);
+
+    expect(logMessage).toHaveBeenCalledWith(
+      expect.stringContaining("duplicates an already-loaded component"),
+      "warn"
+    );
+    expect(client.buttons.size).toBe(1);
+    expect(client.buttons.get("dup")?.execute).toBe(firstExecute);
+  });
+
+  it("should skip a component that duplicates an already-loaded equivalent RegExp customId, keeping the first one", async () => {
+    const firstExecute = jest.fn();
+    const secondExecute = jest.fn();
+
+    mockReaddirSync.mockImplementation((dirPath: any) => {
+      if (typeof dirPath === "string") {
+        if (dirPath.endsWith("components")) return ["buttons"];
+        if (dirPath.endsWith("buttons")) return ["secondA.ts", "secondB.ts"];
+      }
+      return [];
+    });
+
+    jest.mock(
+      path.join(__dirname, "../../../src/components/buttons/secondA.ts"),
+      () => ({
+        __esModule: true,
+        default: { data: { customId: /_dup_/ }, execute: firstExecute },
+      }),
+      { virtual: true }
+    );
+    jest.mock(
+      path.join(__dirname, "../../../src/components/buttons/secondB.ts"),
+      () => ({
+        __esModule: true,
+        default: { data: { customId: /_dup_/ }, execute: secondExecute },
+      }),
+      { virtual: true }
+    );
+
+    await handleComponents(client);
+
+    expect(logMessage).toHaveBeenCalledWith(
+      expect.stringContaining("duplicates an already-loaded component"),
+      "warn"
+    );
+    // The Collection must not retain BOTH regex keys (Map/Collection compares
+    // RegExp keys by reference, so two distinct-but-equivalent regexes would
+    // otherwise both get stored, leaving the second handler unreachable dead
+    // weight instead of actually being skipped).
+    expect(client.buttons.size).toBe(1);
+    const [, storedComponent] = [...client.buttons.entries()][0];
+    expect(storedComponent.execute).toBe(firstExecute);
+  });
+
+  it("should not warn when two components register different customIds", async () => {
+    mockReaddirSync.mockImplementation((dirPath: any) => {
+      if (typeof dirPath === "string") {
+        if (dirPath.endsWith("components")) return ["buttons"];
+        if (dirPath.endsWith("buttons")) return ["thirdA.ts", "thirdB.ts"];
+      }
+      return [];
+    });
+
+    jest.mock(
+      path.join(__dirname, "../../../src/components/buttons/thirdA.ts"),
+      () => ({
+        __esModule: true,
+        default: { data: { customId: "a" }, execute: jest.fn() },
+      }),
+      { virtual: true }
+    );
+    jest.mock(
+      path.join(__dirname, "../../../src/components/buttons/thirdB.ts"),
+      () => ({
+        __esModule: true,
+        default: { data: { customId: "b" }, execute: jest.fn() },
+      }),
+      { virtual: true }
+    );
+
+    await handleComponents(client);
+
+    expect(logMessage).not.toHaveBeenCalledWith(
+      expect.stringContaining("duplicates an already-loaded component"),
+      "warn"
+    );
+    expect(client.buttons.size).toBe(2);
   });
 
   it("should filter out non-ts and .i18n.ts files", async () => {

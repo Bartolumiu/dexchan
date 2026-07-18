@@ -5,6 +5,11 @@ import { Collection } from "discord.js";
 import { Component } from "../../types/Component";
 import { logMessage } from "../../lib/app";
 
+function isSameCustomId(a: string | RegExp, b: string | RegExp): boolean {
+  if (typeof a === "string" || typeof b === "string") return a === b;
+  return a.source === b.source && a.flags === b.flags;
+}
+
 export default async function handleComponents(
   client: ExtendedClient
 ): Promise<void> {
@@ -23,7 +28,7 @@ export default async function handleComponents(
     return;
   }
 
-  const componentMap: Record<string, Collection<string, any>> = {
+  const componentMap: Record<string, Collection<string | RegExp, any>> = {
     buttons: client.buttons,
     selectMenus: client.selectMenus,
     modals: client.modals,
@@ -61,7 +66,18 @@ export default async function handleComponents(
           continue;
         }
 
-        collection.set(component.data.customId.toString(), component);
+        const isDuplicate = [...collection.keys()].some((existingKey) =>
+          isSameCustomId(existingKey, component.data.customId)
+        );
+        if (isDuplicate) {
+          await logMessage(
+            `[Component Handler] Component ${file} in ${folder} registers customId ${component.data.customId}, which duplicates an already-loaded component. Skipping to keep the first-loaded handler.`,
+            "warn"
+          );
+          continue;
+        }
+
+        collection.set(component.data.customId, component);
 
         await logMessage(
           `[Component Handler] Component ${component.data.customId} loaded from ${file} in ${folder}.`,

@@ -1,10 +1,14 @@
 import {
+  ActionRow,
   ActionRowBuilder,
   ButtonBuilder,
   ButtonInteraction,
   ButtonStyle,
   Colors,
+  ComponentType,
   EmbedBuilder,
+  MessageActionRowComponent,
+  MessageActionRowComponentBuilder,
 } from "discord.js";
 import { MessageFlags } from "discord-api-types/v10";
 import { getTranslations } from "../../functions/handlers/handleLocales";
@@ -19,7 +23,28 @@ export default {
     customId: /_title_stats_/,
   },
   async execute(interaction: ButtonInteraction, client: ExtendedClient) {
-    await interaction.deferUpdate();
+    const updatedComponents = interaction.message.components.map(
+      (untypedRow) => {
+        if (untypedRow.type !== ComponentType.ActionRow) return untypedRow;
+
+        const row =
+          untypedRow as unknown as ActionRow<MessageActionRowComponent>;
+        const newRow =
+          ActionRowBuilder.from<MessageActionRowComponentBuilder>(row);
+
+        row.components.forEach((component, index) => {
+          if (
+            component.type === ComponentType.Button &&
+            component.customId === interaction.customId
+          ) {
+            (newRow.components[index] as ButtonBuilder).setDisabled(true);
+          }
+        });
+
+        return newRow;
+      }
+    );
+    await interaction.update({ components: updatedComponents });
     const context = await getInteractionContext(interaction);
     const locale = context.locale;
     const translations = getTranslations(locale);

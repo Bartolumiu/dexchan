@@ -66,14 +66,15 @@ export default async function handleComponents(
           continue;
         }
 
-        const duplicateKey = [...collection.keys()].find((existingKey) =>
+        const isDuplicate = [...collection.keys()].some((existingKey) =>
           isSameCustomId(existingKey, component.data.customId)
         );
-        if (duplicateKey !== undefined) {
+        if (isDuplicate) {
           await logMessage(
-            `[Component Handler] Component ${file} in ${folder} registers customId ${component.data.customId}, which duplicates an already-loaded component. It will shadow the previous one.`,
+            `[Component Handler] Component ${file} in ${folder} registers customId ${component.data.customId}, which duplicates an already-loaded component. Skipping to keep the first-loaded handler.`,
             "warn"
           );
+          continue;
         }
 
         collection.set(component.data.customId, component);

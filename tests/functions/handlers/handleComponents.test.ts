@@ -231,7 +231,10 @@ describe("handleComponents", () => {
     );
   });
 
-  it("should warn when two components register the same string customId", async () => {
+  it("should skip a component that duplicates an already-loaded string customId, keeping the first one", async () => {
+    const firstExecute = jest.fn();
+    const secondExecute = jest.fn();
+
     mockReaddirSync.mockImplementation((dirPath: any) => {
       if (typeof dirPath === "string") {
         if (dirPath.endsWith("components")) return ["buttons"];
@@ -244,7 +247,7 @@ describe("handleComponents", () => {
       path.join(__dirname, "../../../src/components/buttons/firstA.ts"),
       () => ({
         __esModule: true,
-        default: { data: { customId: "dup" }, execute: jest.fn() },
+        default: { data: { customId: "dup" }, execute: firstExecute },
       }),
       { virtual: true }
     );
@@ -252,7 +255,7 @@ describe("handleComponents", () => {
       path.join(__dirname, "../../../src/components/buttons/firstB.ts"),
       () => ({
         __esModule: true,
-        default: { data: { customId: "dup" }, execute: jest.fn() },
+        default: { data: { customId: "dup" }, execute: secondExecute },
       }),
       { virtual: true }
     );
@@ -264,9 +267,13 @@ describe("handleComponents", () => {
       "warn"
     );
     expect(client.buttons.size).toBe(1);
+    expect(client.buttons.get("dup")?.execute).toBe(firstExecute);
   });
 
-  it("should warn when two components register an equivalent RegExp customId", async () => {
+  it("should skip a component that duplicates an already-loaded equivalent RegExp customId, keeping the first one", async () => {
+    const firstExecute = jest.fn();
+    const secondExecute = jest.fn();
+
     mockReaddirSync.mockImplementation((dirPath: any) => {
       if (typeof dirPath === "string") {
         if (dirPath.endsWith("components")) return ["buttons"];
@@ -279,7 +286,7 @@ describe("handleComponents", () => {
       path.join(__dirname, "../../../src/components/buttons/secondA.ts"),
       () => ({
         __esModule: true,
-        default: { data: { customId: /_dup_/ }, execute: jest.fn() },
+        default: { data: { customId: /_dup_/ }, execute: firstExecute },
       }),
       { virtual: true }
     );
@@ -287,7 +294,7 @@ describe("handleComponents", () => {
       path.join(__dirname, "../../../src/components/buttons/secondB.ts"),
       () => ({
         __esModule: true,
-        default: { data: { customId: /_dup_/ }, execute: jest.fn() },
+        default: { data: { customId: /_dup_/ }, execute: secondExecute },
       }),
       { virtual: true }
     );
@@ -298,6 +305,13 @@ describe("handleComponents", () => {
       expect.stringContaining("duplicates an already-loaded component"),
       "warn"
     );
+    // The Collection must not retain BOTH regex keys (Map/Collection compares
+    // RegExp keys by reference, so two distinct-but-equivalent regexes would
+    // otherwise both get stored, leaving the second handler unreachable dead
+    // weight instead of actually being skipped).
+    expect(client.buttons.size).toBe(1);
+    const [, storedComponent] = [...client.buttons.entries()][0];
+    expect(storedComponent.execute).toBe(firstExecute);
   });
 
   it("should not warn when two components register different customIds", async () => {

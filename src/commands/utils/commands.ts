@@ -32,10 +32,18 @@ const command: SlashCommand = {
     const translations = getTranslations(locale);
     const t = translations.commands.commands.response;
 
+    if (!interaction.guild) {
+      await interaction.reply({
+        content: translations.common.errors.unknown,
+        ephemeral: true,
+      });
+      return;
+    }
+
     const globalCommands = await client.application!.commands.fetch();
-    const guildCommands = await interaction.guild!.commands.fetch();
+    const guildCommands = await interaction.guild.commands.fetch();
     const guildCommandPermissions =
-      await interaction.guild!.commands.permissions.fetch({});
+      await interaction.guild.commands.permissions.fetch({});
 
     const allCommands = new Collection<string, ApplicationCommand>([
       ...globalCommands,

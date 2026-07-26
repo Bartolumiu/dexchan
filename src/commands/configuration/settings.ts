@@ -212,9 +212,10 @@ async function localeSettings(
       break;
     case "reset":
       try {
-        await prisma.user.update({
+        await prisma.user.upsert({
           where: { id: interaction.user.id },
-          data: { preferredLocale: null },
+          update: { preferredLocale: null },
+          create: { id: interaction.user.id, preferredLocale: null },
         });
 
         const fallbackLocale = interaction.locale;

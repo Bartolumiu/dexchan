@@ -10,7 +10,13 @@ const event: BotEvent<Events.ClientReady> = {
   execute: async (client: ExtendedClient, readyClient: Client<true>) => {
     const { default: pickPresence } =
       await import("../../functions/tools/pickPresence");
-    setInterval(() => pickPresence(client), 10 * 1000);
+    setInterval(async () => {
+      try {
+        await pickPresence(client);
+      } catch {
+        // Presence rotation failed silently, already logged in pickPresence
+      }
+    }, 10 * 1000);
 
     await logMessage("[GitHub] Checking for updates...", "info");
     await checkUpdates();

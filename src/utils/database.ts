@@ -12,6 +12,14 @@ export async function getInteractionContext(
   interaction: Interaction
 ): Promise<InteractionContext> {
   try {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(
+        () => reject(new Error("Database check timed out")),
+        1000
+      );
+    });
+
     const result = await Promise.race([
       (async () => {
         const [user, guildSettings] = await Promise.all([
@@ -40,10 +48,10 @@ export async function getInteractionContext(
 
         return { user, sources };
       })(),
-      new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("Database check timed out")), 1000)
-      ),
+      timeoutPromise,
     ]);
+
+    clearTimeout(timeoutId!);
 
     const { user: dbUser, sources: allowedSources } = result;
 

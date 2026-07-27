@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { MessageFlags } from "discord-api-types/v10";
+import { MessageFlags } from "discord.js";
 import titleStatsButton from "../../../src/components/buttons/title_stats";
 import { ExtendedClient } from "../../../src/lib/ExtendedClient";
 import getTitleStats from "../../../src/functions/titles/titleStats";

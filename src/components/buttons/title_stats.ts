@@ -9,8 +9,8 @@ import {
   EmbedBuilder,
   MessageActionRowComponent,
   MessageActionRowComponentBuilder,
+  MessageFlags,
 } from "discord.js";
-import { MessageFlags } from "discord-api-types/v10";
 import { getTranslations } from "../../functions/handlers/handleLocales";
 import getTitleStats, { TitleStats } from "../../functions/titles/titleStats";
 import { getInteractionContext } from "../../utils/database";

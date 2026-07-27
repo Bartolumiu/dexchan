@@ -11,7 +11,7 @@ jest.mock("@prisma/adapter-pg", () => ({
   PrismaPg: jest.fn().mockImplementation(() => ({})),
 }));
 
-jest.mock("../../prisma/generated/prisma/client", () => ({
+jest.mock("../../src/_generated/prisma/client", () => ({
   PrismaClient: jest.fn().mockImplementation(() => ({})),
 }));
 

@@ -6,3 +6,4 @@ coverage
 *.log
 .env
 prisma/generated
+src/_generated

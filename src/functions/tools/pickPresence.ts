@@ -45,7 +45,9 @@ export default async function pickPresence(
         presenceCache = dbPresences.map((p) => ({
           text: p.text,
           status: p.status as PresenceStatusData,
-          type: p.type as ActivityType,
+          type: Object.values(ActivityType).includes(p.type as ActivityType)
+            ? (p.type as ActivityType)
+            : ActivityType.Custom,
         }));
       } else {
         presenceCache = buildFallbackPresences();

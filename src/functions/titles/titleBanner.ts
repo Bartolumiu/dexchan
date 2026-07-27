@@ -14,7 +14,7 @@ export default async function getBanner(
   title: any,
   type: ProviderType
 ): Promise<Buffer | null> {
-  const url = buildUrl(title, "namicomi");
+  const url = buildUrl(title, type);
   return fetchImageAsBuffer(url);
 }
 

@@ -1,5 +1,7 @@
 import {
   ApplicationCommand,
+  ApplicationCommandPermissions,
+  ApplicationCommandPermissionType,
   ChatInputCommandInteraction,
   Collection,
   Colors,
@@ -99,24 +101,24 @@ const command: SlashCommand = {
 export default command;
 
 export const hasRolePermission = (
-  commandPermissions: any[],
+  commandPermissions: ApplicationCommandPermissions[],
   interaction: ChatInputCommandInteraction
 ): boolean => {
   const rolePermissions = commandPermissions.filter(
-    (p: any) => p.type === 1 && p.permission === true
+    (p) => p.type === ApplicationCommandPermissionType.Role && p.permission === true
   );
   const userRoleIDs = interaction.member
     ? (interaction.member.roles as any).cache.map((role: any) => role.id)
     : [];
-  return rolePermissions.some((p: any) => userRoleIDs.includes(p.id));
+  return rolePermissions.some((p) => userRoleIDs.includes(p.id));
 };
 
 export const hasUserPermission = (
-  commandPermissions: any[],
+  commandPermissions: ApplicationCommandPermissions[],
   interaction: ChatInputCommandInteraction
 ): boolean => {
   const userPermissions = commandPermissions.filter(
-    (p: any) => p.type === 2 && p.permission === true
+    (p) => p.type === ApplicationCommandPermissionType.User && p.permission === true
   );
-  return userPermissions.some((p: any) => p.id === interaction.user.id);
+  return userPermissions.some((p) => p.id === interaction.user.id);
 };

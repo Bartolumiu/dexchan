@@ -133,7 +133,6 @@ const addMangaBakaTags = (
   translations: TitleTagsI18n
 ): boolean => {
   const groups = getTitleTags(title, "mangabaka");
-  if (!groups) return false;
   const typed = groups as ReturnType<typeof getMangaBakaTags>;
   embed.addFields(
     { name: translations.genres, value: typed.genres, inline: true },
@@ -148,7 +147,6 @@ const addMangaDexTags = (
   translations: TitleTagsI18n
 ): boolean => {
   const groups = getTitleTags(title, "mangadex");
-  if (!groups) return false;
   const typed = groups as ReturnType<typeof getMangaDexTags>;
   embed.addFields(
     { name: translations.format, value: typed.format, inline: true },
@@ -166,7 +164,6 @@ const addNamiComiTags = (
   locale: string
 ): boolean => {
   const groups = getTitleTags(title, "namicomi", locale);
-  if (!groups) return false;
   const typed = groups as ReturnType<typeof getNamiComiTags>;
   embed.addFields(
     { name: translations.format, value: typed.format, inline: true },

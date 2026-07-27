@@ -96,9 +96,7 @@ const command: SlashCommand = {
       return sendErrorEmbed(
         interaction,
         searchStrings.errors,
-        searchStrings.errors.command_disabled
-          ? translations.error_embed.title
-          : translations.common.words.error,
+        translations.common.words.error,
         embed,
         "no_source"
       );

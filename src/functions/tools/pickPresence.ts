@@ -1,6 +1,7 @@
 import { ActivityType, PresenceStatusData } from "discord.js";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import { prisma } from "../../utils/prisma";
+import { logMessage } from "../../lib/app";
 
 interface CachedPresence {
   text: string;
@@ -55,9 +56,9 @@ export default async function pickPresence(
 
       lastFetchTime = currentTime;
     } catch (error) {
-      console.error(
-        "[Presence] Failed to fetch presences from database:",
-        error
+      await logMessage(
+        `[Presence] Failed to fetch presences from database: ${error instanceof Error ? error.message : String(error)}`,
+        "error"
       );
       if (presenceCache.length === 0) {
         presenceCache = buildFallbackPresences();

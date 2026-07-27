@@ -9,6 +9,7 @@ import {
 import { ActivityType } from "discord.js";
 import { ExtendedClient } from "../../../src/lib/ExtendedClient";
 import { prisma } from "../../../src/utils/prisma";
+import { logMessage } from "../../../src/lib/app";
 
 jest.mock("../../../src/utils/prisma", () => ({
   prisma: {
@@ -16,6 +17,10 @@ jest.mock("../../../src/utils/prisma", () => ({
       findMany: jest.fn<any>().mockResolvedValue([]),
     },
   },
+}));
+
+jest.mock("../../../src/lib/app", () => ({
+  logMessage: jest.fn(),
 }));
 
 describe("pickPresence", () => {
@@ -106,18 +111,14 @@ describe("pickPresence", () => {
   it("should use fallback presences if database fetch fails and cache is empty", async () => {
     const error = new Error("DB Error");
     getMockFindMany().mockRejectedValue(error);
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
 
     await pickPresence(client);
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "[Presence] Failed to fetch presences from database:",
-      error
+    expect(logMessage).toHaveBeenCalledWith(
+      "[Presence] Failed to fetch presences from database: DB Error",
+      "error"
     );
     expect(client.user?.setPresence).toHaveBeenCalled();
-    consoleErrorSpy.mockRestore();
   });
 
   it("should retain existing cache if database fetch fails and cache is populated", async () => {
@@ -129,9 +130,6 @@ describe("pickPresence", () => {
     jest.advanceTimersByTime(6 * 60 * 1000);
 
     getMockFindMany().mockRejectedValue(new Error("DB Failure"));
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
     await pickPresence(client);
 
     expect(client.user?.setPresence).toHaveBeenCalledWith(
@@ -139,7 +137,6 @@ describe("pickPresence", () => {
         activities: [expect.objectContaining({ name: "Cached Presence" })],
       })
     );
-    consoleErrorSpy.mockRestore();
   });
 
   it("should use cache within TTL", async () => {

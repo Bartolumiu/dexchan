@@ -11,9 +11,7 @@ export const sendErrorEmbed = async (
 ): Promise<void> => {
   if (!embed) return;
 
-  let description: string = interaction.isMessageComponent()
-    ? commandErrors.api
-    : commandErrors[errorKey];
+  let description: string = commandErrors[errorKey];
 
   if (!description) return;
 

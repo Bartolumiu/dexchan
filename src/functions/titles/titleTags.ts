@@ -132,12 +132,12 @@ const addMangaBakaTags = (
   embed: EmbedBuilder,
   translations: TitleTagsI18n
 ): boolean => {
-  const groups = getTitleTags(title, "mangabaka") as ReturnType<
-    typeof getMangaBakaTags
-  >;
+  const groups = getTitleTags(title, "mangabaka");
+  if (!groups) return false;
+  const typed = groups as ReturnType<typeof getMangaBakaTags>;
   embed.addFields(
-    { name: translations.genres, value: groups.genres, inline: true },
-    { name: translations.tags, value: groups.tags, inline: true }
+    { name: translations.genres, value: typed.genres, inline: true },
+    { name: translations.tags, value: typed.tags, inline: true }
   );
   return true;
 };
@@ -147,14 +147,14 @@ const addMangaDexTags = (
   embed: EmbedBuilder,
   translations: TitleTagsI18n
 ): boolean => {
-  const groups = getTitleTags(title, "mangadex") as ReturnType<
-    typeof getMangaDexTags
-  >;
+  const groups = getTitleTags(title, "mangadex");
+  if (!groups) return false;
+  const typed = groups as ReturnType<typeof getMangaDexTags>;
   embed.addFields(
-    { name: translations.format, value: groups.format, inline: true },
-    { name: translations.genres, value: groups.genre, inline: true },
-    { name: translations.themes, value: groups.theme, inline: true },
-    { name: translations.content_warning, value: groups.content, inline: true }
+    { name: translations.format, value: typed.format, inline: true },
+    { name: translations.genres, value: typed.genre, inline: true },
+    { name: translations.themes, value: typed.theme, inline: true },
+    { name: translations.content_warning, value: typed.content, inline: true }
   );
   return true;
 };
@@ -165,19 +165,19 @@ const addNamiComiTags = (
   translations: TitleTagsI18n,
   locale: string
 ): boolean => {
-  const groups = getTitleTags(title, "namicomi", locale) as ReturnType<
-    typeof getNamiComiTags
-  >;
+  const groups = getTitleTags(title, "namicomi", locale);
+  if (!groups) return false;
+  const typed = groups as ReturnType<typeof getNamiComiTags>;
   embed.addFields(
-    { name: translations.format, value: groups.format, inline: true },
-    { name: translations.genres, value: groups.genre, inline: true },
-    { name: translations.themes, value: groups.theme, inline: true },
+    { name: translations.format, value: typed.format, inline: true },
+    { name: translations.genres, value: typed.genre, inline: true },
+    { name: translations.themes, value: typed.theme, inline: true },
     {
       name: translations.content_warning,
-      value: groups.content_warning,
+      value: typed.content_warning,
       inline: true,
     },
-    { name: translations.other_tags, value: groups.other, inline: true }
+    { name: translations.other_tags, value: typed.other, inline: true }
   );
   return true;
 };

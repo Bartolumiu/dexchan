@@ -61,7 +61,7 @@ export async function lookupTitleById(
     source,
   )
 
-  const files = await setImages(entry, embed, source, translations)
+  const files = await setImages(entry, embed, source, translations, locale)
 
   return {
     success: true,

@@ -62,22 +62,22 @@
     "@prisma/adapter-pg": "~7.8.0",
     "@prisma/client": "~7.8.0",
     "chalk": "~5.6.2",
-    "discord-api-types": "~0.38.49",
-    "discord.js": "~14.26.4",
+    "discord.js": "~14.27.0",
     "dotenv": "~17.4.2",
     "pg": "~8.22.0",
-    "tsx": "~4.23.0"
+    "tsx": "~4.23.1"
   },
   "devDependencies": {
     "@jest/globals": "~30.4.1",
     "@tolgee/cli": "~2.20.0",
-    "@types/node": "~26.1.0",
+    "@types/node": "~26.1.1",
     "babel-jest": "~30.4.1",
     "jest": "~30.4.2",
-    "prettier": "~3.9.4",
+    "prettier": "~3.9.5",
     "prisma": "~7.8.0",
     "ts-jest": "~29.4.11",
-    "typescript": "~6.0.3"
+    "@typescript/native": "npm:typescript@~7.0.2",
+    "typescript": "npm:@typescript/typescript6@~6.0.2"
   },
-  "packageManager": "pnpm@11.13.0+sha512.88d94724d8f2e6c186744a5584c6e59ecac869ec7ba15e9cb4cd628e8dc7066820b2481d8ee3b51ea8da323a7378068aa58c556a3720d32b7c20a051d088363a"
+  "packageManager": "pnpm@11.17.0+sha512.cca3cea332ad254bb84145f966d19f4879615210346fc92c79a047f23a0d7b3cca3c3792f0076ba1f1831d277efbcf0a9119b31a9a60eca7fb3d6231f331ef72"
 }

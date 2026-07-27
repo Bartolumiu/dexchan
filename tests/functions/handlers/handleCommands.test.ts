@@ -227,6 +227,52 @@ describe("handleCommands", () => {
     expect(client.commands.get("ping-func")).toBe(mockCommand as any);
   });
 
+  it("should skip duplicate command names and keep the first-loaded handler", async () => {
+    const mockCommand1 = {
+      data: {
+        name: "duplicate",
+        toJSON: jest.fn().mockReturnValue({ name: "duplicate" }),
+      },
+      global: true,
+    };
+    const mockCommand2 = {
+      data: {
+        name: "duplicate",
+        toJSON: jest.fn().mockReturnValue({ name: "duplicate" }),
+      },
+      global: true,
+    };
+
+    mockReaddirSync.mockImplementation((dirPath: any) => {
+      if (typeof dirPath === "string") {
+        if (dirPath.endsWith("commands")) return ["dup_test"];
+        if (dirPath.endsWith("dup_test")) return ["cmd1.ts", "cmd2.ts"];
+      }
+      return [];
+    });
+
+    jest.mock(
+      path.join(__dirname, "../../../src/commands/dup_test/cmd1.ts"),
+      () => ({ __esModule: true, default: mockCommand1 }),
+      { virtual: true }
+    );
+    jest.mock(
+      path.join(__dirname, "../../../src/commands/dup_test/cmd2.ts"),
+      () => ({ __esModule: true, default: mockCommand2 }),
+      { virtual: true }
+    );
+
+    await handleCommands(client);
+
+    // First one registered
+    expect(client.commands.get("duplicate")).toBe(mockCommand1 as any);
+    // Second one skipped — warning logged
+    expect(logMessage).toHaveBeenCalledWith(
+      expect.stringContaining("registered twice"),
+      "warn"
+    );
+  });
+
   it("should warn if command has no data", async () => {
     const mockCommand = { global: true };
     mockReaddirSync

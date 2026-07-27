@@ -121,6 +121,18 @@ describe("pickPresence", () => {
     expect(client.user?.setPresence).toHaveBeenCalled();
   });
 
+  it("should handle non-Error database rejections", async () => {
+    getMockFindMany().mockRejectedValue("string db error");
+
+    await pickPresence(client);
+
+    expect(logMessage).toHaveBeenCalledWith(
+      "[Presence] Failed to fetch presences from database: string db error",
+      "error"
+    );
+    expect(client.user?.setPresence).toHaveBeenCalled();
+  });
+
   it("should retain existing cache if database fetch fails and cache is populated", async () => {
     getMockFindMany().mockResolvedValue([
       { text: "Cached Presence", status: "online", type: ActivityType.Custom },
@@ -179,6 +191,28 @@ describe("pickPresence", () => {
         activities: [
           expect.objectContaining({
             name: "v1.0.0 g2 u200",
+          }),
+        ],
+      })
+    );
+  });
+
+  it("should fallback to ActivityType.Custom for invalid type values", async () => {
+    getMockFindMany().mockResolvedValue([
+      {
+        text: "Invalid type",
+        status: "online",
+        type: 9999,
+      },
+    ]);
+
+    await pickPresence(client);
+
+    expect(client.user?.setPresence).toHaveBeenCalledWith(
+      expect.objectContaining({
+        activities: [
+          expect.objectContaining({
+            type: ActivityType.Custom,
           }),
         ],
       })

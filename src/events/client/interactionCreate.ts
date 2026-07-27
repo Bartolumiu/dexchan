@@ -12,7 +12,7 @@ import {
   ModalSubmitInteraction,
   UserContextMenuCommandInteraction,
 } from "discord.js";
-import * as fs from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { BotEvent } from "../../types/Event";
 import { ExtendedClient } from "../../lib/ExtendedClient";
@@ -168,11 +168,11 @@ async function logAndReplyError(
   }
 
   try {
-    if (!fs.existsSync("./logs")) fs.mkdirSync("./logs", { recursive: true });
+    if (!existsSync("./logs")) mkdirSync("./logs", { recursive: true });
 
     const logFileName = `${errorTimestamp}-${randomUUID().slice(0, 8)}`;
 
-    fs.writeFileSync(
+    writeFileSync(
       `./logs/${logFileName}.txt`,
       `Data: ${errorTimestamp}\nUser: ${interaction.user.tag} (${interaction.user.id})\nError origin: ${origin}\nError message: ${error.message}\nError stack: ${error.stack}\nInteraction type: ${interaction.type}\n\nInput:${JSON.stringify(options, null, 2)}`
     );
@@ -280,10 +280,9 @@ function processInteractionError<T>(
       options.embeds[1],
       options.errorStrings
     );
-    throw error;
   }
 
-  throw new Error("Interaction execution timed out");
+  throw error;
 }
 
 function updateErrorEmbed(

@@ -9,7 +9,7 @@ export default function truncateString(
   }
 
   if (maxLength <= 6) {
-    throw new RangeError("maxLength must be greater than 6");
+    return str.slice(0, Math.max(0, maxLength));
   }
 
   return (

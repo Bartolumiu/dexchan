@@ -56,7 +56,7 @@ export const format = (
 ): string => {
   return Object.entries(replacements).reduce(
     (str, [placeholder, value]) =>
-      str.replace(new RegExp(`{${placeholder}}`, "g"), String(value)),
+      str.replaceAll(`{${placeholder}}`, String(value)),
     text
   );
 };
@@ -76,14 +76,15 @@ export const translate = (
   }
 
   if (typeof translation !== "string") {
-    translation = en;
+    let fallback: any = en;
     for (const k of keys) {
-      if (!translation || (translation as any)[k] === undefined) {
-        translation = undefined;
+      if (!fallback || (fallback as any)[k] === undefined) {
+        fallback = undefined;
         break;
       }
-      translation = (translation as any)[k];
+      fallback = (fallback as any)[k];
     }
+    if (typeof fallback === "string") translation = fallback;
   }
 
   if (typeof translation !== "string") return key;

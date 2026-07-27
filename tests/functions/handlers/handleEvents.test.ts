@@ -205,4 +205,82 @@ describe("handleEvents", () => {
       expect.any(Function)
     );
   });
+
+  it("should catch and log unhandled rejections from event.execute", async () => {
+    const mockEventFolders = ["client"];
+    const mockEventFiles = ["error.ts"];
+    const mockEvent = {
+      name: "errorEvent",
+      once: false,
+      execute: jest.fn<any>().mockRejectedValue(new Error("Something broke")),
+    };
+
+    mockReaddirSync.mockImplementation((dirPath: any) => {
+      if (typeof dirPath === "string") {
+        if (dirPath.endsWith("events")) return mockEventFolders;
+        if (dirPath.endsWith("client")) return mockEventFiles;
+      }
+      return [];
+    });
+
+    jest.mock(
+      path.join(__dirname, "../../../src/events/client/error.ts"),
+      () => ({
+        __esModule: true,
+        default: mockEvent,
+      }),
+      { virtual: true }
+    );
+
+    await handleEvents(client);
+
+    const callback = (client.on as jest.Mock).mock.calls[0][1] as (
+      ...args: any[]
+    ) => Promise<any>;
+    await callback("data");
+
+    expect(logMessage).toHaveBeenCalledWith(
+      "[Event Handler] Unhandled error in errorEvent: Something broke",
+      "error"
+    );
+  });
+
+  it("should handle non-Error rejections from event.execute", async () => {
+    const mockEventFolders = ["client"];
+    const mockEventFiles = ["error2.ts"];
+    const mockEvent = {
+      name: "errorEvent2",
+      once: false,
+      execute: jest.fn<any>().mockRejectedValue("raw string error"),
+    };
+
+    mockReaddirSync.mockImplementation((dirPath: any) => {
+      if (typeof dirPath === "string") {
+        if (dirPath.endsWith("events")) return mockEventFolders;
+        if (dirPath.endsWith("client")) return mockEventFiles;
+      }
+      return [];
+    });
+
+    jest.mock(
+      path.join(__dirname, "../../../src/events/client/error2.ts"),
+      () => ({
+        __esModule: true,
+        default: mockEvent,
+      }),
+      { virtual: true }
+    );
+
+    await handleEvents(client);
+
+    const callback = (client.on as jest.Mock).mock.calls[0][1] as (
+      ...args: any[]
+    ) => Promise<any>;
+    await callback("data");
+
+    expect(logMessage).toHaveBeenCalledWith(
+      "[Event Handler] Unhandled error in errorEvent2: raw string error",
+      "error"
+    );
+  });
 });

@@ -59,7 +59,7 @@ async function loadAndRegisterCommand(
     const commandModule = await import(filePath);
 
     const command: SlashCommand & {
-      guildID?: string | string[];
+      guildId?: string | string[];
       data: any;
     } = commandModule.default || commandModule;
 
@@ -73,6 +73,14 @@ async function loadAndRegisterCommand(
 
     if (typeof command.data === "function") {
       command.data = await command.data();
+    }
+
+    if (client.commands.has(command.data.name)) {
+      await logMessage(
+        `[Command Handler] Command ${command.data.name} registered twice from ${file} in ${folder}. Skipping to keep the first-loaded handler.`,
+        "warn"
+      );
+      return;
     }
 
     client.commands.set(command.data.name, command);
@@ -93,8 +101,12 @@ async function loadAndRegisterCommand(
 }
 
 async function categorizeCommand(
-  command: any,
-  commandJson: any,
+  command: {
+    global?: boolean;
+    guildId?: string | string[];
+    data: { name: string };
+  },
+  commandJson: RESTPostAPIChatInputApplicationCommandsJSONBody,
   globalCommandList: GlobalCommandList,
   guildCommandMap: GuildCommandMap
 ) {
@@ -107,10 +119,10 @@ async function categorizeCommand(
     return; // Early return
   }
 
-  if (command.guildID) {
-    const targetGuilds = Array.isArray(command.guildID)
-      ? command.guildID
-      : [command.guildID];
+  if (command.guildId) {
+    const targetGuilds = Array.isArray(command.guildId)
+      ? command.guildId
+      : [command.guildId];
 
     for (const guildId of targetGuilds) {
       if (!guildCommandMap.has(guildId)) {
@@ -126,7 +138,7 @@ async function categorizeCommand(
   }
 
   await logMessage(
-    `[Command Handler] Command /${command.data.name} does not have a guildID set and is not marked as global. Skipping...`,
+    `[Command Handler] Command /${command.data.name} does not have a guildId set and is not marked as global. Skipping...`,
     "warn"
   );
 }
@@ -160,12 +172,12 @@ async function refreshCommands(
       body: globalCommandList,
     });
 
-    for (const [guildID, commands] of guildCommandMap) {
+    for (const [guildId, commands] of guildCommandMap) {
       await logMessage(
-        `[Command Handler] Started refreshing guild (/) commands for guild ${guildID}`,
+        `[Command Handler] Started refreshing guild (/) commands for guild ${guildId}`,
         "debug"
       );
-      await rest.put(Routes.applicationGuildCommands(clientID, guildID), {
+      await rest.put(Routes.applicationGuildCommands(clientID, guildId), {
         body: commands,
       });
     }

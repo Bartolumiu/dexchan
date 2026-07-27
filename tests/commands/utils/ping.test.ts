@@ -134,18 +134,10 @@ describe("ping command", () => {
         ws: { ping: 100 },
       } as unknown as ExtendedClient;
 
-      const consoleErrorSpy = jest
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
-
       await pingCommand.execute(interaction, client);
 
       expect(interaction.deferReply).toHaveBeenCalled();
       expect(interaction.editReply).toHaveBeenCalled();
-
-      expect(console.error).toHaveBeenCalledTimes(3);
-
-      consoleErrorSpy.mockRestore();
     });
   });
 });

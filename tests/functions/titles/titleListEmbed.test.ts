@@ -19,9 +19,9 @@ jest.mock("../../../src/functions/tools/truncateString", () => ({
 
 jest.mock("../../../src/functions/parsers/urlParser", () => ({
   urlFormats: {
-    mangabaka: { primary: "https://mb.test/{id}/{title}" },
-    mangadex: { primary: "https://md.test/{id}/{title}" },
-    namicomi: { primary: "https://nc.test/{id}" },
+    mangabaka: { primary: "https://mb.test/{id}" },
+    mangadex: { primary: "https://md.test/{id}" },
+    namicomi: { shortened: "https://nc.test/{id}" },
   },
 }));
 
@@ -110,7 +110,7 @@ describe("buildTitleListEmbed", () => {
 
   describe("Provider Implementations", () => {
     it("should build MangaBaka list embed correctly", () => {
-      const titles = new Map([["Solo Leveling", "mb-123"]]);
+      const titles = new Map([["mb-123", "Solo Leveling"]]);
 
       const actionRow = buildTitleListEmbed(
         mockEmbed,
@@ -129,7 +129,7 @@ describe("buildTitleListEmbed", () => {
       expect(embedData.fields).toEqual([
         {
           name: "Solo Leveling",
-          value: "[View on MangaBaka](https://mb.test/mb-123/)",
+          value: "[View on MangaBaka](https://mb.test/mb-123)",
         },
       ]);
 
@@ -145,7 +145,7 @@ describe("buildTitleListEmbed", () => {
     });
 
     it("should build MangaDex list embed correctly", () => {
-      const titles = new Map([["Naruto", "md-456"]]);
+      const titles = new Map([["md-456", "Naruto"]]);
 
       buildTitleListEmbed(
         mockEmbed,
@@ -159,13 +159,13 @@ describe("buildTitleListEmbed", () => {
       expect(embedData.fields).toEqual([
         {
           name: "Naruto",
-          value: "[View on MangaDex](https://md.test/md-456/)",
+          value: "[View on MangaDex](https://md.test/md-456)",
         },
       ]);
     });
 
     it("should build NamiComi list embed correctly", () => {
-      const titles = new Map([["Bleach", "nc-789"]]);
+      const titles = new Map([["nc-789", "Bleach"]]);
 
       buildTitleListEmbed(
         mockEmbed,
@@ -186,7 +186,7 @@ describe("buildTitleListEmbed", () => {
 
     it("should fallback to unknown strings if title is empty", () => {
       // Create a map with an empty string key to force the `|| translations.unknown` branch
-      const titles = new Map([["", "empty-1"]]);
+      const titles = new Map([["empty-1", ""]]);
 
       const actionRow = buildTitleListEmbed(
         mockEmbed,
@@ -205,7 +205,7 @@ describe("buildTitleListEmbed", () => {
     });
 
     it("should return empty string for URL if type is somehow bypassed into getProviderUrl", () => {
-      const titles = new Map([["Ghost Title", "ghost-1"]]);
+      const titles = new Map([["ghost-1", "Ghost Title"]]);
 
       // Inject a fake source name to bypass the first check, forcing the switch to hit default
       const translationsWithGhost = {

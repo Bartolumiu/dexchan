@@ -9,9 +9,12 @@ import {
   EmbedBuilder,
   MessageActionRowComponent,
   MessageActionRowComponentBuilder,
+  MessageFlags,
 } from "discord.js";
-import { MessageFlags } from "discord-api-types/v10";
-import { getTranslations } from "../../functions/handlers/handleLocales";
+import {
+  format,
+  getTranslations,
+} from "../../functions/handlers/handleLocales";
 import getTitleStats, { TitleStats } from "../../functions/titles/titleStats";
 import { getInteractionContext } from "../../utils/database";
 import { ExtendedClient } from "../../lib/ExtendedClient";
@@ -63,10 +66,9 @@ export default {
         .setTitle(translations.common.words.error)
         .setDescription(translations.common.errors.api_failure)
         .setFooter({
-          text: translations.common.footers.stats.replace(
-            "{user}",
-            interaction.user.username
-          ),
+          text: format(translations.common.footers.stats, {
+            user: interaction.user.username,
+          }),
           iconURL: client.user?.avatarURL() ?? undefined,
         })
         .setColor(Colors.Red);
@@ -85,10 +87,9 @@ export default {
       )
       .addFields(buildEmbedFields(stats, strings, source))
       .setFooter({
-        text: translations.common.footers.stats.replace(
-          "{user}",
-          interaction.user.username
-        ),
+        text: format(translations.common.footers.stats, {
+          user: interaction.user.username,
+        }),
         iconURL: client.user?.avatarURL() ?? undefined,
       })
       .setColor(Colors.Blurple);

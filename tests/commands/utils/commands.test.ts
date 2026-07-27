@@ -52,7 +52,8 @@ jest.mock("discord.js", () => {
     EmbedBuilder: MockEmbedBuilder,
     SlashCommandBuilder: MockSlashCommandBuilder,
     Colors: { Blurple: "Blurple" },
-    Collection: Map, // Discord.js Collection extends standard JS Map
+    Collection: Map,
+    ApplicationCommandPermissionType: { Role: 1, User: 2, Channel: 3 },
   };
 });
 
@@ -72,7 +73,10 @@ describe("commands command", () => {
       locale: "en",
     });
     (getTranslations as jest.Mock).mockReturnValue({
-      common: { footers: { command: "Requested by {user}" } },
+      common: {
+        errors: { unknown: "Unknown error" },
+        footers: { command: "Requested by {user}" },
+      },
       commands: {
         commands: { response: mockT },
         normal: { description: "Translated Normal Description" },
@@ -249,6 +253,21 @@ describe("commands command", () => {
             .mockReturnValue("https://avatar.url/avatar.png"),
         },
       };
+    });
+
+    it("should reply with ephemeral error if interaction.guild is null (DM)", async () => {
+      mockInteraction.guild = null;
+      mockInteraction.member = null;
+
+      await commandsCommand.execute(
+        mockInteraction as ChatInputCommandInteraction,
+        mockClient as ExtendedClient
+      );
+
+      expect(mockInteraction.reply).toHaveBeenCalledWith({
+        content: "Unknown error",
+        ephemeral: true,
+      });
     });
 
     it("should fetch commands, filter them, and build the embed with localized descriptions", async () => {

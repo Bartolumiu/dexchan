@@ -32,8 +32,8 @@ jest.mock("../../../src/functions/titles/titleTags", () => ({
 
 jest.mock("../../../src/functions/parsers/urlParser", () => ({
   urlFormats: {
-    mangabaka: { primary: "https://mb.test/{id}/{title}" },
-    mangadex: { primary: "https://md.test/{id}/{title}" },
+    mangabaka: { primary: "https://mb.test/{id}" },
+    mangadex: { primary: "https://md.test/{id}" },
     namicomi: { shortened: "https://nc.test/{id}" },
   },
 }));
@@ -166,7 +166,7 @@ describe("buildTitleEmbed", () => {
       );
 
       expect(mockEmbed.setTitle).toHaveBeenCalledWith("MB Title");
-      expect(mockEmbed.setURL).toHaveBeenCalledWith("https://mb.test/mb-1/");
+      expect(mockEmbed.setURL).toHaveBeenCalledWith("https://mb.test/mb-1");
       expect(mockEmbed.setDescription).toHaveBeenCalledWith(
         "Valid description"
       );
@@ -250,7 +250,7 @@ describe("buildTitleEmbed", () => {
 
       const descriptionSet = mockEmbed.setDescription.mock.calls[0][0];
       expect(descriptionSet).toBe(
-        `"'' &amp; \n &lt;b&gt;bold&lt;/b&gt; \n spaces`
+        `"'/' &amp; \n &lt;b&gt;bold&lt;/b&gt; \n spaces`
       );
     });
 
@@ -295,7 +295,7 @@ describe("buildTitleEmbed", () => {
       );
 
       expect(mockEmbed.setTitle).toHaveBeenCalledWith("MD Title");
-      expect(mockEmbed.setURL).toHaveBeenCalledWith("https://md.test/md-1/");
+      expect(mockEmbed.setURL).toHaveBeenCalledWith("https://md.test/md-1");
       expect(mockEmbed.setDescription).toHaveBeenCalledWith("MD Desc");
 
       const addFieldsCall = mockEmbed.addFields.mock.calls[0][0];

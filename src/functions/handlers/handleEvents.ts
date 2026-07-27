@@ -24,10 +24,24 @@ export default async function handleEvents(
       const event: BotEvent<any> = eventModule.default || eventModule;
 
       if (event.name && typeof event.execute === "function") {
+        const execute = (...args: unknown[]) => {
+          const result = event.execute(client, ...args);
+          if (result instanceof Promise) {
+            result.catch((error: unknown) => {
+              const message =
+                error instanceof Error ? error.message : String(error);
+              logMessage(
+                `[Event Handler] Unhandled error in ${event.name}: ${message}`,
+                "error"
+              );
+            });
+          }
+        };
+
         if (event.once) {
-          client.once(event.name, (...args) => event.execute(client, ...args));
+          client.once(event.name, execute);
         } else {
-          client.on(event.name, (...args) => event.execute(client, ...args));
+          client.on(event.name, execute);
         }
         await logMessage(
           `[Event Loader] Loaded ${event.name} event.`,

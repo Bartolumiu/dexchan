@@ -73,7 +73,7 @@ describe("sendErrorEmbed", () => {
     expect(mockInteraction.editReply).not.toHaveBeenCalled();
   });
 
-  it("should use commandErrors.api and interaction.reply if interaction is a MessageComponent", async () => {
+  it("should use commandErrors[errorKey] and interaction.reply if interaction is a MessageComponent", async () => {
     mockInteraction.isMessageComponent.mockReturnValue(true);
 
     await sendErrorEmbed(
@@ -81,11 +81,11 @@ describe("sendErrorEmbed", () => {
       commandErrors,
       "Global Error",
       mockEmbed as any,
-      "not_found" // Should ignore this and use 'api' instead
+      "not_found"
     );
 
     expect(mockEmbed.setDescription).toHaveBeenCalledWith(
-      "An API error occurred."
+      "The requested title '{id}' was not found in {source}."
     );
     expect(mockInteraction.reply).toHaveBeenCalledWith({
       embeds: [mockEmbed],

@@ -1,5 +1,7 @@
 import {
   ApplicationCommand,
+  ApplicationCommandPermissions,
+  ApplicationCommandPermissionType,
   ChatInputCommandInteraction,
   Collection,
   Colors,
@@ -32,10 +34,18 @@ const command: SlashCommand = {
     const translations = getTranslations(locale);
     const t = translations.commands.commands.response;
 
+    if (!interaction.guild) {
+      await interaction.reply({
+        content: translations.common.errors.unknown,
+        ephemeral: true,
+      });
+      return;
+    }
+
     const globalCommands = await client.application!.commands.fetch();
-    const guildCommands = await interaction.guild!.commands.fetch();
+    const guildCommands = await interaction.guild.commands.fetch();
     const guildCommandPermissions =
-      await interaction.guild!.commands.permissions.fetch({});
+      await interaction.guild.commands.permissions.fetch({});
 
     const allCommands = new Collection<string, ApplicationCommand>([
       ...globalCommands,
@@ -91,24 +101,26 @@ const command: SlashCommand = {
 export default command;
 
 export const hasRolePermission = (
-  commandPermissions: any[],
+  commandPermissions: ApplicationCommandPermissions[],
   interaction: ChatInputCommandInteraction
 ): boolean => {
   const rolePermissions = commandPermissions.filter(
-    (p: any) => p.type === 1 && p.permission === true
+    (p) =>
+      p.type === ApplicationCommandPermissionType.Role && p.permission === true
   );
   const userRoleIDs = interaction.member
     ? (interaction.member.roles as any).cache.map((role: any) => role.id)
     : [];
-  return rolePermissions.some((p: any) => userRoleIDs.includes(p.id));
+  return rolePermissions.some((p) => userRoleIDs.includes(p.id));
 };
 
 export const hasUserPermission = (
-  commandPermissions: any[],
+  commandPermissions: ApplicationCommandPermissions[],
   interaction: ChatInputCommandInteraction
 ): boolean => {
   const userPermissions = commandPermissions.filter(
-    (p: any) => p.type === 2 && p.permission === true
+    (p) =>
+      p.type === ApplicationCommandPermissionType.User && p.permission === true
   );
-  return userPermissions.some((p: any) => p.id === interaction.user.id);
+  return userPermissions.some((p) => p.id === interaction.user.id);
 };

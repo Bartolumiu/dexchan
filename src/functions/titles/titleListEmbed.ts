@@ -21,7 +21,7 @@ export default function buildTitleListEmbed(
   const sourceName = translations.sources[type];
   if (!sourceName) return null;
 
-  const fields = Array.from(titles, ([title, id]) => {
+  const fields = Array.from(titles, ([id, title]) => {
     const url = getProviderUrl(id, type);
     const hyperlinkedText = translations.utils.title_list_embed.view.replace(
       "{source}",
@@ -40,7 +40,7 @@ export default function buildTitleListEmbed(
     .setMinValues(1)
     .setMaxValues(1);
 
-  titles.forEach((id, title) => {
+  titles.forEach((title, id) => {
     menu.addOptions({
       label: truncateString(title, 100) || translations.common.words.unknown,
       value: `${type}:${id}`,
@@ -71,7 +71,7 @@ const getProviderUrl = (id: string, type: ProviderType): string => {
         .replace("{id}", id)
         .replace("{title}", "");
     case "namicomi":
-      return urlFormats.namicomi.primary.replace("{id}", id);
+      return urlFormats.namicomi.shortened.replace("{id}", id);
     default:
       return "";
   }

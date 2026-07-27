@@ -55,7 +55,12 @@ const buildURL = (
 
 function getMangaBakaCoverUrl(title: any): URL | null {
   const coverUrl = title.cover?.raw;
-  return coverUrl ? new URL(coverUrl) : null;
+  if (!coverUrl) return null;
+  try {
+    return new URL(coverUrl);
+  } catch {
+    return null;
+  }
 }
 
 function getMangaDexCoverUrl(title: any): URL | null {

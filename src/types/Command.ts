@@ -9,12 +9,11 @@ import { ExtendedClient } from "../lib/ExtendedClient";
 
 export interface SlashCommand {
   global?: boolean;
-  guildID?: string | string[];
+  guildId?: string | string[];
   data:
     | SlashCommandBuilder
     | SlashCommandOptionsOnlyBuilder
-    | SlashCommandSubcommandsOnlyBuilder
-    | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
+    | SlashCommandSubcommandsOnlyBuilder;
   execute: (
     interaction: ChatInputCommandInteraction,
     client: ExtendedClient

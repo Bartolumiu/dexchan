@@ -233,7 +233,7 @@ describe("search command", () => {
       expect(sendErrorEmbed).toHaveBeenCalledWith(
         mockInteraction,
         expect.anything(),
-        "Error Title", // Ternary true branch
+        "Error", // Always uses common.words.error
         expect.anything(),
         "no_source"
       );
@@ -353,7 +353,8 @@ describe("search command", () => {
           expect.anything(),
           "Error Title",
           expect.anything(),
-          "invalid_id"
+          "invalid_id",
+          undefined
         );
       });
 
@@ -372,7 +373,8 @@ describe("search command", () => {
           expect.anything(),
           "Error Title",
           expect.anything(),
-          "invalid_id"
+          "invalid_id",
+          undefined
         );
       });
 

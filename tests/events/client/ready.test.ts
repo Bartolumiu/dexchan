@@ -29,10 +29,13 @@ jest.mock("../../../src/functions/tools/pickPresence", () => ({
 describe("Ready Event", () => {
   let client: ExtendedClient;
   let readyClient: Client<true>;
+  let setIntervalSpy: jest.Spied<typeof global.setInterval>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.useFakeTimers();
+    setIntervalSpy = jest
+      .spyOn(global, "setInterval")
+      .mockImplementation(() => ({}) as any);
 
     client = {
       version: "1.0.0",
@@ -41,7 +44,7 @@ describe("Ready Event", () => {
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    setIntervalSpy.mockRestore();
     jest.clearAllMocks();
   });
 
@@ -54,11 +57,39 @@ describe("Ready Event", () => {
     (checkUpdates as jest.Mock<any>).mockResolvedValue({});
     await readyEvent.execute(client, readyClient);
 
-    expect(mockPickPresence).not.toHaveBeenCalled();
+    expect(setIntervalSpy).toHaveBeenCalledTimes(1);
+    expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 10000);
 
-    jest.advanceTimersByTime(10 * 1000);
+    const callback = setIntervalSpy.mock.calls[0][0] as () => Promise<void>;
+    await callback();
 
     expect(mockPickPresence).toHaveBeenCalledTimes(1);
     expect(mockPickPresence).toHaveBeenCalledWith(client);
+  });
+
+  it("should log error if checkUpdates fails", async () => {
+    const { logMessage } = require("../../../src/lib/app");
+    (checkUpdates as jest.Mock<any>).mockRejectedValue(
+      new Error("Update check failed")
+    );
+
+    await readyEvent.execute(client, readyClient);
+
+    expect(logMessage).toHaveBeenCalledWith(
+      "[Ready] Error during initialization: Update check failed",
+      "error"
+    );
+  });
+
+  it("should handle non-Error rejections gracefully", async () => {
+    const { logMessage } = require("../../../src/lib/app");
+    (checkUpdates as jest.Mock<any>).mockRejectedValue("string error");
+
+    await readyEvent.execute(client, readyClient);
+
+    expect(logMessage).toHaveBeenCalledWith(
+      "[Ready] Error during initialization: string error",
+      "error"
+    );
   });
 });

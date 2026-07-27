@@ -34,7 +34,7 @@ export default async function checkUpdates(): Promise<UpdateStatus> {
     const latestVersion = data.tag_name;
     const currentVersion = getVersion();
 
-    const latestParts = latestVersion.split(".");
+    const latestParts = latestVersion.replace(/^v/, "").split(".");
     const currentParts = currentVersion.split(".");
 
     const latest: ParsedVersion = {

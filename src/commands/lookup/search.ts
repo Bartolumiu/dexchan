@@ -12,11 +12,7 @@ import {
 import { sendErrorEmbed } from "../../functions/titles/errorEmbed";
 import search from "../../functions/titles/titleSearch";
 import buildTitleListEmbed from "../../functions/titles/titleListEmbed";
-import { checkID, parseUrl } from "../../functions/parsers/urlParser";
-import getTitleDetails from "../../functions/titles/titleDetails";
-import getTitleStats from "../../functions/titles/titleStats";
-import buildTitleEmbed from "../../functions/titles/titleEmbed";
-import setImages from "../../functions/titles/setImages";
+import { lookupTitleById } from "../../functions/titles/titleLookup";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import { getInteractionContext } from "../../utils/database";
 import { SlashCommand } from "../../types/Command";
@@ -100,9 +96,7 @@ const command: SlashCommand = {
       return sendErrorEmbed(
         interaction,
         searchStrings.errors,
-        searchStrings.errors.command_disabled
-          ? translations.error_embed.title
-          : translations.common.words.error,
+        translations.common.words.error,
         embed,
         "no_source"
       );
@@ -135,7 +129,8 @@ const command: SlashCommand = {
         query,
         source as ProviderType,
         embed,
-        translations
+        translations,
+        locale
       );
     }
 
@@ -205,9 +200,10 @@ async function handleQuerySearch(
   query: string,
   source: ProviderType,
   embed: EmbedBuilder,
-  translations: TranslationsType
+  translations: TranslationsType,
+  locale: string
 ) {
-  const searchResults = await search(query, source);
+  const searchResults = await search(query, source, locale);
 
   if (!searchResults) {
     return sendErrorEmbed(
@@ -243,47 +239,25 @@ async function handleIdOrUrlSearch(
   locale: string
 ) {
   const searchStrings = translations.commands.search;
-  const titleID = id || parseUrl(url, source);
-
-  if (!checkID(titleID, source)) {
-    return sendErrorEmbed(
-      interaction,
-      searchStrings.errors,
-      translations.error_embed.title,
-      embed,
-      "invalid_id"
-    );
-  }
-
-  const [entry, stats] = await Promise.all([
-    getTitleDetails(titleID!, source),
-    getTitleStats(titleID!, source),
-  ]);
-
-  if (!entry || !stats) {
-    return sendErrorEmbed(
-      interaction,
-      searchStrings.errors,
-      translations.error_embed.title,
-      embed,
-      "invalid_id"
-    );
-  }
-
-  const buttons = buildTitleEmbed(
-    embed,
+  const result = await lookupTitleById(
+    id,
+    url,
+    source,
     locale,
-    entry,
-    stats,
     translations,
-    source
+    embed
   );
 
-  const payload = {
-    embeds: [embed],
-    files: await setImages(entry, embed, source, translations),
-    components: buttons ? [buttons] : [],
-  };
+  if (!result.success) {
+    return sendErrorEmbed(
+      interaction,
+      searchStrings.errors,
+      translations.error_embed.title,
+      embed,
+      result.errorKey,
+      result.replacements
+    );
+  }
 
-  await interaction.editReply(payload);
+  await interaction.editReply(result.payload);
 }

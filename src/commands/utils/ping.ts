@@ -89,29 +89,24 @@ const command: SlashCommand = {
       })
       .setColor(Colors.Blurple);
 
-    try {
-      const mbPing = await getPing(API_URLS.MANGABAKA);
-      fields.mb.value = `${mbPing}ms`;
-    } catch (e) {
-      console.error(e);
-      fields.mb.value = translations.common.words.not_ok;
-    }
+    const [mbResult, mdResult, namiResult] = await Promise.allSettled([
+      getPing(API_URLS.MANGABAKA),
+      getPing(API_URLS.MANGADEX),
+      getPing(API_URLS.NAMICOMI),
+    ]);
 
-    try {
-      const mdPing = await getPing(API_URLS.MANGADEX);
-      fields.md.value = `${mdPing}ms`;
-    } catch (e) {
-      console.error(e);
-      fields.md.value = translations.common.words.not_ok;
-    }
-
-    try {
-      const namiPing = await getPing(API_URLS.NAMICOMI);
-      fields.nami.value = `${namiPing}ms`;
-    } catch (e) {
-      console.error(e);
-      fields.nami.value = translations.common.words.not_ok;
-    }
+    fields.mb.value =
+      mbResult.status === "fulfilled"
+        ? `${mbResult.value}ms`
+        : translations.common.words.not_ok;
+    fields.md.value =
+      mdResult.status === "fulfilled"
+        ? `${mdResult.value}ms`
+        : translations.common.words.not_ok;
+    fields.nami.value =
+      namiResult.status === "fulfilled"
+        ? `${namiResult.value}ms`
+        : translations.common.words.not_ok;
 
     embed.addFields(fields.mb, fields.md, fields.nami);
     await interaction.editReply({ embeds: [embed] });
@@ -125,6 +120,7 @@ const getPing = async (url: string): Promise<number> => {
 
   const res = await fetch(url, {
     headers: { "User-Agent": `Dex-chan/${pkg.version} by Bartolumiu` },
+    signal: AbortSignal.timeout(5000),
   });
 
   if (!res.ok) throw new Error("Fetch failed");

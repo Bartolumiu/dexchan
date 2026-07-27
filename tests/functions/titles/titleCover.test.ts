@@ -50,6 +50,14 @@ describe("getCover", () => {
       const url = (fetchImageAsBuffer as jest.Mock).mock.calls[0][0] as URL;
       expect(url.href).toBe("https://example.com/cover.jpg");
     });
+
+    it("should return null if cover url is malformed", async () => {
+      const title = {
+        cover: { raw: "\0invalid" },
+      };
+      const result = await getCover(title, "mangabaka");
+      expect(result).toBeNull();
+    });
   });
 
   describe("MangaDex Provider", () => {

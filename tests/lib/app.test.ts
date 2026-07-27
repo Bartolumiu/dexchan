@@ -191,5 +191,27 @@ describe("app.ts", () => {
         expect.stringContaining("✅ Ready as")
       );
     });
+
+    it("should log a warning if guilds.fetch fails", async () => {
+      (prisma.$connect as jest.Mock).mockResolvedValue(undefined as never);
+      const ExtendedClientMock =
+        require("../../src/lib/ExtendedClient").ExtendedClient;
+      ExtendedClientMock.mockImplementation(() => ({
+        version: "1.0.0",
+        login: jest.fn<any>().mockResolvedValue("token"),
+        user: { tag: "Bot#1234" },
+        guilds: {
+          fetch: jest.fn<any>().mockRejectedValue(new Error("Rate limited")),
+        },
+      }));
+
+      const client = await initializeApplication({ token: "test-token" });
+
+      expect(client.guilds.fetch).toHaveBeenCalled();
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        "Failed to fetch guilds: Error: Rate limited"
+      );
+      expect(client.login).toHaveBeenCalledWith("test-token");
+    });
   });
 });

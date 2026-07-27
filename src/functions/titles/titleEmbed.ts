@@ -54,11 +54,7 @@ const buildMangaBakaEmbed = (
 
   embed
     .setTitle(embedTitle)
-    .setURL(
-      urlFormats.mangabaka.primary
-        .replace("{id}", title.id)
-        .replace("{title}", "")
-    )
+    .setURL(urlFormats.mangabaka.primary.replace("{id}", title.id))
     .setDescription(embedDescription)
     .addFields([
       {
@@ -111,11 +107,7 @@ const buildMangaBakaEmbed = (
           translations.sources.mangabaka
         )
       )
-      .setURL(
-        urlFormats.mangabaka.primary
-          .replace("{id}", title.id)
-          .replace("{title}", "")
-      )
+      .setURL(urlFormats.mangabaka.primary.replace("{id}", title.id))
       .setStyle(ButtonStyle.Link),
     new ButtonBuilder()
       .setLabel(translations.utils.title_embed.button.stats)
@@ -145,11 +137,7 @@ const buildMangaDexEmbed = (
 
   embed
     .setTitle(embedTitle)
-    .setURL(
-      urlFormats.mangadex.primary
-        .replace("{id}", title.id)
-        .replace("{title}", "")
-    )
+    .setURL(urlFormats.mangadex.primary.replace("{id}", title.id))
     .setDescription(embedDescription)
     .addFields([
       {
@@ -204,11 +192,7 @@ const buildMangaDexEmbed = (
           translations.sources.mangadex
         )
       )
-      .setURL(
-        urlFormats.mangadex.primary
-          .replace("{id}", title.id)
-          .replace("{title}", "")
-      )
+      .setURL(urlFormats.mangadex.primary.replace("{id}", title.id))
       .setStyle(ButtonStyle.Link),
     new ButtonBuilder()
       .setLabel(translations.utils.title_embed.button.stats)
@@ -337,12 +321,16 @@ const sanitizeDescription = (
   }
 
   let sanitized = description
+    .replaceAll("&", "&amp;")
+    .replaceAll("&amp;quot;", "&quot;")
+    .replaceAll("&amp;#39;", "&#39;")
+    .replaceAll("&amp;apos;", "&apos;")
+    .replaceAll("&amp;nbsp;", "&nbsp;")
     .replaceAll("&quot;", '"')
     .replaceAll("&#39;", "'")
-    .replaceAll("/&apos;", "'")
+    .replaceAll("&apos;", "'")
     .replaceAll("&nbsp;", " ");
 
-  sanitized = sanitized.replaceAll("&", "&amp;");
   sanitized = sanitized.replaceAll(/<br\s*\/?>/gi, "|||LINEBREAK|||");
   sanitized = sanitized.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 

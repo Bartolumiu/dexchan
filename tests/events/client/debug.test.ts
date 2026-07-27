@@ -21,9 +21,19 @@ describe("Debug Event", () => {
     const client = {} as ExtendedClient;
     const debugMessage = "Test debug message";
 
+    process.env.DEBUG = "true";
     await debugEvent.execute(client, debugMessage);
 
     expect(logMessage).toHaveBeenCalledTimes(1);
     expect(logMessage).toHaveBeenCalledWith(debugMessage, "debug");
+  });
+
+  it("should skip logging when DEBUG env var is not set", async () => {
+    const client = {} as ExtendedClient;
+
+    delete process.env.DEBUG;
+    await debugEvent.execute(client, "test");
+
+    expect(logMessage).not.toHaveBeenCalled();
   });
 });

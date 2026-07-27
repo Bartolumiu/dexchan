@@ -55,7 +55,12 @@ const buildURL = (
 
 function getMangaBakaCoverUrl(title: any): URL | null {
   const coverUrl = title.cover?.raw;
-  return coverUrl ? new URL(coverUrl) : null;
+  if (!coverUrl) return null;
+  try {
+    return new URL(coverUrl);
+  } catch {
+    return null;
+  }
 }
 
 function getMangaDexCoverUrl(title: any): URL | null {
@@ -65,7 +70,11 @@ function getMangaDexCoverUrl(title: any): URL | null {
     (rel: any) => rel.type === "cover_art"
   )?.attributes?.fileName;
   if (!coverName) return null;
-  return new URL(`${URL_FORMATS.mangadex}${id}/${coverName}.512.jpg`);
+  try {
+    return new URL(`${URL_FORMATS.mangadex}${id}/${coverName}.512.jpg`);
+  } catch {
+    return null;
+  }
 }
 
 function getNamiComiCoverUrl(title: any, locale: string | null): URL | null {
@@ -92,5 +101,9 @@ function getNamiComiCoverUrl(title: any, locale: string | null): URL | null {
 
   if (!coverName) return null;
 
-  return new URL(`${URL_FORMATS.namicomi}${id}/${coverName}.512.jpg`);
+  try {
+    return new URL(`${URL_FORMATS.namicomi}${id}/${coverName}.512.jpg`);
+  } catch {
+    return null;
+  }
 }

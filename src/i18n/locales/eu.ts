@@ -208,7 +208,7 @@ export default {
         too_many: "Egile Anitz",
       },
       description: {
-        no_description: "Ez dago deskribapenik eskuragarri {locale}(e)rako.",
+        no_description: "Ez dago deskribapenik eskuragarri.",
       },
       fields: {
         rating: "Balorazioa",

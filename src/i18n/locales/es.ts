@@ -206,7 +206,7 @@ export default {
         too_many: "Múltiples Autores",
       },
       description: {
-        no_description: "No hay descripción disponible para {locale}.",
+        no_description: "No hay descripción disponible.",
       },
       fields: {
         rating: "Calificación",

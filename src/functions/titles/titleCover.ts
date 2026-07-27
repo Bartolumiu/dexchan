@@ -70,11 +70,7 @@ function getMangaDexCoverUrl(title: any): URL | null {
     (rel: any) => rel.type === "cover_art"
   )?.attributes?.fileName;
   if (!coverName) return null;
-  try {
-    return new URL(`${URL_FORMATS.mangadex}${id}/${coverName}.512.jpg`);
-  } catch {
-    return null;
-  }
+  return new URL(`${URL_FORMATS.mangadex}${id}/${coverName}.512.jpg`);
 }
 
 function getNamiComiCoverUrl(title: any, locale: string | null): URL | null {
@@ -101,9 +97,5 @@ function getNamiComiCoverUrl(title: any, locale: string | null): URL | null {
 
   if (!coverName) return null;
 
-  try {
-    return new URL(`${URL_FORMATS.namicomi}${id}/${coverName}.512.jpg`);
-  } catch {
-    return null;
-  }
+  return new URL(`${URL_FORMATS.namicomi}${id}/${coverName}.512.jpg`);
 }

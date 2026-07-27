@@ -13,9 +13,10 @@ datasource db {
 }
 
 model User {
-  id              String  @id
+  id              String   @id
   preferredLocale String?
-  nsfwEnabled     Boolean @default(false)
+  nsfwEnabled     Boolean  @default(false)
+  lastUsedAt      DateTime @default(now())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

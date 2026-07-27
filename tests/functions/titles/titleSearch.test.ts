@@ -89,7 +89,7 @@ describe("search", () => {
       const result = await search("solo leveling", "mangabaka", "es");
 
       expect(result).toBeInstanceOf(Map);
-      expect(result!.get("MB Localized")).toBe("mb-1");
+      expect(result!.get("mb-1")).toBe("MB Localized");
 
       const calledUrl = (fetchJSON as jest.Mock).mock.calls[0][0] as URL;
       expect(calledUrl.origin + calledUrl.pathname).toBe(
@@ -117,7 +117,7 @@ describe("search", () => {
       const result = await search("naruto", "mangadex"); // omitting locale tests fallback to 'en'
 
       expect(result).toBeInstanceOf(Map);
-      expect(result!.get("MD Localized")).toBe("md-1");
+      expect(result!.get("md-1")).toBe("MD Localized");
 
       const calledUrl = (fetchJSON as jest.Mock).mock.calls[0][0] as URL;
       expect(calledUrl.origin + calledUrl.pathname).toBe(
@@ -180,8 +180,8 @@ describe("search", () => {
       const result = await search("weird", "mangadex");
 
       expect(result).toBeInstanceOf(Map);
-      expect(result!.has("Unknown Title")).toBe(true);
-      expect(result!.get("Unknown Title")).toBe("999");
+      expect(result!.has("999")).toBe(true);
+      expect(result!.get("999")).toBe("Unknown Title");
     });
   });
 });

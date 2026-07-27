@@ -186,14 +186,14 @@ describe("settings command", () => {
     it("should route to localeSettings", async () => {
       mockInteraction.options.getSubcommandGroup.mockReturnValue("locale");
       mockInteraction.options.getSubcommand.mockReturnValue("reset");
-      (prisma.user.update as jest.Mock<any>).mockResolvedValue({});
+      (prisma.user.upsert as jest.Mock<any>).mockResolvedValue({});
 
       await settingsCommand.execute!(
         mockInteraction as ChatInputCommandInteraction,
         mockClient
       );
 
-      expect(prisma.user.update).toHaveBeenCalled();
+      expect(prisma.user.upsert).toHaveBeenCalled();
       expect(mockInteraction.reply).toHaveBeenCalled();
     });
 
@@ -295,16 +295,17 @@ describe("settings command", () => {
     });
 
     it("should update user and send success on reset", async () => {
-      (prisma.user.update as jest.Mock<any>).mockResolvedValue({});
+      (prisma.user.upsert as jest.Mock<any>).mockResolvedValue({});
 
       await settingsCommand.execute!(
         mockInteraction as ChatInputCommandInteraction,
         mockClient
       );
 
-      expect(prisma.user.update).toHaveBeenCalledWith({
+      expect(prisma.user.upsert).toHaveBeenCalledWith({
         where: { id: "user_123" },
-        data: { preferredLocale: null },
+        update: { preferredLocale: null },
+        create: { id: "user_123", preferredLocale: null },
       });
       const replyCall = mockInteraction.reply.mock.calls[0][0];
       const embed = replyCall.embeds[0];
@@ -314,7 +315,7 @@ describe("settings command", () => {
     });
 
     it("should send error if database throws during reset", async () => {
-      (prisma.user.update as jest.Mock<any>).mockRejectedValue(
+      (prisma.user.upsert as jest.Mock<any>).mockRejectedValue(
         new Error("DB Failure")
       );
 

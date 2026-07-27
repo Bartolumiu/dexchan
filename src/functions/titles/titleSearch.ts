@@ -24,8 +24,8 @@ export default async function search(
 
   return new Map(
     dataArray.map((item) => [
-      getLocalizedTitle(item, type, locale ?? "en") || "Unknown Title",
       String(item.id),
+      getLocalizedTitle(item, type, locale ?? "en") || "Unknown Title",
     ])
   );
 }

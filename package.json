@@ -31,7 +31,8 @@
     ],
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "<rootDir>/src/**/*.ts"
+      "<rootDir>/src/**/*.ts",
+      "!<rootDir>/src/_generated/**/*.ts"
     ],
     "coverageDirectory": "<rootDir>/coverage",
     "coverageReporters": [

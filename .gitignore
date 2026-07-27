@@ -139,6 +139,7 @@ dist
 /coverage
 .scannerwork
 /prisma/generated/prisma
+src/_generated
 
 # i18n
 .i18n-temp/

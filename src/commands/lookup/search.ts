@@ -135,7 +135,8 @@ const command: SlashCommand = {
         query,
         source as ProviderType,
         embed,
-        translations
+        translations,
+        locale
       );
     }
 
@@ -205,9 +206,10 @@ async function handleQuerySearch(
   query: string,
   source: ProviderType,
   embed: EmbedBuilder,
-  translations: TranslationsType
+  translations: TranslationsType,
+  locale: string
 ) {
-  const searchResults = await search(query, source);
+  const searchResults = await search(query, source, locale);
 
   if (!searchResults) {
     return sendErrorEmbed(

@@ -12,11 +12,7 @@ import {
 import { sendErrorEmbed } from "../../functions/titles/errorEmbed";
 import search from "../../functions/titles/titleSearch";
 import buildTitleListEmbed from "../../functions/titles/titleListEmbed";
-import { checkID, parseUrl } from "../../functions/parsers/urlParser";
-import getTitleDetails from "../../functions/titles/titleDetails";
-import getTitleStats from "../../functions/titles/titleStats";
-import buildTitleEmbed from "../../functions/titles/titleEmbed";
-import setImages from "../../functions/titles/setImages";
+import { lookupTitleById } from "../../functions/titles/titleLookup";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import { getInteractionContext } from "../../utils/database";
 import { SlashCommand } from "../../types/Command";
@@ -245,47 +241,18 @@ async function handleIdOrUrlSearch(
   locale: string
 ) {
   const searchStrings = translations.commands.search;
-  const titleID = id || parseUrl(url, source);
+  const result = await lookupTitleById(id, url, source, locale, translations, embed);
 
-  if (!checkID(titleID, source)) {
+  if (!result.success) {
     return sendErrorEmbed(
       interaction,
       searchStrings.errors,
       translations.error_embed.title,
       embed,
-      "invalid_id"
+      result.errorKey,
+      result.replacements
     );
   }
 
-  const [entry, stats] = await Promise.all([
-    getTitleDetails(titleID!, source),
-    getTitleStats(titleID!, source),
-  ]);
-
-  if (!entry || !stats) {
-    return sendErrorEmbed(
-      interaction,
-      searchStrings.errors,
-      translations.error_embed.title,
-      embed,
-      "invalid_id"
-    );
-  }
-
-  const buttons = buildTitleEmbed(
-    embed,
-    locale,
-    entry,
-    stats,
-    translations,
-    source
-  );
-
-  const payload = {
-    embeds: [embed],
-    files: await setImages(entry, embed, source, translations),
-    components: buttons ? [buttons] : [],
-  };
-
-  await interaction.editReply(payload);
+  await interaction.editReply(result.payload);
 }

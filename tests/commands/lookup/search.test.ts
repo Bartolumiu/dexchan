@@ -353,7 +353,8 @@ describe("search command", () => {
           expect.anything(),
           "Error Title",
           expect.anything(),
-          "invalid_id"
+          "invalid_id",
+          undefined
         );
       });
 
@@ -372,7 +373,8 @@ describe("search command", () => {
           expect.anything(),
           "Error Title",
           expect.anything(),
-          "invalid_id"
+          "invalid_id",
+          undefined
         );
       });
 

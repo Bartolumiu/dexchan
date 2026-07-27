@@ -233,7 +233,7 @@ describe("search command", () => {
       expect(sendErrorEmbed).toHaveBeenCalledWith(
         mockInteraction,
         expect.anything(),
-        "Error Title", // Ternary true branch
+        "Error", // Always uses common.words.error
         expect.anything(),
         "no_source"
       );

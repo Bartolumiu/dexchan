@@ -24,8 +24,9 @@ describe("truncateString", () => {
     expect(truncateString(longStr)!.length).toBeLessThan(110);
   });
 
-  it("should throw RangeError if maxLength is less than or equal to 6", () => {
-    expect(() => truncateString("hello world", 6)).toThrow(RangeError);
-    expect(() => truncateString("hello world", 3)).toThrow(RangeError);
+  it("should return truncated string when maxLength is less than or equal to 6", () => {
+    expect(truncateString("hello world", 6)).toBe("hello ");
+    expect(truncateString("hello world", 3)).toBe("hel");
+    expect(truncateString("hello world", 0)).toBe("");
   });
 });

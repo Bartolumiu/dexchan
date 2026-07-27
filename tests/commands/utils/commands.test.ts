@@ -52,7 +52,8 @@ jest.mock("discord.js", () => {
     EmbedBuilder: MockEmbedBuilder,
     SlashCommandBuilder: MockSlashCommandBuilder,
     Colors: { Blurple: "Blurple" },
-    Collection: Map, // Discord.js Collection extends standard JS Map
+    Collection: Map,
+    ApplicationCommandPermissionType: { Role: 1, User: 2, Channel: 3 },
   };
 });
 

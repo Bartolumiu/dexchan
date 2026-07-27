@@ -8,18 +8,25 @@ const event: BotEvent<Events.ClientReady> = {
   name: Events.ClientReady,
   once: true,
   execute: async (client: ExtendedClient, readyClient: Client<true>) => {
-    const { default: pickPresence } =
-      await import("../../functions/tools/pickPresence");
-    setInterval(async () => {
-      try {
-        await pickPresence(client);
-      } catch {
-        // Presence rotation failed silently, already logged in pickPresence
-      }
-    }, 10 * 1000);
+    try {
+      const { default: pickPresence } =
+        await import("../../functions/tools/pickPresence");
+      setInterval(async () => {
+        try {
+          await pickPresence(client);
+        } catch {
+          // Presence rotation failed silently, already logged in pickPresence
+        }
+      }, 10 * 1000);
 
-    await logMessage("[GitHub] Checking for updates...", "info");
-    await checkUpdates();
+      await logMessage("[GitHub] Checking for updates...", "info");
+      await checkUpdates();
+    } catch (error) {
+      await logMessage(
+        `[Ready] Error during initialization: ${error instanceof Error ? error.message : String(error)}`,
+        "error"
+      );
+    }
   },
 };
 

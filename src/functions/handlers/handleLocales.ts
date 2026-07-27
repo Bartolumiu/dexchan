@@ -56,7 +56,7 @@ export const format = (
 ): string => {
   return Object.entries(replacements).reduce(
     (str, [placeholder, value]) =>
-      str.replace(new RegExp(`{${placeholder}}`, "g"), String(value)),
+      str.replaceAll(`{${placeholder}}`, String(value)),
     text
   );
 };

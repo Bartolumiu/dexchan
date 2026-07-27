@@ -92,7 +92,7 @@ describe("handleCommands", () => {
         name: "test",
         toJSON: jest.fn().mockReturnValue({ name: "test" }),
       },
-      guildID: "guild123",
+      guildId: "guild123",
       execute: jest.fn(),
     };
 
@@ -123,20 +123,20 @@ describe("handleCommands", () => {
     });
   });
 
-  it("should handle multiple commands mapping to the exact same guildID", async () => {
+  it("should handle multiple commands mapping to the exact same guildId", async () => {
     const mockCommand1 = {
       data: {
         name: "cmd1",
         toJSON: jest.fn().mockReturnValue({ name: "cmd1" }),
       },
-      guildID: "shared-guild",
+      guildId: "shared-guild",
     };
     const mockCommand2 = {
       data: {
         name: "cmd2",
         toJSON: jest.fn().mockReturnValue({ name: "cmd2" }),
       },
-      guildID: "shared-guild",
+      guildId: "shared-guild",
     };
 
     mockReaddirSync.mockImplementation((dirPath: any) => {
@@ -167,13 +167,13 @@ describe("handleCommands", () => {
     });
   });
 
-  it("should handle commands with guildID array", async () => {
+  it("should handle commands with guildId array", async () => {
     const mockCommand = {
       data: {
         name: "test-array",
         toJSON: jest.fn().mockReturnValue({ name: "test-array" }),
       },
-      guildID: ["guild1", "guild2"],
+      guildId: ["guild1", "guild2"],
     };
 
     mockReaddirSync.mockImplementation((dirPath: any) => {
@@ -246,7 +246,7 @@ describe("handleCommands", () => {
     );
   });
 
-  it("should warn if command is neither global nor has guildID", async () => {
+  it("should warn if command is neither global nor has guildId", async () => {
     const mockCommand = {
       data: { name: "no-scope", toJSON: jest.fn() },
     };

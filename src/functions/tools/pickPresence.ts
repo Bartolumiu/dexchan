@@ -1,3 +1,4 @@
+import { randomInt } from "node:crypto";
 import { ActivityType, PresenceStatusData } from "discord.js";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import { prisma } from "../../utils/prisma";
@@ -66,7 +67,7 @@ export default async function pickPresence(
     }
   }
 
-  const randomIndex = Math.floor(Math.random() * presenceCache.length);
+  const randomIndex = randomInt(presenceCache.length);
   const selected = presenceCache[randomIndex];
 
   const parsedText = parseDynamicReplacements(selected.text, client);

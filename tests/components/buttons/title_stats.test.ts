@@ -15,11 +15,12 @@ jest.mock("../../../src/utils/database", () => ({
 }));
 
 jest.mock("../../../src/functions/handlers/handleLocales", () => ({
-  format: jest.fn((text: string, replacements: Record<string, string | number>) =>
-    Object.entries(replacements).reduce(
-      (str, [key, val]) => str.replace(`{${key}}`, String(val)),
-      text
-    )
+  format: jest.fn(
+    (text: string, replacements: Record<string, string | number>) =>
+      Object.entries(replacements).reduce(
+        (str, [key, val]) => str.replace(`{${key}}`, String(val)),
+        text
+      )
   ),
   getTranslations: jest.fn().mockReturnValue({
     sources: { mangadex: "MangaDex", namicomi: "NamiComi" },

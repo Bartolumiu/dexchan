@@ -33,7 +33,9 @@ describe("Ready Event", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    setIntervalSpy = jest.spyOn(global, "setInterval").mockImplementation(() => ({} as any));
+    setIntervalSpy = jest
+      .spyOn(global, "setInterval")
+      .mockImplementation(() => ({}) as any);
 
     client = {
       version: "1.0.0",
@@ -56,10 +58,7 @@ describe("Ready Event", () => {
     await readyEvent.execute(client, readyClient);
 
     expect(setIntervalSpy).toHaveBeenCalledTimes(1);
-    expect(setIntervalSpy).toHaveBeenCalledWith(
-      expect.any(Function),
-      10000
-    );
+    expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 10000);
 
     const callback = setIntervalSpy.mock.calls[0][0] as () => Promise<void>;
     await callback();

@@ -96,7 +96,6 @@ describe("getCover", () => {
         "https://uploads.mangadex.org/covers/123/cover.png.512.jpg"
       );
     });
-
   });
 
   describe("NamiComi Provider", () => {
@@ -176,7 +175,6 @@ describe("getCover", () => {
       const result = await getCover(title, "namicomi");
       expect(result).toBeNull();
     });
-
   });
 
   describe("Unknown Provider", () => {

@@ -11,7 +11,10 @@ import {
   MessageActionRowComponentBuilder,
   MessageFlags,
 } from "discord.js";
-import { format, getTranslations } from "../../functions/handlers/handleLocales";
+import {
+  format,
+  getTranslations,
+} from "../../functions/handlers/handleLocales";
 import getTitleStats, { TitleStats } from "../../functions/titles/titleStats";
 import { getInteractionContext } from "../../utils/database";
 import { ExtendedClient } from "../../lib/ExtendedClient";

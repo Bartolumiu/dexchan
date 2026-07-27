@@ -28,7 +28,8 @@ export default async function handleEvents(
           const result = event.execute(client, ...args);
           if (result instanceof Promise) {
             result.catch((error: unknown) => {
-              const message = error instanceof Error ? error.message : String(error);
+              const message =
+                error instanceof Error ? error.message : String(error);
               logMessage(
                 `[Event Handler] Unhandled error in ${event.name}: ${message}`,
                 "error"

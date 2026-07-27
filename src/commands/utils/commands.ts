@@ -105,7 +105,8 @@ export const hasRolePermission = (
   interaction: ChatInputCommandInteraction
 ): boolean => {
   const rolePermissions = commandPermissions.filter(
-    (p) => p.type === ApplicationCommandPermissionType.Role && p.permission === true
+    (p) =>
+      p.type === ApplicationCommandPermissionType.Role && p.permission === true
   );
   const userRoleIDs = interaction.member
     ? (interaction.member.roles as any).cache.map((role: any) => role.id)
@@ -118,7 +119,8 @@ export const hasUserPermission = (
   interaction: ChatInputCommandInteraction
 ): boolean => {
   const userPermissions = commandPermissions.filter(
-    (p) => p.type === ApplicationCommandPermissionType.User && p.permission === true
+    (p) =>
+      p.type === ApplicationCommandPermissionType.User && p.permission === true
   );
   return userPermissions.some((p) => p.id === interaction.user.id);
 };

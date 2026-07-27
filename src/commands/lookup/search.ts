@@ -239,7 +239,14 @@ async function handleIdOrUrlSearch(
   locale: string
 ) {
   const searchStrings = translations.commands.search;
-  const result = await lookupTitleById(id, url, source, locale, translations, embed);
+  const result = await lookupTitleById(
+    id,
+    url,
+    source,
+    locale,
+    translations,
+    embed
+  );
 
   if (!result.success) {
     return sendErrorEmbed(

@@ -3,31 +3,31 @@ import {
   AttachmentBuilder,
   ButtonBuilder,
   EmbedBuilder,
-} from "discord.js"
-import { BotStrings } from "../../i18n/schema"
-import { ProviderType } from "../../constants/providers"
-import { checkID, parseUrl } from "../parsers/urlParser"
-import getTitleDetails from "./titleDetails"
-import getTitleStats from "./titleStats"
-import buildTitleEmbed from "./titleEmbed"
-import setImages from "./setImages"
+} from "discord.js";
+import { BotStrings } from "../../i18n/schema";
+import { ProviderType } from "../../constants/providers";
+import { checkID, parseUrl } from "../parsers/urlParser";
+import getTitleDetails from "./titleDetails";
+import getTitleStats from "./titleStats";
+import buildTitleEmbed from "./titleEmbed";
+import setImages from "./setImages";
 
 export interface TitleLookupSuccess {
-  success: true
+  success: true;
   payload: {
-    embeds: EmbedBuilder[]
-    files: AttachmentBuilder[]
-    components: ActionRowBuilder<ButtonBuilder>[]
-  }
+    embeds: EmbedBuilder[];
+    files: AttachmentBuilder[];
+    components: ActionRowBuilder<ButtonBuilder>[];
+  };
 }
 
 export interface TitleLookupError {
-  success: false
-  errorKey: string
-  replacements?: Record<string, string>
+  success: false;
+  errorKey: string;
+  replacements?: Record<string, string>;
 }
 
-export type TitleLookupResult = TitleLookupSuccess | TitleLookupError
+export type TitleLookupResult = TitleLookupSuccess | TitleLookupError;
 
 export async function lookupTitleById(
   id: string | null,
@@ -35,21 +35,21 @@ export async function lookupTitleById(
   source: ProviderType,
   locale: string,
   translations: BotStrings,
-  embed: EmbedBuilder,
+  embed: EmbedBuilder
 ): Promise<TitleLookupResult> {
-  const titleID = id || parseUrl(url, source)
+  const titleID = id || parseUrl(url, source);
 
   if (!checkID(titleID, source)) {
-    return { success: false, errorKey: "invalid_id" }
+    return { success: false, errorKey: "invalid_id" };
   }
 
   const [entry, stats] = await Promise.all([
     getTitleDetails(titleID!, source),
     getTitleStats(titleID!, source),
-  ])
+  ]);
 
   if (!entry || !stats) {
-    return { success: false, errorKey: "invalid_id" }
+    return { success: false, errorKey: "invalid_id" };
   }
 
   const buttons = buildTitleEmbed(
@@ -58,10 +58,10 @@ export async function lookupTitleById(
     entry,
     stats,
     translations,
-    source,
-  )
+    source
+  );
 
-  const files = await setImages(entry, embed, source, translations, locale)
+  const files = await setImages(entry, embed, source, translations, locale);
 
   return {
     success: true,
@@ -70,5 +70,5 @@ export async function lookupTitleById(
       files,
       components: buttons ? [buttons] : [],
     },
-  }
+  };
 }

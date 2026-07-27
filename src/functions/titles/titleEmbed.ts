@@ -107,9 +107,7 @@ const buildMangaBakaEmbed = (
           translations.sources.mangabaka
         )
       )
-      .setURL(
-        urlFormats.mangabaka.primary.replace("{id}", title.id)
-      )
+      .setURL(urlFormats.mangabaka.primary.replace("{id}", title.id))
       .setStyle(ButtonStyle.Link),
     new ButtonBuilder()
       .setLabel(translations.utils.title_embed.button.stats)
@@ -194,9 +192,7 @@ const buildMangaDexEmbed = (
           translations.sources.mangadex
         )
       )
-      .setURL(
-        urlFormats.mangadex.primary.replace("{id}", title.id)
-      )
+      .setURL(urlFormats.mangadex.primary.replace("{id}", title.id))
       .setStyle(ButtonStyle.Link),
     new ButtonBuilder()
       .setLabel(translations.utils.title_embed.button.stats)

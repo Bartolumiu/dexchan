@@ -101,7 +101,11 @@ async function loadAndRegisterCommand(
 }
 
 async function categorizeCommand(
-  command: { global?: boolean; guildId?: string | string[]; data: { name: string } },
+  command: {
+    global?: boolean;
+    guildId?: string | string[];
+    data: { name: string };
+  },
   commandJson: RESTPostAPIChatInputApplicationCommandsJSONBody,
   globalCommandList: GlobalCommandList,
   guildCommandMap: GuildCommandMap

@@ -117,8 +117,8 @@ export async function initializeApplication({
     await logMessage(`Failed to fetch guilds: ${error}`, "warn");
   }
 
-  await logMessage(
-    `✅ Ready as ${client.user?.tag}! Logged in and connected to PostgreSQL.`,
+    await logMessage(
+    `✅ Ready as ${client.user!.tag}! Logged in and connected to PostgreSQL.`,
     "success"
   );
 

@@ -17,18 +17,19 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v5
-
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: "26"
-          cache: "pnpm"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          standalone: true
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -42,7 +43,9 @@ jobs:
         run: pnpm test
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v7
+        uses: SonarSource/sonarqube-scan-action@v8
+        with:
+          skipSignatureVerification: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

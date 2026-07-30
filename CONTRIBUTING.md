@@ -15,7 +15,16 @@ Please note that this project is released with a [Contributor Code of Conduct](C
 ### Translation Contributions
 
 If you want to help translate the bot, you can do so by visiting [Weblate](https://weblate.tr25.es/engage/dexchan/).
-You can translate the bot into any language you want, and it will be automatically updated in the bot once the translated strings are approved.
+You can translate the bot into any language you want, and it will be automatically updated in the bot once the translated strings are approved and synced.
+
+**For Project Maintainers:**
+To sync translations between the codebase and Weblate, you must have write access to the Weblate project. Add your Personal API Token to your `.env` file (`WEBLATE_TOKEN=your_token`).
+
+*(Note: Standard code contributors do not need to use these commands)*
+
+Once authenticated, maintainers can use the following package scripts:
+- `pnpm i18n:pull`: Downloads the latest translations from Weblate, cleans empty strings, and compiles them into heavily-typed TypeScript files.
+- `pnpm i18n:push`: Extracts the base English TypeScript strings to JSON and pushes them to Weblate to update the source keys.
 
 ## Creating a Pull Request
 

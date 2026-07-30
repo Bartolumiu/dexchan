@@ -38,10 +38,19 @@ describe("handleCommands", () => {
     client = {
       commands: new Map(),
     } as unknown as ExtendedClient;
+
     jest.clearAllMocks();
+    jest.resetModules();
+
+  (REST as unknown as jest.Mock).mockImplementation(() => ({
+    setToken: jest.fn<any>().mockReturnThis(),
+                                                           put: jest.fn<any>().mockResolvedValue({} as any),
+  }));
+
     mockReaddirSync.mockReturnValue([]);
     process.env.CLIENT_ID = "test-client-id";
     process.env.DEXCHAN_TOKEN = "test-bot-token";
+    delete process.env.TEST_GUILD_ID;
   });
 
   it("should load global commands correctly", async () => {
@@ -382,5 +391,80 @@ describe("handleCommands", () => {
 
     expect(client.commands.get("ping-no-default")).toBeDefined();
     expect(client.commands.get("ping-no-default")?.global).toBe(true);
+  });
+
+  it("should abort registration and log an error if payload contains empty strings", async () => {
+    const mockCommand = {
+      data: {
+        name: "bad-cmd",
+        toJSON: jest.fn().mockReturnValue({
+          name: "bad-cmd",
+          description_localizations: { es: "" },
+        }),
+      },
+      global: true,
+    };
+
+    mockReaddirSync.mockImplementation((dirPath: any) => {
+      if (typeof dirPath === "string") {
+        if (dirPath.endsWith("commands")) return ["test"];
+        if (dirPath.endsWith("test")) return ["bad-cmd.ts"];
+      }
+      return [];
+    });
+
+    jest.mock(
+      path.join(__dirname, "../../../src/commands/test/bad-cmd.ts"),
+              () => ({ __esModule: true, default: mockCommand }),
+              { virtual: true }
+    );
+
+    await handleCommands(client);
+
+    expect(logMessage).toHaveBeenCalledWith(
+      expect.stringContaining("[i18n Error] Empty string detected in command payload at: bad-cmd.description_localizations.es"),
+                                            "error"
+    );
+    expect(REST).not.toHaveBeenCalled();
+  });
+
+  it("should route globals to TEST_GUILD_ID and wipe original globals in DEV MODE", async () => {
+    process.env.TEST_GUILD_ID = "dev-guild-123";
+
+    const mockCommand = {
+      data: {
+        name: "dev-cmd",
+        toJSON: jest.fn().mockReturnValue({ name: "dev-cmd" }),
+      },
+      global: true,
+    };
+
+    mockReaddirSync.mockImplementation((dirPath: any) => {
+      if (typeof dirPath === "string") {
+        if (dirPath.endsWith("commands")) return ["test"];
+        if (dirPath.endsWith("test")) return ["dev-cmd.ts"];
+      }
+      return [];
+    });
+
+    jest.mock(
+      path.join(__dirname, "../../../src/commands/test/dev-cmd.ts"),
+              () => ({ __esModule: true, default: mockCommand }),
+              { virtual: true }
+    );
+
+    await handleCommands(client);
+
+    expect(REST).toHaveBeenCalled();
+    const restInstance = (REST as unknown as jest.Mock).mock.results[0].value as any;
+
+    // 1. Verify it wiped the global commands (empty array)
+    expect(restInstance.put).toHaveBeenCalledWith("/apps/commands", {
+      body: [],
+    });
+    // 2. Verify it routed the global command to the test guild endpoint
+    expect(restInstance.put).toHaveBeenCalledWith("/apps/guilds/commands", {
+      body: [{ name: "dev-cmd" }],
+    });
   });
 });

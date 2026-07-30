@@ -1,6 +1,7 @@
 import en from "../../i18n/locales/en";
 import es from "../../i18n/locales/es";
 import eu from "../../i18n/locales/eu";
+import ja from "../../i18n/locales/ja";
 
 import { TranslationKey } from "../../utils/i18n";
 import { BotStrings, PartialBotStrings } from "../../i18n/schema";
@@ -48,6 +49,7 @@ const locales: Record<string, PartialBotStrings | BotStrings> = {
   "es-ES": es,
   "es-419": es,
   eu: eu,
+  ja: ja,
 };
 
 export const format = (
@@ -75,7 +77,7 @@ export const translate = (
     if (translation === undefined) break;
   }
 
-  if (typeof translation !== "string") {
+  if (typeof translation !== "string" || translation === "") {
     let fallback: any = en;
     for (const k of keys) {
       if (!fallback || (fallback as any)[k] === undefined) {
@@ -84,10 +86,10 @@ export const translate = (
       }
       fallback = (fallback as any)[k];
     }
-    if (typeof fallback === "string") translation = fallback;
+    if (typeof fallback === "string" && fallback !== "") translation = fallback;
   }
 
-  if (typeof translation !== "string") return key;
+  if (typeof translation !== "string" || translation === "") return key;
 
   return format(translation, replacements);
 };
@@ -146,7 +148,7 @@ function deepMerge(base: any, override: any): any {
     typeof override !== "object" ||
     override === null
   ) {
-    return override !== undefined ? override : base;
+    return override !== undefined && override !== "" ? override : base;
   }
 
   const result: any = { ...base };

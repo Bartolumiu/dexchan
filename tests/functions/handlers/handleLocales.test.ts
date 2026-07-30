@@ -84,6 +84,21 @@ describe("handleLocales", () => {
       const result = translate("es", "commands.ping.does_not_exist" as any);
       expect(result).toBe("commands.ping.does_not_exist");
     });
+
+    it("should fallback to English if key is an empty string", () => {
+      // Temporarily inject an empty string
+      const original = es.commands?.ping?.description;
+      (es.commands as any).ping.description = "";
+
+      const result = translate("es", "commands.ping.description" as any);
+
+      expect(result).toBe(en.commands.ping.description);
+
+      // Restore
+      if (es.commands?.ping) {
+        (es.commands.ping as any).description = original;
+      }
+    });
   });
 
   describe("getTranslations", () => {
@@ -99,6 +114,21 @@ describe("handleLocales", () => {
     it("should fall back to base string if override value is explicitly undefined", () => {
       const originalDesc = es.commands?.ping?.description;
       (es.commands as any).ping.description = undefined;
+
+      const translations = getTranslations("es");
+
+      expect(translations.commands.ping.description).toBe(
+        en.commands.ping.description
+      );
+
+      if (es.commands?.ping) {
+        (es.commands.ping as any).description = originalDesc;
+      }
+    });
+
+    it("should fall back to base string if override value is an empty string", () => {
+      const originalDesc = es.commands?.ping?.description;
+      (es.commands as any).ping.description = "";
 
       const translations = getTranslations("es");
 

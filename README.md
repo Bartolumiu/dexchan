@@ -129,6 +129,12 @@ pnpm install --frozen-lockfile
 DEXCHAN_TOKEN=YOUR_DISCORD_BOT_TOKEN
 CLIENT_ID=YOUR_DISCORD_CLIENT_ID
 DATABASE_URL=YOUR_DATABASE_URL
+
+# Optional: Routes global commands to a specific server for instant dev testing
+TEST_GUILD_ID=YOUR_TEST_SERVER_ID
+
+# Optional: Required only for project admins with write access to sync translations
+WEBLATE_TOKEN=YOUR_WEBLATE_API_TOKEN
 ```
 
 4. Start the bot

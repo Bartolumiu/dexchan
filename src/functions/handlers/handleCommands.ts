@@ -143,6 +143,23 @@ async function categorizeCommand(
   );
 }
 
+function validateCommandPayloads(payloads: RESTPostAPIChatInputApplicationCommandsJSONBody[]) {
+  const checkEmptyStrings = (obj: any, path: string) => {
+    if (typeof obj === "string" && obj.trim() === "") {
+      throw new Error(`[i18n Error] Empty string detected in command payload at: ${path}`);
+    }
+    if (typeof obj === "object" && obj !== null) {
+      for (const [key, value] of Object.entries(obj)) {
+        checkEmptyStrings(value, `${path}.${key}`);
+      }
+    }
+  };
+
+  for (const cmd of payloads) {
+    checkEmptyStrings(cmd, cmd.name);
+  }
+}
+
 async function refreshCommands(
   globalCommandList: RESTPostAPIChatInputApplicationCommandsJSONBody[],
   guildCommandMap: Map<
@@ -152,6 +169,7 @@ async function refreshCommands(
 ): Promise<void> {
   const clientID = process.env.CLIENT_ID;
   const botToken = process.env.DEXCHAN_TOKEN;
+  const testGuildId = process.env.TEST_GUILD_ID;
 
   if (!clientID || !botToken) {
     await logMessage(
@@ -161,16 +179,36 @@ async function refreshCommands(
     return;
   }
 
+  try {
+    validateCommandPayloads(globalCommandList);
+    for (const commands of guildCommandMap.values()) {
+      validateCommandPayloads(commands);
+    }
+  } catch (err: any) {
+    await logMessage(err.message, "error");
+    return;
+  }
+
   const rest = new REST({ version: "10" }).setToken(botToken);
 
   try {
-    await logMessage(
-      "[Command Handler] Started refreshing global application (/) commands.",
-      "info"
-    );
-    await rest.put(Routes.applicationCommands(clientID), {
-      body: globalCommandList,
-    });
+    if (testGuildId) {
+      await logMessage(`[Command Handler] DEV MODE: Wiping global commands to prevent UI overlap...`, "warn");
+      await rest.put(Routes.applicationCommands(clientID), { body: [] });
+
+      await logMessage(`[Command Handler] DEV MODE: Redirecting global commands to Test Guild ${testGuildId}`, "warn");
+      await rest.put(Routes.applicationGuildCommands(clientID, testGuildId), {
+        body: globalCommandList,
+      });
+    } else {
+      await logMessage(
+        "[Command Handler] Started refreshing global application (/) commands.",
+                       "info"
+      );
+      await rest.put(Routes.applicationCommands(clientID), {
+        body: globalCommandList,
+      });
+    }
 
     for (const [guildId, commands] of guildCommandMap) {
       await logMessage(

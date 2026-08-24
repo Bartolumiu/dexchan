@@ -3,6 +3,7 @@ import { BotEvent } from "../../types/Event";
 import { ExtendedClient } from "../../lib/ExtendedClient";
 import checkUpdates from "../../functions/tools/checkUpdates";
 import { logMessage } from "../../lib/app";
+import { syncBotLocales } from "../../i18n/syncBotLocales";
 
 const event: BotEvent<Events.ClientReady> = {
   name: Events.ClientReady,
@@ -24,6 +25,16 @@ const event: BotEvent<Events.ClientReady> = {
     } catch (error) {
       await logMessage(
         `[Ready] Error during initialization: ${error instanceof Error ? error.message : String(error)}`,
+        "error"
+      );
+    }
+
+    // Sync locale availability to the DB (best-effort; never blocks startup).
+    try {
+      await syncBotLocales();
+    } catch (error) {
+      await logMessage(
+        `[Ready] Locale sync failed: ${error instanceof Error ? error.message : String(error)}`,
         "error"
       );
     }

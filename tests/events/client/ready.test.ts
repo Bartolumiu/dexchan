@@ -26,6 +26,11 @@ jest.mock("../../../src/functions/tools/pickPresence", () => ({
   default: mockPickPresence,
 }));
 
+jest.mock("../../../src/i18n/syncBotLocales", () => ({
+  __esModule: true,
+  syncBotLocales: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+}));
+
 describe("Ready Event", () => {
   let client: ExtendedClient;
   let readyClient: Client<true>;
@@ -65,6 +70,14 @@ describe("Ready Event", () => {
 
     expect(mockPickPresence).toHaveBeenCalledTimes(1);
     expect(mockPickPresence).toHaveBeenCalledWith(client);
+  });
+
+  it("should sync bot locales on startup", async () => {
+    (checkUpdates as jest.Mock<any>).mockResolvedValue({});
+    await readyEvent.execute(client, readyClient);
+
+    const { syncBotLocales } = require("../../../src/i18n/syncBotLocales");
+    expect(syncBotLocales).toHaveBeenCalledTimes(1);
   });
 
   it("should log error if checkUpdates fails", async () => {

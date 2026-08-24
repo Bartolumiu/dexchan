@@ -67,3 +67,13 @@ model BotPresence {
   activeFrom DateTime?
   activeTo   DateTime?
 }
+
+// Bot-specific configuration for this Discord application, keyed by the bot's
+// CLIENT_ID. Written by the bot on startup; read by the website (read-only) to
+// discover available locales without hardcoding them. The `locales` JSON holds
+// `[{ code, enabled }]`. Additional bot settings can be added as columns later.
+model Bot {
+  id        String   @id // Discord CLIENT_ID
+  locales   Json
+  updatedAt DateTime @updatedAt
+}

@@ -61,7 +61,9 @@ async function pullFromWeblate() {
       );
 
       if (!res.ok) {
-        console.warn(`Failed to pull ${locale} (${res.status}). Skipping download.`);
+        console.warn(
+          `Failed to pull ${locale} (${res.status}). Skipping download.`
+        );
       } else {
         const text = await res.text();
         fs.writeFileSync(jsonPath, text);
@@ -82,7 +84,7 @@ async function pullFromWeblate() {
 
     fs.writeFileSync(
       path.join(__dirname, `../src/i18n/locales/${locale}.ts`),
-                     tsContent
+      tsContent
     );
     console.log(`Successfully compiled ${locale}.ts`);
   }

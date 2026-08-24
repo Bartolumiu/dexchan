@@ -42,10 +42,10 @@ describe("handleCommands", () => {
     jest.clearAllMocks();
     jest.resetModules();
 
-  (REST as unknown as jest.Mock).mockImplementation(() => ({
-    setToken: jest.fn<any>().mockReturnThis(),
-                                                           put: jest.fn<any>().mockResolvedValue({} as any),
-  }));
+    (REST as unknown as jest.Mock).mockImplementation(() => ({
+      setToken: jest.fn<any>().mockReturnThis(),
+      put: jest.fn<any>().mockResolvedValue({} as any),
+    }));
 
     mockReaddirSync.mockReturnValue([]);
     process.env.CLIENT_ID = "test-client-id";
@@ -415,15 +415,17 @@ describe("handleCommands", () => {
 
     jest.mock(
       path.join(__dirname, "../../../src/commands/test/bad-cmd.ts"),
-              () => ({ __esModule: true, default: mockCommand }),
-              { virtual: true }
+      () => ({ __esModule: true, default: mockCommand }),
+      { virtual: true }
     );
 
     await handleCommands(client);
 
     expect(logMessage).toHaveBeenCalledWith(
-      expect.stringContaining("[i18n Error] Empty string detected in command payload at: bad-cmd.description_localizations.es"),
-                                            "error"
+      expect.stringContaining(
+        "[i18n Error] Empty string detected in command payload at: bad-cmd.description_localizations.es"
+      ),
+      "error"
     );
     expect(REST).not.toHaveBeenCalled();
   });
@@ -449,14 +451,15 @@ describe("handleCommands", () => {
 
     jest.mock(
       path.join(__dirname, "../../../src/commands/test/dev-cmd.ts"),
-              () => ({ __esModule: true, default: mockCommand }),
-              { virtual: true }
+      () => ({ __esModule: true, default: mockCommand }),
+      { virtual: true }
     );
 
     await handleCommands(client);
 
     expect(REST).toHaveBeenCalled();
-    const restInstance = (REST as unknown as jest.Mock).mock.results[0].value as any;
+    const restInstance = (REST as unknown as jest.Mock).mock.results[0]
+      .value as any;
 
     // 1. Verify it wiped the global commands (empty array)
     expect(restInstance.put).toHaveBeenCalledWith("/apps/commands", {

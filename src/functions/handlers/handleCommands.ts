@@ -143,10 +143,14 @@ async function categorizeCommand(
   );
 }
 
-function validateCommandPayloads(payloads: RESTPostAPIChatInputApplicationCommandsJSONBody[]) {
+function validateCommandPayloads(
+  payloads: RESTPostAPIChatInputApplicationCommandsJSONBody[]
+) {
   const checkEmptyStrings = (obj: any, path: string) => {
     if (typeof obj === "string" && obj.trim() === "") {
-      throw new Error(`[i18n Error] Empty string detected in command payload at: ${path}`);
+      throw new Error(
+        `[i18n Error] Empty string detected in command payload at: ${path}`
+      );
     }
     if (typeof obj === "object" && obj !== null) {
       for (const [key, value] of Object.entries(obj)) {
@@ -193,17 +197,23 @@ async function refreshCommands(
 
   try {
     if (testGuildId) {
-      await logMessage(`[Command Handler] DEV MODE: Wiping global commands to prevent UI overlap...`, "warn");
+      await logMessage(
+        `[Command Handler] DEV MODE: Wiping global commands to prevent UI overlap...`,
+        "warn"
+      );
       await rest.put(Routes.applicationCommands(clientID), { body: [] });
 
-      await logMessage(`[Command Handler] DEV MODE: Redirecting global commands to Test Guild ${testGuildId}`, "warn");
+      await logMessage(
+        `[Command Handler] DEV MODE: Redirecting global commands to Test Guild ${testGuildId}`,
+        "warn"
+      );
       await rest.put(Routes.applicationGuildCommands(clientID, testGuildId), {
         body: globalCommandList,
       });
     } else {
       await logMessage(
         "[Command Handler] Started refreshing global application (/) commands.",
-                       "info"
+        "info"
       );
       await rest.put(Routes.applicationCommands(clientID), {
         body: globalCommandList,

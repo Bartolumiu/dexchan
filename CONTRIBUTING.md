@@ -20,9 +20,10 @@ You can translate the bot into any language you want, and it will be automatical
 **For Project Maintainers:**
 To sync translations between the codebase and Weblate, you must have write access to the Weblate project. Add your Personal API Token to your `.env` file (`WEBLATE_TOKEN=your_token`).
 
-*(Note: Standard code contributors do not need to use these commands)*
+_(Note: Standard code contributors do not need to use these commands)_
 
 Once authenticated, maintainers can use the following package scripts:
+
 - `pnpm i18n:pull`: Downloads the latest translations from Weblate, cleans empty strings, and compiles them into heavily-typed TypeScript files.
 - `pnpm i18n:push`: Extracts the base English TypeScript strings to JSON and pushes them to Weblate to update the source keys.
 
